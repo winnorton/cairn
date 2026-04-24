@@ -14,6 +14,11 @@ When you (the agent) hit friction with cairn itself, file it. Cairn depends on a
 to improve — you're the one using the framework, so you see the gaps first. The active
 session user should not need to relay your observations to the cairn maintainer.
 
+> **What this skill adds:** a competent agent will often file feedback organically when
+> it notices a gap. This skill's value is *standardization* (consistent issue body
+> format), *discoverability* (new agents know filing is expected), and *sanitization
+> reminders* (PII pre-flight). Not new behavior — enabled consistency.
+
 ## Scope
 
 **File for:**

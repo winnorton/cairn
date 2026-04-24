@@ -31,7 +31,7 @@ Determine which environment you are running in. Use this decision tree:
 
 Record the environment. All path resolution below depends on it.
 
-### Step 2 — Fetch the manifest
+### Step 2 — Fetch the manifest, then check for fast-path
 
 Fetch the manifest at:
 
@@ -42,6 +42,19 @@ https://raw.githubusercontent.com/winnorton/cairn/main/manifest.json
 It contains:
 - `pathVariables` — environment-specific path mappings (e.g. `{userMemory}`, `{projectRoot}`).
 - `files` — the list of files to install, each with `src`, `dest`, `mode`, `description`.
+- `version` — the release version of this manifest.
+
+**Fast-path check** — before walking the file list, look for a local version marker at
+`{projectClaude}/cairn-version`:
+
+- **Not found** → fresh install. Proceed to Step 3.
+- **Found and matches `manifest.version`** → report *"cairn vX.Y.Z already installed at
+  `{projectClaude}/` — nothing to do."* and stop. No further steps.
+- **Found but version differs** → re-adoption. Proceed to Step 3. The diff pass in the
+  "Re-adoption / upgrade" section below becomes cheaper because the delta is bounded.
+
+The marker is a single-line file (just the version string, no frontmatter). It is written
+at the end of a successful install — see Step 6.
 
 ### Step 3 — Resolve paths
 
@@ -76,7 +89,7 @@ path rather than guessing. Wrong install locations are the most common failure m
 Before writing anything, show the user a compact preview:
 
 ```
-cairn v0.3.0 — install preview
+cairn v0.3.3 — install preview
 
 Will create (mode: create-if-absent):
   ~/.claude/memory/MEMORY.md           — memory index
@@ -89,6 +102,9 @@ Will create (mode: create-if-absent):
   ~/.claude/skills/prune.md            — stale memory/law review
   ~/.claude/skills/audit.md            — usage citation report
   ~/.claude/skills/feedback.md         — file feedback to cairn directly
+
+Will also write (post-install):
+  <project>/.claude/cairn-version      — version marker for re-adoption fast-path
 
 Skipping (already exist): <list any>
 
@@ -111,12 +127,17 @@ For each file in the manifest:
 If a fetch or write fails, stop and report the partial state clearly — do not continue
 silently.
 
-### Step 6 — Report
+### Step 6 — Write version marker, then report
 
-When done, show the user:
+**First, write the version marker.** After a successful install (or upgrade), write
+`{projectClaude}/cairn-version` containing just the installed version string (e.g. `0.3.3`).
+No frontmatter, no comments — just the version on a single line. Create the parent
+directory if it doesn't exist. This enables the Step 2 fast-path on future re-adoptions.
+
+**Then report to the user:**
 
 ```
-cairn v0.3.0 installed.
+cairn v0.3.3 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -152,7 +173,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.3.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.3.3/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.

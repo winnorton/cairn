@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.3.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.3.3`
 
 ## What you get
 
@@ -98,6 +98,11 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.3.3 — Version marker + re-adoption fast-path (#3). Install writes
+`{projectClaude}/cairn-version`; re-adoption reads it first and short-circuits
+when versions match. Also reframes the `/feedback` skill's value as
+standardization, not new behavior.
 
 v0.3.2 — Re-adoption flow now explicitly handles doc-only version bumps (#2). Agents
 performing re-adoption after a docs-only release no longer have to improvise.
