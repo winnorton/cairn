@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.4`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.7.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -29,7 +29,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 5 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Starter skills: `tour`, `reflect`, `plan`, `prune`, `audit`, `feedback` (drop in more) |
+| `~/.claude/skills/` | Two categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`) + **collaboration** (`reframe`, `bridge`, `advocate`) — see [skills taxonomy](#skills-taxonomy-maintenance-vs-collaboration) below |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -96,19 +96,51 @@ See [`plans/v0.3-observation-and-feedback-loop.md`](./plans/v0.3-observation-and
 ## Who cairn serves
 
 Cairn is primarily agent-facing — memory, laws, skills, conventions are optimized for
-how an agent works. But the human in the loop has jobs too, and cairn targets one of
-them directly:
+how an agent works. But the human in the loop has jobs too. Cairn has skills that
+serve each:
 
 - **Context provision** (user's main job): feeding the agent facts, history, and
-  constraints. Cairn supports this via `CLAUDE.md`, `MEMORY.md`, and `LAWS.md`.
-- **Reframing** (user's other job): rotating the solution space when the agent is
-  converging toward a wrong answer. Agents converge toward training patterns;
-  reframes unlock out-of-distribution solutions. The **`/reframe`** skill directly
-  supports this: user invokes, agent generates 2–4 alternative framings, user picks
-  one to explore.
+  constraints. Supported via `CLAUDE.md`, `MEMORY.md`, and `LAWS.md`.
+- **Reframing** (solution-space rotation): unlocked by `/reframe`. Agents converge
+  toward training patterns; reframes generate out-of-distribution alternatives.
+- **Cross-session relay** (carrying context between parallel sessions): structured
+  by `/bridge`. The human is the inter-session communication layer; the skill makes
+  the handoff structured instead of improvised.
+- **End-user perspective** (observing how others experience what's shipped): prompted
+  by `/advocate`. The builder sees the system they built; the end-user sees a cold
+  start. `/advocate` rotates the observer position pre-ship.
 
-Reframing is not context provision. It's a different cognitive move and cairn treats
-it as such.
+These are **collaboration skills**, distinct from the maintenance skills (reflect,
+plan, prune, audit, tour, feedback) that service the habitat itself. See the
+taxonomy below.
+
+## Skills taxonomy: maintenance vs collaboration
+
+Cairn's skills fall into two categories with different origins.
+
+**Maintenance skills — service the habitat:**
+
+- `tour` — onboard new users post-install.
+- `reflect` — end-of-task retrospective.
+- `plan` — structured pre-flight before execution.
+- `prune` — retire stale entries by type.
+- `audit` — count citations, surface unused structures.
+- `feedback` — file issues to cairn's maintainer (three-level degradation).
+
+**Collaboration skills — service the human-agent pair:**
+
+- `reframe` — generate alternative framings when convergent thinking is stuck.
+- `bridge` — structure cross-session context relay.
+- `advocate` — simulate end-user perspective before shipping.
+
+The maintenance skills were identified by gap analysis — what the agent noticed it
+needed. The collaboration skills came from studying what the *human* does in the
+collaboration (see [`docs/research/collaboration-skills.md`](./docs/research/collaboration-skills.md)
+for the analysis).
+
+**Design principle:** *observe the collaboration first, then package what you see.*
+Skills designed from observation solve problems that exist; skills designed from
+theory often solve problems that don't.
 
 ## Design notes
 
@@ -163,6 +195,13 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.7.0 — Collaboration skills + taxonomy (#16). Systematic analysis of the cairn build
+transcript surfaced three more skills that serve the human-agent pair: `/bridge`
+(cross-session relay), `/advocate` (end-user perspective), and a `/plan` enhancement
+for timing awareness. Introduces the maintenance-vs-collaboration taxonomy explicitly
+in README and skills/README. Adds `collaboration-skills.md` and `human-interaction-patterns.md`
+to `docs/research/`. See `plans/v0.7-collaboration-skills.md`.
 
 v0.6.4 — Cite in durable output, not just in conversation (#13). First cross-session
 habitat transfer observation revealed that `[LAW 4]` fired in live transcript but

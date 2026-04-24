@@ -32,6 +32,17 @@ snapshots of specific moments, not living documents.
   format), what couldn't be observed from outside the session, and the open
   questions the single citation raises.
 
+- **[collaboration-skills.md](collaboration-skills.md)** — The paper that led to
+  cairn's v0.7.0 collaboration skills. Transcript analysis of 60 human messages
+  surfaced 8 interaction patterns; 3 pass formalization (`/bridge`, `/advocate`,
+  and a `/plan` enhancement for timing). Introduces the maintenance-vs-collaboration
+  taxonomy and names the design principle: "observe the collaboration first, then
+  package what you see."
+
+- **[human-interaction-patterns.md](human-interaction-patterns.md)** — The field
+  notes behind `collaboration-skills.md`. All 8 patterns with instance counts,
+  categorized by formalizability.
+
 ## Why these live here
 
 Not under `files/` — that's the payload directory for cairn's installation;

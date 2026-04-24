@@ -85,11 +85,11 @@ the user.
 
 | User said | Install tier | Files |
 |---|---|---|
-| `adopt <url>` | `full` | 14 |
+| `adopt <url>` | `full` | 17 |
 | `adopt <url> --tier seed` | `seed` | 2 |
-| `adopt <url> --tier grow` | `grow` | 6 |
-| `adopt <url> --tier structure` | `structure` | 14 |
-| `adopt <url> --tier full` | `full` | 14 (explicit form of default) |
+| `adopt <url> --tier grow` | `grow` | 8 |
+| `adopt <url> --tier structure` | `structure` | 16 |
+| `adopt <url> --tier full` | `full` | 17 (explicit form of default) |
 
 Tiers are cumulative — `grow` includes `seed`; `structure` includes `grow`; `full`
 includes `structure`.
@@ -152,28 +152,30 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.6.4 — install preview (tier: full)
+cairn v0.7.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
   ~/.claude/memory/MEMORY.md                 — memory lookup entry point
 
 SCAFFOLDING — shape is important, content grows with you:
-  <project>/.claude/LAWS.md                  — schema + 5 seed laws (grow tier)
-  ~/.claude/skills/reframe.md                — user-supporting: alt framings (grow)
-  ~/.claude/memory/user/README.md            — user memory conventions (structure tier)
+  <project>/.claude/LAWS.md                  — schema + 5 seed laws (grow)
+  ~/.claude/skills/reframe.md                — collaboration: rotate problem axis (grow)
+  ~/.claude/skills/bridge.md                 — collaboration: cross-session relay (grow)
+  ~/.claude/skills/advocate.md               — collaboration: end-user perspective (grow)
+  ~/.claude/memory/user/README.md            — user memory conventions (structure)
   ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
   ~/.claude/memory/project/README.md         — project memory conventions (structure)
   ~/.claude/memory/reference/README.md       — reference memory conventions (structure)
   ~/.claude/skills/README.md                 — skills authoring guide (structure)
-  ~/.claude/skills/tour.md                   — onboarding (structure)
-  ~/.claude/skills/prune.md                  — hygiene (structure)
-  ~/.claude/skills/audit.md                  — citation report (structure)
+  ~/.claude/skills/tour.md                   — maintenance: onboarding (structure)
+  ~/.claude/skills/prune.md                  — maintenance: hygiene (structure)
+  ~/.claude/skills/audit.md                  — maintenance: citation report (structure)
 
 OPTIONAL — ergonomic; delete if you prefer less surface:
-  ~/.claude/skills/reflect.md                — capable agents reflect anyway (grow)
-  ~/.claude/skills/plan.md                   — capable agents plan anyway (grow)
-  ~/.claude/skills/feedback.md               — capable agents file feedback anyway (full)
+  ~/.claude/skills/reflect.md                — maintenance: reflect (grow)
+  ~/.claude/skills/plan.md                   — maintenance: plan (grow)
+  ~/.claude/skills/feedback.md               — maintenance: file feedback (full)
 
 Will also write (post-install):
   <project>/.claude/cairn-version            — version marker for re-adoption fast-path
@@ -250,7 +252,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.6.4 installed.
+cairn v0.7.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -286,7 +288,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.6.4/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.7.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -398,6 +400,8 @@ bump may trigger multiple cases.
 | `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | optional | grow |
 | `files/skills/plan.md` | `~/.claude/skills/plan.md` | optional | grow |
 | `files/skills/reframe.md` | `~/.claude/skills/reframe.md` | scaffolding | grow |
+| `files/skills/bridge.md` | `~/.claude/skills/bridge.md` | scaffolding | grow |
+| `files/skills/advocate.md` | `~/.claude/skills/advocate.md` | scaffolding | grow |
 | `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding | structure |
 | `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding | structure |
 | `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding | structure |

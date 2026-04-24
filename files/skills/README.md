@@ -43,7 +43,33 @@ description: One-sentence description used by the agent to decide relevance. Be 
 
 ## Built-in skills (from cairn)
 
-- `reflect.md` — pause and take stock: what's been learned, what to remember, what to adjust.
-- `plan.md` — before executing, state the plan and get approval.
+Cairn's skills fall into two categories:
 
-Add your own by dropping new `.md` files into this directory with the frontmatter shape above.
+### Maintenance skills — service the habitat itself
+
+Help the agent keep its environment clean, current, and useful.
+
+- `tour.md` — onboard new users post-install.
+- `reflect.md` — end-of-task retrospective.
+- `plan.md` — structured pre-flight before execution.
+- `prune.md` — retire stale entries by type.
+- `audit.md` — count citations, surface unused structures.
+- `feedback.md` — file issues to cairn's maintainer (three-level degradation).
+
+### Collaboration skills — service the human-agent pair
+
+Help the human do their part of the work, or help the agent support the human's
+cognitive process. The maintenance skills existed from v0.1 and were identified by
+agent self-observation (gap analysis). The collaboration skills came from studying
+what the *human* actually does in the collaboration.
+
+- `reframe.md` — generate alternative framings when the agent is stuck on one axis.
+- `bridge.md` — structure cross-session context relay.
+- `advocate.md` — simulate end-user perspective before shipping.
+
+Design principle: **observe the collaboration first, then package what you see.**
+Skills designed from observation solve problems that exist; skills designed from
+theory often solve problems that don't.
+
+Add your own by dropping new `.md` files into this directory with the frontmatter
+shape above.

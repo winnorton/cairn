@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -86,7 +86,23 @@
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "grow",
-      "description": "Generate 2-4 alternative framings of the current problem — user-supporting skill for rotating the solution space when convergent thinking is stuck"
+      "description": "Generate 2-4 alternative framings of the current problem — collaboration skill for rotating the solution space when convergent thinking is stuck"
+    },
+    {
+      "src": "files/skills/bridge.md",
+      "dest": "{userSkills}/bridge.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "grow",
+      "description": "Structure cross-session context relay — collaboration skill for carrying output between agent sessions with minimal loss"
+    },
+    {
+      "src": "files/skills/advocate.md",
+      "dest": "{userSkills}/advocate.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "grow",
+      "description": "Simulate end-user perspective before shipping — collaboration skill for rotating the observer position from builder to user"
     },
     {
       "src": "files/memory/user/README.md",
@@ -171,7 +187,7 @@
   "tiers": {
     "description": "Graduated adoption scope. Default install is 'full' (everything). Users who want a minimal, agent-portable habitat can request a lower tier via `adopt ... --tier <name>`. Each tier is cumulative — grow includes seed, structure includes grow, full includes structure.",
     "seed": "Agent-neutral core: CLAUDE.md + memory/MEMORY.md. Cross-session continuity, works with any agent (Claude, GPT, Gemini, local LLM) that can read markdown. The two-file minimum viable habitat.",
-    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect skills. Still reasonably generic — content a non-Claude agent can use with a little orientation.",
+    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect maintenance skills, and the collaboration skills (reframe, bridge, advocate) that service the human-agent pair. Still reasonably generic — content a non-Claude agent can use with a little orientation.",
     "structure": "Adds cairn's native hygiene loop: typed memory subdirectories, citation conventions, tour/prune/audit skills. Starts to assume cairn-aware tooling and conventions.",
     "full": "Adds cairn-ecosystem integrations like the feedback skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized; default unless user requests a lower tier."
   },

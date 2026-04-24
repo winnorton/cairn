@@ -40,7 +40,20 @@ Do NOT invoke for:
    can do after user approval of the plan; the first `[!]` needs its own explicit approval
    at execution time.
 
-5. **Present and wait.** Show the plan in under ~150 words. End with a single clear question:
+5. **Surface timing dimensions if lifecycle-relevant.** If any step has a cost curve
+   that shifts over time — "cheap to change now, expensive later" (early development,
+   structural refactors) or "expensive now, cheaper later" (premature optimization,
+   waiting for a dependency) — name it in the plan as a one-liner:
+
+   > *"Note: this is a structural change. Now (pre-users) it's a file move; later
+   > (post-adoption) it requires migration."*
+
+   Agents default to conservative / incremental. The human has lifecycle context the
+   agent doesn't. Surfacing the timing dimension gives the human an opening to override
+   your default with their window-aware judgment. Only include when the timing actually
+   matters — don't perform timing awareness for every trivial plan.
+
+6. **Present and wait.** Show the plan in under ~150 words. End with a single clear question:
    "Proceed with this plan?" Do not start executing until the user says yes.
 
 ## Output
