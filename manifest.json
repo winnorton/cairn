@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "cairn",
+  "version": "0.1.0",
+  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic.",
+  "repo": "https://github.com/winnorton/cairn",
+  "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
+
+  "pathVariables": {
+    "userClaude": {
+      "description": "User-global Claude config directory",
+      "claude-code": "~/.claude",
+      "cowork": "probe: workspace-level .claude/ or equivalent user-scoped config; ask user if uncertain"
+    },
+    "userMemory": {
+      "description": "Persistent cross-session memory root",
+      "claude-code": "~/.claude/memory",
+      "cowork": "{userClaude}/memory"
+    },
+    "userSkills": {
+      "description": "User-scoped skill directory",
+      "claude-code": "~/.claude/skills",
+      "cowork": "{userClaude}/skills"
+    },
+    "projectClaude": {
+      "description": "Project-scoped Claude config (applies to current work effort only)",
+      "claude-code": "{cwd}/.claude",
+      "cowork": "{workspaceRoot}/.claude"
+    },
+    "projectRoot": {
+      "description": "Root of the current work effort",
+      "claude-code": "{cwd}",
+      "cowork": "{workspaceRoot}"
+    }
+  },
+
+  "files": [
+    {
+      "src": "files/MEMORY.md",
+      "dest": "{userMemory}/MEMORY.md",
+      "mode": "create-if-absent",
+      "description": "Memory index — persistent cross-session pointers"
+    },
+    {
+      "src": "files/CLAUDE.md",
+      "dest": "{projectRoot}/CLAUDE.md",
+      "mode": "create-if-absent",
+      "description": "Project context template — fill in per work effort"
+    },
+    {
+      "src": "files/LAWS.md",
+      "dest": "{projectClaude}/LAWS.md",
+      "mode": "create-if-absent",
+      "description": "Meta-laws + seed laws. Customize per domain."
+    },
+    {
+      "src": "files/skills/README.md",
+      "dest": "{userSkills}/README.md",
+      "mode": "create-if-absent",
+      "description": "How skills work in cairn"
+    },
+    {
+      "src": "files/skills/reflect.md",
+      "dest": "{userSkills}/reflect.md",
+      "mode": "create-if-absent",
+      "description": "Reflective check-in skill (domain-agnostic)"
+    },
+    {
+      "src": "files/skills/plan.md",
+      "dest": "{userSkills}/plan.md",
+      "mode": "create-if-absent",
+      "description": "Plan-before-execute skill (domain-agnostic)"
+    }
+  ],
+
+  "modes": {
+    "create-if-absent": "Write only if destination does not exist. Never overwrite.",
+    "merge-append": "Append cairn section to existing file (idempotent by marker).",
+    "overwrite-with-backup": "Back up existing to {dest}.bak, then overwrite. Requires explicit user approval."
+  }
+}
