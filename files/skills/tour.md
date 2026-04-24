@@ -48,7 +48,7 @@ Do NOT invoke for:
    Don't push.
 
 5. **Point to the next step.** After CLAUDE.md is drafted:
-   - "Skim LAWS.md. The 5 seed laws apply broadly — read them and decide which to keep,
+   - "Skim LAWS.md. The 6 seed laws apply broadly — read them and decide which to keep,
      edit, or delete. Add one domain-specific law of your own."
    - "Memory will grow on its own as we work together. You don't need to populate it now."
    - "When this session ends and we have learnings worth keeping, say 'reflect' and I'll

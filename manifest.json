@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -62,7 +62,7 @@
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "grow",
-      "description": "Meta-laws (the schema) + 5 seed laws. The shape is load-bearing; the seeds are scaffolding — replace with your own laws over time."
+      "description": "Meta-laws (the schema) + 6 seed laws. The shape is load-bearing; the seeds are scaffolding — replace with your own laws over time."
     },
     {
       "src": "files/skills/reflect.md",

@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.7.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.8.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -28,7 +28,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 |---|---|
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
-| `<project>/.claude/LAWS.md` | Meta-laws + 5 seed laws — your non-negotiables |
+| `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
 | `~/.claude/skills/` | Two categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`) + **collaboration** (`reframe`, `bridge`, `advocate`) — see [skills taxonomy](#skills-taxonomy-maintenance-vs-collaboration) below |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
@@ -167,6 +167,16 @@ needs to move. `adopt.md` documents the pattern. This changes the cost model for
 changes: they're cheap because agents are capable readers/movers, not because maintainers
 ship migration tooling.
 
+**Upstream/downstream workspaces.** A single habitat isn't always self-contained. Research
+workspaces produce findings that should inform *other* habitats (e.g. a game-engine
+research workspace feeding a cwar-engine build workspace). Cairn supports this via a
+`## Downstream consumers` section in `CLAUDE.md` — declare who consumes your work. When
+`/reflect` fires in a workspace with declared consumers, it produces **distillate**
+(memory entries, laws, plans) shaped for each consumer's habitat, written to
+`distillate/<consumer>/...` for transport (copy, symlink, or submodule). Research stays
+in its source workspace as long-form reasoning; the distillate is what actually flows
+between habitats.
+
 **What matters vs what helps (role).** Every installed file has a `role` in the manifest:
 
 - **`essential`** — load-bearing from day one (`CLAUDE.md`, `MEMORY.md`). The habitat doesn't meaningfully function without these. Fill in first.
@@ -195,6 +205,14 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.8.0 — Reflection cadence + upstream/downstream distillation (closes #14 + #17).
+`/reflect` now triggers proactively at natural checkpoints (not only on explicit user
+request) and produces distillate for declared downstream consumer habitats. New
+optional `## Downstream consumers` section in `CLAUDE.md` template. Sixth seed law
+added: "Pause to reflect at natural checkpoints." Addresses the root cause observed
+when a research agent produced 1,600+ lines of work and zero memory entries —
+reflection wasn't firing. See `plans/v0.8-upstream-downstream.md`.
 
 v0.7.0 — Collaboration skills + taxonomy (#16). Systematic analysis of the cairn build
 transcript surfaced three more skills that serve the human-agent pair: `/bridge`

@@ -78,7 +78,23 @@ good doc. Scattered artifacts rot independently.
 **How to apply:** Before creating a new file, check whether an existing one could hold the
 change. Create new files only when genuinely needed, not when convenient.
 
-### 5. Root-cause, don't route-around
+### 5. Pause to reflect at natural checkpoints
+
+**Why:** Substantive work produces signal worth persisting across sessions — memory
+entries, law candidates, plans — but only if a reflection step fires to capture it.
+Work without reflection accumulates output; reflection turns output into habitat. In
+cairn's own early data, the agent that skipped reflection produced 1,600+ lines of
+research and zero memory entries. The sessions that invoked `/reflect` produced
+durable habitat artifacts.
+
+**How to apply:** At natural checkpoints — end of a deep-dive, completed substantive
+chunk, hit a milestone, before switching context — proactively propose `/reflect`.
+Don't wait for the user to remember to ask. The user can decline any proposed
+reflection; default to offering. For workspaces with declared downstream consumers
+(see `CLAUDE.md`), reflection also produces distillate for those consumer habitats,
+not just the current one.
+
+### 6. Root-cause, don't route-around
 
 **Why:** Bypassing a failing check (skipping a hook, ignoring a test, catching-and-swallowing
 an error) makes the symptom disappear but leaves the underlying problem. The problem then

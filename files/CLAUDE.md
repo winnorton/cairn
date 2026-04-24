@@ -44,3 +44,26 @@ See [LAWS.md](.claude/LAWS.md) for the non-negotiable rules for this effort.
   Pointers to external systems the agent may need: issue trackers, docs sites, shared drives.
   Keep entries one line each so agents can scan quickly.
 -->
+
+## Downstream consumers
+
+<!--
+  OPTIONAL. Use only if this workspace's work is meant to inform OTHER habitats — e.g.,
+  a research workspace producing findings for a build workspace; an upstream design
+  effort feeding a downstream implementation.
+
+  When /reflect fires, declared downstream consumers trigger an extra distillation step:
+  memory entries, laws, and plans are proposed in the SHAPE of the consumer's habitat,
+  not just this one's. The distillate is written to distillate/<consumer>/... for
+  transport (copy, symlink, or git submodule).
+
+  Format:
+  - **<consumer-name>** (`<path-or-URL>`) — one-line description of what research
+    from this workspace applies there.
+
+  Example:
+  - **cwar-engine** (`~/projects/cwar/cwar-engine`) — game engine being built;
+    findings about rendering, ECS, architecture apply there.
+
+  Remove this section (header and comment) if this workspace has no downstream consumers.
+-->

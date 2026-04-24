@@ -152,14 +152,14 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.7.0 — install preview (tier: full)
+cairn v0.8.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
   ~/.claude/memory/MEMORY.md                 — memory lookup entry point
 
 SCAFFOLDING — shape is important, content grows with you:
-  <project>/.claude/LAWS.md                  — schema + 5 seed laws (grow)
+  <project>/.claude/LAWS.md                  — schema + 6 seed laws (grow)
   ~/.claude/skills/reframe.md                — collaboration: rotate problem axis (grow)
   ~/.claude/skills/bridge.md                 — collaboration: cross-session relay (grow)
   ~/.claude/skills/advocate.md               — collaboration: end-user perspective (grow)
@@ -252,7 +252,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.7.0 installed.
+cairn v0.8.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -288,7 +288,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.7.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.8.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
