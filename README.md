@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.1`
 
 ## What you get
 
@@ -88,21 +88,28 @@ See [`plans/v0.3-observation-and-feedback-loop.md`](./plans/v0.3-observation-and
 
 ## Design notes
 
-**Multi-agent is supported.** Cairn's habitat is passive data — MEMORY.md, LAWS.md,
+**Multi-agent is supported.** Cairn's habitat is passive data — memory files, LAWS.md,
 CLAUDE.md, and skills are just files. Any agent that reads them inherits the context.
 Multiple agents sharing one habitat works by design; concurrent writes are handled by git
 the same way any shared files are.
 
-**Versioning is git.** Put your habitat in a git repo — MEMORY.md, LAWS.md, CLAUDE.md all
-benefit from commit history. You can diff, rollback, and branch a habitat exactly like any
-other tracked content. Cairn itself versions releases with git tags (`v0.2.0`, etc.); your
-habitat versions the customizations you layer on top. No separate snapshot mechanism needed.
+**Versioning is git.** Put your habitat in a git repo — every file benefits from commit
+history. You can diff, rollback, and branch a habitat exactly like any other tracked
+content. Cairn itself versions releases with git tags (`v0.4.1`, etc.); your habitat
+versions the customizations you layer on top. No separate snapshot mechanism needed.
 
 **Skills are atomic by design.** One skill, one purpose. Composition happens at the agent
 layer: agents invoke multiple skills per session as the task demands. If you find yourself
 wanting to "chain" two skills into one flow, either (a) one is actually a step inside the
 other — merge them — or (b) your skill descriptions need sharper triggers so the agent
 picks the right one at the right moment.
+
+**Migration is a prompt, not a script.** Cairn is agent-targeted software. When the
+structure changes (see v0.4.0's memory refactor), migration doesn't require migration
+code — a capable agent can read the old layout, read the new manifest, and move what
+needs to move. `adopt.md` documents the pattern. This changes the cost model for breaking
+changes: they're cheap because agents are capable readers/movers, not because maintainers
+ship migration tooling.
 
 ## Agent-readable install instructions
 
@@ -111,10 +118,14 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
-v0.4.0 — Typed memory (#4). Memory now splits into `user/`, `feedback/`, `project/`,
-and `reference/` subdirectories, each with its own citation convention and hygiene
-rules. `/audit` and `/prune` are per-type aware. Dropped uniform `[MEM name]` in favor
-of type-prefixed citations where they actually fit. See `plans/v0.4-typed-memory.md`.
+v0.4.1 — Agent-driven migration as a first-class path (#5). `adopt.md` now documents the
+migration flow (detect → plan → execute → verify) including index-tombstoning for
+environments without deletion support. Cowork Step 3 also distinguishes bash mount from
+memory store with per-layer tool guidance.
+
+v0.4.0 — Typed memory (#4). Memory splits into `user/`, `feedback/`, `project/`, and
+`reference/` subdirectories with per-type citation conventions. `/audit` and `/prune`
+are per-type aware. See `plans/v0.4-typed-memory.md`.
 
 v0.3.3 — Version marker + re-adoption fast-path (#3).
 v0.3.2 — Explicit doc-only re-adoption case (#2).

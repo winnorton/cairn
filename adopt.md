@@ -68,18 +68,23 @@ For **Claude Code**, the variables resolve as:
 - `{projectClaude}` → `<cwd>/.claude`
 - `{projectRoot}` → `<cwd>` (the user's current project directory)
 
-For **Cowork**, resolve relative to the workspace root. Two complications to be aware of:
+For **Cowork**, resolve relative to the workspace root. Cowork has **two distinct storage
+layers**, each with different tool access patterns — use the right one:
 
-1. **`.claude/` is often write-protected from Cowork's file tools** (Read/Write/Edit).
-   Writes may fail with *"blocked in this session — resolves to a protected location."*
-   When this happens, **fall back to the shell** (bash or PowerShell) — the shell can
-   typically write where the file tools cannot.
+- **Project `.claude/`** (CLAUDE.md, LAWS.md, cairn-version marker) lives on the **bash
+  mount** at a path like `/sessions/<session-name>/mnt/<folder>/`. File tools often can't
+  write here — writes fail with *"blocked in this session — resolves to a protected
+  location."* **Fall back to the shell** (bash or PowerShell). Run `pwd` in the shell to
+  confirm where you are, then write from there. Reads via file tools usually still work;
+  only writes need the shell.
 
-2. **Shell paths differ from file-tool paths.** The shell's working directory usually
-   maps to a mount path like `/sessions/<session-name>/mnt/<folder>/`, not the
-   workspace root visible to file tools. Run `pwd` in the shell first to see where
-   you are, then write to `.claude/` from there. Reads via file tools usually still
-   work; only writes need the shell fallback.
+- **Memory** (`~/.claude/memory/`) lives in Cowork's **persistent memory store**, not the
+  bash mount. Access it with **file tools**, not shell. Note: **deletion is not supported**
+  from standard tools in this layer — for migrations that retire files, use index
+  tombstoning (see Migration section below).
+
+- **Skills** (`~/.claude/skills/`) behavior varies — probe first. If unsure, try file
+  tools; fall back to shell.
 
 If any path remains ambiguous after probing, **ask the user** for the absolute target
 path rather than guessing. Wrong install locations are the most common failure mode.
@@ -89,7 +94,7 @@ path rather than guessing. Wrong install locations are the most common failure m
 Before writing anything, show the user a compact preview:
 
 ```
-cairn v0.4.0 — install preview
+cairn v0.4.1 — install preview
 
 Will create (mode: create-if-absent):
   ~/.claude/memory/MEMORY.md                 — top-level memory index
@@ -141,7 +146,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.4.0 installed.
+cairn v0.4.1 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -177,10 +182,78 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.4.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.4.1/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
+
+## Migration across version boundaries
+
+Cairn is agent-targeted software. Migration for agent-targeted software does not require
+migration *code* — a capable agent can read the old layout, read the new manifest, and
+move what needs to move. What this section provides is the pattern, not tooling.
+
+### When to invoke migration
+
+Invoke the migration flow when:
+- Step 2's fast-path detects a version marker AND the installed version is a major bump
+  behind the target (e.g. installed `0.3.x`, target `0.4.0`).
+- The local file layout visibly doesn't match the new manifest's expected layout.
+- The user explicitly asks to migrate.
+
+For patch-level bumps (`0.4.0` → `0.4.1`), migration is overkill — the re-adoption diff
+flow below handles it.
+
+### Migration flow
+
+1. **Enumerate the installed habitat.** List every file currently at resolved cairn paths
+   (memory dir, skills dir, project `.claude/`, CLAUDE.md). Read bodies where needed.
+
+2. **Enumerate the new manifest.** Read the target's `files:` array.
+
+3. **Build a mapping.** For each installed file, decide: **keep** (still present in target),
+   **move** (path changed), **transform** (shape changed — e.g. flat entry moving into a
+   type subdir), or **retire** (no longer part of cairn). Where classification isn't obvious
+   (flat memory → typed memory requires sorting each entry), use the memory file's `type:`
+   frontmatter if present, otherwise read the body and classify, otherwise ask the user.
+
+4. **Present the plan to the user.** Show the full mapping before acting:
+   ```
+   Migrate cairn v0.3.x → v0.4.0
+
+   Keep as-is:    <list>
+   Move:          <old path> → <new path>
+   Transform:     <old path> → <new path> (+ classification note)
+   Retire:        <orphans — see deletion handling below>
+
+   Proceed? (y/n)
+   ```
+
+5. **Execute.** Move/copy files using the right tool for the storage layer (shell vs
+   file-tools — see environment notes below). Update every index (`MEMORY.md` top-level,
+   type-subdirectory READMEs) to point at new paths.
+
+6. **Handle deletion constraints with index tombstoning.** Some environments don't allow
+   deleting files from their standard tools (Cowork's memory store is the known case).
+   When deletion isn't possible: remove the orphan's entry from every index, then note its
+   existence in the migration report as "orphaned-but-present." Orphaned-and-unindexed is
+   functionally equivalent to deleted — agents load the index, not the directory listing.
+
+7. **Write the new version marker** (`{projectClaude}/cairn-version`). Report the full
+   summary: installed, migrated, transformed, tombstoned.
+
+### Environment notes for migration
+
+**Cowork** has two distinct storage layers with different capabilities:
+
+- **Bash mount** (`/sessions/<name>/mnt/...`): accessible via shell. Project `.claude/`
+  lives here (see Step 3 for the write-protection workaround). Deletion is supported.
+- **Memory store** (`~/.claude/memory/`): accessible via file tools, not shell. **Deletion
+  is not supported from standard tools.** Use index tombstoning (step 6) when the old
+  layout leaves orphans.
+
+Use the right tool for each layer. Memory migrations are file-tool operations; `.claude/`
+migrations may need the shell fallback documented in Step 3.
 
 ## Re-adoption / upgrade
 
