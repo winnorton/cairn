@@ -99,9 +99,11 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
-v0.3.0 — adds citation convention, `audit` skill (usage signal for pruning), and `feedback`
-skill (agent-driven issue filing). Claude Code paths validated; Cowork paths resolve by
-agent probing at install time.
+v0.3.1 — Cowork adoption guidance: documents `.claude/` write protection and the
+bash-shell mount-path fallback, based on first real Cowork adoption report (#1).
+
+v0.3.0 — citation convention, `audit` skill (usage signal for pruning), `feedback`
+skill (agent-driven issue filing).
 
 ## License
 
