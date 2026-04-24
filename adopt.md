@@ -134,7 +134,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.5.0 — install preview (tier: full)
+cairn v0.5.1 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -142,6 +142,7 @@ ESSENTIAL — load-bearing from day one (seed tier):
 
 SCAFFOLDING — shape is important, content grows with you:
   <project>/.claude/LAWS.md                  — schema + 5 seed laws (grow tier)
+  ~/.claude/skills/reframe.md                — user-supporting: alt framings (grow)
   ~/.claude/memory/user/README.md            — user memory conventions (structure tier)
   ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
   ~/.claude/memory/project/README.md         — project memory conventions (structure)
@@ -160,7 +161,7 @@ Will also write (post-install):
   <project>/.claude/cairn-version            — version marker for re-adoption fast-path
 
 Want a smaller install? Re-run with --tier seed (2 files, agent-portable),
---tier grow (5 files), or --tier structure (13 files).
+--tier grow (6 files), or --tier structure (14 files).
 
 Proceed? (y/n)
 ```
@@ -195,7 +196,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.5.0 installed.
+cairn v0.5.1 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -231,7 +232,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.5.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.5.1/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -342,6 +343,7 @@ bump may trigger multiple cases.
 | `files/LAWS.md` | `<project>/.claude/LAWS.md` | scaffolding | grow |
 | `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | optional | grow |
 | `files/skills/plan.md` | `~/.claude/skills/plan.md` | optional | grow |
+| `files/skills/reframe.md` | `~/.claude/skills/reframe.md` | scaffolding | grow |
 | `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding | structure |
 | `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding | structure |
 | `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding | structure |

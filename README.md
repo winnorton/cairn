@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.5.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.5.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -88,6 +88,23 @@ docs errors. Not for your own project's issues.
 
 See [`plans/v0.3-observation-and-feedback-loop.md`](./plans/v0.3-observation-and-feedback-loop.md) for design rationale.
 
+## Who cairn serves
+
+Cairn is primarily agent-facing — memory, laws, skills, conventions are optimized for
+how an agent works. But the human in the loop has jobs too, and cairn targets one of
+them directly:
+
+- **Context provision** (user's main job): feeding the agent facts, history, and
+  constraints. Cairn supports this via `CLAUDE.md`, `MEMORY.md`, and `LAWS.md`.
+- **Reframing** (user's other job): rotating the solution space when the agent is
+  converging toward a wrong answer. Agents converge toward training patterns;
+  reframes unlock out-of-distribution solutions. The **`/reframe`** skill directly
+  supports this: user invokes, agent generates 2–4 alternative framings, user picks
+  one to explore.
+
+Reframing is not context provision. It's a different cognitive move and cairn treats
+it as such.
+
 ## Design notes
 
 **Multi-agent is supported.** Cairn's habitat is passive data — memory files, LAWS.md,
@@ -141,6 +158,11 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.5.1 — `/reframe` skill + "Who cairn serves" framing (#9). Cairn now directly
+supports the user's reframing job (not just context provision). Skill generates 2–4
+alternative framings on request — helps humans rotate the solution space when
+convergent thinking is stuck.
 
 v0.5.0 — Graduated tiers (#8). Every installed file tagged with a `tier` alongside
 `role`. Four tiers: `seed` (two-file minimum viable = maximally portable habitat),

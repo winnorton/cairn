@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -79,6 +79,14 @@
       "role": "optional",
       "tier": "grow",
       "description": "Plan-before-execute — standardizes something capable agents do anyway"
+    },
+    {
+      "src": "files/skills/reframe.md",
+      "dest": "{userSkills}/reframe.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "grow",
+      "description": "Generate 2-4 alternative framings of the current problem — user-supporting skill for rotating the solution space when convergent thinking is stuck"
     },
     {
       "src": "files/memory/user/README.md",
