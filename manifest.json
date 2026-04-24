@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -184,10 +184,18 @@
 
   "endpoints": {
     "feedback": {
-      "url": "https://cairn.winnorton.com/feedback",
+      "urls": [
+        "https://cairn-feedback-591252228833.us-central1.run.app/feedback",
+        "https://cairn.winnorton.com/feedback"
+      ],
+      "url_notes": {
+        "https://cairn-feedback-591252228833.us-central1.run.app/feedback": "Cloud Run direct URL — DNS-independent, always-reliable.",
+        "https://cairn.winnorton.com/feedback": "Custom domain — may not resolve until CNAME propagates after initial setup. Kept as secondary because it's more memorable and survives Cloud Run service renames."
+      },
+      "strategy": "first-success: try URLs in array order; on network error, DNS failure, or 5xx, try the next URL before falling through to gh CLI and paste fallback",
       "method": "POST",
       "content_type": "application/json",
-      "description": "Primary delivery channel for the /feedback skill. Agents POST structured feedback JSON; endpoint creates a GitHub issue on winnorton/cairn and returns the issue URL. Three-level degradation: this endpoint, then `gh issue create`, then user-paste fallback.",
+      "description": "Primary delivery channel for the /feedback skill. Agents POST structured feedback JSON; endpoint creates a GitHub issue on winnorton/cairn and returns the issue URL. Three-level degradation: these endpoints, then `gh issue create`, then user-paste fallback.",
       "payload_schema": {
         "category": "gap | bug | skill-idea | clarification | docs | design",
         "severity": "low | medium | high",

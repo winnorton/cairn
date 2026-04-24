@@ -50,10 +50,16 @@ available. The structured payload is the same for all three; only the transport 
 
 ### Level 1 — POST to the cairn feedback endpoint (preferred)
 
-Build the JSON payload and POST to the endpoint defined in `manifest.endpoints.feedback`:
+The manifest lists multiple endpoint URLs at `manifest.endpoints.feedback.urls`. Try them
+in array order — on the first success, stop. Current array:
+
+1. `https://cairn-feedback-591252228833.us-central1.run.app/feedback` — Cloud Run direct URL, always reliable.
+2. `https://cairn.winnorton.com/feedback` — custom domain, may not resolve during initial CNAME propagation.
+
+Build the JSON payload:
 
 ```
-POST https://cairn.winnorton.com/feedback
+POST <url>
 Content-Type: application/json
 
 {
@@ -62,18 +68,23 @@ Content-Type: application/json
   "title":    "<short, <=120 chars>",
   "body":     "<markdown body; What I observed / expected / Suggested action / Context>",
   "context":  "<optional>",
-  "cairn_version": "<e.g. 0.6.0>",
+  "cairn_version": "<e.g. 0.6.1>",
   "environment":   "<Claude Code, Cowork, claude.ai, etc.>"
 }
 ```
 
-Success (200): `{ "issue_url": "...", "issue_number": N }` — report the URL to the user.
+For each URL in the array, attempt the POST. On:
 
-Failures:
-- **429 rate_limited** — wait 60s and retry, or fall through to Level 2.
-- **400 invalid_***  — fix the payload and retry (response includes `retry_strategy`).
-- **502 github_api_failed** — GitHub upstream broke; fall through to Level 2.
-- **Network error / DNS fail** — endpoint unreachable; fall through to Level 2.
+- **200** `{ "issue_url": "...", "issue_number": N }` — report the URL to the user, done.
+- **400** (invalid payload) — don't retry with a different URL; fix the payload per
+  `retry_strategy` and POST again to the same URL, or stop filing if the fix isn't clear.
+- **429** (rate limited) — the limit is per-endpoint-IP; try the next URL or fall through
+  to Level 2 if all URLs in the array are rate-limited.
+- **502** (GitHub API failed) — upstream issue, not endpoint issue; try next URL, or
+  fall through to Level 2.
+- **Network error / DNS failure / timeout** — endpoint unreachable; try next URL.
+
+If all URLs in the array failed, fall through to Level 2.
 
 ### Level 2 — `gh issue create` (CLI fallback)
 

@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -164,11 +164,13 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
-v0.6.0 — Hosted feedback endpoint. `/feedback` skill now POSTs to
-`https://cairn.winnorton.com/feedback` as the primary delivery path; `gh` CLI and
-user-paste remain as graceful fallbacks. Handler code + Cloud Run deployment guide
-in `server/feedback-endpoint/`. Deployment pending; cairn-side wiring shipped.
-See `plans/v0.6-feedback-endpoint.md`.
+v0.6.1 — Feedback endpoint live + multi-URL fallback. Deployed to Cloud Run;
+manifest now lists both the Cloud Run direct URL and `cairn.winnorton.com` (custom
+domain, pending CNAME propagation) so agents always have a working primary. Skill
+tries URLs in array order, falls through on DNS/network/5xx.
+
+v0.6.0 — Hosted feedback endpoint (cairn-side wiring). Handler code + Cloud Run
+deployment guide in `server/feedback-endpoint/`. See `plans/v0.6-feedback-endpoint.md`.
 
 v0.5.1 — `/reframe` skill + "Who cairn serves" framing (#9). Cairn now directly
 supports the user's reframing job (not just context provision). Skill generates 2–4
