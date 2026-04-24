@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.4.3",
-  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic.",
+  "version": "0.5.0",
+  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
 
@@ -45,6 +45,7 @@
       "dest": "{projectRoot}/CLAUDE.md",
       "mode": "create-if-absent",
       "role": "essential",
+      "tier": "seed",
       "description": "Project context template — fill in per work effort. Read every session."
     },
     {
@@ -52,6 +53,7 @@
       "dest": "{userMemory}/MEMORY.md",
       "mode": "create-if-absent",
       "role": "essential",
+      "tier": "seed",
       "description": "Top-level memory index — the lookup entry point for all memory"
     },
     {
@@ -59,69 +61,15 @@
       "dest": "{projectClaude}/LAWS.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
+      "tier": "grow",
       "description": "Meta-laws (the schema) + 5 seed laws. The shape is load-bearing; the seeds are scaffolding — replace with your own laws over time."
-    },
-    {
-      "src": "files/memory/user/README.md",
-      "dest": "{userMemory}/user/README.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "User memory conventions — always-on background, no citation"
-    },
-    {
-      "src": "files/memory/feedback/README.md",
-      "dest": "{userMemory}/feedback/README.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "Feedback memory conventions — fires discretely, cite [MEM feedback/<name>]"
-    },
-    {
-      "src": "files/memory/project/README.md",
-      "dest": "{userMemory}/project/README.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "Project memory conventions — decision-shaping, cite [MEM project/<name>]"
-    },
-    {
-      "src": "files/memory/reference/README.md",
-      "dest": "{userMemory}/reference/README.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "Reference memory conventions — episodic lookups, cite [MEM reference/<name>]"
-    },
-    {
-      "src": "files/skills/README.md",
-      "dest": "{userSkills}/README.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "How skills work in cairn — authoring guide for adding more"
-    },
-    {
-      "src": "files/skills/tour.md",
-      "dest": "{userSkills}/tour.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "Post-install onboarding walk-through — grow out of it once the habitat is familiar"
-    },
-    {
-      "src": "files/skills/prune.md",
-      "dest": "{userSkills}/prune.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "Stale memory/law review — becomes useful as the habitat accumulates entries"
-    },
-    {
-      "src": "files/skills/audit.md",
-      "dest": "{userSkills}/audit.md",
-      "mode": "create-if-absent",
-      "role": "scaffolding",
-      "description": "Citation frequency report — becomes useful once session history accumulates"
     },
     {
       "src": "files/skills/reflect.md",
       "dest": "{userSkills}/reflect.md",
       "mode": "create-if-absent",
       "role": "optional",
+      "tier": "grow",
       "description": "Reflective check-in — standardizes something capable agents do anyway"
     },
     {
@@ -129,14 +77,80 @@
       "dest": "{userSkills}/plan.md",
       "mode": "create-if-absent",
       "role": "optional",
+      "tier": "grow",
       "description": "Plan-before-execute — standardizes something capable agents do anyway"
+    },
+    {
+      "src": "files/memory/user/README.md",
+      "dest": "{userMemory}/user/README.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "User memory conventions — always-on background, no citation"
+    },
+    {
+      "src": "files/memory/feedback/README.md",
+      "dest": "{userMemory}/feedback/README.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Feedback memory conventions — fires discretely, cite [MEM feedback/<name>]"
+    },
+    {
+      "src": "files/memory/project/README.md",
+      "dest": "{userMemory}/project/README.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Project memory conventions — decision-shaping, cite [MEM project/<name>]"
+    },
+    {
+      "src": "files/memory/reference/README.md",
+      "dest": "{userMemory}/reference/README.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Reference memory conventions — episodic lookups, cite [MEM reference/<name>]"
+    },
+    {
+      "src": "files/skills/README.md",
+      "dest": "{userSkills}/README.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "How skills work in cairn — authoring guide for adding more"
+    },
+    {
+      "src": "files/skills/tour.md",
+      "dest": "{userSkills}/tour.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Post-install onboarding walk-through — grow out of it once the habitat is familiar"
+    },
+    {
+      "src": "files/skills/prune.md",
+      "dest": "{userSkills}/prune.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Stale memory/law review — becomes useful as the habitat accumulates entries"
+    },
+    {
+      "src": "files/skills/audit.md",
+      "dest": "{userSkills}/audit.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Citation frequency report — becomes useful once session history accumulates"
     },
     {
       "src": "files/skills/feedback.md",
       "dest": "{userSkills}/feedback.md",
       "mode": "create-if-absent",
       "role": "optional",
-      "description": "File structured feedback to cairn — standardizes something capable agents do anyway"
+      "tier": "full",
+      "description": "File structured feedback to cairn's GitHub repo — cairn-ecosystem-specific (integrates with cairn's own issue tracker)"
     }
   ],
 
@@ -144,6 +158,14 @@
     "essential": "Load-bearing from day one. Habitat doesn't meaningfully function without this. Read first, fill in first.",
     "scaffolding": "Grow-into territory. Shape is important (schemas, conventions, discoverability); specific content gets customized over time. Safe to skim at install, impossible to skip entirely.",
     "optional": "Ergonomic win. Standardizes something a capable agent does anyway. Delete if you prefer less prompt surface; add back if consistency starts to slip."
+  },
+
+  "tiers": {
+    "description": "Graduated adoption scope. Default install is 'full' (everything). Users who want a minimal, agent-portable habitat can request a lower tier via `adopt ... --tier <name>`. Each tier is cumulative — grow includes seed, structure includes grow, full includes structure.",
+    "seed": "Agent-neutral core: CLAUDE.md + memory/MEMORY.md. Cross-session continuity, works with any agent (Claude, GPT, Gemini, local LLM) that can read markdown. The two-file minimum viable habitat.",
+    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect skills. Still reasonably generic — content a non-Claude agent can use with a little orientation.",
+    "structure": "Adds cairn's native hygiene loop: typed memory subdirectories, citation conventions, tour/prune/audit skills. Starts to assume cairn-aware tooling and conventions.",
+    "full": "Adds cairn-ecosystem integrations like the feedback skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized; default unless user requests a lower tier."
   },
 
   "modes": {

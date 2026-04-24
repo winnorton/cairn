@@ -18,7 +18,9 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.3`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.5.0`
+
+For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
 ## What you get
 
@@ -111,15 +113,27 @@ needs to move. `adopt.md` documents the pattern. This changes the cost model for
 changes: they're cheap because agents are capable readers/movers, not because maintainers
 ship migration tooling.
 
-**What matters vs what helps.** Every installed file has a `role` in the manifest:
+**What matters vs what helps (role).** Every installed file has a `role` in the manifest:
 
 - **`essential`** — load-bearing from day one (`CLAUDE.md`, `MEMORY.md`). The habitat doesn't meaningfully function without these. Fill in first.
 - **`scaffolding`** — shape is important, content grows with you (`LAWS.md`, memory type READMEs, growth-dependent skills). Skim at install, customize over time. Hard to skip entirely.
-- **`optional`** — ergonomic standardization (`reflect`, `plan`, `feedback` skills). A capable agent does these anyway; the skills just make them consistent and discoverable. Delete if you prefer less prompt surface; add back if consistency slips.
+- **`optional`** — ergonomic standardization (`reflect`, `plan`, `feedback` skills). A capable agent does these anyway; the skills just make them consistent and discoverable.
 
-Cairn installs all of them at once because deletion is cheap and decisions are expensive.
-The labels tell you what to read first and what to skim. They do *not* gate install — you
-get everything, grouped.
+**How deep to go (tier).** A second axis: how cairn-specific do you want your habitat to be?
+
+- **`seed`** — `CLAUDE.md` + `MEMORY.md`. Two files. **Works with any agent** (Claude, GPT, Gemini, local LLM) that can read markdown. Minimum viable habitat = maximally portable habitat.
+- **`grow`** — adds `LAWS.md` + `reflect`/`plan` skills. Durable conventions any careful agent can follow.
+- **`structure`** — adds typed memory + hygiene skills (`tour`/`prune`/`audit`). Assumes cairn-aware tooling.
+- **`full`** — adds the `feedback` skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized.
+
+Tiers are cumulative. Default install is `full` (everything). Request a smaller tier via
+`adopt … --tier seed`/`grow`/`structure`.
+
+**Portability.** The minimum viable habitat (seed tier) is the maximally portable habitat —
+two markdown files any LLM can read. Higher tiers progressively add cairn's own conventions
+(citation patterns, skill format, feedback-loop integrations). If cross-ecosystem
+portability matters to you, stop at `seed` or `grow`. If you're all-in on Claude's
+ecosystem, take `full`.
 
 ## Agent-readable install instructions
 
@@ -128,9 +142,15 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
+v0.5.0 — Graduated tiers (#8). Every installed file tagged with a `tier` alongside
+`role`. Four tiers: `seed` (two-file minimum viable = maximally portable habitat),
+`grow` (adds laws + process skills), `structure` (adds typed memory + hygiene),
+`full` (adds cairn-ecosystem integration). Default install unchanged (full); users who
+want portable minimal now have `--tier seed`. See `plans/v0.5-graduated-tiers.md`.
+
 v0.4.3 — Roles: every installed file tagged `essential | scaffolding | optional` (#7).
 Install preview groups by role; README's Design notes explains what matters vs what
-helps. Labels over tiers — one install, clear structure.
+helps.
 
 v0.4.2 — Memory path dual-scope detection (#6). `adopt.md` Step 1 and `manifest.json`
 now document that Claude Code has two memory conventions (user-global vs project-scoped)

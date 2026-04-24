@@ -52,7 +52,7 @@ Detect which this session uses:
 
 Record the resolved memory root. Use it everywhere the manifest says `{userMemory}`.
 
-### Step 2 — Fetch the manifest, then check for fast-path
+### Step 2 — Fetch the manifest, then check for fast-path and tier
 
 Fetch the manifest at:
 
@@ -62,8 +62,25 @@ https://raw.githubusercontent.com/winnorton/cairn/main/manifest.json
 
 It contains:
 - `pathVariables` — environment-specific path mappings (e.g. `{userMemory}`, `{projectRoot}`).
-- `files` — the list of files to install, each with `src`, `dest`, `mode`, `description`.
+- `files` — the list of files to install, each with `src`, `dest`, `mode`, `role`, `tier`,
+  `description`.
 - `version` — the release version of this manifest.
+- `roles` — definitions of the three role labels (`essential`, `scaffolding`, `optional`).
+- `tiers` — definitions of the four graduated adoption tiers (`seed`, `grow`, `structure`,
+  `full`).
+
+**Tier filter** — check whether the user requested a specific tier. Accepted forms:
+
+- `adopt …` → default: install **full** (everything).
+- `adopt … --tier seed` → install only seed-tier files (CLAUDE.md + MEMORY.md). For
+  agent-portable minimal use.
+- `adopt … --tier grow` → install seed + grow (adds LAWS.md + reflect/plan skills).
+- `adopt … --tier structure` → install seed + grow + structure (adds typed memory,
+  tour/prune/audit).
+- `adopt … --tier full` → install everything (explicit form of the default).
+
+Tiers are cumulative. If the user didn't explicitly request a tier, default to `full`
+but mention the lower-tier options in the Step 4 preview so they can choose.
 
 **Fast-path check** — before walking the file list, look for a local version marker at
 `{projectClaude}/cairn-version`:
@@ -114,41 +131,43 @@ path rather than guessing. Wrong install locations are the most common failure m
 
 Before writing anything, show the user a compact preview:
 
+**For a `full` install** (default), group by role so users see what matters most:
+
 ```
-cairn v0.4.3 — install preview
+cairn v0.5.0 — install preview (tier: full)
 
-Grouped by role (see manifest.roles for role definitions):
-
-ESSENTIAL — load-bearing from day one:
+ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
   ~/.claude/memory/MEMORY.md                 — memory lookup entry point
 
 SCAFFOLDING — shape is important, content grows with you:
-  <project>/.claude/LAWS.md                  — schema + 5 seed laws
-  ~/.claude/memory/user/README.md            — user memory conventions
-  ~/.claude/memory/feedback/README.md        — feedback memory conventions
-  ~/.claude/memory/project/README.md         — project memory conventions
-  ~/.claude/memory/reference/README.md       — reference memory conventions
-  ~/.claude/skills/README.md                 — skills authoring guide
-  ~/.claude/skills/tour.md                   — onboarding (grow out of it)
-  ~/.claude/skills/prune.md                  — hygiene (becomes useful with entries)
-  ~/.claude/skills/audit.md                  — citation report (becomes useful with history)
+  <project>/.claude/LAWS.md                  — schema + 5 seed laws (grow tier)
+  ~/.claude/memory/user/README.md            — user memory conventions (structure tier)
+  ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
+  ~/.claude/memory/project/README.md         — project memory conventions (structure)
+  ~/.claude/memory/reference/README.md       — reference memory conventions (structure)
+  ~/.claude/skills/README.md                 — skills authoring guide (structure)
+  ~/.claude/skills/tour.md                   — onboarding (structure)
+  ~/.claude/skills/prune.md                  — hygiene (structure)
+  ~/.claude/skills/audit.md                  — citation report (structure)
 
 OPTIONAL — ergonomic; delete if you prefer less surface:
-  ~/.claude/skills/reflect.md                — capable agents reflect anyway
-  ~/.claude/skills/plan.md                   — capable agents plan anyway
-  ~/.claude/skills/feedback.md               — capable agents file feedback anyway
+  ~/.claude/skills/reflect.md                — capable agents reflect anyway (grow)
+  ~/.claude/skills/plan.md                   — capable agents plan anyway (grow)
+  ~/.claude/skills/feedback.md               — capable agents file feedback anyway (full)
 
 Will also write (post-install):
   <project>/.claude/cairn-version            — version marker for re-adoption fast-path
 
-Skipping (already exist): <list any>
+Want a smaller install? Re-run with --tier seed (2 files, agent-portable),
+--tier grow (5 files), or --tier structure (13 files).
 
 Proceed? (y/n)
 ```
 
-Showing the group labels is the point — users can skim OPTIONAL confident they can delete
-it, and spend their attention on ESSENTIAL first.
+**For a tier-filtered install** (e.g. `--tier seed`), show only the files included in
+that tier, and state the tier clearly in the header. Users who picked a smaller tier
+made a conscious choice — don't bombard them with the full tree.
 
 Show **absolute resolved paths**, not the variable templates. If any destination already
 exists, list it under "Skipping" — `create-if-absent` mode must never overwrite.
@@ -176,7 +195,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.4.3 installed.
+cairn v0.5.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -212,7 +231,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.4.3/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.5.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -316,23 +335,24 @@ bump may trigger multiple cases.
 
 ## Manifest reference (quick lookup)
 
-| `src` | `dest` (Claude Code) | `role` |
-|---|---|---|
-| `files/CLAUDE.md` | `<project>/CLAUDE.md` | essential |
-| `files/memory/MEMORY.md` | `~/.claude/memory/MEMORY.md` | essential |
-| `files/LAWS.md` | `<project>/.claude/LAWS.md` | scaffolding |
-| `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding |
-| `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding |
-| `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding |
-| `files/memory/reference/README.md` | `~/.claude/memory/reference/README.md` | scaffolding |
-| `files/skills/README.md` | `~/.claude/skills/README.md` | scaffolding |
-| `files/skills/tour.md` | `~/.claude/skills/tour.md` | scaffolding |
-| `files/skills/prune.md` | `~/.claude/skills/prune.md` | scaffolding |
-| `files/skills/audit.md` | `~/.claude/skills/audit.md` | scaffolding |
-| `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | optional |
-| `files/skills/plan.md` | `~/.claude/skills/plan.md` | optional |
-| `files/skills/feedback.md` | `~/.claude/skills/feedback.md` | optional |
+| `src` | `dest` (Claude Code) | `role` | `tier` |
+|---|---|---|---|
+| `files/CLAUDE.md` | `<project>/CLAUDE.md` | essential | seed |
+| `files/memory/MEMORY.md` | `~/.claude/memory/MEMORY.md` | essential | seed |
+| `files/LAWS.md` | `<project>/.claude/LAWS.md` | scaffolding | grow |
+| `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | optional | grow |
+| `files/skills/plan.md` | `~/.claude/skills/plan.md` | optional | grow |
+| `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding | structure |
+| `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding | structure |
+| `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding | structure |
+| `files/memory/reference/README.md` | `~/.claude/memory/reference/README.md` | scaffolding | structure |
+| `files/skills/README.md` | `~/.claude/skills/README.md` | scaffolding | structure |
+| `files/skills/tour.md` | `~/.claude/skills/tour.md` | scaffolding | structure |
+| `files/skills/prune.md` | `~/.claude/skills/prune.md` | scaffolding | structure |
+| `files/skills/audit.md` | `~/.claude/skills/audit.md` | scaffolding | structure |
+| `files/skills/feedback.md` | `~/.claude/skills/feedback.md` | optional | full |
 
-All entries use `mode: create-if-absent`. Role definitions: see `manifest.roles`.
+All entries use `mode: create-if-absent`. Role and tier definitions: see `manifest.roles`
+and `manifest.tiers`.
 
 For the authoritative list, always use the manifest at runtime — this table may drift.
