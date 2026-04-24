@@ -159,10 +159,30 @@ If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
 
 ## Re-adoption / upgrade
 
-If the user adopts again with cairn already installed:
-1. Diff each existing destination against the new source.
-2. For each file with changes, show the diff and ask: keep local, take new, or merge.
-3. Never auto-overwrite a file the user may have customized.
+If the user adopts again with cairn already installed, compare the new manifest and
+sources against the local state. Apply these four cases in order — a single version
+bump may trigger multiple cases.
+
+1. **New files** — present in the new manifest, absent from the installed set. Install
+   via the standard `create-if-absent` flow. Report *"installed: <list>."*
+
+2. **Removed files** — present in the old manifest, absent from the new. Leave local
+   copies untouched unless the user explicitly asks to remove. Report *"note: <list>
+   is no longer part of cairn — your local copy is preserved."*
+
+3. **Changed file bodies** — same `src` and `dest`, different content. Diff each
+   changed file and ask per-file: keep local, take new, or merge. Never auto-overwrite
+   a file the user may have customized.
+
+4. **Doc-only bump** — none of cases 1–3 produced any action. The version bump changed
+   only `adopt.md`, `README.md`, `plans/`, `VERSION`, or other repo metadata; nothing
+   in the installed habitat is affected. Report briefly: *"cairn vX.Y.Z is a
+   documentation-only update — no changes to your installed habitat. Release notes at
+   https://github.com/winnorton/cairn/releases."* Then stop.
+
+   **Do NOT** invent a recommendation to "update the repo copy of adopt.md in your
+   workspace." `adopt.md` is fetched fresh on each adoption — it is not a file users
+   maintain locally. There is nothing to "keep in sync."
 
 ---
 

@@ -99,6 +99,9 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
+v0.3.2 — Re-adoption flow now explicitly handles doc-only version bumps (#2). Agents
+performing re-adoption after a docs-only release no longer have to improvise.
+
 v0.3.1 — Cowork adoption guidance: documents `.claude/` write protection and the
 bash-shell mount-path fallback, based on first real Cowork adoption report (#1).
 
