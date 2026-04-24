@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.5.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -79,14 +79,19 @@ it to `LAWS.md`. The types create gravitational pulls.
 
 When an agent using cairn notices a gap, bug, or missing piece in cairn itself — not in
 your project, in cairn — it can file feedback directly to this repo via the **`/feedback`**
-skill. The agent files a GitHub issue (via `gh` CLI, or drafts one for you to paste if
-`gh` is unavailable) and notifies you with a link. You are not required to triage in your
-working session.
+skill. Delivery is three-level with automatic degradation:
+
+1. **POST to [`cairn.winnorton.com/feedback`](https://cairn.winnorton.com/feedback)** — hosted endpoint, creates the issue server-side, returns a URL. Works from any environment the agent can make HTTP calls from (no shell required).
+2. **`gh issue create`** — if CLI is available and the endpoint isn't reachable.
+3. **Draft-for-paste** — if neither, the agent prepares a formatted issue body and asks you to paste it.
+
+The agent notifies you with the issue URL after filing. You are not required to triage
+in your working session.
 
 Scoped strictly to cairn itself: framework gaps, confusing instructions, missing skills,
 docs errors. Not for your own project's issues.
 
-See [`plans/v0.3-observation-and-feedback-loop.md`](./plans/v0.3-observation-and-feedback-loop.md) for design rationale.
+See [`plans/v0.3-observation-and-feedback-loop.md`](./plans/v0.3-observation-and-feedback-loop.md) and [`plans/v0.6-feedback-endpoint.md`](./plans/v0.6-feedback-endpoint.md) for design rationale.
 
 ## Who cairn serves
 
@@ -158,6 +163,12 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.6.0 — Hosted feedback endpoint. `/feedback` skill now POSTs to
+`https://cairn.winnorton.com/feedback` as the primary delivery path; `gh` CLI and
+user-paste remain as graceful fallbacks. Handler code + Cloud Run deployment guide
+in `server/feedback-endpoint/`. Deployment pending; cairn-side wiring shipped.
+See `plans/v0.6-feedback-endpoint.md`.
 
 v0.5.1 — `/reframe` skill + "Who cairn serves" framing (#9). Cairn now directly
 supports the user's reframing job (not just context provision). Skill generates 2–4

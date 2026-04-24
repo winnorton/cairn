@@ -43,41 +43,70 @@ Before filing, confirm:
 3. Does it contain any PII, credentials, file paths from the user's machine, or proprietary
    code? (If yes, sanitize before filing. Cairn issues are public.)
 
-## Steps
+## Delivery (three-level degradation)
 
-1. **Structure the submission** as:
-   ```
-   Category: gap | bug | skill-idea | clarification | docs
-   Severity: low | medium | high
-   Title: <60 chars, specific>
-   Body:
-     What I observed: <what you hit, where>
-     What I expected: <what would have worked>
-     Suggested action: <concrete fix if you can think of one>
-     Context: <cairn version, environment (Claude Code/Cowork), sanitized excerpt if useful>
-   ```
+Try delivery channels in order — use the next only when the previous fails or isn't
+available. The structured payload is the same for all three; only the transport differs.
 
-2. **File it.** Preferred channel: `gh issue create` against `winnorton/cairn` if the `gh`
-   CLI is available. Command shape:
-   ```
-   gh issue create \
-     --repo winnorton/cairn \
-     --title "<title>" \
-     --body "<formatted body>" \
-     --label "<category>,<severity>,agent-filed"
-   ```
+### Level 1 — POST to the cairn feedback endpoint (preferred)
 
-3. **Fallback if `gh` is unavailable.** Print the fully-formatted issue body and the URL
-   `https://github.com/winnorton/cairn/issues/new` and tell the user: "I'd like to file
-   this to cairn — can you paste it at this URL?" This is the *only* case where the user
-   is asked to help.
+Build the JSON payload and POST to the endpoint defined in `manifest.endpoints.feedback`:
 
-4. **Notify the user, once, after filing.**
-   - With `gh`: "I filed feedback to cairn about <title> — <issue URL>. Continuing."
-   - Fallback: "I drafted feedback about <title> — paste it at the link above when convenient, then we'll continue."
-   - Do not discuss further unless the user asks.
+```
+POST https://cairn.winnorton.com/feedback
+Content-Type: application/json
 
-5. **Never file silently.** The user always hears about it. Once, briefly, with a link.
+{
+  "category": "gap" | "bug" | "skill-idea" | "clarification" | "docs" | "design",
+  "severity": "low" | "medium" | "high",
+  "title":    "<short, <=120 chars>",
+  "body":     "<markdown body; What I observed / expected / Suggested action / Context>",
+  "context":  "<optional>",
+  "cairn_version": "<e.g. 0.6.0>",
+  "environment":   "<Claude Code, Cowork, claude.ai, etc.>"
+}
+```
+
+Success (200): `{ "issue_url": "...", "issue_number": N }` — report the URL to the user.
+
+Failures:
+- **429 rate_limited** — wait 60s and retry, or fall through to Level 2.
+- **400 invalid_***  — fix the payload and retry (response includes `retry_strategy`).
+- **502 github_api_failed** — GitHub upstream broke; fall through to Level 2.
+- **Network error / DNS fail** — endpoint unreachable; fall through to Level 2.
+
+### Level 2 — `gh issue create` (CLI fallback)
+
+If the endpoint is unreachable and `gh` CLI is available and authenticated, file directly:
+
+```
+gh issue create \
+  --repo winnorton/cairn \
+  --title "<title>" \
+  --body "<formatted body>" \
+  --label "agent-filed,<category>,<severity>"
+```
+
+Format the body as it would appear on GitHub — include all the fields from the JSON
+payload as prose.
+
+### Level 3 — Draft for user to paste (last resort)
+
+If neither the endpoint nor `gh` is available, print the fully-formatted issue body and
+tell the user: *"I'd like to file this to cairn — can you paste it at
+https://github.com/winnorton/cairn/issues/new?"* This is the only path that requires
+the active user's help.
+
+## Notify the user (always)
+
+After any of the three paths succeed, tell the user once, briefly:
+
+- **Level 1/2 success:** *"I filed feedback to cairn about &lt;title&gt; — &lt;issue URL&gt;. Continuing."*
+- **Level 3 draft:** *"I drafted feedback about &lt;title&gt; — paste it at the link above when convenient, then we'll continue."*
+
+Do not discuss further unless the user asks.
+
+**Never file silently.** The user always hears about it. Once, briefly, with a link.
 
 ## Rate limit yourself
 
@@ -87,7 +116,7 @@ Before filing, confirm:
 
 ## Output
 
-- Either: "Filed to cairn: <URL>" (one line)
-- Or: a clean issue body + the new-issue URL (for user to paste), one request for them to help
+- Either: "Filed to cairn: &lt;URL&gt;" (one line, Level 1 or 2)
+- Or: a clean issue body + the new-issue URL (for user to paste, Level 3)
 
 Nothing else. No preamble.
