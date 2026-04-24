@@ -31,6 +31,27 @@ Determine which environment you are running in. Use this decision tree:
 
 Record the environment. All path resolution below depends on it.
 
+**Claude Code only — also detect memory scope.** Claude Code has two memory conventions
+and installing to the wrong one is a silent failure (files land where the agent's memory
+loader never reads):
+
+- **User-global:** `~/.claude/memory/` — memories shared across all projects.
+- **Project-scoped:** `~/.claude/projects/<project-slug>/memory/` — memories scoped to one
+  project. The slug is the project's absolute path with slashes/colons replaced by hyphens
+  (e.g. `C:\Users\winno\projects\foo` → `C--Users-winno-projects-foo`).
+
+Detect which this session uses:
+
+1. **Check the system prompt / agent config** — if there's an explicit directive like
+   "your memory system is at `<path>`," use that path. Authoritative.
+2. **Probe the filesystem** — check which candidate path contains an existing `MEMORY.md`
+   or entries. If one has content and the other doesn't, the populated one is probably
+   where memory actually loads from.
+3. **Ask the user** if both paths exist or if you're uncertain. A direct "is memory
+   user-global or project-scoped in this setup?" is better than a wrong install.
+
+Record the resolved memory root. Use it everywhere the manifest says `{userMemory}`.
+
 ### Step 2 — Fetch the manifest, then check for fast-path
 
 Fetch the manifest at:
@@ -94,7 +115,7 @@ path rather than guessing. Wrong install locations are the most common failure m
 Before writing anything, show the user a compact preview:
 
 ```
-cairn v0.4.1 — install preview
+cairn v0.4.2 — install preview
 
 Will create (mode: create-if-absent):
   ~/.claude/memory/MEMORY.md                 — top-level memory index
@@ -146,7 +167,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.4.1 installed.
+cairn v0.4.2 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -182,7 +203,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.4.1/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.4.2/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.

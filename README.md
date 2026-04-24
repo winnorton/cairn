@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.2`
 
 ## What you get
 
@@ -117,6 +117,10 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.4.2 — Memory path dual-scope detection (#6). `adopt.md` Step 1 and `manifest.json`
+now document that Claude Code has two memory conventions (user-global vs project-scoped)
+and require probing before installing. Silent-failure gap closed.
 
 v0.4.1 — Agent-driven migration as a first-class path (#5). `adopt.md` now documents the
 migration flow (detect → plan → execute → verify) including index-tombstoning for
