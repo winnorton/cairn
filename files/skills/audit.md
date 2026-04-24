@@ -33,6 +33,13 @@ Citations are directional, not rigorous — agents may miscite or forget. Treat 
 "which items show up in practice," not "which items matter." The gap between the two is
 itself useful signal.
 
+**Important:** citations only count if they reach durable files (notes, commits, docs,
+research). Citations that exist only in conversational transcripts may or may not be
+scannable depending on the harness — for reliable audit, grep durable files first.
+Conversation-only citations under-represent actual usage, so low citation counts for
+a law or memory may mean either "unused" or "used but cited in conversation not files."
+When uncertain, check the transcript source before concluding a candidate is prune-worthy.
+
 ## When to use
 
 - User asks: "audit", "what's being used", "which laws fire", "habitat usage report."

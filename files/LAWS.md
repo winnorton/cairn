@@ -27,9 +27,13 @@ Five meta-rules govern the laws themselves:
 2. **Ranked by blast radius.** Most-harmful-if-violated first. Lower numbers are more dangerous.
 3. **Why + How to apply are mandatory.** Without them, the law doesn't survive contact with edge cases.
 4. **Laws expire.** Review this list periodically. Retire laws that no longer apply.
-5. **Cite when applying.** When an agent applies a law, it cites inline: `[LAW 3]`. This is how
-   `/audit` and `/prune` learn which laws earn their keep. Uncited laws over time are prune
-   candidates. Noise is tolerable; the signal feeds the pruning loop.
+5. **Cite in written output when applying.** When an agent applies a law, it cites inline:
+   `[LAW 3]`. The citation must appear in **durable output** — files the agent writes or
+   edits, notes, commits, research documents — because that is what `/audit` can scan.
+   Conversational citations in the reply that don't reach disk produce **zero** audit
+   signal. The rule: when a law shapes something you're writing down, cite it in the
+   thing you're writing down. If you're only talking (no files produced), a citation is
+   optional courtesy. Noise is tolerable; the signal feeds the pruning loop.
 
 ---
 

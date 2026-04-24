@@ -4,9 +4,12 @@
 docs, Slack channels, Linear projects. Agent looks them up when the task triggers; otherwise
 they sit dormant.
 
-**Citation:** `[MEM reference/<name>]` at the moment of reference. "Per [MEM reference/linear_ingest],
-this bug would be tracked there" — cite when you point the user or yourself at the external
-resource.
+**Citation:** `[MEM reference/<name>]` at the moment of reference, in **durable output**
+(the file, note, or commit where the reference is actually being cited). "Per
+[MEM reference/linear_ingest], this bug would be tracked there" — cite when you point
+the user or yourself at the external resource, and write the citation into the
+artifact you're producing. Citations that stay only in the conversation produce no
+audit signal.
 
 **Hygiene:** integrity-driven. References decay because the thing they point to moves or
 dies. `/prune` should periodically validate that the referenced resources still exist —

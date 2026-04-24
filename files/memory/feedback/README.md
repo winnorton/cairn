@@ -3,8 +3,10 @@
 **Character:** fires discretely, like a mini-law. Collaboration preferences, lessons learned,
 "do this / don't do that" rules that survive across sessions.
 
-**Citation:** `[MEM feedback/<name>]` when applying. Works the same way `[LAW N]` works —
-discrete trigger, discrete citation, real signal for `/audit`.
+**Citation:** `[MEM feedback/<name>]` when applying, in **durable output you write**
+(files, notes, commits — not just in your conversational reply). Works the same way
+`[LAW N]` works — discrete trigger, discrete citation, real signal for `/audit`.
+Citations that don't reach disk contribute no audit signal.
 
 **Hygiene:** citation-driven + semantic. `/audit` flags uncited-over-time entries; `/prune`
 reviews them plus any entries whose motivation has become obsolete.

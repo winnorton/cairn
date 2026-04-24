@@ -49,3 +49,11 @@ If a memory feels important enough to cite *every time it fires*, it probably be
 - Cite when it drives a specific decision → **project memory**
 - Cite at lookup → **reference memory**
 - Never cite (always-on) → **user memory**
+
+## Where citations must live
+
+Citations go in **durable output** — files the agent writes or edits, notes,
+commits, research documents — because that's what `/audit` can scan. Citations
+in conversational responses that don't reach disk produce zero audit signal.
+Say it in the reply if you want; write it in the file that was shaped by the
+memory if you want that usage to count.

@@ -1,8 +1,8 @@
 # Research notes
 
 Short essays written during cairn's early development, studying the framework
-from inside the habitat it creates. All three were drafted around the v0.5.0
-release — they're snapshots of a specific moment, not living documents.
+from inside the habitat it creates. Most were drafted around v0.5.0–v0.6.3 —
+snapshots of specific moments, not living documents.
 
 ## Entries
 
@@ -20,6 +20,17 @@ release — they're snapshots of a specific moment, not living documents.
   seven releases in one session driven by agent-filed feedback. Where the model
   works well (solo maintainers, early frameworks, low-stakes fixes) and where
   it doesn't.
+
+- **[habitat-transfer.md](habitat-transfer.md)** — The first cross-session
+  observation of cairn habitat working: a fresh agent instance in a different
+  workspace and domain (game engine research) adopted cairn, read the laws, and
+  applied `[LAW 4]` to a real architectural decision. Positive signal, with
+  honest limitations named.
+
+- **[cross-session-observation.md](cross-session-observation.md)** — The field
+  notes behind `habitat-transfer.md`. What transferred (tour, laws, plan skill
+  format), what couldn't be observed from outside the session, and the open
+  questions the single citation raises.
 
 ## Why these live here
 

@@ -3,8 +3,11 @@
 **Character:** current work state. Active goals, deadlines, in-flight decisions, stakeholders,
 ongoing initiatives. Changes as the project moves — faster than user or feedback memory.
 
-**Citation:** `[MEM project/<name>]` when it shapes a specific decision. Don't cite just
-because project memory is "relevant" — cite when it actually drove what you did or didn't do.
+**Citation:** `[MEM project/<name>]` when it shapes a specific decision, **in the
+durable output that records that decision** (file, note, commit, doc). Don't cite
+just because project memory is "relevant" — cite when it actually drove what you did
+or didn't do, and write the citation into the artifact of that doing. Citations in
+conversational replies that don't reach disk produce no audit signal.
 
 **Hygiene:** time-driven. Project state goes stale fast. `/prune` should visit project
 memory more often than other types.
