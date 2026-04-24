@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.2`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.3`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -163,6 +163,11 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.6.3 — Install must fetch files via HTTP, not heredoc inline (#12). adopt.md
+Step 5 now explicitly rules out `cat > file << EOF ... EOF` patterns and mandates
+`curl -sL {rawBase}/{src} > {dest}` (or equivalent). Adoption time drops from
+minutes to seconds when agents follow the correct path.
 
 v0.6.2 — adopt.md no longer invites agents to render a tier picker (#11). First-time
 install is default-full with a single y/n confirmation; tier flags documented as

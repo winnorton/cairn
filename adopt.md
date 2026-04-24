@@ -128,9 +128,11 @@ layers**, each with different tool access patterns — use the right one:
 - **Project `.claude/`** (CLAUDE.md, LAWS.md, cairn-version marker) lives on the **bash
   mount** at a path like `/sessions/<session-name>/mnt/<folder>/`. File tools often can't
   write here — writes fail with *"blocked in this session — resolves to a protected
-  location."* **Fall back to the shell** (bash or PowerShell). Run `pwd` in the shell to
-  confirm where you are, then write from there. Reads via file tools usually still work;
-  only writes need the shell.
+  location."* **Fall back to the shell** with `curl` to HTTP-fetch and redirect to disk:
+  `curl -sL {rawBase}/files/LAWS.md > .claude/LAWS.md`. Run `pwd` in the shell first to
+  confirm the working directory resolves to the project root. Reads via file tools usually
+  still work; only writes need the shell. **Do not** use heredocs to inline file content
+  — fetch every file via HTTP (see Step 5 for the right-vs-wrong pattern).
 
 - **Memory** (`~/.claude/memory/`) lives in Cowork's **persistent memory store**, not the
   bash mount. Access it with **file tools**, not shell. Note: **deletion is not supported**
@@ -150,7 +152,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.6.2 — install preview (tier: full)
+cairn v0.6.3 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -195,14 +197,48 @@ Wait for explicit user approval before proceeding.
 
 ### Step 5 — Install
 
-For each file in the manifest:
-1. Fetch the source file from `{rawBase}/{src}` where `rawBase` is defined in the manifest.
-2. If the resolved `dest` already exists and `mode` is `create-if-absent`, skip it.
-3. Ensure parent directories exist.
-4. Write the file.
+For each file in the manifest (that survived Step 4 confirmation):
 
-If a fetch or write fails, stop and report the partial state clearly — do not continue
-silently.
+1. **Fetch the source file over HTTP. Do NOT regenerate the content inline.**
+   The manifest's `rawBase` points at the raw GitHub URL prefix. Combine it with
+   the entry's `src` to get the full source URL, then fetch.
+
+   ✅ **Right:**
+   ```
+   curl -sL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
+   ```
+   or with your environment's HTTP-fetch tool, write the fetched bytes directly.
+
+   ❌ **Wrong:**
+   ```
+   cat > {projectClaude}/LAWS.md << 'EOF'
+   # Laws — [Project / Effort Name]
+   ... [full file body regenerated from context]
+   EOF
+   ```
+
+   Heredoc-with-inline-content requires the agent to regenerate every byte of
+   every file. For 14 files this turns a 5-second install into a 5-minute install.
+   It is a **correctness requirement**, not a style preference — an adopting agent
+   that heredocs the content is doing the wrong thing even if the end state is
+   identical.
+
+2. If the resolved `dest` already exists and `mode` is `create-if-absent`, skip.
+3. Ensure parent directories exist (`mkdir -p` the parent).
+4. Write the fetched bytes to the destination.
+
+**In environments where file tools can't write** (e.g., Cowork's `.claude/` protection
+— see Step 3), still HTTP-fetch — just pipe through the shell instead of file tools:
+
+```
+curl -sL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
+```
+
+The shell fallback is about *where you write*, not *what you write*. Never let the
+write-path constraint cause you to regenerate content from context.
+
+If a fetch or write fails, stop and report the partial state clearly — do not
+continue silently.
 
 ### Step 6 — Write version marker, then report
 
@@ -214,7 +250,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.6.2 installed.
+cairn v0.6.3 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -250,7 +286,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.6.2/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.6.3/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
