@@ -21,12 +21,15 @@ can't violate. Without a why, no one can judge edge cases.>
 or miss the case entirely.>
 ```
 
-Four meta-rules govern the laws themselves:
+Five meta-rules govern the laws themselves:
 
 1. **Observable, not vibes.** "Be careful" is not a law. "Never run `rm -rf` without confirmation" is.
 2. **Ranked by blast radius.** Most-harmful-if-violated first. Lower numbers are more dangerous.
 3. **Why + How to apply are mandatory.** Without them, the law doesn't survive contact with edge cases.
 4. **Laws expire.** Review this list periodically. Retire laws that no longer apply.
+5. **Cite when applying.** When an agent applies a law, it cites inline: `[LAW 3]`. This is how
+   `/audit` and `/prune` learn which laws earn their keep. Uncited laws over time are prune
+   candidates. Noise is tolerable; the signal feeds the pruning loop.
 
 ---
 

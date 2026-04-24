@@ -13,5 +13,8 @@
 
   <body>
 
-  See the memory system documentation for more.
+  Citation convention: when an agent applies a memory, cite inline as [MEM <name>]
+  (e.g. [MEM user_role]). This feeds /audit and /prune with real usage signal so
+  uncited-over-time entries can be surfaced for review. Noise is acceptable; the
+  signal is what powers the pruning loop.
 -->

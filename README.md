@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.2.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.3.0`
 
 ## What you get
 
@@ -27,7 +27,7 @@ For a pinned version: `adopt https://github.com/winnorton/cairn@v0.2.0`
 | `~/.claude/memory/MEMORY.md` | Persistent cross-session memory index |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 5 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Starter skills: `tour`, `reflect`, `plan`, `prune` (drop in more) |
+| `~/.claude/skills/` | Starter skills: `tour`, `reflect`, `plan`, `prune`, `audit`, `feedback` (drop in more) |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -51,7 +51,28 @@ You build this up over time. Cairn just gives you the scaffold so you don't star
 - Add laws to `LAWS.md` as you hit "never again" or "always do this" moments.
 - Add skills by dropping a `.md` file into `~/.claude/skills/` with YAML frontmatter (see [`files/skills/README.md`](./files/skills/README.md)).
 - Add memory entries via the agent when it learns something worth persisting.
-- Periodically say **`prune`** — the agent will surface stale memories and obsolete laws for review.
+- Periodically say **`audit`** to see which laws and memories are actually being cited, then **`prune`** to retire the cold ones.
+
+## Usage signal (citations)
+
+When an agent applies a law or memory, it cites it inline: `[LAW 3]`, `[MEM user_role]`.
+The convention is documented in the installed `LAWS.md` and `MEMORY.md`. The `/audit`
+skill reads those citations to tell you which habitat entries are earning their keep;
+`/prune` uses that data to turn stale-entry review from guesswork into evidence-driven
+decisions. Citation noise is tolerable — the goal is directional signal, not analytics.
+
+## Feedback to cairn (agent-driven)
+
+When an agent using cairn notices a gap, bug, or missing piece in cairn itself — not in
+your project, in cairn — it can file feedback directly to this repo via the **`/feedback`**
+skill. The agent files a GitHub issue (via `gh` CLI, or drafts one for you to paste if
+`gh` is unavailable) and notifies you with a link. You are not required to triage in your
+working session.
+
+Scoped strictly to cairn itself: framework gaps, confusing instructions, missing skills,
+docs errors. Not for your own project's issues.
+
+See [`plans/v0.3-observation-and-feedback-loop.md`](./plans/v0.3-observation-and-feedback-loop.md) for design rationale.
 
 ## Design notes
 
@@ -78,9 +99,9 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
-v0.2.0 — adds `tour` and `prune` skills, design-note clarifications. Claude Code paths
-validated; Cowork paths resolve by agent probing at install time (future release validates
-on real Cowork workspaces).
+v0.3.0 — adds citation convention, `audit` skill (usage signal for pruning), and `feedback`
+skill (agent-driven issue filing). Claude Code paths validated; Cowork paths resolve by
+agent probing at install time.
 
 ## License
 

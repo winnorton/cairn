@@ -64,7 +64,7 @@ common failure mode.
 Before writing anything, show the user a compact preview:
 
 ```
-cairn v0.2.0 — install preview
+cairn v0.3.0 — install preview
 
 Will create (mode: create-if-absent):
   ~/.claude/memory/MEMORY.md           — memory index
@@ -75,6 +75,8 @@ Will create (mode: create-if-absent):
   ~/.claude/skills/reflect.md          — reflection skill
   ~/.claude/skills/plan.md             — planning skill
   ~/.claude/skills/prune.md            — stale memory/law review
+  ~/.claude/skills/audit.md            — usage citation report
+  ~/.claude/skills/feedback.md         — file feedback to cairn directly
 
 Skipping (already exist): <list any>
 
@@ -102,7 +104,7 @@ silently.
 When done, show the user:
 
 ```
-cairn v0.2.0 installed.
+cairn v0.3.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -135,7 +137,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.2.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.3.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -161,5 +163,7 @@ If the user adopts again with cairn already installed:
 | `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | create-if-absent |
 | `files/skills/plan.md` | `~/.claude/skills/plan.md` | create-if-absent |
 | `files/skills/prune.md` | `~/.claude/skills/prune.md` | create-if-absent |
+| `files/skills/audit.md` | `~/.claude/skills/audit.md` | create-if-absent |
+| `files/skills/feedback.md` | `~/.claude/skills/feedback.md` | create-if-absent |
 
 For the authoritative list, always use the manifest at runtime — this table may drift.
