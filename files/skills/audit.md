@@ -3,7 +3,7 @@ name: audit
 description: Report which laws and memories have been actively cited vs. sitting unused.
   Use when the user says "audit", "what laws fire", "which memories are used", "habitat
   usage", or before invoking /prune. Scans current session transcripts for inline citations
-  (`[LAW N]`, `[MEM feedback/<name>]`, `[MEM project/<name>]`, `[MEM reference/<name>]`)
+  (`[LAW <slug>]`, `[MEM feedback/<name>]`, `[MEM project/<name>]`, `[MEM reference/<name>]`)
   and ranks by frequency. User-type memories are intentionally excluded — they are
   always-on background, not discrete triggers. Do NOT invoke mid-task or for fresh
   habitats with no usage history yet.
@@ -20,7 +20,7 @@ Citation conventions are type-aware:
 
 | Target | Citation pattern | Why this shape |
 |---|---|---|
-| Laws | `[LAW N]` | Laws fire discretely; citation is a binary "did I apply this?" |
+| Laws | `[LAW <slug>]` (e.g. `[LAW plan]`, `[LAW cadence]`) | Stable across reorders. Numeric `[LAW N]` still parses but is brittle — prefer slug. |
 | `feedback/` memory | `[MEM feedback/<name>]` | Fires discretely like mini-laws |
 | `project/` memory | `[MEM project/<name>]` | Cited when shaping a specific decision |
 | `reference/` memory | `[MEM reference/<name>]` | Cited at lookup time |
@@ -62,8 +62,12 @@ Do NOT invoke for:
    not part of the citation audit.
 
 3. **Count citations.** Regex patterns:
-   - Laws: `\[LAW (\d+)\]`
+   - Laws (preferred, slug form): `\[LAW ([a-z][a-z0-9-]*)\]` — matches `[LAW plan]`, `[LAW cadence]`, etc.
+   - Laws (deprecated, number form): `\[LAW (\d+)\]` — brittle; flag these in output as "candidates for migration to slug form."
    - Memories: `\[MEM (feedback|project|reference)/([a-z0-9_-]+)\]`
+
+   When counting, resolve numeric citations to slugs by reading LAWS.md (each law's header
+   contains both). Report counts by slug; treat slug and number as the same law.
 
 4. **Produce the report.** Grouped by category, ranked by citation count:
 

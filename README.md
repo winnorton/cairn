@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.8.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.9.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -57,11 +57,13 @@ You build this up over time. Cairn just gives you the scaffold so you don't star
 
 ## Usage signal (citations)
 
-Citation conventions are type-aware. Laws fire discretely, so they cite inline — `[LAW 3]`.
+Citation conventions are type-aware. Laws fire discretely and cite by **slug**, not number —
+numbers drift when laws are reordered; slugs are stable: `[LAW plan]`, `[LAW cadence]`.
 Memory is split into four types with different citation rules:
 
 | Type | Character | Citation | Why |
 |---|---|---|---|
+| Laws | Discrete triggers | `[LAW <slug>]` (e.g. `[LAW plan]`) | Stable across reorders — numbers are display-order only |
 | `user/` | Always-on background | **None** | Continuous; citing every response is noise |
 | `feedback/` | Fires discretely | `[MEM feedback/<name>]` | Acts like a mini-law |
 | `project/` | Shapes specific decisions | `[MEM project/<name>]` | Cite when it drove a decision |
@@ -206,6 +208,12 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
+v0.9.0 — Slug-based law identity (#18). Laws now cite by stable slug (`[LAW plan]`,
+`[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers.
+`/audit` matches both forms during transition. Evidence: cwar's AGENTS.md renumbered
+26→22→13 rules in one day, leaving citation debt in ESLint comments and cross-file
+references — cairn preempts the same pattern. See `plans/v0.9-law-slugs.md`.
+
 v0.8.0 — Reflection cadence + upstream/downstream distillation (closes #14 + #17).
 `/reflect` now triggers proactively at natural checkpoints (not only on explicit user
 request) and produces distillate for declared downstream consumer habitats. New
@@ -222,7 +230,7 @@ in README and skills/README. Adds `collaboration-skills.md` and `human-interacti
 to `docs/research/`. See `plans/v0.7-collaboration-skills.md`.
 
 v0.6.4 — Cite in durable output, not just in conversation (#13). First cross-session
-habitat transfer observation revealed that `[LAW 4]` fired in live transcript but
+habitat transfer observation revealed that `[LAW prefer-edit]` (formerly `[LAW 4]`) fired in live transcript but
 left no trace on disk — `/audit` was blind despite the habitat actively shaping
 behavior. LAWS.md meta-rule 5, memory type READMEs, and audit.md now specify
 citations must appear in files/notes/commits to feed the audit loop. Adds
