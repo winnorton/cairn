@@ -18,13 +18,13 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.3.3`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.0`
 
 ## What you get
 
 | File | Purpose |
 |---|---|
-| `~/.claude/memory/MEMORY.md` | Persistent cross-session memory index |
+| `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 5 seed laws — your non-negotiables |
 | `~/.claude/skills/` | Starter skills: `tour`, `reflect`, `plan`, `prune`, `audit`, `feedback` (drop in more) |
@@ -55,11 +55,23 @@ You build this up over time. Cairn just gives you the scaffold so you don't star
 
 ## Usage signal (citations)
 
-When an agent applies a law or memory, it cites it inline: `[LAW 3]`, `[MEM user_role]`.
-The convention is documented in the installed `LAWS.md` and `MEMORY.md`. The `/audit`
-skill reads those citations to tell you which habitat entries are earning their keep;
-`/prune` uses that data to turn stale-entry review from guesswork into evidence-driven
-decisions. Citation noise is tolerable — the goal is directional signal, not analytics.
+Citation conventions are type-aware. Laws fire discretely, so they cite inline — `[LAW 3]`.
+Memory is split into four types with different citation rules:
+
+| Type | Character | Citation | Why |
+|---|---|---|---|
+| `user/` | Always-on background | **None** | Continuous; citing every response is noise |
+| `feedback/` | Fires discretely | `[MEM feedback/<name>]` | Acts like a mini-law |
+| `project/` | Shapes specific decisions | `[MEM project/<name>]` | Cite when it drove a decision |
+| `reference/` | Episodic lookup | `[MEM reference/<name>]` | Cite at the moment of reference |
+
+`/audit` counts the discrete citations — laws and the three citable memory types — to tell
+you which habitat entries are earning their keep. `/prune` applies type-appropriate
+hygiene (event-driven for user, citation-driven for feedback, time-driven for project,
+integrity-driven for reference).
+
+Forcing function: if a `feedback` memory fires often enough to cite every time, promote
+it to `LAWS.md`. The types create gravitational pulls.
 
 ## Feedback to cairn (agent-driven)
 
@@ -99,19 +111,15 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
-v0.3.3 — Version marker + re-adoption fast-path (#3). Install writes
-`{projectClaude}/cairn-version`; re-adoption reads it first and short-circuits
-when versions match. Also reframes the `/feedback` skill's value as
-standardization, not new behavior.
+v0.4.0 — Typed memory (#4). Memory now splits into `user/`, `feedback/`, `project/`,
+and `reference/` subdirectories, each with its own citation convention and hygiene
+rules. `/audit` and `/prune` are per-type aware. Dropped uniform `[MEM name]` in favor
+of type-prefixed citations where they actually fit. See `plans/v0.4-typed-memory.md`.
 
-v0.3.2 — Re-adoption flow now explicitly handles doc-only version bumps (#2). Agents
-performing re-adoption after a docs-only release no longer have to improvise.
-
-v0.3.1 — Cowork adoption guidance: documents `.claude/` write protection and the
-bash-shell mount-path fallback, based on first real Cowork adoption report (#1).
-
-v0.3.0 — citation convention, `audit` skill (usage signal for pruning), `feedback`
-skill (agent-driven issue filing).
+v0.3.3 — Version marker + re-adoption fast-path (#3).
+v0.3.2 — Explicit doc-only re-adoption case (#2).
+v0.3.1 — Cowork `.claude/` write protection + shell fallback (#1).
+v0.3.0 — citation convention, `audit`, `feedback`.
 
 ## License
 

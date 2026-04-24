@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code and Cowork. Domain-agnostic.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -36,10 +36,34 @@
 
   "files": [
     {
-      "src": "files/MEMORY.md",
+      "src": "files/memory/MEMORY.md",
       "dest": "{userMemory}/MEMORY.md",
       "mode": "create-if-absent",
-      "description": "Memory index — persistent cross-session pointers"
+      "description": "Top-level memory index — points at the four memory types"
+    },
+    {
+      "src": "files/memory/user/README.md",
+      "dest": "{userMemory}/user/README.md",
+      "mode": "create-if-absent",
+      "description": "User memory conventions — continuous background, no citation"
+    },
+    {
+      "src": "files/memory/feedback/README.md",
+      "dest": "{userMemory}/feedback/README.md",
+      "mode": "create-if-absent",
+      "description": "Feedback memory conventions — fires discretely, cite [MEM feedback/<name>]"
+    },
+    {
+      "src": "files/memory/project/README.md",
+      "dest": "{userMemory}/project/README.md",
+      "mode": "create-if-absent",
+      "description": "Project memory conventions — decision-shaping, cite [MEM project/<name>]"
+    },
+    {
+      "src": "files/memory/reference/README.md",
+      "dest": "{userMemory}/reference/README.md",
+      "mode": "create-if-absent",
+      "description": "Reference memory conventions — episodic lookups, cite [MEM reference/<name>]"
     },
     {
       "src": "files/CLAUDE.md",

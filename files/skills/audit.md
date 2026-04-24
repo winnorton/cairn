@@ -3,9 +3,10 @@ name: audit
 description: Report which laws and memories have been actively cited vs. sitting unused.
   Use when the user says "audit", "what laws fire", "which memories are used", "habitat
   usage", or before invoking /prune. Scans current session transcripts for inline citations
-  (`[LAW N]`, `[MEM name]`) and ranks by frequency. Do NOT invoke mid-task or for fresh
-  habitats with no usage history yet — audit needs at least a few sessions of history
-  to produce a useful signal.
+  (`[LAW N]`, `[MEM feedback/<name>]`, `[MEM project/<name>]`, `[MEM reference/<name>]`)
+  and ranks by frequency. User-type memories are intentionally excluded — they are
+  always-on background, not discrete triggers. Do NOT invoke mid-task or for fresh
+  habitats with no usage history yet.
 ---
 
 # Audit
@@ -15,8 +16,18 @@ earning their keep and which have been sitting cold. Output feeds directly into 
 
 ## How signal works
 
-When agents apply a law or memory, they cite inline: `[LAW 3]`, `[MEM user_role]`. The
-convention is documented in `LAWS.md` and `MEMORY.md`. Audit counts these citations.
+Citation conventions are type-aware:
+
+| Target | Citation pattern | Why this shape |
+|---|---|---|
+| Laws | `[LAW N]` | Laws fire discretely; citation is a binary "did I apply this?" |
+| `feedback/` memory | `[MEM feedback/<name>]` | Fires discretely like mini-laws |
+| `project/` memory | `[MEM project/<name>]` | Cited when shaping a specific decision |
+| `reference/` memory | `[MEM reference/<name>]` | Cited at lookup time |
+| `user/` memory | **no citation** | Always-on background; citation is noise |
+
+Audit counts the discrete citations. User-type memory is excluded — its hygiene is
+event-driven (user situation changed), not citation-driven.
 
 Citations are directional, not rigorous — agents may miscite or forget. Treat output as
 "which items show up in practice," not "which items matter." The gap between the two is
@@ -39,15 +50,15 @@ Do NOT invoke for:
    prior transcripts are accessible (Claude Code: `~/.claude/projects/<project>/` often
    contains session logs; Cowork: TBD — ask the user if uncertain).
 
-2. **Enumerate the habitat.** Load `LAWS.md` and every file in `~/.claude/memory/`.
-   Build two lists: law numbers with titles, memory names with descriptions.
+2. **Enumerate the habitat.** Load `LAWS.md` (law numbers + titles) and the three
+   citable memory subdirs (`feedback/`, `project/`, `reference/`). Skip `user/` — it's
+   not part of the citation audit.
 
-3. **Count citations.** For each law and memory, count inline citations in scope. Regex
-   patterns:
+3. **Count citations.** Regex patterns:
    - Laws: `\[LAW (\d+)\]`
-   - Memories: `\[MEM ([a-z0-9_-]+)\]`
+   - Memories: `\[MEM (feedback|project|reference)/([a-z0-9_-]+)\]`
 
-4. **Produce the report.** Two tables, ranked by citation count descending:
+4. **Produce the report.** Grouped by category, ranked by citation count:
 
    ```
    Laws:
@@ -55,21 +66,32 @@ Do NOT invoke for:
      1   12         LAW 1: Plan before executing anything hard to reverse
      2   8          LAW 3: Surface assumptions
      …
-     8   0          LAW 7: <uncited candidate for prune>
+     N   0          LAW 7: <uncited candidate for prune>
 
-   Memories:
-   Rank  Citations  Memory
-     1   6          [MEM user_role]
+   Feedback memory:
+   Rank  Citations  Entry
+     1   6          feedback/terse_responses
      …
+
+   Project memory:
+   Rank  Citations  Entry
+     …
+
+   Reference memory:
+   Rank  Citations  Entry
+     …
+
+   User memory: <N entries — excluded from citation audit (always-on background).
+   Hygiene is event-driven; invoke /prune for review.>
    ```
 
-5. **Flag prune candidates.** Laws and memories with zero citations across the audited
-   scope — surface as "prune candidates." Suggest invoking `/prune` next.
+5. **Flag prune candidates.** Zero-citation entries in `feedback/`, `project/`, or
+   `reference/` — surface as "prune candidates." Suggest `/prune` next.
 
 ## Output
 
 - Scope (sessions audited)
-- Two ranked tables (laws and memories)
+- Four ranked tables (laws + 3 citable memory types) + user-memory note
 - Zero-citation list flagged for prune
 - One-line next step ("Run /prune to review the uncited entries?")
 
