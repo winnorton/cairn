@@ -64,15 +64,17 @@ common failure mode.
 Before writing anything, show the user a compact preview:
 
 ```
-cairn v0.1.0 — install preview
+cairn v0.2.0 — install preview
 
 Will create (mode: create-if-absent):
   ~/.claude/memory/MEMORY.md           — memory index
   <project>/CLAUDE.md                  — project context template
   <project>/.claude/LAWS.md            — laws template (meta + 5 seed laws)
   ~/.claude/skills/README.md           — skills authoring guide
+  ~/.claude/skills/tour.md             — onboarding walk-through
   ~/.claude/skills/reflect.md          — reflection skill
   ~/.claude/skills/plan.md             — planning skill
+  ~/.claude/skills/prune.md            — stale memory/law review
 
 Skipping (already exist): <list any>
 
@@ -100,7 +102,7 @@ silently.
 When done, show the user:
 
 ```
-cairn v0.1.0 installed.
+cairn v0.2.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -108,12 +110,12 @@ Created:
 Skipped (already existed):
   <list>
 
-Next steps:
-  1. Open <project>/CLAUDE.md and fill in the project context.
-  2. Open <project>/.claude/LAWS.md and add any domain-specific laws.
-  3. Memory lives at ~/.claude/memory/ — entries grow as you and the agent work together.
-  4. Skills live at ~/.claude/skills/ — drop new .md files here to extend.
+Next: say `tour` and I'll walk you through what was installed and help you take
+the first concrete action.
 ```
+
+The `tour` skill (installed at `~/.claude/skills/tour.md`) will handle onboarding. Point
+the user at it rather than dumping a long "what to do" list — it's more actionable.
 
 Keep the report under ~200 words. No prose padding.
 
@@ -133,7 +135,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.1.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.2.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -155,7 +157,9 @@ If the user adopts again with cairn already installed:
 | `files/CLAUDE.md` | `<project>/CLAUDE.md` | create-if-absent |
 | `files/LAWS.md` | `<project>/.claude/LAWS.md` | create-if-absent |
 | `files/skills/README.md` | `~/.claude/skills/README.md` | create-if-absent |
+| `files/skills/tour.md` | `~/.claude/skills/tour.md` | create-if-absent |
 | `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | create-if-absent |
 | `files/skills/plan.md` | `~/.claude/skills/plan.md` | create-if-absent |
+| `files/skills/prune.md` | `~/.claude/skills/prune.md` | create-if-absent |
 
 For the authoritative list, always use the manifest at runtime — this table may drift.
