@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.6.2`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -163,6 +163,10 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.6.2 — adopt.md no longer invites agents to render a tier picker (#11). First-time
+install is default-full with a single y/n confirmation; tier flags documented as
+invocation-only forms.
 
 v0.6.1 — Feedback endpoint live + multi-URL fallback. Deployed to Cloud Run;
 manifest now lists both the Cloud Run direct URL and `cairn.winnorton.com` (custom

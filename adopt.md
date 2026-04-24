@@ -69,18 +69,34 @@ It contains:
 - `tiers` — definitions of the four graduated adoption tiers (`seed`, `grow`, `structure`,
   `full`).
 
-**Tier filter** — check whether the user requested a specific tier. Accepted forms:
+**Tier filter — default to full; do NOT render a tier picker.**
 
-- `adopt …` → default: install **full** (everything).
-- `adopt … --tier seed` → install only seed-tier files (CLAUDE.md + MEMORY.md). For
-  agent-portable minimal use.
-- `adopt … --tier grow` → install seed + grow (adds LAWS.md + reflect/plan skills).
-- `adopt … --tier structure` → install seed + grow + structure (adds typed memory,
-  tour/prune/audit).
-- `adopt … --tier full` → install everything (explicit form of the default).
+**Default behavior:** if the user invoked `adopt` without an explicit `--tier` flag,
+install the `full` tier. Do not prompt the user to choose a tier. Do not render a
+tier picker UI. Do not list tier options as a menu. First-time users should not have
+to learn cairn's tier vocabulary before adopting.
 
-Tiers are cumulative. If the user didn't explicitly request a tier, default to `full`
-but mention the lower-tier options in the Step 4 preview so they can choose.
+**Tier is an invocation form, not an interactive UI.** Tier flags are for users who
+already know cairn and want a smaller install — power users, agent-portability
+scenarios, CI/CD bootstraps. Parse them from the invocation; never elicit them from
+the user.
+
+**Recognized invocations:**
+
+| User said | Install tier | Files |
+|---|---|---|
+| `adopt <url>` | `full` | 14 |
+| `adopt <url> --tier seed` | `seed` | 2 |
+| `adopt <url> --tier grow` | `grow` | 6 |
+| `adopt <url> --tier structure` | `structure` | 14 |
+| `adopt <url> --tier full` | `full` | 14 (explicit form of default) |
+
+Tiers are cumulative — `grow` includes `seed`; `structure` includes `grow`; `full`
+includes `structure`.
+
+**If the user later asks for a smaller install** (e.g. "can we skip the extra skills?"
+or "I just want the minimum") — that's the moment to surface tier alternatives, not
+at first-time adoption. At that point, describe the tiers and ask which they prefer.
 
 **Fast-path check** — before walking the file list, look for a local version marker at
 `{projectClaude}/cairn-version`:
@@ -134,7 +150,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.6.1 — install preview (tier: full)
+cairn v0.6.2 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -160,11 +176,13 @@ OPTIONAL — ergonomic; delete if you prefer less surface:
 Will also write (post-install):
   <project>/.claude/cairn-version            — version marker for re-adoption fast-path
 
-Want a smaller install? Re-run with --tier seed (2 files, agent-portable),
---tier grow (6 files), or --tier structure (14 files).
-
 Proceed? (y/n)
 ```
+
+**Do not append a tier menu to this preview.** The preview's job is "here's what will
+land — confirm or cancel." Adding "or would you like a smaller install?" turns every
+first-time adoption into a vocabulary quiz. Tiers are documented in Step 2 as
+invocation forms; they're not part of the confirmation flow.
 
 **For a tier-filtered install** (e.g. `--tier seed`), show only the files included in
 that tier, and state the tier clearly in the header. Users who picked a smaller tier
@@ -196,7 +214,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.6.1 installed.
+cairn v0.6.2 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -232,7 +250,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.6.1/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.6.2/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
