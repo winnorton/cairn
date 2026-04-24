@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.2`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.4.3`
 
 ## What you get
 
@@ -111,12 +111,26 @@ needs to move. `adopt.md` documents the pattern. This changes the cost model for
 changes: they're cheap because agents are capable readers/movers, not because maintainers
 ship migration tooling.
 
+**What matters vs what helps.** Every installed file has a `role` in the manifest:
+
+- **`essential`** — load-bearing from day one (`CLAUDE.md`, `MEMORY.md`). The habitat doesn't meaningfully function without these. Fill in first.
+- **`scaffolding`** — shape is important, content grows with you (`LAWS.md`, memory type READMEs, growth-dependent skills). Skim at install, customize over time. Hard to skip entirely.
+- **`optional`** — ergonomic standardization (`reflect`, `plan`, `feedback` skills). A capable agent does these anyway; the skills just make them consistent and discoverable. Delete if you prefer less prompt surface; add back if consistency slips.
+
+Cairn installs all of them at once because deletion is cheap and decisions are expensive.
+The labels tell you what to read first and what to skim. They do *not* gate install — you
+get everything, grouped.
+
 ## Agent-readable install instructions
 
 Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-readable file
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.4.3 — Roles: every installed file tagged `essential | scaffolding | optional` (#7).
+Install preview groups by role; README's Design notes explains what matters vs what
+helps. Labels over tiers — one install, clear structure.
 
 v0.4.2 — Memory path dual-scope detection (#6). `adopt.md` Step 1 and `manifest.json`
 now document that Claude Code has two memory conventions (user-global vs project-scoped)

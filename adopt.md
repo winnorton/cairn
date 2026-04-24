@@ -115,23 +115,29 @@ path rather than guessing. Wrong install locations are the most common failure m
 Before writing anything, show the user a compact preview:
 
 ```
-cairn v0.4.2 — install preview
+cairn v0.4.3 — install preview
 
-Will create (mode: create-if-absent):
-  ~/.claude/memory/MEMORY.md                 — top-level memory index
-  ~/.claude/memory/user/README.md            — user memory (no citation)
-  ~/.claude/memory/feedback/README.md        — feedback memory ([MEM feedback/<name>])
-  ~/.claude/memory/project/README.md         — project memory ([MEM project/<name>])
-  ~/.claude/memory/reference/README.md       — reference memory ([MEM reference/<name>])
-  <project>/CLAUDE.md                        — project context template
-  <project>/.claude/LAWS.md                  — laws template (meta + 5 seed laws)
+Grouped by role (see manifest.roles for role definitions):
+
+ESSENTIAL — load-bearing from day one:
+  <project>/CLAUDE.md                        — project context (read every session)
+  ~/.claude/memory/MEMORY.md                 — memory lookup entry point
+
+SCAFFOLDING — shape is important, content grows with you:
+  <project>/.claude/LAWS.md                  — schema + 5 seed laws
+  ~/.claude/memory/user/README.md            — user memory conventions
+  ~/.claude/memory/feedback/README.md        — feedback memory conventions
+  ~/.claude/memory/project/README.md         — project memory conventions
+  ~/.claude/memory/reference/README.md       — reference memory conventions
   ~/.claude/skills/README.md                 — skills authoring guide
-  ~/.claude/skills/tour.md                   — onboarding walk-through
-  ~/.claude/skills/reflect.md                — reflection skill
-  ~/.claude/skills/plan.md                   — planning skill
-  ~/.claude/skills/prune.md                  — per-type hygiene review
-  ~/.claude/skills/audit.md                  — typed citation report
-  ~/.claude/skills/feedback.md               — file feedback to cairn directly
+  ~/.claude/skills/tour.md                   — onboarding (grow out of it)
+  ~/.claude/skills/prune.md                  — hygiene (becomes useful with entries)
+  ~/.claude/skills/audit.md                  — citation report (becomes useful with history)
+
+OPTIONAL — ergonomic; delete if you prefer less surface:
+  ~/.claude/skills/reflect.md                — capable agents reflect anyway
+  ~/.claude/skills/plan.md                   — capable agents plan anyway
+  ~/.claude/skills/feedback.md               — capable agents file feedback anyway
 
 Will also write (post-install):
   <project>/.claude/cairn-version            — version marker for re-adoption fast-path
@@ -140,6 +146,9 @@ Skipping (already exist): <list any>
 
 Proceed? (y/n)
 ```
+
+Showing the group labels is the point — users can skim OPTIONAL confident they can delete
+it, and spend their attention on ESSENTIAL first.
 
 Show **absolute resolved paths**, not the variable templates. If any destination already
 exists, list it under "Skipping" — `create-if-absent` mode must never overwrite.
@@ -167,7 +176,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.4.2 installed.
+cairn v0.4.3 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -203,7 +212,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.4.2/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.4.3/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -307,21 +316,23 @@ bump may trigger multiple cases.
 
 ## Manifest reference (quick lookup)
 
-| `src` | `dest` (Claude Code) | `mode` |
+| `src` | `dest` (Claude Code) | `role` |
 |---|---|---|
-| `files/memory/MEMORY.md` | `~/.claude/memory/MEMORY.md` | create-if-absent |
-| `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | create-if-absent |
-| `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | create-if-absent |
-| `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | create-if-absent |
-| `files/memory/reference/README.md` | `~/.claude/memory/reference/README.md` | create-if-absent |
-| `files/CLAUDE.md` | `<project>/CLAUDE.md` | create-if-absent |
-| `files/LAWS.md` | `<project>/.claude/LAWS.md` | create-if-absent |
-| `files/skills/README.md` | `~/.claude/skills/README.md` | create-if-absent |
-| `files/skills/tour.md` | `~/.claude/skills/tour.md` | create-if-absent |
-| `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | create-if-absent |
-| `files/skills/plan.md` | `~/.claude/skills/plan.md` | create-if-absent |
-| `files/skills/prune.md` | `~/.claude/skills/prune.md` | create-if-absent |
-| `files/skills/audit.md` | `~/.claude/skills/audit.md` | create-if-absent |
-| `files/skills/feedback.md` | `~/.claude/skills/feedback.md` | create-if-absent |
+| `files/CLAUDE.md` | `<project>/CLAUDE.md` | essential |
+| `files/memory/MEMORY.md` | `~/.claude/memory/MEMORY.md` | essential |
+| `files/LAWS.md` | `<project>/.claude/LAWS.md` | scaffolding |
+| `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding |
+| `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding |
+| `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding |
+| `files/memory/reference/README.md` | `~/.claude/memory/reference/README.md` | scaffolding |
+| `files/skills/README.md` | `~/.claude/skills/README.md` | scaffolding |
+| `files/skills/tour.md` | `~/.claude/skills/tour.md` | scaffolding |
+| `files/skills/prune.md` | `~/.claude/skills/prune.md` | scaffolding |
+| `files/skills/audit.md` | `~/.claude/skills/audit.md` | scaffolding |
+| `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | optional |
+| `files/skills/plan.md` | `~/.claude/skills/plan.md` | optional |
+| `files/skills/feedback.md` | `~/.claude/skills/feedback.md` | optional |
+
+All entries use `mode: create-if-absent`. Role definitions: see `manifest.roles`.
 
 For the authoritative list, always use the manifest at runtime — this table may drift.
