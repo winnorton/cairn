@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.9`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,17 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.11.0 — Project subdirs for cross-project user-global memory stores (#22).
+Antigravity's `~/.gemini/antigravity/memory/` shares one tree across every
+workspace, so entries from cwar-engine, cairn, and side-projects accumulated
+flat under `project/`. New rule: cross-project user-global stores get a
+`project/<projectname>/` layer; citation becomes
+`[MEM project/<projectname>/<name>]`. Slug-separated stores (Claude Code's
+per-slug `~/.claude/projects/<slug>/memory/`) stay flat — the slug already
+separates. `/reflect`'s distillate-naming convention updated; the rule is
+documented in `files/memory/project/README.md`. Migrated 5 existing
+Antigravity entries into `project/cwar-engine/`.
 
 v0.10.9 — Antigravity added to the canonical "Works in X" list (README, adopt.md,
 manifest.json description). Validated empirically on 2026-04-25: a Gemini Pro 3.1

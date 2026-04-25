@@ -82,8 +82,18 @@ Do NOT invoke for:
    designated `distillate/` folder in this workspace (create if absent) so the user can
    transport it — via copy, symlink, or git submodule — into the consumer habitat.
 
-   File naming convention: `distillate/<consumer-name>/<type>/<slug>.md` so the consumer
-   can ingest by folder structure.
+   File naming convention depends on the consumer's memory store layout:
+   - **Slug-separated consumer** (per-project memory tree):
+     `distillate/<consumer-name>/<type>/<slug>.md`
+   - **Cross-project user-global consumer** (e.g. Antigravity's
+     `~/.gemini/antigravity/memory/`, where multiple workspaces share one tree):
+     `distillate/<consumer-name>/<type>/<this-project>/<slug>.md` — the
+     `<this-project>` subdir prevents pile-up when many workspaces feed one
+     consumer. Use the producing workspace's directory basename (typically
+     `path.basename(cwd)`, e.g. `cwar-engine`, `cairn`).
+
+   When uncertain, default to subdir-by-project for cross-process consumers.
+   See `files/memory/project/README.md` for the layout rule.
 
 7. **Offer transport if the consumer path is locally writable.** After writing distillate,
    check whether the declared consumer path (e.g. `~/.gemini/antigravity/memory/`) is a
