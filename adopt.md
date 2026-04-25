@@ -52,6 +52,12 @@ Detect which this session uses:
 
 Record the resolved memory root. Use it everywhere the manifest says `{userMemory}`.
 
+**Skills have the same dual-scope pattern** (see manifest `pathVariables.userSkills`).
+Apply the same detection: check system prompt / probe filesystem / ask user. Claude Code
+can load skills from either `~/.claude/skills` (user-global) or `<project>/.claude/skills`
+(project-scoped). Resolving `{userSkills}` to the wrong one is the same silent-failure
+mode as getting `{userMemory}` wrong.
+
 ### Step 2 — Fetch the manifest, then check for fast-path and tier
 
 Fetch the manifest at:
@@ -152,7 +158,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.9.0 — install preview (tier: full)
+cairn v0.9.1 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -252,7 +258,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.9.0 installed.
+cairn v0.9.1 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -288,7 +294,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.9.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.9.1/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.

@@ -5,6 +5,17 @@ Non-negotiable rules for this work effort. Violating one will break the project 
 This file is a living document. Agents should load it into every session. Users should review
 it periodically — retire what's obsolete, add what you've learned the hard way.
 
+> **Scope:** these are *project-operational* laws — specific rules this effort must not
+> violate. For *meta-disciplinary* laws about AI-agent engineering as a practice (the
+> Stateless Collaborator Law, the Amnesia Tax, the Scope Ratchet, etc.), see the
+> reference below. Cairn's LAWS concept is the project-operational specialization of
+> that broader pattern.
+>
+> **Meta-laws reference:** see [NEW_LAWS_OF_AI_AGENT_ENGINEERING.md](https://github.com/winnorton/cwar) or its
+> equivalent in your project's docs. If you're doing AI-agent engineering and haven't
+> encountered such a document, that itself is a signal — either the field has matured
+> past that domain or you're working without priors that would help.
+
 ---
 
 ## How to write a law

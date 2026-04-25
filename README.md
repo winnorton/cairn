@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.9.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.9.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -207,6 +207,11 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.9.1 — Session-close release: cairn's own LAWS.md (at repo root — framework eats its
+own dog food), LAWS.md template credit note pointing at `NEW_LAWS_OF_AI_AGENT_ENGINEERING`
+as the meta-disciplinary source, `HANDOFF.md` for session-to-session bridging, and #15
+closed (userSkills dual-scope path detection parallel to #6's memory fix).
 
 v0.9.0 — Slug-based law identity (#18). Laws now cite by stable slug (`[LAW plan]`,
 `[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers.
