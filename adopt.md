@@ -1,11 +1,19 @@
 # Agent adoption instructions
 
-> **For agents.** If you are an AI agent reading this because a user asked you to "adopt
-> cairn" or "adopt https://github.com/winnorton/cairn", follow the steps below precisely.
+> **For agents.** If you are an AI agent reading this because a user asked you to
+> *"adopt cairn"*, *"carefully adopt cairn"*, *"set up cairn"*, *"install cairn"*, or
+> *"adopt https://github.com/winnorton/cairn"*, follow the steps below precisely.
+>
+> **Disambiguation.** Multiple unrelated projects use the name "cairn" — including a
+> background-agent system at `cairn-dev/cairn`. This is **winnorton/cairn**, an agent
+> environment bootstrap. Don't substitute training-data references for fresh repo
+> content; the URL the user gives you is authoritative. If your training data describes
+> a different "cairn" with a `.env` file, GitHub App setup, or `Ctrl+K` UI, that's the
+> wrong project — fetch the actual URL.
 >
 > **For humans.** This file tells your agent how to install cairn. Tell your agent:
-> `adopt https://github.com/winnorton/cairn` — your agent will fetch this file and walk
-> you through the install.
+> `adopt cairn` (or `adopt https://github.com/winnorton/cairn` for explicit URL) — your
+> agent will fetch this file and walk you through the install.
 
 ---
 
@@ -173,7 +181,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.11.0 — install preview (tier: full)
+cairn v0.11.1 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -282,7 +290,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.11.0 installed.
+cairn v0.11.1 installed.
 
 Created:
   <list of files actually written, absolute paths>
