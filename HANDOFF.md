@@ -4,6 +4,11 @@
 boundary. Read it first. It exists because session boundaries are where signal goes to die
 unless explicitly preserved.
 
+> **Recommended entry point:** invoke `/resume` (cairn v0.10.0+) at session start. The
+> skill probes HANDOFF.md, memory at multiple project slugs (worktree-aware), transcript
+> junctions, and recent git activity, then synthesizes orientation. If `/resume` isn't
+> available in your habitat, read this file directly and follow the manual paths below.
+
 ## One-line context
 
 Cairn is a portable agent-environment bootstrap — memory, laws, skills, context templates
@@ -12,7 +17,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.9.1 (slug-based law identity + self-LAWS + #15 userSkills path fix).
+- **Latest release:** v0.10.0 (`/resume` skill for session-to-session handoff, after the first link test failed).
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 

@@ -91,11 +91,11 @@ the user.
 
 | User said | Install tier | Files |
 |---|---|---|
-| `adopt <url>` | `full` | 17 |
+| `adopt <url>` | `full` | 18 |
 | `adopt <url> --tier seed` | `seed` | 2 |
-| `adopt <url> --tier grow` | `grow` | 8 |
-| `adopt <url> --tier structure` | `structure` | 16 |
-| `adopt <url> --tier full` | `full` | 17 (explicit form of default) |
+| `adopt <url> --tier grow` | `grow` | 9 |
+| `adopt <url> --tier structure` | `structure` | 17 |
+| `adopt <url> --tier full` | `full` | 18 (explicit form of default) |
 
 Tiers are cumulative — `grow` includes `seed`; `structure` includes `grow`; `full`
 includes `structure`.
@@ -158,7 +158,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.9.1 — install preview (tier: full)
+cairn v0.10.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -169,6 +169,7 @@ SCAFFOLDING — shape is important, content grows with you:
   ~/.claude/skills/reframe.md                — collaboration: rotate problem axis (grow)
   ~/.claude/skills/bridge.md                 — collaboration: cross-session relay (grow)
   ~/.claude/skills/advocate.md               — collaboration: end-user perspective (grow)
+  ~/.claude/skills/resume.md                 — collaboration: detect prior-session context (grow)
   ~/.claude/memory/user/README.md            — user memory conventions (structure)
   ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
   ~/.claude/memory/project/README.md         — project memory conventions (structure)
@@ -258,7 +259,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.9.1 installed.
+cairn v0.10.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -294,7 +295,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.9.1/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.10.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -408,6 +409,7 @@ bump may trigger multiple cases.
 | `files/skills/reframe.md` | `~/.claude/skills/reframe.md` | scaffolding | grow |
 | `files/skills/bridge.md` | `~/.claude/skills/bridge.md` | scaffolding | grow |
 | `files/skills/advocate.md` | `~/.claude/skills/advocate.md` | scaffolding | grow |
+| `files/skills/resume.md` | `~/.claude/skills/resume.md` | scaffolding | grow |
 | `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding | structure |
 | `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding | structure |
 | `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding | structure |

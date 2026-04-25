@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.9.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -132,8 +132,9 @@ Cairn's skills fall into two categories with different origins.
 **Collaboration skills — service the human-agent pair:**
 
 - `reframe` — generate alternative framings when convergent thinking is stuck.
-- `bridge` — structure cross-session context relay.
+- `bridge` — structure cross-session context relay (parallel sessions).
 - `advocate` — simulate end-user perspective before shipping.
+- `resume` — detect and load context from a previous session (sequential sessions).
 
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the
@@ -207,6 +208,15 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.0 — `/resume` skill for session-to-session handoff. The first link test (a fresh
+session opening in a different worktree, asking "where were we?") FAILED to auto-discover
+prior context because: (1) memory is namespaced per-worktree; (2) `HANDOFF.md` requires
+explicit knowledge of where to look; (3) transcript junctions are ad-hoc. `/resume`
+codifies the probe — checks HANDOFF.md at common paths, memory at multiple project slugs
+(worktree-aware), transcript junctions, and recent git activity, then synthesizes a
+compact orientation. Agents now have a named protocol for "pick up where we left off."
+See `plans/v0.10-session-handoff.md`.
 
 v0.9.1 — Session-close release: cairn's own LAWS.md (at repo root — framework eats its
 own dog food), LAWS.md template credit note pointing at `NEW_LAWS_OF_AI_AGENT_ENGINEERING`
