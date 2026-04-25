@@ -49,6 +49,26 @@ into its own repo creates duplicate artifacts (cairn's project-root `LAWS.md`
 
 Then exit. Do not proceed with install.
 
+**Pre-flight check second: do you have persistent filesystem reach to the user?**
+Cairn installs files. Without filesystem reach, the install is a lie — the report
+would list paths that don't survive, which is worse than not installing. Refuse if
+any of these apply:
+
+- You're running in claude.ai web/mobile chat. The sandbox at `/home/claude` is
+  ephemeral and isn't on the user's machine.
+- You're in a hosted notebook, sandboxed eval environment, or any "agent demo"
+  harness where your writes don't land on the user's filesystem.
+- You have no `cwd`, no project path, and no workspace context — just a chat
+  prompt with no environment around it.
+
+If any apply, refuse and tell the user:
+
+> *"I'm in an ephemeral sandbox; writes here won't reach your machine. Run
+> `adopt cairn` in a harness with persistent filesystem reach — Claude Code,
+> Antigravity, Cursor, or Cowork."*
+
+Then exit. Do not fake an install into your sandbox.
+
 Determine which environment you are running in. Use this decision tree:
 
 1. Does the current working directory have a `.claude/` folder, **or** is there a
@@ -185,7 +205,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.11.2 — install preview (tier: full)
+cairn v0.11.3 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -294,7 +314,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.11.2 installed.
+cairn v0.11.3 installed.
 
 Created:
   <list of files actually written, absolute paths>

@@ -49,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.2`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.3`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -251,6 +251,14 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.11.3 — adopt.md gains a second pre-flight check: refuse install in ephemeral
+sandboxes (claude.ai web/mobile chat, hosted notebooks, sandboxed evals) where
+filesystem writes don't reach the user's machine. Filed after a Claude.ai chat
+session walked Step 1, hit "Neither clear? → Ask the user", and surfaced the
+spec gap unprompted — the right behavior, but only because the agent was careful;
+a less-careful agent could have faked the install into `/home/claude`. The new
+pre-flight closes that path explicitly. Doc-only.
 
 v0.11.2 — Doc patch: category disambiguation. Added "What cairn is (and isn't)"
 section between the description and Adopt — explicit IS/IS NOT framing because
