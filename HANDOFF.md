@@ -4,10 +4,22 @@
 boundary. Read it first. It exists because session boundaries are where signal goes to die
 unless explicitly preserved.
 
-> **Recommended entry point:** invoke `/resume` (cairn v0.10.0+) at session start. The
-> skill probes HANDOFF.md, memory at multiple project slugs (worktree-aware), transcript
-> junctions, and recent git activity, then synthesizes orientation. If `/resume` isn't
-> available in your habitat, read this file directly and follow the manual paths below.
+> **Recommended entry point:** invoke `/resume` (cairn v0.10.1+) at session start. The
+> skill probes HANDOFF.md, memory at multiple project slugs (worktree-aware AND any
+> `## Related memory paths` declared below), transcript junctions, and recent git
+> activity, then synthesizes orientation. If `/resume` isn't available in your habitat,
+> read this file directly and follow the manual paths below.
+
+## Related memory paths
+
+The cairn build session wrote durable memory to **cwar's project slug**, not cairn's.
+A `/resume` invocation in cairn's own worktree won't find it without this pointer.
+
+- `~/.claude/projects/C--Users-winno-projects-cwar-cwar-engine/memory/` — 11 entries
+  from the 2026-04-24 cairn session: collaboration style, reframing, build-transcript
+  reference, session-handoff link-test result, cwar adoption plan, plan-drift findings,
+  load-meta-laws-before-building, and more. Read MEMORY.md at that path for the full
+  index.
 
 ## One-line context
 
@@ -17,7 +29,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.0 (`/resume` skill for session-to-session handoff, after the first link test failed).
+- **Latest release:** v0.10.1 (`/resume` enhancement — reads `## Related memory paths` from HANDOFF.md so cross-project memory pointers actually work; new law in `cairn/LAWS.md` requiring HANDOFF.md updates before tagging).
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 

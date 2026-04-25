@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -208,6 +208,15 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.1 — `/resume` validation surfaced two gaps; both fixed. (1) HANDOFF.md drifted
+within one release cycle ("v0.9.1" inside HANDOFF.md while main was on v0.10.0) — new
+seed law `handoff-stays-current` in cairn's own `LAWS.md` requires HANDOFF.md to update
+in the same commit as VERSION/manifest/README. (2) `/resume` couldn't find memory
+written under a different project's slug — extended the skill to read a `## Related
+memory paths` section from HANDOFF.md and probe those paths too. cairn's HANDOFF.md
+now declares cwar's memory slug explicitly, so a fresh `/resume` in cairn finds the
+session's memory entries.
 
 v0.10.0 — `/resume` skill for session-to-session handoff. The first link test (a fresh
 session opening in a different worktree, asking "where were we?") FAILED to auto-discover

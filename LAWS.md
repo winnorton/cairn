@@ -97,6 +97,22 @@ up", "move to the next session", "come back here for analysis"), stop accepting 
 work and invoke `/reflect`. Produce memory candidates, law candidates, and a
 HANDOFF.md before the boundary — not after.
 
+### 6. Update HANDOFF.md before tagging a release *(slug: handoff-stays-current)*
+
+**Why:** HANDOFF.md is the bridge document the next session reads. If it drifts
+behind the actual release, it actively misleads — telling the next agent "we're at
+v0.9.1" when main is on v0.10.0. The first `/resume` validation surfaced this
+exact drift: HANDOFF.md said v0.9.1 minutes after v0.10.0 shipped because the
+release commit didn't update it. The bridge document rotted faster than the
+bridge.
+
+**How to apply:** Before any `git tag -a vX.Y.Z` on cairn (or any project where
+HANDOFF.md is canonical), verify HANDOFF.md reflects the version about to ship.
+Specifically check: the version line, the "State at end of session" section, and
+any "open work" entries that may now be closed. Bundle the HANDOFF.md update into
+the same commit as the release artifacts (VERSION, manifest version, README
+status). One commit, one consistent view.
+
 ---
 
 ## Your laws

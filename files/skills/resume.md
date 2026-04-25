@@ -57,7 +57,7 @@ If multiple HANDOFF.md files exist, prefer the one most recently modified.
 If the workspace is part of a multi-repo setup (e.g. cairn alongside cwar), also check
 adjacent project roots — a `HANDOFF.md` in a sibling project may be the real bridge.
 
-### 2. Memory directory probe (worktree-aware)
+### 2. Memory directory probe (worktree-aware + HANDOFF-aware)
 
 Memory may be project-scoped, user-global, or per-worktree depending on Claude Code
 configuration. **Probe multiple slugs.** Common locations:
@@ -70,9 +70,21 @@ The slug is derived from the absolute path with separators replaced: `C:\Users\f
 becomes `C--Users-foo-bar`. For a worktree at `<project>/.claude/worktrees/<name>/`, the
 parent slug points at `<project>` itself.
 
-If memory is found at a sibling/parent slug but not the current one, **call this out
-explicitly in the orientation** — it's a namespace-fragmentation finding the user
-should know about.
+**ALSO: if HANDOFF.md (from step 1) contains a `## Related memory paths` section,
+probe those paths too.** This is how cross-project memory bridges work — when a session
+in project A produced memory at project B's slug, HANDOFF.md in A declares the pointer
+so `/resume` knows to follow it. Example HANDOFF.md content:
+
+```markdown
+## Related memory paths
+
+- `~/.claude/projects/C--Users-foo-projects-other-project/memory/` — primary memory
+  for this effort lives at this slug, not the current one
+```
+
+If memory is found at a sibling/parent/declared slug but not the current one, **call
+this out explicitly in the orientation** — it's a namespace-fragmentation finding the
+user should know about.
 
 ### 3. Transcript junctions
 
