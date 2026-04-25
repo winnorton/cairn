@@ -173,7 +173,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.10.9 — install preview (tier: full)
+cairn v0.11.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -282,7 +282,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.10.9 installed.
+cairn v0.11.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
