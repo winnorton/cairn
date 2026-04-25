@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.4`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.5`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,12 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.5 — `/bridge` skill: ask direction before guessing. When the user invokes
+`/bridge` without a clear direction signal, the skill now requires asking incoming-
+or-outgoing first. Validated 2026-04-25: a Gemini Pro 3.1 session produced a
+well-formed but wrong-direction outgoing bridge when the user wanted incoming.
+Confirmation gate prevents this misfire pattern.
 
 v0.10.4 — Doc fix: don't `git clone` cairn during adopt. `adopt.md` Step 5 gains
 an explicit pre-flight forbidding `git clone` of the cairn repo into the workspace.

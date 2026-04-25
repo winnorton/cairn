@@ -1,13 +1,13 @@
 ---
 name: bridge
-description: Structure cross-session context relay when the user carries output, observations,
-  or findings from another agent session into this one. Use when the user pastes agent
-  output from elsewhere, shows a screenshot of another session, says "the other agent said",
-  "check the X session", or similar. Also use proactively when this session produces output
-  clearly relevant to another effort — flag it for bridging. Supports the human's inter-
-  session communication job (the most frequent human move observed in the cairn build
-  transcript). Do NOT use for standalone code snippets the user is asking about, or as
-  a substitute for plain "read this file" / "answer this question" prompts.
+description: Structure cross-session context relay between agent sessions. Two directions —
+  INCOMING (ingest something the user is bringing FROM another session into this one;
+  triggered by pastes, screenshots, "the other agent said", "check the X session") and
+  OUTGOING (package THIS session's work for another agent to consume; triggered by
+  "package this for X", "summarize for the other session", or you noticing relevance to
+  parallel work). When the user invokes `/bridge` without clear direction signal, ASK
+  which direction first — guessing wrong wastes the artifact. Do NOT use for standalone
+  code snippets, file reads, or as a substitute for plain "read this" / "answer this".
 ---
 
 # Bridge
@@ -43,6 +43,22 @@ Do NOT invoke for:
 - Every mention of "the other thing" — only when context is actually being carried.
 
 ## Steps
+
+0. **Determine direction first if ambiguous.** If the user invokes `/bridge` (or just
+   says "bridge") without a clear source pointer, paste, or directional signal, **ASK
+   before producing output:**
+
+   > *"Outgoing bridge (package this session's work for another agent to consume) or
+   > incoming bridge (ingest something I should pull from)? Quick answer either way."*
+
+   Don't guess. The cost of a wrong guess is producing a polished outgoing summary
+   when the user wanted an incoming ingest, or vice versa — the artifact is wasted
+   and the user has to re-prompt. Validated 2026-04-25: a Gemini Pro 3.1 session
+   defaulted to outgoing when the user wanted incoming, producing well-formed but
+   wrong-direction output. Confirmation gate prevents this.
+
+   Skip this step ONLY when direction is clearly signaled (paste = incoming;
+   "package this for X" = outgoing).
 
 1. **Identify the source.** Which session, workspace, or agent is the context coming
    from? If unclear, ask in one line: *"This is from the [research / build / test]
