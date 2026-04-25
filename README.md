@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.6`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.7`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,15 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.7 — Research docs refreshed with Phase 2 evidence. Cairn-test session
+analyzed a second transcript (v0.7.0 → v0.10.5, ~50 messages, cross-platform
+testing in Antigravity + Cowork + Claude Code) and updated four research
+papers + added `open-questions.md`. New findings: bidirectional verification
+(an agent corrected the human with tool-log evidence), experimental design
+as a distinct human pattern, ecosystem-coordination as a third candidate
+skill category. Removed redundant `cross-session-observation.md`
+(consolidated into `habitat-transfer.md`). Doc-only release.
 
 v0.10.6 — Two bridge-test learnings codified. (1) `/reflect` Step 7 added: when consumer
 path is locally writable, offer to copy distillate directly — eliminates the manual `cp`

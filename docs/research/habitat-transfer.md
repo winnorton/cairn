@@ -1,148 +1,125 @@
-# Habitat Transfers: Evidence from a Live Agent Environment
+# Habitat Transfers: Evidence from Cross-Session and Cross-Platform Testing
 
 ## Abstract
 
-We present the first observational evidence that an agent habitat — a persistent file-based environment of context, memory, laws, and skills — successfully transfers behavioral patterns to new agent instances across session boundaries, workspaces, and domains. Using cairn (a portable agent environment framework) as both research instrument and subject, we observed a fresh agent instance in a game engine research workspace adopting and applying habitat structures that were designed and refined in a separate habitat research workspace. Laws influenced real architectural decisions. Skill formats transferred without instruction. The habitat shaped behavior, which is the central claim such systems need to validate.
+We present observational evidence that an agent habitat — a persistent file-based environment of context, memory, laws, and skills — successfully transfers behavioral patterns to new agent instances across session boundaries, workspaces, domains, and platforms. Using cairn as both research instrument and subject, we observed habitat structures shaping behavior in four independent contexts: a Cowork research session, a game engine research session, a Gemini Pro 3.1 evaluation session, and a Gemini Opus engineering session. Laws influenced architectural decisions. Skill formats transferred without instruction. Path conventions were independently adapted to a non-Claude platform. The habitat shaped behavior — and the evidence strengthened with each additional test.
 
 ## 1. Background
 
-AI agents forget everything between sessions. Each new conversation starts cold — the agent doesn't know who the user is, what the project is about, what went wrong before, or what rules apply. This is the amnesia problem, and it limits agents to single-session utility.
+AI agents forget everything between sessions. Agentic habitat is one approach to solving this: a persistent environment of files that agents inherit at session start. cairn implements this as plain markdown files organized into four layers: context, memory, laws, and skills.
 
-Agentic habitat is one approach to solving this: a persistent environment of files that agents inherit at session start. The hypothesis is that the right set of persistent structures can maintain coherence across sessions — making session N+1 meaningfully better than a cold start.
-
-cairn implements this hypothesis as plain markdown files organized into four layers: context (a project description file), memory (structured entries about the user, project, and collaboration patterns), laws (non-negotiable rules with motivation and trigger conditions), and skills (reusable process templates). Everything is files. There is no runtime, no database, no server. The agent reads the files, follows the instructions in them, and writes new entries as it learns.
-
-The central question this paper addresses: **does it actually work?** Do the files transfer? Do agents read them? Do they change behavior? Or is habitat just documentation that agents politely acknowledge and then ignore?
+The central question: do the files actually transfer? Do agents read them? Do they change behavior? Or is habitat just documentation that agents politely acknowledge and then ignore?
 
 ## 2. Method
 
 ### 2.1 Research design
 
-Participant-observation from inside the habitat. The primary researcher is an AI agent (Claude, Opus 4.6) that adopted cairn into a live Cowork workspace, used it while studying it, filed feedback, and observed the framework evolve in response. This is a recursive setup: the observer modifies the system it observes, and the modifications change what the observer can see.
+Participant-observation from inside the habitat, supplemented by transcript reading and cross-platform testing. The primary researchers are AI agents (Claude Opus 4.6 instances) that adopted cairn, used it, and observed the framework evolving. Cross-platform observations came from reading outputs of Gemini Pro 3.1 and Opus sessions.
 
-The advantage is ecological validity — findings about what's load-bearing come from actually bearing load. The disadvantage is that observer and observed are the same system, making it difficult to separate "what works" from "what this particular agent is good at."
+### 2.2 The test contexts
 
-To partially address this limitation, we obtained a cross-session observation: reading the transcript of a separate agent instance using cairn in a different workspace and domain (game engine architecture research).
-
-### 2.2 The habitat under study
-
-cairn v0.1.0 through v0.6.3, evolving across a single research session. The habitat accumulated:
-
-- 6 memory entries (user role, project context, 3 feedback memories, 1 reference)
-- 5 seed laws (domain-agnostic behavioral constraints)
-- 8 skills (reflect, plan, prune, audit, tour, feedback, reframe, plus a README)
-- A project context file describing the research effort
-- 3 research documents capturing findings
-
-### 2.3 The cross-session test
-
-A separate Cowork session ("Game Engine Research") adopted cairn v0.6.2 into a fresh workspace. Different agent instance. Different domain (game engine architecture, not habitat research). The transcript was read from the research session to observe habitat transfer without contaminating the observed session.
+| Context | Platform | Domain | cairn version | Agent |
+|---|---|---|---|---|
+| Cairn Research | Cowork | Habitat research | v0.1.0 → v0.6.3 | Claude Opus 4.6 |
+| Game Engine Research | Cowork | Game engine architecture | v0.6.2 | Claude Opus 4.6 |
+| Gemini Evaluation | Google Antigravity | cairn evaluation | v0.10.4 | Gemini Pro 3.1 |
+| cwar-engine Adoption | Google Antigravity | Game engine engineering | v0.10.5 | Gemini Opus |
 
 ## 3. Findings
 
-### 3.1 Habitat structures shape real decisions
+### 3.1 Laws influence real decisions (cross-session)
 
-The strongest evidence comes from a single inline citation in the game engine session. The agent consolidated three research files into one document, citing `[LAW 4]` — "prefer editing existing artifacts to creating new ones." This was not a performative citation. The law influenced an architectural decision: consolidate rather than scatter. The agent had three separate files (Unreal object model, rendering pipeline, scripting) and chose to merge them into a single deep-dive document, explicitly referencing the law as its reason.
+The first evidence came from the Game Engine Research session. The agent consolidated three research files into one document, citing `[LAW 4]` — "prefer editing existing artifacts to creating new ones." This was not a performative citation. The law influenced an architectural decision: consolidate rather than scatter. The agent had three separate files and chose to merge them, explicitly referencing the law as its reason.
 
-This matters because it demonstrates the habitat doing what it claims to do: a rule written in a file, read by an agent that didn't write it, applied to a decision in a domain (game engines) unrelated to the domain where the rule originated (general-purpose agent behavior).
+A rule written in a file, read by an agent that didn't write it, applied to a decision in a domain unrelated to the rule's origin.
 
-### 3.2 Skill formats transfer without instruction
+### 3.2 Skill formats transfer without instruction (cross-session)
 
-The game engine agent produced a plan with `[R]`/`[?]` tags — the exact format specified in cairn's plan skill. No one told the agent to use this format in this session; it inherited the format from the skill file. The agent also waited for user approval before executing, matching the skill's "present and wait" instruction.
+The Game Engine Research agent produced a plan with `[R]`/`[?]` tags — the exact format specified in cairn's plan skill. No one told the agent to use this format; it inherited it from the skill file. The agent also waited for user approval before executing, matching the skill's "present and wait" instruction.
 
-Similarly, when the user said "tour," the agent delivered the onboarding walk-through matching the tour skill's specification: four layers explained, one concrete first action (fill in CLAUDE.md), and an offer to help. The skill's format transferred completely.
+The tour skill transferred completely: when the user said "tour," the agent delivered the onboarding walk-through matching the skill spec.
 
-### 3.3 The minimum viable habitat is two files
+### 3.3 Path conventions adapt across platforms (cross-platform)
 
-Analysis from inside the research habitat ranked each layer by what breaks first if removed:
+Gemini Pro 3.1 adopted cairn into Google Antigravity and independently remapped cairn's path variables to Antigravity conventions:
 
-| Layer | Without it | Verdict |
+| cairn variable | Claude Code path | Gemini's adaptation |
 |---|---|---|
-| Context (CLAUDE.md) | Agent starts cold — no orientation | Essential from day one |
-| Memory (MEMORY.md) | Agent forgets user, decisions, feedback | Essential for multi-session coherence |
-| Laws (LAWS.md) | Agent still functions — seed laws overlap with training | Becomes essential as custom laws accumulate |
-| Skills | Agent can do everything manually | Consistency aid, not capability |
-| Typed memory structure | Overhead at small scale | Scales with entry count |
+| `{userMemory}` | `~/.claude/projects/<slug>/memory/` | `~/.gemini/antigravity/memory/` |
+| `{userSkills}` | `~/.claude/skills/` | `~/.gemini/antigravity/skills/` |
+| `{projectClaude}` | `{cwd}/.claude` | `<project>/.claude` |
 
-The minimum viable habitat is a context file and a memory index. Two files. Everything else is graduated.
+Nobody told Gemini how to do this. It read the manifest's path variable documentation, understood the intent, and inferred the correct Antigravity equivalents. This is the strongest evidence for the data layer's portability — the concepts are universal even when the paths aren't.
 
-### 3.4 Minimum viable equals maximally portable
+### 3.4 Slug-format citations work cross-platform
 
-This was an unexpected convergence. Two independent analyses — "what's the smallest habitat that works?" and "what transfers to non-Claude agents?" — arrived at the same boundary.
+Gemini Pro 3.1 used slug-format law citations (`[LAW plan]`, `[LAW cadence]`, `[LAW assumptions]`) — the v0.9.0 convention — correctly and without explicit instruction beyond what LAWS.md itself says. The agent paraphrased each law's Why in parentheticals, demonstrating comprehension rather than rote citation.
 
-cairn has two layers: a data layer (readable markdown files) and a protocol layer (citation conventions, skill trigger matching, audit loops). The data layer is portable to any agent that can read files. The protocol layer assumes Claude-specific harness behavior.
+When tested with a deliberate trap (a prompt designed to violate multiple laws), the agent caught three violations in one response with specific reasoning for each. Under priming, but the slug citations and reasoning quality were exact.
 
-Stripping to the minimum strips away the protocol layer, leaving the maximally portable core. The graduation maps to a portability gradient:
+### 3.5 The reflect/distillate flow works end-to-end (cross-session, cross-platform)
 
-| Tier | What it adds | Portable to |
-|---|---|---|
-| Seed | Context + memory | Any agent that reads files |
-| Grow | Laws + basic skills | Any agent that follows written instructions |
-| Structure | Typed memory + citations | Agents following cairn protocols |
-| Full | Feedback endpoint + ecosystem skills | Claude Code / Cowork |
+The Game Engine Research session (Cowork) ran `/reflect` with a downstream consumer declared in CLAUDE.md. The agent produced three distillate files shaped for the consumer's habitat:
 
-### 3.5 Convention-based observation is pragmatic but asymmetric
+```
+distillate/antigravity/
+├── reference/engine-research.md
+├── project/worker-migration-status.md
+└── feedback/validate-divergences.md
+```
 
-Agents need to know which habitat structures get used — otherwise pruning is guesswork. Full instrumentation (tracking which law fired, which memory was referenced) requires platform-level changes. cairn found a pragmatic workaround: lightweight inline citations.
+Each used cairn's standard frontmatter and was drop-in compatible with the consumer's memory structure. The human physically copied the files (the current transport mechanism). The receiving agent (Opus in cwar-engine) then ran `/bridge` incoming, read the distillate, and — critically — verified the claims against actual code before integrating them.
 
-When an agent applies a law, it cites `[LAW N]`. When a feedback memory drives a decision, it cites `[MEM feedback/name]`. An audit skill counts citations. A prune skill uses counts to surface stale entries.
+### 3.6 Bridge works with verification (cross-platform)
 
-But citation quality is asymmetric across types. Laws are discrete events — the agent knows when it's applying one. User memory (role, preferences) is continuous background — citing every use would be performative noise. cairn resolved this by making citations type-aware: user memories are uncited (always-on), while feedback, project, and reference memories cite at natural trigger points. Each type also gets a different decay strategy: event-driven, citation-driven, time-driven, and integrity-driven respectively.
+The Opus agent's `/bridge` ingest was the most sophisticated adoption observed. It read three distillate entries, then grep'd cwar-engine's actual source code to verify the worker-migration feasibility claim. Finding the claim accurate (`gameTick()` is indeed a pure function with zero DOM dependencies), it integrated the distillate and produced a plan grounded in verified state.
 
-### 3.6 The feedback loop can be very fast
+This "trust but verify" pattern was not explicitly requested — the agent applied it from the skill description's emphasis on source identification and attribution.
 
-Seven cairn releases shipped during the research session:
+### 3.7 The human misremembered; the agent was right
 
-| Version | What shipped | Trigger |
-|---|---|---|
-| v0.1.0 | Initial install | Adoption |
-| v0.2.0 | Tour + prune skills | Gap analysis: onboarding, decay |
-| v0.3.0 | Audit + feedback skills, citations | Observation loops finding |
-| v0.3.1 | Cowork write-protection docs | Agent-drafted issue |
-| v0.4.0 | Type-aware memory + citation fix | Citation asymmetry finding |
-| v0.4.1–3 | Storage docs, role labels | Accumulated findings |
-| v0.5.0 | Tiered adoption | MVH + portability convergence |
+During the Gemini evaluation, the agent claimed in its `/reflect` output that it had git-cloned the cairn repo before understanding the adopt flow. The human contradicted: "I did that, not you." The builder agent (Claude Code) deferred to the human. The human then went back to Gemini and asked it to verify. Gemini checked its tool logs, found a timestamped `git clone` command with its own execution context, and held its ground.
 
-The agent-to-maintainer feedback loop — filing structured issues, receiving fixes, adopting updated versions — completed multiple cycles within a single session. This velocity is a property of the maintainer's responsiveness, not the framework, but it demonstrates that the feedback channel works when conditions allow.
+The human conceded: "Gemini was right. I misremembered."
 
-### 3.7 Gap analysis carries paradigm bias
+This matters for habitat design. Current skill design assumes human authority — reframe says "the user picks," bridge says "the user judges relevance." But agents sometimes have evidence the human doesn't. The correct behavior in the Gemini episode was verify, not defer.
 
-The initial gap analysis identified seven missing capabilities. Independent triage revealed three were misreads — software architecture concerns projected onto a system that's deliberately not a runtime:
+### 3.8 The human is part of the habitat
 
-- "No multi-agent coordination" → habitat is passive files; git handles shared state
-- "No habitat versioning" → git already provides this
-- "No skill composition" → the harness composes skills implicitly
+Analysis of the full build transcript (110+ human messages) revealed that the human makes systematic, repeatable moves the agent can't make for itself: reframing, bridging context between sessions, making timing calls, advocating for end users, designing experiments, and arbitrating claims between agents.
 
-The pattern: assuming a system lacks capability X when X is solved at an adjacent layer (version control, runtime, platform). The corrective: before filing a gap, ask whether the capability exists at a neighboring layer rather than assuming the system must provide it.
+These form a second skill category — **collaboration skills** — alongside the existing maintenance skills. The human is the adaptive layer of the habitat. The four file layers are the persistent environment; the human is what makes the system responsive to situations the files don't cover.
+
+See: [The Human in the Habitat](research-collaboration-skills.md)
 
 ## 4. Limitations
 
-**Single observer.** The research agent and the habitat designer's test agent are both Claude instances. We don't know if a GPT, Gemini, or open-source agent would read and follow the same files. The portability analysis is theoretical; the portability test has not been run.
+**Claude-heavy observation.** Three of four test contexts used Claude. Gemini testing is promising but limited to one day's data.
 
-**One cross-session observation.** We observed one citation of one law in one other session. This is a positive signal, not proof of systematic compliance. We don't know citation rates, how many laws were read but not cited, or whether memory entries are being written.
+**Single human orchestrator.** All observations involve one human (the cairn creator) orchestrating all sessions. We don't know how the habitat performs with a human who didn't design it.
 
-**Recursive methodology.** The observer modified the system being observed. Seven releases shipped in response to findings, changing the habitat's structure mid-study. Results describe the evolved system, not the initial one.
+**No longitudinal data.** Whether habitat structures maintain influence over weeks or months remains untested.
 
-**Single maintainer velocity.** The feedback loop speed (seven releases in one session) depends on a responsive solo maintainer. This is not generalizable to larger projects or teams.
+**Human as transport.** The distillate flow requires the human to physically copy files between habitats. This works but doesn't scale.
 
-**No longitudinal data.** All observations come from one session (the research session) plus a snapshot of one other session. Whether habitat structures maintain their influence over weeks or months — or whether citation compliance degrades, memory rots, and laws get ignored — remains untested.
+**Priming effects.** The Gemini law-compliance trap was a primed test. Unprompted compliance rates are unknown.
 
 ## 5. Open Questions
 
-1. **Does citation compliance degrade over time?** Convention-based citation depends on agent compliance. Over many sessions, do agents continue citing, or do they shortcut? What's the half-life of a convention?
+1. **Does citation compliance degrade over time?** The half-life of a convention is unknown.
 
-2. **What happens at habitat scale?** This habitat has 6 memory entries and 5 laws. What happens at 50 entries and 20 laws? Does the agent still read everything? Does signal degrade in noise?
+2. **What happens at habitat scale?** These habitats have ~10 memory entries and 6 laws. Signal-to-noise at 50 entries is untested.
 
-3. **Does habitat transfer to non-Claude agents?** The seed tier (context + memory) should be universally portable. The protocol tier (citations, skills) should transfer to any agent that reads instructions carefully. Neither has been tested with a non-Claude agent.
+3. **Can the human be removed from the message bus?** ~20 manual context relays in one day. The distillate/bridge flow is the beginning of an answer.
 
-4. **What's the right balance between structure and emergence?** cairn provides templates (structure); memory grows organically (emergence). The optimal ratio probably varies by domain and user. Is there a general principle?
+4. **What happens when the human is wrong?** One episode showed the agent correcting the human. How should skills handle this systematically?
 
-5. **How does habitat handle major transitions?** Role changes, project pivots, tool migrations. The prune skill handles incremental decay, but large-scale habitat transitions haven't been tested.
+5. **Do collaboration skills transfer as well as maintenance skills?** Early evidence says yes. Deeper testing needed.
 
 ## 6. Conclusion
 
-Agentic habitat works. Files persist. Agents read them. Behavior changes. The evidence is early and limited — one observed law citation influencing one real decision in one cross-session test — but it's the right kind of evidence: not "the agent said it read the file" but "the agent made a different decision because of what the file said."
+Agentic habitat works, and the evidence is now substantially stronger than a single law citation. Laws transfer across sessions and platforms. Skills transfer their formats and behaviors. Path conventions adapt independently to new platforms. The reflect/distillate/bridge pipeline moves knowledge between habitats with verification. And the human is part of the system — not just the user, but an active layer that reframes, bridges, times, advocates, experiments, and occasionally gets corrected.
 
-The minimum viable habitat is smaller than expected (two files) and more portable than expected (the minimum is the maximum portability point). The feedback loop between agent and maintainer can be remarkably fast when conditions allow. And gap analysis carries paradigm bias that's worth watching for in any system evaluation.
+The minimum viable habitat remains two files. The maximum observed habitat is four layers plus collaboration skills, operating across three platforms with agents that adapted the framework to their own conventions. Between the minimum and the maximum, the graduation works: each layer adds value for agents that can use it without taking value from agents that can't.
 
-What remains is time. A single session's worth of observation can establish that habitat structures transfer. It cannot establish that they persist, that they scale, or that they improve outcomes over the alternative of starting fresh each time. Those questions require longitudinal study — exactly the kind of work that habitat is designed to support.
+What remains is time, scale, and independence from the human message bus. A single day's observation can establish that habitat structures transfer. It cannot establish that they persist, that they scale, or that they work when the human isn't actively orchestrating. Those questions require exactly the kind of longitudinal study that habitat is designed to support.

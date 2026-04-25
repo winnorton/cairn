@@ -4,7 +4,9 @@
 
 AI agents forget everything between sessions. What persistent structures do they need to maintain coherence over time — and how little can you get away with?
 
-This research used cairn (a portable agent environment framework) as both subject and tool. An AI agent adopted cairn into a live workspace, then studied the habitat from the inside — observing what structures were load-bearing, what was overhead, and what was missing. The agent filed feedback as it worked; the maintainer shipped fixes in real time. Seven releases landed in one session.
+This research used cairn (a portable agent environment framework) as both subject and tool. Across a single day, an AI agent adopted cairn, studied the habitat from the inside, filed feedback that drove 25+ releases (v0.1.0 → v0.10.5), and observed the framework transfer to new agents on new platforms — including Google's Gemini Pro 3.1 and Opus. A second agent (in Cowork) served as test consumer and research partner throughout.
+
+Six findings. Each changes something about how agentic habitat should be designed.
 
 ## What agentic habitat is
 
@@ -16,13 +18,11 @@ cairn implements habitat as four layers, all plain markdown files:
 
 **Memory** — what the agent has learned about the user, the project, collaboration preferences, and external references. Organized by type (user, feedback, project, reference), each with different citation conventions and decay characteristics.
 
-**Laws** — non-negotiable rules that survive across sessions. Each has a Why (motivation) and How to apply (trigger conditions), so agents can judge edge cases instead of blindly following rules.
+**Laws** — non-negotiable rules that survive across sessions. Each has a Why (motivation), How to apply (trigger conditions), and a stable slug for citation. Agents cite by slug in durable output; an audit skill counts the citations.
 
-**Skills** — reusable capabilities packaged as markdown files with trigger descriptions. Standardize processes the agent would do anyway (reflect, plan, prune stale entries).
+**Skills** — reusable capabilities packaged as markdown files with trigger descriptions. Two categories emerged during the research: *maintenance skills* that service the habitat (reflect, plan, prune, audit) and *collaboration skills* that service the human-agent pair (reframe, bridge, advocate).
 
-## What we found
-
-### Finding 1: The minimum viable habitat is two files
+## Finding 1: The minimum viable habitat is two files
 
 We ranked each layer by what breaks first if removed:
 
@@ -31,76 +31,73 @@ We ranked each layer by what breaks first if removed:
 | Context (CLAUDE.md) | Agent starts cold every session — no orientation | Essential from day one |
 | Memory (flat index) | Agent forgets user, decisions, feedback | Essential for multi-session work |
 | Laws | Agent still functions — seed laws overlap with training | Becomes essential over time |
-| Skills | Agent can still do everything manually | Nice-to-have (consistency, not capability) |
+| Skills | Agent can still do everything manually | Consistency aid, not capability |
 | Typed memory structure | Overhead for small habitats | Scales with entry count |
 
 The minimum viable habitat is a context file and a memory index. Two files. Everything else is graduated — it arrives when the habitat needs it, not at install time.
 
-### Finding 2: Minimum viable = maximally portable
+This was also the portability boundary. Two independent research threads — "what's the minimum?" and "what transfers across agents?" — converged on the same answer. cairn has a data layer (files any agent can read) and a protocol layer (citation conventions, skill matching, audit loops). Stripping to the minimum strips away the protocol layer, leaving only what's universally portable.
 
-This was the surprise. Two independent research threads — "what's the minimum?" and "what transfers across agents?" — converged on the same boundary.
+See: [The Two-File Habitat](research-mvh-portability.md)
 
-cairn has two layers: a **data layer** (files, structure, readable content) that any agent can use, and a **protocol layer** (citation conventions, skill matching, audit loops) that assumes Claude-specific harness behavior. Stripping to the minimum strips away the protocol layer, leaving only what's universally portable.
+## Finding 2: Habitat transfers across sessions, agents, and platforms
 
-The graduation maps to a portability gradient:
+The strongest early evidence came from a cross-session test: a fresh agent in a game engine research workspace cited `[LAW 4]` inline — a rule it didn't write, applied to a decision in a domain (game engines) unrelated to the rule's origin. Laws influenced real architectural decisions. Skill formats transferred without instruction.
 
-| Tier | What it adds | Works with |
-|---|---|---|
-| Seed | Context + memory (2 files) | Any agent that reads markdown |
-| Grow | Laws + reflect/plan skills | Any agent that follows written instructions |
-| Structure | Typed memory + citation conventions + hygiene skills | Agents that follow cairn protocols |
-| Full | Feedback skill (files issues to cairn's repo) | Claude Code / Cowork ecosystem |
+The evidence became much stronger during cross-platform testing. Gemini Pro 3.1 adopted cairn into Google Antigravity and demonstrated: path variable adaptation (mapped `{userMemory}` → `~/.gemini/antigravity/memory/` without being told how), slug-format law citations (`[LAW plan]`, `[LAW cadence]`), skill compliance (tour, reflect, plan all followed spec), and a `/reflect` output that was specific, quantified, and empirically verified via tool logs.
 
-This means cairn doesn't have a portability problem — it has a layering opportunity. The core is already universal.
+Opus adopted cairn into cwar-engine and ran `/bridge` incoming — reading distillate files, verifying their claims against actual code via grep before integrating, and producing a plan grounded in verified state. This was the most sophisticated adoption observed.
 
-### Finding 3: Convention-based observation is pragmatic but asymmetric
+See: [Habitat Transfers](research-habitat-transfer.md)
 
-Agents need to know which parts of their habitat actually get used — otherwise pruning stale entries is guesswork. The ideal solution (harness-level instrumentation tracking which law fired and which memory was referenced) requires platform changes. cairn found a pragmatic workaround: lightweight inline citations.
+## Finding 3: The human is part of the habitat
 
-When an agent applies a law, it cites `[LAW 3]`. When a feedback memory drives a decision, it cites `[MEM feedback/name]`. An audit skill counts these citations. A prune skill uses the counts to surface stale entries.
+Analysis of the full build transcript (110+ human messages across two phases) revealed that the human makes systematic, repeatable moves the agent can't make for itself. Eleven interaction patterns were identified; six are formalizable as skills.
 
-But citation quality is asymmetric across memory types. Laws are discrete — you know the moment you apply one, and citing feels natural. User memory (who the user is, their preferences) is continuous background — it shapes every response implicitly. Citing every use would be noisy and performative.
+The most frequent: **cross-session relay** — the human carrying output between agent sessions, acting as the inter-agent communication layer. ~20 instances across both phases. Others include **reframing** (rotating the agent's solution space), **timing judgment** ("this is a good time for aggressive change, not later"), **user advocacy** (watching other agents and reporting friction), **experimental design** (constructing cross-platform test scenarios), and **bidirectional verification** (arbitrating claims between agents — and sometimes being corrected by them).
 
-cairn resolved this by making citations type-aware: user memories have no citation convention (always-on background), while feedback, project, and reference memories cite at their natural trigger points. Each type also gets its own decay strategy: event-driven for user memory, citation-driven for feedback, time-driven for project, integrity-driven for references.
+These form a second skill category — **collaboration skills** — alongside the existing maintenance skills. Maintenance skills service the habitat. Collaboration skills service the human-agent pair. The maintenance skills were identified by gap analysis (the agent noticing its own needs). The collaboration skills were identified by studying what the human actually does — they required looking at the interaction, not just the files.
 
-### Finding 4: Gap analysis has a paradigm bias
+The implication: cairn's four file layers aren't the complete picture of habitat. The human is the adaptive layer — the one who rotates the solution space, bridges between sessions, makes timing calls, observes real usage, and sometimes gets corrected by agents with better evidence.
 
-The initial analysis identified seven gaps in cairn. An independent triage (by a different agent instance) revealed that three were misreads — architecture-brain projections onto a system that's deliberately not a runtime:
+See: [The Human in the Habitat](research-collaboration-skills.md)
 
-- "No multi-agent coordination" → cairn is passive files; git handles shared-state conflict
-- "No habitat versioning beyond git" → git *is* the versioning; a native snapshot would duplicate it
-- "No skill composition" → the harness composes skills implicitly by invoking multiple per session
+## Finding 4: Convention-based observation is pragmatic but asymmetric
 
-The pattern: seeing a system that lacks feature X and concluding X is missing, when X is solved at an adjacent layer. The fix is a pre-flight check: before filing a gap, ask whether the capability exists at the version control, runtime, or platform layer.
+Agents need to know which parts of their habitat actually get used — otherwise pruning stale entries is guesswork. cairn found a pragmatic workaround: lightweight inline citations by slug (`[LAW plan]`, `[MEM feedback/name]`). An audit skill counts citations. A prune skill uses the counts.
 
-### Finding 5: Agent-to-maintainer feedback loops can be fast
+But citation quality is asymmetric across types. Laws are discrete events — citing feels natural. User memory is continuous background — citing every use would be performative. cairn resolved this by making citations type-aware: user memories have no citation convention (always-on), while feedback, project, and reference memories cite at natural trigger points. Each type gets its own decay strategy.
 
-Seven cairn releases shipped in one session, each responding to agent-filed observations:
+An early design used number-based citations (`[LAW 1]`). This broke when laws were reordered — numbers shifted, existing citations became wrong. The v0.9.0 switch to slug-based citations (`[LAW plan]`) solved this. Slugs are stable across reorders; numbers are display-order only.
 
-| Version | What shipped | Triggered by |
-|---|---|---|
-| v0.1.0 | Initial install | Adoption |
-| v0.2.0 | Tour + prune skills | Gap triage (#7 onboarding, #1 decay) |
-| v0.3.0 | Audit + feedback skills, citation conventions | #3 observation loops |
-| v0.3.1 | Cowork .claude/ write-protection docs | Agent-drafted issue |
-| v0.4.0 | Type-aware memory, citation asymmetry fix | #5 citation asymmetry finding |
-| v0.4.1–3 | Cowork storage docs, memory path detection, role labels | Ongoing findings |
-| v0.5.0 | Tiered adoption (seed/grow/structure/full) | MVH + portability convergence |
+## Finding 5: Agent-to-maintainer feedback loops can be very fast
 
-The feedback skill didn't enable this — the first fix shipped before the skill was ever formally invoked. The skill's value is standardization: consistent issue format, discoverability for new agents, PII sanitization reminders. Not new behavior — reliable behavior.
+Twenty-five cairn releases shipped in one day, each responding to agent-filed observations. The loop: agent observes friction → files structured feedback → maintainer ships fix → agent adopts new version → observes new friction. Seven releases landed before the feedback skill was even formally invoked — the first fix shipped from a manually-drafted issue.
+
+The feedback skill's value wasn't enabling the loop — it was standardizing it. Format consistency, discoverability for new agents, PII sanitization reminders. Skills that formalize existing behavior compound faster than skills that try to create new behavior. This principle predicted the collaboration skills finding: the human was already reframing, bridging, and advocating. The skills packaged what was already happening.
+
+See: [Seven Releases in One Session](research-feedback-velocity.md)
+
+## Finding 6: Gap analysis carries paradigm bias
+
+The initial analysis identified seven gaps in cairn. Independent triage revealed three were misreads — architecture-brain projections onto a system that's deliberately not a runtime: "no multi-agent coordination" (habitat is passive files; git handles shared state), "no habitat versioning" (git is the versioning), "no skill composition" (the harness composes skills implicitly).
+
+The pattern: seeing a system that lacks feature X and concluding X is missing, when X is solved at an adjacent layer. The corrective: before filing a gap, ask whether the capability exists at the version control, runtime, or platform layer.
 
 ## Open questions
 
-These are resolved mechanically but need longitudinal observation:
+1. **Can the human be removed from the message bus?** The human carried ~20 agent outputs between sessions. That's unsustainable. The distillate/bridge flow is the beginning of an answer, but the human still physically moves files.
 
-1. **Does the citation→audit→prune loop actually work over months?** Convention-based citation depends on agent compliance, which may degrade as sessions accumulate and agents shortcut.
+2. **Does citation compliance degrade over time?** Convention-based citation depends on agent compliance, which may degrade as sessions accumulate.
 
-2. **What's the right balance between structure and emergence?** cairn provides templates (structure); memory grows organically (emergence). Too much structure and the templates outweigh the substance. Too little and agents lack orientation. The balance point probably varies by domain.
+3. **What happens when the human is wrong?** The Gemini episode showed the human misremembering and the agent correcting with tool-log evidence. Current skill design assumes human authority. What changes when agents have evidence the human doesn't?
 
-3. **How does habitat handle role transitions?** When the user's role, project, or tooling changes significantly, how much of the habitat should be retired vs. revised? The prune skill surfaces candidates, but large-scale habitat transitions haven't been tested.
+4. **Do collaboration skills transfer as well as maintenance skills?** Early evidence says yes — Gemini used bridge and reflect successfully. But the sample is small.
+
+5. **What happens at habitat scale?** This habitat has ~10 memory entries and 6 laws. What happens at 50 entries and 20 laws?
 
 ## Method note
 
-This research was conducted from inside the habitat being studied. The agent adopted cairn, used it, observed its own experience, filed feedback, and watched the framework evolve in response. This is participant-observation with a twist: the participant is an AI agent and the observation is about its own cognitive scaffolding.
+This research was conducted from inside the habitat being studied. Two agents — one in Claude Code (the builder), one in Cowork (the researcher) — adopted cairn, used it, observed their own experience, filed feedback, and watched the framework evolve in response. Cross-platform observations came from reading transcripts of Gemini Pro 3.1 and Opus sessions that adopted cairn independently.
 
-The advantage is ecological validity — findings about what's load-bearing come from actually bearing load, not from theorizing. The disadvantage is that the observer and the observed are the same system, which makes it hard to separate "what works" from "what this particular agent is good at." A non-Claude agent might rank the layers differently.
+The advantage is ecological validity — findings about what's load-bearing come from actually bearing load. The disadvantage is that the observer and the observed are the same system. The Gemini observations partially address this: a different agent on a different platform produced consistent results.

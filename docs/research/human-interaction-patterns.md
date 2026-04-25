@@ -2,7 +2,10 @@
 
 ## Source
 
-Transcript of "Create exportable bootstrap for agentic engineering environment" — a Claude Code session where cairn was built from v0.1.0 through v0.6.4. 60 human messages, 1315 transcript lines. The human (Win) built cairn with one agent while simultaneously running a second agent (Cowork) as a test consumer.
+Two transcripts from the same Claude Code session ("Create exportable bootstrap for agentic engineering environment"):
+
+- **Transcript 1:** v0.1.0 through v0.6.4. 60 human messages, 1315 lines. The human built cairn with one agent while running a second agent (Cowork) as a test consumer.
+- **Transcript 2:** v0.7.0 through v0.10.5. ~50 additional human messages, 2040 lines. The human shifted from builder to test orchestrator, running parallel sessions across Claude Code, Cowork, and Google Antigravity (Gemini Pro 3.1 and Opus).
 
 ## Method
 
@@ -80,14 +83,56 @@ Instances: #3, #6, #8, #45, #46, #47
 ### 4. `/triage` — structured prioritization
 **Might fold into `/plan` rather than standalone.** When presenting options, structure them with cost/value signals, dependencies, and recommended sequence. Help the human decide faster rather than making the decision for them.
 
+## Patterns from Transcript 2 (v0.7.0 → v0.10.5)
+
+The second transcript shows the human's role shifting from builder to test orchestrator. Three new patterns emerged, and several existing patterns intensified.
+
+### Pattern 9: Experimental design (new)
+The human designed deliberate cross-agent, cross-platform experiments. "Going to adopt cairn in the google antigravity agent manager. first with gemeni-pro-3.1, then with opus." Then: "antigrav opus model adopting cairn in cwar-engine now, for the bridge test." The human controlled variables (which agent, which platform, which workspace) and observed outcomes systematically.
+
+This is different from Pattern 2 (relay). The relay moves existing output. Experimental design creates new test scenarios to answer specific questions. The human is doing research methodology.
+
+Instances: #1711, #1963, #1488, #1474
+
+### Pattern 10: Bidirectional verification / claim arbitration (new)
+The Gemini reflection episode: Gemini claimed it git-cloned the repo. The human said "I did that, not you." The builder agent deferred to the human. The human went back to Gemini: "are you sure?" Gemini checked its tool logs, found timestamped proof. The human admitted: "Gemini was right. I misremembered."
+
+The human served as a claim arbitrator between agents — and got corrected by the agent. This isn't "human corrects agent" — it's a three-party verification loop where anyone can be wrong.
+
+Instances: #1754-1774
+
+### Pattern 11: Agent-model correction (new)
+"you should know your user better. i said 'plan it'. waiting for plan." The human corrected the agent's model of the human's communication style. Not a reframe (rotating the problem) or advocacy (rotating the observer) — this is recalibrating the agent's understanding of who it's working with.
+
+This is probably a feedback memory rather than a skill. The agent should learn from accumulated feedback entries about user style, not from a triggered skill.
+
+Instances: #2010
+
+### Evolution of existing patterns
+
+**Bridge (Pattern 2) escalated dramatically.** The human pasted ~15 agent outputs into the builder session — full `/resume` outputs, upgrade plans, shell logs, distillate files, bridge outputs, adoption plans. The human became a multi-agent message bus orchestrating a pipeline across 4+ sessions on 3 platforms.
+
+**Advocate (Pattern 5) recurred** in new contexts: "confusing for first time user" about Cowork adoption, "this is taking the new agent along time."
+
+**Tempo (Pattern 3) recurred:** "2 is too aggressive i think" — moderating pace of change.
+
+## New skill candidates from Transcript 2
+
+### 5. `/experiment` — structured hypothesis testing
+When the agent or user faces a validation question ("does this work on Gemini?"), propose a structured experiment: pick the variable, control the rest, define what success looks like, observe. The human was already doing this — routing specific tests to specific agents on specific platforms. A skill would help the agent propose experiments proactively instead of the human inventing them.
+
+### 6. `/verify` — claim verification before integration
+Before integrating a claim from another session or agent, verify it against current state. The Opus agent demonstrated this independently — it grep'd cwar's actual code before integrating distillate claims. But the builder agent initially didn't (deferred to the human's memory, which was wrong). A skill would make "trust but verify" the default for incoming bridge content.
+
 ## The emerging taxonomy
 
 cairn's skills now fall into two categories:
 
 **Maintenance skills** (service the habitat):
-- reflect, plan, prune, audit, tour, feedback
+- reflect, plan, prune, audit, tour, feedback, resume
 
 **Collaboration skills** (service the human-agent pair):
 - reframe (rotate the problem), bridge (carry context), tempo (surface timing), advocate (shift perspective)
+- Candidates: experiment (design tests), verify (check claims before integrating)
 
-The maintenance skills existed from v0.1. The collaboration skills are the next layer — and they all came from observing what the human actually does in the collaboration.
+The maintenance skills existed from v0.1. The collaboration skills emerged from observing what the human actually does. The second transcript confirms the taxonomy and adds evidence that collaboration skills are the higher-leverage category — the human's experimental design and claim arbitration produced more insight per move than any maintenance skill firing.

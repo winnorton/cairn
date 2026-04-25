@@ -1,47 +1,57 @@
 # Research notes
 
 Short essays written during cairn's early development, studying the framework
-from inside the habitat it creates. Most were drafted around v0.5.0–v0.6.3 —
-snapshots of specific moments, not living documents.
+from inside the habitat it creates. Several were updated when a Phase 2 transcript
+(v0.7.0–v0.10.5) added new evidence — they're snapshots, not living documents,
+but the snapshots got refreshed when more data landed.
 
 ## Entries
 
 - **[agentic-habitat.md](agentic-habitat.md)** — What agents need to remember,
   ranked by what breaks first if removed. Four-layer map of cairn, the minimum
-  viable habitat finding, citation asymmetry, and the "gap analysis has paradigm
-  bias" observation.
+  viable habitat finding, citation asymmetry, gap-analysis paradigm bias.
+  *Updated with Phase 2 evidence: cross-platform adoption results.*
 
 - **[two-file-habitat.md](two-file-habitat.md)** — Two independent questions
   ("what's the least an agent needs?" and "what transfers across agents?")
-  converge on the same answer: a context file and a memory index. When
-  convergence happens on the same boundary, the boundary is real.
+  converge on the same answer: a context file and a memory index.
 
 - **[feedback-velocity.md](feedback-velocity.md)** — Observations from shipping
-  seven releases in one session driven by agent-filed feedback. Where the model
-  works well (solo maintainers, early frameworks, low-stakes fixes) and where
-  it doesn't.
+  seven releases in one session driven by agent-filed feedback.
 
-- **[habitat-transfer.md](habitat-transfer.md)** — The first cross-session
-  observation of cairn habitat working: a fresh agent instance in a different
-  workspace and domain (game engine research) adopted cairn, read the laws, and
-  applied `[LAW 4]` to a real architectural decision. Positive signal, with
-  honest limitations named.
+- **[habitat-transfer.md](habitat-transfer.md)** — Cross-session observation of
+  cairn habitat working: a fresh agent in a different workspace and domain
+  applied `[LAW 4]` to a real architectural decision. *Phase 2 added evidence
+  from cross-platform tests across Cowork, Antigravity (Gemini Pro 3.1, Opus),
+  and Claude Code.*
 
-- **[cross-session-observation.md](cross-session-observation.md)** — The field
-  notes behind `habitat-transfer.md`. What transferred (tour, laws, plan skill
-  format), what couldn't be observed from outside the session, and the open
-  questions the single citation raises.
+- **[collaboration-skills.md](collaboration-skills.md)** — The paper that led
+  to cairn's collaboration-skills layer. Phase 1 surfaced 8 patterns and
+  produced `/bridge`, `/advocate`, `/tempo`-as-plan-step. *Phase 2 added three
+  more patterns (experimental design, bidirectional verification, agent-model
+  correction), validated cross-platform skill transfer, and surfaced two new
+  candidates: `/experiment` and `/verify` (the latter folded into `/bridge`
+  Step 3.5 in v0.10.6).*
 
-- **[collaboration-skills.md](collaboration-skills.md)** — The paper that led to
-  cairn's v0.7.0 collaboration skills. Transcript analysis of 60 human messages
-  surfaced 8 interaction patterns; 3 pass formalization (`/bridge`, `/advocate`,
-  and a `/plan` enhancement for timing). Introduces the maintenance-vs-collaboration
-  taxonomy and names the design principle: "observe the collaboration first, then
-  package what you see."
+- **[human-interaction-patterns.md](human-interaction-patterns.md)** — The
+  field notes behind `collaboration-skills.md`. All patterns enumerated with
+  message-instance citations from both transcripts.
 
-- **[human-interaction-patterns.md](human-interaction-patterns.md)** — The field
-  notes behind `collaboration-skills.md`. All 8 patterns with instance counts,
-  categorized by formalizability.
+- **[open-questions.md](open-questions.md)** — Research questions still open
+  after Phase 2. Includes "can the human be removed from the message bus?",
+  "what happens when the human is wrong?", and the third-skill-category
+  (coordination skills) hypothesis.
+
+## The Phase 2 update (added 2026-04-25)
+
+A second transcript covering v0.7.0 → v0.10.5 added cross-platform validation
+data: Gemini Pro 3.1 and Opus both adopted cairn in Antigravity, ran skills
+that originated from Phase 1 analysis (`/bridge`, `/reflect`, `/resume`),
+and produced behaviors that confirmed and extended the original findings.
+The most surprising finding: **bidirectional verification** — a Gemini session
+corrected the human with timestamped tool-log evidence when the human
+misremembered who initiated a `git clone`. The human isn't always the
+authority; asking for evidence is how you discover it.
 
 ## Why these live here
 

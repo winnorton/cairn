@@ -8,7 +8,10 @@ That origin suggested a question: what other moves does the human make that the 
 
 ## Method
 
-We analyzed the full transcript of the Claude Code session where cairn was built (v0.1.0 through v0.6.4). 60 human messages across 1,315 transcript lines. The human (the cairn maintainer) was simultaneously running a second agent session (Cowork) as a test consumer, making the transcript unusually rich in cross-session interaction.
+We analyzed two transcripts from the Claude Code session where cairn was built:
+
+- **Phase 1** (v0.1.0 → v0.6.4): 60 human messages, 1,315 lines. The human built cairn while running a Cowork session as test consumer.
+- **Phase 2** (v0.7.0 → v0.10.5): ~50 additional messages, 2,040 lines. The human shifted from builder to test orchestrator, running parallel sessions across Claude Code, Cowork, and Google Antigravity (Gemini Pro 3.1 and Opus). This phase produced live validation of `/bridge`, `/resume`, `/reflect`, and cross-platform adoption.
 
 Every human message was categorized by the type of move it represented. We looked for patterns that repeated, that the agent couldn't perform for itself, and that would benefit from formalization.
 
@@ -135,10 +138,60 @@ The `/reframe` skill was born from a specific interaction: the human did somethi
 
 The transcript analysis that produced `/bridge`, `/tempo`, and `/advocate` followed exactly this process at a larger scale — 60 messages instead of one moment.
 
-## Open questions
+## Phase 2: New patterns from cross-platform testing (v0.7.0 → v0.10.5)
 
-1. **Do collaboration skills transfer as well as maintenance skills?** The cross-session test showed maintenance skills (tour, plan) and laws transferring cleanly. Collaboration skills are different — they depend on the human engaging with the prompt. Will a new user invoke `/bridge` without being taught?
+The second transcript changed the human's role from builder to test orchestrator. Three new patterns emerged.
 
-2. **What's the right trigger for agent-initiated collaboration skills?** `/reframe` fires when the agent notices convergence. `/tempo` should fire when the agent is about to default to caution on a change with lifecycle implications. `/advocate` should fire before shipping. But these triggers are fuzzier than maintenance skill triggers — how reliably will agents detect them?
+### Pattern 9: Experimental design
 
-3. **Is there a third skill category?** Maintenance skills service the habitat. Collaboration skills service the pair. Is there a category that services the *ecosystem* — skills that help multiple human-agent pairs coordinate? The bridge skill hints at this but stays within one human's sessions.
+The human designed deliberate cross-agent experiments. "Going to adopt cairn in the google antigravity agent manager. first with gemeni-pro-3.1, then with opus." Then: "antigrav opus model adopting cairn in cwar-engine now, for the bridge test." The human controlled variables (which agent, which platform, which workspace) and observed outcomes systematically.
+
+This is different from bridge. Bridge moves existing output. Experimental design creates new test scenarios to answer specific questions — it's research methodology as a collaboration move.
+
+### Pattern 10: Bidirectional verification
+
+The Gemini reflection episode was the most surprising moment in either transcript. Gemini claimed in its `/reflect` output that it had git-cloned the cairn repo. The human contradicted: "I did that, not you." The builder agent (Claude Code) deferred to the human and recommended not shipping a cairn fix. The human then went back to Gemini and asked it to verify. Gemini checked its tool logs, found a timestamped `git clone` command, and held its ground. The human came back to the builder: "Gemini was right. I misremembered."
+
+Three things matter here. First, the human served as a claim arbitrator between agents on different platforms that couldn't communicate directly. Second, the arbitration was bidirectional — the agent corrected the human. Third, the builder agent's initial instinct (defer to the human) was wrong. The correct behavior was verify, not defer.
+
+### Pattern 11: Agent-model correction
+
+"You should know your user better. I said 'plan it'. Waiting for plan." The human corrected the agent's model of the human's communication style — not the problem framing (reframe), not the observer position (advocate), but the agent's understanding of who it's working with.
+
+This is probably a feedback memory rather than a skill. The agent should learn from accumulated feedback entries about user style.
+
+### Evolution of existing patterns
+
+Bridge (Pattern 2) escalated dramatically. The human pasted approximately 15 full agent outputs into the builder session during Phase 2 — `/resume` outputs, upgrade plans, shell logs, distillate files, bridge outputs, adoption records. The human became a multi-agent message bus across 4+ sessions on 3 platforms. This is the strongest evidence yet that bridge is the highest-leverage collaboration skill.
+
+### New skill candidates
+
+**`/experiment`** — When the agent or user faces a validation question, propose a structured experiment: pick the variable, control the rest, define what success looks like, observe. The human was already doing this. A skill would help the agent propose experiments proactively.
+
+**`/verify`** — Before integrating a claim from another session or agent, verify it against current state. The Opus agent demonstrated this independently (it grep'd cwar's actual code before integrating distillate claims). But the builder agent initially didn't — it deferred to the human's memory, which was wrong. A skill would make "trust but verify" the default for incoming bridge content.
+
+## Phase 2: Answers to Phase 1 open questions
+
+### Do collaboration skills transfer?
+
+**Yes, decisively.** `/bridge` was invoked successfully by agents on Cowork and Antigravity (both Gemini Pro 3.1 and Opus). `/reframe` was not tested cross-platform in this data. `/advocate` was not invoked as a skill but its underlying pattern (user perspective) appeared in the human's observations.
+
+More striking: Gemini Pro 3.1 adapted cairn's entire path variable system to Antigravity's conventions (`{userMemory}` → `~/.gemini/antigravity/memory/`) without being told how. The collaboration skills are at least as portable as the maintenance skills — possibly more, because their value comes from the human engaging with the prompt, not from agent-specific protocol compliance.
+
+### What's the right trigger for agent-initiated collaboration skills?
+
+The Opus agent answered this empirically. When ingesting bridge content (distillate from the Game Engine Research session), it spontaneously ran verification against actual code before integrating. Nobody told it to verify. It applied the principle from the skill description. This suggests that well-written skill descriptions can serve as reliable triggers even for fuzzy collaboration skills.
+
+### Is there a third skill category?
+
+Phase 2 suggests yes, but it's embryonic. The `/reflect` + distillate flow creates artifacts shaped for *other* habitats. The `/bridge` + `/verify` pattern moves claims between agents and checks them. These aren't just pair-level collaboration — they're **ecosystem-level coordination**. The human is still the message bus, but the skills are producing standardized artifacts that any cairn-aware agent can ingest. The third category might be called **coordination skills** — skills that help multiple habitats stay coherent.
+
+## Open questions (updated)
+
+1. **Can the human be removed from the message bus?** The human carried ~15 agent outputs between sessions in Phase 2. That's unsustainable. The distillate/bridge flow is the beginning of an answer, but the human still has to trigger it and physically move files. What's the minimum infrastructure that would let agents bridge directly?
+
+2. **Does `/verify` belong in `/bridge` or standalone?** The Opus agent verified naturally during bridge ingest. Maybe verification is a step within bridge (Step 3.5: "verify claims against current state") rather than a separate skill.
+
+3. **What happens when the human is wrong?** The Gemini episode showed the human misremembering and the agent correcting. Current skill design assumes the human is the authority (reframe: "the user picks"; bridge: "the user judges relevance"). What changes when agents have evidence the human doesn't?
+
+4. **Is experimental design formalizable?** The human designed experiments naturally. But experiments require understanding what questions are open, what variables matter, and what platforms are available — context the agent may not have. Can a skill meaningfully help, or is this inherently a human-led move?

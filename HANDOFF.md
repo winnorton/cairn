@@ -40,7 +40,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.6 (two bridge-test learnings: `/reflect` Step 7 offers to copy distillate directly to consumer when locally writable — kills the manual `cp` friction; `/bridge` Step 3.5 requires verifying load-bearing claims against current state before integrating — codifies the Opus agent's verify-then-integrate behavior from the 2026-04-25 cross-workspace test).
+- **Latest release:** v0.10.7 (Research docs refreshed with Phase 2 evidence from a 2026-04-25 cross-platform test arc. Four research papers updated, new `open-questions.md`, redundant `cross-session-observation.md` removed. New findings: bidirectional verification, experimental design pattern, ecosystem-coordination as third skill category candidate. Doc-only.)
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 
