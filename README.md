@@ -7,6 +7,28 @@ Domain-agnostic: software, writing, research, personal knowledge management, any
 > A *cairn* is a stack of stones that travelers leave to guide those following. This is the
 > configured environment you leave for future agent sessions — and the one they inherit.
 
+## What cairn is (and isn't)
+
+Cairn is a **markdown convention layer** — memory, laws, skills, and context templates
+that shape how an agent works inside its existing harness. Drop the files into a project,
+the agent reads them, behavior changes. That's the whole product.
+
+**Cairn IS:**
+- Files that ship with one prompt (`adopt cairn`).
+- A vocabulary your agent uses across sessions (skills + typed memory + laws).
+- Compatible with any harness that reads markdown context (Claude Code, Antigravity,
+  Cursor, Cowork, etc.).
+
+**Cairn is NOT:**
+- An agent runtime (≠ LangGraph, AG2, AutoGen, Devin).
+- A multi-agent orchestrator (≠ MetaGPT, Conductor).
+- A CLI or IDE (≠ Cline, Aider, Cursor).
+- A background-agent system that runs tasks unattended (≠ `cairn-dev/cairn`, an
+  unrelated project that happens to share the name).
+
+If you need an agent runtime *and* want cairn's conventions, run cairn inside the
+runtime — they're complementary layers, not competitors.
+
 ## Adopt
 
 > **For agents.** If you've been asked to *"adopt cairn"*, *"carefully adopt cairn"*,
@@ -27,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.2`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -229,6 +251,14 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.11.2 — Doc patch: category disambiguation. Added "What cairn is (and isn't)"
+section between the description and Adopt — explicit IS/IS NOT framing because
+agents (and search-grounded answers) keep mistaking cairn for a runtime, an
+orchestrator, a CLI, or `cairn-dev/cairn`. Surfaced after a Gemini test
+returned a peer-comparison list of agent runtimes (LangGraph, AG2, MetaGPT,
+Devin) — every project on the list was a wrong-category peer because cairn is
+a convention layer, not a runtime. Doc-only.
 
 v0.11.1 — Doc patch: agent-side disambiguation + trigger-phrase callout.
 Added a "For agents" block to README's Adopt section and to adopt.md's
