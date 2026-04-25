@@ -40,7 +40,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.3 (don't-adopt-cairn-in-cairn doc fix: README adopt section gains a warning + workaround, `adopt.md` Step 1 has a pre-flight check that detects cairn's own repo and stops before install). Doc-only.
+- **Latest release:** v0.10.4 (don't-`git clone`-cairn doc fix: `adopt.md` Step 5 now has an explicit pre-flight forbidding `git clone` of the cairn repo into the workspace. Validated 2026-04-24/25 by Gemini Pro 3.1 in Antigravity — first-prompt instinct on `adopt URL` was to clone the entire repo before reading instructions. Tool-log timestamped at 2026-04-25T01:35:24Z. Defensive doc grounded in real agent-behavior evidence, not speculation).
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 

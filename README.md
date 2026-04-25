@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.3`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.4`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,14 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.4 — Doc fix: don't `git clone` cairn during adopt. `adopt.md` Step 5 gains
+an explicit pre-flight forbidding `git clone` of the cairn repo into the workspace.
+Adopt fetches manifest-declared files via HTTP — it does NOT pull the framework's
+entire source. Validated 2026-04-24 by Gemini Pro 3.1 in Antigravity: the agent's
+first instinct on `adopt URL` (no flag) was to `git clone https://github.com/winnorton/cairn .`
+— tool-log entry timestamped at 2026-04-25T01:35:24Z. Defensive doc grounded in real
+non-Claude-agent behavior, not speculation.
 
 v0.10.3 — Doc fix: don't adopt cairn into cairn. README adopt section gains a warning
 + workaround (copy individual files from `files/skills/` to `.claude/skills/` for

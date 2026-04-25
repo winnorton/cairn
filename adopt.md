@@ -173,7 +173,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.10.3 — install preview (tier: full)
+cairn v0.10.4 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -222,6 +222,14 @@ Wait for explicit user approval before proceeding.
 ### Step 5 — Install
 
 For each file in the manifest (that survived Step 4 confirmation):
+
+**Pre-flight: do NOT `git clone` the cairn repo into the workspace.** Adopt fetches
+specific files declared in the manifest's `files:` array via HTTP — it does NOT
+pull cairn's entire source (manifest, plans, server code, research docs, etc.).
+Cloning contaminates the user's workspace with framework internals they didn't
+ask for. Validated 2026-04-24: a non-Claude agent's first instinct on `adopt URL`
+was to `git clone https://github.com/winnorton/cairn .` into the workspace before
+reading these instructions, requiring a manual cleanup pass. Don't repeat that.
 
 1. **Fetch the source file over HTTP. Do NOT regenerate the content inline.**
    The manifest's `rawBase` points at the raw GitHub URL prefix. Combine it with
@@ -274,7 +282,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.10.3 installed.
+cairn v0.10.4 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -310,7 +318,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.10.3/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.10.4/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
