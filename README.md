@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.5`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.6`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,13 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.6 — Two bridge-test learnings codified. (1) `/reflect` Step 7 added: when consumer
+path is locally writable, offer to copy distillate directly — eliminates the manual `cp`
+step that's been cross-workspace friction. Cross-machine fallback documented (git transport,
+or leave staged). (2) `/bridge` Step 3.5 added: verify load-bearing claims against current
+state before integrating. Codifies the Opus agent's exemplary verify-then-integrate
+behavior during the 2026-04-25 cross-workspace bridge test.
 
 v0.10.5 — `/bridge` skill: ask direction before guessing. When the user invokes
 `/bridge` without a clear direction signal, the skill now requires asking incoming-

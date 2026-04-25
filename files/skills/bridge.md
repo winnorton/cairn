@@ -72,6 +72,17 @@ Do NOT invoke for:
    - **Integrate** — incorporate into current work (memory, a doc, a plan).
    - **Act** — execute something based on it (write code, file an issue, ship a fix).
 
+3.5. **Verify load-bearing claims against current state before integrating or acting.**
+   Bridge content was produced in another session at another time — it may have drifted
+   from current reality. For factual claims (file paths, function signatures, design
+   decisions, "X already exists" assertions), `grep` / read the code before relying on
+   them. Cost: one or two file reads. Value: confidence the integration isn't building
+   on stale assumptions. Validated 2026-04-25: a Claude Opus session ingesting
+   engine-research distillate verified the claim *"`gameTick()` is pure, sim layer is
+   DOM-free"* by grepping `window.|document.` references in `src/sim/` (found 2 guarded
+   refs, confirming feasibility) — without that step the integration would have been
+   speculation; with it, the resulting `/plan` was grounded in observed code state.
+
 4. **If acting, preserve attribution.** When committing, writing to memory, or filing
    an issue, note the source in durable output. "Per [Cairn Research session's analysis]…"
    or "(Originated in [session name])." Future sessions can trace the lineage.

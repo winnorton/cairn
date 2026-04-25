@@ -85,6 +85,26 @@ Do NOT invoke for:
    File naming convention: `distillate/<consumer-name>/<type>/<slug>.md` so the consumer
    can ingest by folder structure.
 
+7. **Offer transport if the consumer path is locally writable.** After writing distillate,
+   check whether the declared consumer path (e.g. `~/.gemini/antigravity/memory/`) is a
+   real directory the current process can write to. If yes, ask:
+
+   > *"Distillate written to `distillate/<consumer>/`. Also copy to `<consumer-path>/`
+   > now? (y/n)"*
+
+   On **y** — copy distillate files into the consumer's typed-memory subdirs (preserving
+   `<type>/<slug>.md` structure). Consumer's habitat is now updated; user skipped the
+   manual cp step.
+
+   On **n** (or path is not locally writable — different machine, sandboxed harness, etc.) —
+   leave distillate in place and tell the user the canonical cross-boundary transport
+   pattern: *"Distillate is in `distillate/<consumer>/`. Transport via git (commit + push,
+   consumer pulls) for cross-machine setups, or via cp for same-machine when the consumer
+   path becomes writable."*
+
+   This eliminates the manual cp friction for the 80% same-machine case while leaving
+   the cross-boundary case to the user's existing tools (git, scp, etc.).
+
 ## Output
 
 A short reflection (under ~300 words) with:
