@@ -136,6 +136,37 @@ migration work later.
 Avoid duplicating across slugs. When uncertain, default to the project where the
 work artifact is being produced.
 
+### 8. Survey available tools by verb in their description, not by name prefix *(slug: survey-tools-by-verb)*
+
+**Why:** Agents underestimate the applicability of tools whose names carry a
+project prefix that doesn't match the current task. A tool named
+`cwar_browser_eval` works on any browser the agent can reach — the prefix is a
+registration detail, not a scope constraint. But agents read the prefix as
+scope and filter the tool out as "off-topic," reaching for universal-but-slower
+alternatives instead. Observed empirically on 2026-04-25: an Antigravity Opus
+session debugging a cwar Worker migration burned roughly an hour of human
+wall-clock time on a screenshot-paste loop with the human when
+`cwar_browser_eval` was registered in the same MCP and would have read the
+same data in ~3 seconds per call without human involvement. The bias is
+invisible because the agent doesn't notice the tools they didn't reach for;
+the wall-clock cost is paid in a dimension the agent can't see.
+
+**How to apply:** At the start of any task that involves a verb the current
+toolset might support (read, eval, screenshot, click, search, audit, inspect,
+trace):
+1. List available tools by **verb-in-description**, not by name prefix. Treat
+   the prefix as a label, not a gate.
+2. When wall-clock cost spikes during a task (manual screenshots, repeated
+   greps, sub-agent browser orchestration), re-survey — the cost itself is
+   the signal that a faster tool was probably skipped.
+3. If a general-purpose tool sits under another project's namespace, surface
+   that as a finding — consider proposing it be aliased at a more universal
+   name, or document its cross-project applicability in its description.
+
+Companion to cwar's NEW_LAWS Law 13 (Serialization Boundary), which captures
+the technical-content layer of the same episode. This law captures the
+process-meta layer.
+
 ---
 
 ## Your laws
