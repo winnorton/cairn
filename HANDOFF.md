@@ -40,8 +40,9 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.11.1 (Doc patch — agent-side disambiguation + trigger-phrase callout in README and adopt.md. Lists natural trigger phrases (`adopt cairn`, `carefully adopt cairn`, etc.) and warns agents against substituting training-data references for fresh repo content. Filed after a Gemini test confused winnorton/cairn with an unrelated `cairn-dev/cairn` background-agent system. Doc-only.)
-- **Previous release:** v0.11.0 (Project subdirs for cross-project user-global memory stores. Closes #22.)
+- **Latest release:** v0.11.2 (Doc patch — category disambiguation. Added "What cairn is (and isn't)" section in README between description and Adopt: explicit IS/IS NOT framing because agents and search-grounded answers keep classifying cairn as a runtime, orchestrator, CLI, or background-agent system. Filed after a Gemini test returned LangGraph/AG2/MetaGPT/Devin as peer projects — all wrong-category. Doc-only.)
+- **Previous release:** v0.11.1 (Agent-side disambiguation + trigger-phrase callout. Filed after a Gemini test confused winnorton/cairn with cairn-dev/cairn.)
+- **Earlier release:** v0.11.0 (Project subdirs for cross-project user-global memory stores. Closes #22.)
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 
