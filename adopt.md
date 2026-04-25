@@ -12,7 +12,7 @@
 ## What cairn is
 
 A portable agent environment: memory index, laws template, starter skills, and a project
-context template (CLAUDE.md). Designed to work in Claude Code and Cowork. Domain-agnostic —
+context template (CLAUDE.md). Designed to work in Claude Code, Antigravity, and Cowork. Domain-agnostic —
 not just software.
 
 Installing cairn creates files in the user's environment. It does not install a package,
@@ -173,7 +173,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.10.8 — install preview (tier: full)
+cairn v0.10.9 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -282,7 +282,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.10.8 installed.
+cairn v0.10.9 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -318,7 +318,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.10.8/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.10.9/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.

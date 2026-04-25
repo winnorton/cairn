@@ -1,7 +1,7 @@
 # cairn
 
 A portable agent environment — memory, laws, skills, and context templates that your agent
-installs into any work effort with one prompt. Works in Claude Code and Cowork.
+installs into any work effort with one prompt. Works in Claude Code, Antigravity, and Cowork.
 Domain-agnostic: software, writing, research, personal knowledge management, anything.
 
 > A *cairn* is a stack of stones that travelers leave to guide those following. This is the
@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.8`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.9`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,15 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.9 — Antigravity added to the canonical "Works in X" list (README, adopt.md,
+manifest.json description). Validated empirically on 2026-04-25: a Gemini Pro 3.1
+session adopted cairn cleanly into the Antigravity workspace, and a follow-up
+Opus session ran `/bridge` + `/plan` end-to-end against cairn skills and produced
+a shipped feature commit on cwar's main. Anecdotally Antigravity may be the
+strongest of the three harnesses for cairn workflows — the agent-relay browser
+panel pattern composes well with cairn's HANDOFF.md + memory_query story.
+Doc-only release.
 
 v0.10.8 — First end-to-end **distillate-to-production** arc documented. A
 research finding from one workspace (game engine research, Cowork) became a

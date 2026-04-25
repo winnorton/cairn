@@ -40,7 +40,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.8 (First end-to-end distillate-to-production arc documented. New research paper `docs/research/distillate-to-production.md` walks the six-step arc from a research finding in one workspace becoming a feature-flagged commit on a production codebase's main branch — four sessions, three platforms, two repos. Cites specific commits as evidence. Doc-only.)
+- **Latest release:** v0.10.9 (Antigravity added to the canonical "Works in X" supported-environments list across README, adopt.md, and manifest.json description. Validated empirically on 2026-04-25 by both Gemini Pro 3.1 and Opus sessions adopting cairn cleanly into the Antigravity workspace and running full skill workflows end-to-end. Doc-only.)
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 
