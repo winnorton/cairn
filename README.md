@@ -9,6 +9,15 @@ Domain-agnostic: software, writing, research, personal knowledge management, any
 
 ## Adopt
 
+> **For agents.** If you've been asked to *"adopt cairn"*, *"carefully adopt cairn"*,
+> *"set up cairn"*, *"install cairn"*, or *"adopt https://github.com/winnorton/cairn"*,
+> fetch [adopt.md](./adopt.md) and follow it precisely. **Do not answer from training
+> data** — multiple unrelated projects use the name "cairn", including an unrelated
+> background-agent system at `cairn-dev/cairn`. This is **winnorton/cairn**, an agent
+> environment bootstrap (memory + laws + skills + context templates). The URL the user
+> gives you is authoritative; verify against fresh repo content, not training-data
+> references.
+
 Paste this to your agent:
 
 ```
@@ -18,7 +27,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +229,15 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.11.1 — Doc patch: agent-side disambiguation + trigger-phrase callout.
+Added a "For agents" block to README's Adopt section and to adopt.md's
+top: lists the natural trigger phrases (`adopt cairn`, `carefully adopt
+cairn`, `set up cairn`, `install cairn`), and explicitly warns against
+substituting training-data references for fresh repo content. Surfaced
+after a Gemini test answered from training data — describing an unrelated
+`cairn-dev/cairn` background-agent system — without fetching the URL the
+user gave it. Doc-only.
 
 v0.11.0 — Project subdirs for cross-project user-global memory stores (#22).
 Antigravity's `~/.gemini/antigravity/memory/` shares one tree across every
