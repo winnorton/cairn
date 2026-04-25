@@ -6,3 +6,9 @@ dist/
 .vscode/
 *.swp
 *.tmp
+
+# Claude Code session-management directories — not part of cairn's product.
+# (cairn ships .claude/ TEMPLATE content via files/, but the local .claude/ at repo
+# root belongs to whatever session is editing cairn, not cairn itself.)
+.claude/
+
