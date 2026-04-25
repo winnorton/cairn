@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.7`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.8`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -220,6 +220,16 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.8 — First end-to-end **distillate-to-production** arc documented. A
+research finding from one workspace (game engine research, Cowork) became a
+feature-flagged commit on a production codebase's main branch (cwar-engine,
+Worker-based simulation Phase 1) — six steps, four sessions, three platforms
+(Cowork → Antigravity → Claude Code), two repos. New research paper
+[`docs/research/distillate-to-production.md`](./docs/research/distillate-to-production.md)
+walks the arc step-by-step with evidence (commit hashes), shows what cairn
+primitive each step depends on, and names what's still manual (cp transport,
+partly addressed by v0.10.6). Doc-only release.
 
 v0.10.7 — Research docs refreshed with Phase 2 evidence. Cairn-test session
 analyzed a second transcript (v0.7.0 → v0.10.5, ~50 messages, cross-platform

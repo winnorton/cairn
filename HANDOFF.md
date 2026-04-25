@@ -40,7 +40,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.7 (Research docs refreshed with Phase 2 evidence from a 2026-04-25 cross-platform test arc. Four research papers updated, new `open-questions.md`, redundant `cross-session-observation.md` removed. New findings: bidirectional verification, experimental design pattern, ecosystem-coordination as third skill category candidate. Doc-only.)
+- **Latest release:** v0.10.8 (First end-to-end distillate-to-production arc documented. New research paper `docs/research/distillate-to-production.md` walks the six-step arc from a research finding in one workspace becoming a feature-flagged commit on a production codebase's main branch — four sessions, three platforms, two repos. Cites specific commits as evidence. Doc-only.)
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 

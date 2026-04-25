@@ -42,6 +42,13 @@ but the snapshots got refreshed when more data landed.
   "what happens when the human is wrong?", and the third-skill-category
   (coordination skills) hypothesis.
 
+- **[distillate-to-production.md](distillate-to-production.md)** — The first
+  end-to-end arc from research finding to shipped code. Six steps, four
+  sessions, three platforms (Cowork → Antigravity → Claude Code), two repos.
+  Per-step table of which cairn primitive each transition depended on, what's
+  still manual, and what made the arc reproducible. Strongest cross-workspace
+  validation cairn has received — code-level, not just artifact-level.
+
 ## The Phase 2 update (added 2026-04-25)
 
 A second transcript covering v0.7.0 → v0.10.5 added cross-platform validation
