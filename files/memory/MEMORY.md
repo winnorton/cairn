@@ -50,6 +50,32 @@ If a memory feels important enough to cite *every time it fires*, it probably be
 - Cite at lookup → **reference memory**
 - Never cite (always-on) → **user memory**
 
+## Where memory should live: slug policy
+
+When you work on a single project, this question doesn't matter — everything goes
+at one slug. When work spans projects (shared tooling informing multiple efforts,
+side projects relating to a primary one), choose slug by **scope of what's being
+remembered**:
+
+- **Project-specific facts** (codebase conventions, ongoing decisions, project
+  state, references to project-internal resources) → store at *this project's*
+  slug.
+- **Cross-cutting agent-meta-knowledge** (collaboration patterns, reframing,
+  general principles that apply regardless of which project) → pick one slug
+  (usually the project where the insight first emerged) and **declare a pointer
+  in `HANDOFF.md`'s `## Related memory paths` section** so other projects'
+  `/resume` invocations find them. Don't duplicate across slugs — two sources of
+  truth drift the moment one is edited.
+- **Per-worktree** (rare — work that's genuinely scoped to a single worktree) →
+  use the worktree's slug. Most worktree work is project-scoped, not
+  worktree-scoped; default to parent project's slug unless there's a reason.
+
+The `HANDOFF.md` `## Related memory paths` mechanism + `/resume` skill solve
+cross-slug discovery without forcing duplication. Use them; don't work around them.
+
+When uncertain: pick the project where the work artifact is being produced. Let
+`HANDOFF.md` handle the cross-references.
+
 ## Where citations must live
 
 Citations go in **durable output** — files the agent writes or edits, notes,

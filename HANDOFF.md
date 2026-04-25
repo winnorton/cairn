@@ -12,14 +12,25 @@ unless explicitly preserved.
 
 ## Related memory paths
 
-The cairn build session wrote durable memory to **cwar's project slug**, not cairn's.
-A `/resume` invocation in cairn's own worktree won't find it without this pointer.
+After the v0.10.2 slug-policy migration, cairn-native memory lives at **cairn's own
+slug** and the cwar slug retains cross-cutting + cwar-native entries. Both are reachable
+to a `/resume` in cairn's worktree:
 
-- `~/.claude/projects/C--Users-winno-projects-cwar-cwar-engine/memory/` — 11 entries
-  from the 2026-04-24 cairn session: collaboration style, reframing, build-transcript
-  reference, session-handoff link-test result, cwar adoption plan, plan-drift findings,
-  load-meta-laws-before-building, and more. Read MEMORY.md at that path for the full
-  index.
+- `~/.claude/projects/C--Users-winno-projects-cairn/memory/` — **cairn slug, 5 entries.**
+  Auto-loaded by `/resume` when running in cairn's worktree (it's the local slug).
+  Contains: `project/cairn`, `project/cairn_at_v101`, `project/session_handoff_link_test`,
+  `reference/cairn`, `reference/cairn_build_transcript`.
+
+- `~/.claude/projects/C--Users-winno-projects-cwar-cwar-engine/memory/` — **cwar slug,
+  11 entries** (cross-cutting feedback + cwar-specific project/reference). `/resume`
+  finds these via this pointer. Contains: `feedback/{collaboration_style, reframing,
+  load_meta_laws, reflect_at_session_end, cite_in_commits, edit_tool_ghost,
+  verify_plan_deliverables}`, `project/{cwar_cairn_adoption_plan, plan_drift_inventory}`,
+  `reference/{cwar_meta_laws, cwar_perf_eslint_rules}`.
+
+Per Law 7 (`choose-slug-by-scope`) in cairn's own `LAWS.md`, future memory writes
+should go to the slug that matches the scope of the content — not the slug where the
+session happens to be running.
 
 ## One-line context
 
@@ -29,7 +40,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.1 (`/resume` enhancement — reads `## Related memory paths` from HANDOFF.md so cross-project memory pointers actually work; new law in `cairn/LAWS.md` requiring HANDOFF.md updates before tagging).
+- **Latest release:** v0.10.2 (slug policy formalized: `files/memory/MEMORY.md` template gains a "Where memory should live" section; new Law 7 `choose-slug-by-scope` in cairn's own `LAWS.md`; cairn-native memory migrated from cwar slug to cairn slug; HANDOFF.md updated to point at both slugs).
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 

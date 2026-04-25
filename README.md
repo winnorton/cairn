@@ -18,7 +18,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.2`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -208,6 +208,13 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.2 — Slug policy formalized after the second `/resume` validation surfaced the
+question: where SHOULD memory live in multi-project workflows? Files that are scope-
+local stay at one slug; cross-cutting agent-meta-knowledge picks one slug + declares
+a pointer in HANDOFF.md. New Law 7 `choose-slug-by-scope` in cairn's own LAWS.md
+codifies this. `files/memory/MEMORY.md` template gains a "Where memory should live"
+section. Cairn-native memory entries migrated from cwar's slug to cairn's slug.
 
 v0.10.1 — `/resume` validation surfaced two gaps; both fixed. (1) HANDOFF.md drifted
 within one release cycle ("v0.9.1" inside HANDOFF.md while main was on v0.10.0) — new

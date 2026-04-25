@@ -113,6 +113,29 @@ any "open work" entries that may now be closed. Bundle the HANDOFF.md update int
 the same commit as the release artifacts (VERSION, manifest version, README
 status). One commit, one consistent view.
 
+### 7. Choose memory slug by content scope, not session location *(slug: choose-slug-by-scope)*
+
+**Why:** Memory's slug determines which sessions can load it. Naive "write where
+the session is running" works for single-project setups but fragments across
+projects in multi-project workflows. The cairn build session's habit of writing
+all memory to cwar's slug (because that's where the session was running) made
+everything invisible to subsequent cairn-side sessions until the v0.10.1
+cross-project pointer landed and the v0.10.2 migration moved cairn-native entries
+to cairn's own slug. The slug should match the SCOPE of what's being remembered,
+not the SESSION's cwd. Otherwise you build up debt that has to be paid in
+migration work later.
+
+**How to apply:** Before writing memory, ask:
+1. Is this fact specific to one project's state? → write at that project's slug.
+2. Is this cross-cutting agent-meta-knowledge that applies across all projects?
+   → pick one slug (usually where the insight first emerged) and declare a
+   pointer in `HANDOFF.md`'s `## Related memory paths` so others find it.
+3. Is this genuinely worktree-scoped? → only when necessary; usually the parent
+   project's slug is correct.
+
+Avoid duplicating across slugs. When uncertain, default to the project where the
+work artifact is being produced.
+
 ---
 
 ## Your laws
