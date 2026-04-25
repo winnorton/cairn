@@ -22,6 +22,21 @@ start a server, or modify the user's shell. Everything is files.
 
 ### Step 1 — Detect the environment
 
+**Pre-flight check first: are we in cairn's own repo?** Read the workspace's
+`manifest.json` (if present); if it contains `"name": "cairn"`, OR there's a
+`LAWS.md` at the repo root titled `Laws — cairn`, **STOP**. Adopting cairn
+into its own repo creates duplicate artifacts (cairn's project-root `LAWS.md`
++ a new `<project>/.claude/LAWS.md` from the install; cairn's README + a new
+`<project>/CLAUDE.md`) and recursive confusion. Tell the user:
+
+> *"You're running adopt inside cairn's own repo. Cairn doesn't adopt itself —
+> it ships templates for OTHER projects to adopt. If you want one of cairn's
+> skills locally for development, copy directly: `cp files/skills/<name>.md
+> .claude/skills/`. If you meant to adopt into a different project, change to
+> that directory and re-run."*
+
+Then exit. Do not proceed with install.
+
 Determine which environment you are running in. Use this decision tree:
 
 1. Does the current working directory have a `.claude/` folder, **or** is there a
@@ -158,7 +173,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.10.2 — install preview (tier: full)
+cairn v0.10.3 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -259,7 +274,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.10.2 installed.
+cairn v0.10.3 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -295,7 +310,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.10.2/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.10.3/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.

@@ -40,7 +40,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.10.2 (slug policy formalized: `files/memory/MEMORY.md` template gains a "Where memory should live" section; new Law 7 `choose-slug-by-scope` in cairn's own `LAWS.md`; cairn-native memory migrated from cwar slug to cairn slug; HANDOFF.md updated to point at both slugs).
+- **Latest release:** v0.10.3 (don't-adopt-cairn-in-cairn doc fix: README adopt section gains a warning + workaround, `adopt.md` Step 1 has a pre-flight check that detects cairn's own repo and stops before install). Doc-only.
 - **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 

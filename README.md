@@ -18,9 +18,21 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.2`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.10.3`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
+
+> **Don't adopt cairn into cairn.** Cairn's own repo has its own `LAWS.md`, `HANDOFF.md`,
+> and project-root structure, and ships the `files/` template tree. Running `adopt`
+> from within the cairn repo would create duplicate artifacts and recursive confusion.
+> If you're working on cairn itself and want one of its skills locally, copy directly:
+>
+> ```bash
+> mkdir -p .claude/skills
+> cp files/skills/<skill-name>.md .claude/skills/
+> ```
+>
+> Adopt cairn into *other* projects.
 
 ## What you get
 
@@ -208,6 +220,13 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.10.3 — Doc fix: don't adopt cairn into cairn. README adopt section gains a warning
++ workaround (copy individual files from `files/skills/` to `.claude/skills/` for
+cairn-internal development). `adopt.md` Step 1 has a pre-flight check that detects
+cairn's own repo (via `manifest.json` name field or `LAWS.md` title) and stops before
+install. Surfaced when the maintainer realized the recursive "adopt cairn into cairn"
+case is plausible — and dangerous (would create duplicate `LAWS.md`, `CLAUDE.md`, etc).
 
 v0.10.2 — Slug policy formalized after the second `/resume` validation surfaced the
 question: where SHOULD memory live in multi-project workflows? Files that are scope-
