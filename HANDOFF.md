@@ -40,11 +40,11 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.11.3 (adopt.md gains an ephemeral-sandbox pre-flight check: refuse install in claude.ai web/mobile chat, hosted notebooks, sandboxed evals, or any harness where filesystem writes don't reach the user's machine. Filed after a Claude.ai chat session correctly hit "Neither clear? → Ask the user" and surfaced the spec gap unprompted. Doc-only.)
-- **Previous release:** v0.11.2 (Category disambiguation — "What cairn is (and isn't)" section. Filed after Gemini returned wrong-category peer list.)
-- **Earlier:** v0.11.1 (Agent-side disambiguation + trigger phrases). v0.11.0 (Project subdirs for cross-project memory; closes #22).
-- **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical — domain CNAME resolved 2026-04-25, returns the cairn-feedback-endpoint service JSON at root) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct URL, still works as fallback).
-- **Total session output:** 18+ releases, 18 issues filed, most closed.
+- **Latest release:** v0.12.0 (Skill format migration to canonical `~/.claude/skills/<name>/SKILL.md` subdirs — fixes the slash-invocation reliability bug from [MEM project/cairn-skills-slash-invocation-unreliable]. Plus two new skills imported from cwar's `/plan`-rework arc: `/note` (pre-emptive intent capture) and `/review` (external-agent fresh-perspective review). Plus a third skill category — **cross-perspective skills** — distinct from maintenance and collaboration. Plus folder-as-state for cairn's own `plans/` (shipped plans → `plans/archive/`). Plus a `/note`-vs-cross-session-memory disambiguation table in `files/CLAUDE.md`.)
+- **Previous release:** v0.11.3 (adopt.md gains an ephemeral-sandbox pre-flight check: refuse install in claude.ai web/mobile chat, hosted notebooks, sandboxed evals, or any harness where filesystem writes don't reach the user's machine. Doc-only.)
+- **Earlier:** v0.11.2 (Category disambiguation — "What cairn is (and isn't)" section). v0.11.1 (Agent-side disambiguation + trigger phrases). v0.11.0 (Project subdirs for cross-project memory; closes #22).
+- **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
+- **Empirical confirmation 2026-04-26:** v0.12.0 format migration validated mid-session — the `resume` skill registered in the harness's available-skills list immediately after the `.claude/skills/resume.md` → `.claude/skills/resume/SKILL.md` move, confirming the subdir format fixes the slash-invocation issue.
 
 ## What's durable
 
