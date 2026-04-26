@@ -167,6 +167,40 @@ Companion to cwar's NEW_LAWS Law 13 (Serialization Boundary), which captures
 the technical-content layer of the same episode. This law captures the
 process-meta layer.
 
+### 9. Route release-shaped PRs through `/review` by a fresh-perspective agent before merge *(slug: pre-merge-review)*
+
+**Why:** Single-pass review by the work-author re-confirms the author's mental
+model rather than challenging it. The author looks where they expect problems —
+the files they touched. The blind-spot class lives in *adjacent unchanged files*
+the author didn't touch this session. v0.12.x produced the canonical evidence:
+five separate misses across four releases, every one in the adjacent-files
+class, every one caught only by a fresh `/review` session. v0.12.0/.1 missed
+adopt.md install-template version strings (user caught), v0.12.1 missed
+`/spec`'s docs propagation, `/review`'s own cwar coupling, the cairn-slug
+MEMORY.md index entry, and the plan-archival step (fresh `/review` caught all
+four). The same release that introduced `/review` shipped with the exact
+gap-class `/review` is meant to catch — five times. The law forces the gate
+the skill alone doesn't enforce.
+
+**How to apply:** Before merging any PR on cairn that ships a release version
+(`feat: vX.Y.Z`, `fix: vX.Y.Z`) or touches multiple user-facing files
+(`README.md` + `adopt.md` + `manifest.json` together; or any 3+ files):
+
+1. Open the PR.
+2. Spawn a **fresh agent session** — different session, no shared context with
+   the PR's author. The fresh agent must not have been in the build.
+3. Have the fresh agent invoke `/review` against the PR (the skill's anti-trigger
+   prevents author-self-review; that's the point).
+4. Address findings before merge, or document why they're deferred.
+5. Merge only after the chain completes.
+
+This is for cairn's *own* dev discipline, not for adopters' habits. (Adopters
+ship `/review` as a skill they invoke ad-hoc; cairn's release process treats it
+as mandatory.) If the law fires often enough that compliance becomes routine,
+escalate to a mechanical gate per `[MEM cwar feedback/escalate-rule-to-mechanical-gate]`
+— a pre-merge hook that checks for a `/review`-shaped citation in the PR body
+or the most recent commit message before allowing merge.
+
 ---
 
 ## Your laws
