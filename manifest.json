@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.11.3",
+  "version": "0.12.0",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code, Antigravity, and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -187,6 +187,22 @@
       "role": "optional",
       "tier": "full",
       "description": "File structured feedback to cairn's GitHub repo — cairn-ecosystem-specific (integrates with cairn's own issue tracker)"
+    },
+    {
+      "src": "files/skills/note.md",
+      "dest": "{userSkills}/note.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "grow",
+      "description": "File a quick thought, debug finding, or feature sketch as a single-paragraph in-tree capture (docs/planning/notes/) — artifact-creation skill, distinct from plan.md (behavioral). Cheap to write, cheap to delete, can be promoted to /spec when work begins"
+    },
+    {
+      "src": "files/skills/spec.md",
+      "dest": "{userSkills}/spec.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "grow",
+      "description": "Write a structured agent execution spec (docs/planning/specs/) with phases, steps, checkpoints, executor handoff — artifact-creation skill for non-trivial code changes, distinct from plan.md (behavioral) and from /note (single-paragraph capture)"
     }
   ],
 
