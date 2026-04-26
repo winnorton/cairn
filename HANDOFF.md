@@ -43,7 +43,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Latest release:** v0.11.3 (adopt.md gains an ephemeral-sandbox pre-flight check: refuse install in claude.ai web/mobile chat, hosted notebooks, sandboxed evals, or any harness where filesystem writes don't reach the user's machine. Filed after a Claude.ai chat session correctly hit "Neither clear? → Ask the user" and surfaced the spec gap unprompted. Doc-only.)
 - **Previous release:** v0.11.2 (Category disambiguation — "What cairn is (and isn't)" section. Filed after Gemini returned wrong-category peer list.)
 - **Earlier:** v0.11.1 (Agent-side disambiguation + trigger phrases). v0.11.0 (Project subdirs for cross-project memory; closes #22).
-- **Live feedback endpoint:** https://cairn-feedback-591252228833.us-central1.run.app/feedback (primary) and https://cairn.winnorton.com/feedback (domain, pending CNAME propagation).
+- **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical — domain CNAME resolved 2026-04-25, returns the cairn-feedback-endpoint service JSON at root) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct URL, still works as fallback).
 - **Total session output:** 18+ releases, 18 issues filed, most closed.
 
 ## What's durable
@@ -58,7 +58,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 | Item | State |
 |---|---|
-| GoDaddy CNAME for `cairn.winnorton.com` | **Still self-referencing at GoDaddy.** Needs manual fix in GoDaddy DNS: set the `cairn` CNAME target to `ghs.googlehosted.com.` (currently points to `cairn.winnorton.com` — self-loop). Once fixed, Google's TLS cert auto-provisions. |
+| ~~GoDaddy CNAME for `cairn.winnorton.com`~~ | **DONE 2026-04-25.** Domain resolves and serves the cairn-feedback-endpoint service JSON at root. TLS cert active. POST /feedback works; GET /feedback returns 404 (correct — POST-only). |
 | cwar worktree commit (not pushed) | A local commit on branch `claude/nice-curran-91ed55` deletes `docs/LAWS_OF_ENGINEERING.md`, cleans up 3 references in `AGENTS.md`, and adds three cairn-derived laws (8, 9, 10) to `docs/NEW_LAWS_OF_AI_AGENT_ENGINEERING.md`. User has not pushed. Merge or cherry-pick when ready. |
 | cwar-engine cairn adoption | **Discussed, not executed.** Recommended a la carte adoption: install memory + most skills; skip `LAWS.md` (cwar has AGENTS.md) and `plan.md` (cwar has richer workflow). Log v0.10 candidate: manifest-level include/exclude flags. |
 
