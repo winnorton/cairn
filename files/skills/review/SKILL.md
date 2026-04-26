@@ -24,10 +24,16 @@ When agent A rewrites file X, A's mental model updates and A assumes adjacent fi
 and Z are consistent. But A didn't touch Y or Z this session. A fresh agent reads Y
 and Z cold, with no anchor, and catches the lie.
 
-Worked example (2026-04-26): an agent rewrote `spec.md` and `note.md` to introduce a
-new no-`STATUS:`-field convention. `execute-plan.md` was untouched and still expected
-the old `STATUS:` field. The author missed it. An external review session read
-`execute-plan.md` cold and flagged it as a shipping blocker on first pass.
+**Why fresh-perspective specifically.** Single-pass review by the work-author tends to
+re-confirm the author's mental model rather than challenge it. The author looks where
+they *expect* problems to be — which is exactly the set of files they touched. The
+gap class lives in files they didn't touch. A fresh agent reads those cold.
+
+Cairn ships this skill in v0.12.x. Its first real test was a v0.12.x doc patch:
+the release that introduced `/review` (v0.12.1) shipped with stale tier counts in
+`adopt.md`, a "three categories" claim in README that v0.12.0 had already invalidated,
+and cwar-coupled worked examples in this very skill body — all caught by a fresh
+`/review` session reading the v0.12.x arc cold. The patch landed as v0.12.3.
 
 ## When to use
 

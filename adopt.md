@@ -138,11 +138,11 @@ the user.
 
 | User said | Install tier | Files |
 |---|---|---|
-| `adopt <url>` | `full` | 20 |
+| `adopt <url>` | `full` | 21 |
 | `adopt <url> --tier seed` | `seed` | 2 |
-| `adopt <url> --tier grow` | `grow` | 11 |
-| `adopt <url> --tier structure` | `structure` | 19 |
-| `adopt <url> --tier full` | `full` | 20 (explicit form of default) |
+| `adopt <url> --tier grow` | `grow` | 12 |
+| `adopt <url> --tier structure` | `structure` | 20 |
+| `adopt <url> --tier full` | `full` | 21 (explicit form of default) |
 
 Tiers are cumulative — `grow` includes `seed`; `structure` includes `grow`; `full`
 includes `structure`.
@@ -205,7 +205,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.12.2 — install preview (tier: full)
+cairn v0.12.3 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -218,6 +218,7 @@ SCAFFOLDING — shape is important, content grows with you:
   ~/.claude/skills/advocate/SKILL.md         — collaboration: end-user perspective (grow)
   ~/.claude/skills/resume/SKILL.md           — cross-perspective: detect prior-session context (grow)
   ~/.claude/skills/review/SKILL.md           — cross-perspective: external review of a change set (grow)
+  ~/.claude/skills/spec/SKILL.md             — artifact: structured executor handoff (grow)
   ~/.claude/memory/user/README.md            — user memory conventions (structure)
   ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
   ~/.claude/memory/project/README.md         — project memory conventions (structure)
@@ -230,7 +231,7 @@ SCAFFOLDING — shape is important, content grows with you:
 OPTIONAL — ergonomic; delete if you prefer less surface:
   ~/.claude/skills/reflect/SKILL.md          — maintenance: reflect (grow)
   ~/.claude/skills/plan/SKILL.md             — maintenance: plan (grow)
-  ~/.claude/skills/note/SKILL.md             — maintenance: pre-emptive intent capture (grow)
+  ~/.claude/skills/note/SKILL.md             — artifact: pre-emptive intent capture (grow)
   ~/.claude/skills/feedback/SKILL.md         — maintenance: file feedback (full)
 
 Will also write (post-install):
@@ -316,7 +317,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.12.2 installed.
+cairn v0.12.3 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -352,7 +353,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.12.2/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.12.3/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -464,6 +465,7 @@ bump may trigger multiple cases.
 | `files/skills/reflect/SKILL.md` | `~/.claude/skills/reflect/SKILL.md` | optional | grow |
 | `files/skills/plan/SKILL.md` | `~/.claude/skills/plan/SKILL.md` | optional | grow |
 | `files/skills/note/SKILL.md` | `~/.claude/skills/note/SKILL.md` | optional | grow |
+| `files/skills/spec/SKILL.md` | `~/.claude/skills/spec/SKILL.md` | scaffolding | grow |
 | `files/skills/review/SKILL.md` | `~/.claude/skills/review/SKILL.md` | scaffolding | grow |
 | `files/skills/reframe/SKILL.md` | `~/.claude/skills/reframe/SKILL.md` | scaffolding | grow |
 | `files/skills/bridge/SKILL.md` | `~/.claude/skills/bridge/SKILL.md` | scaffolding | grow |
