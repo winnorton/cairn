@@ -40,11 +40,11 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.12.0 (Skill format migration to canonical `~/.claude/skills/<name>/SKILL.md` subdirs — fixes the slash-invocation reliability bug from [MEM project/cairn-skills-slash-invocation-unreliable]. Plus two new skills imported from cwar's `/plan`-rework arc: `/note` (pre-emptive intent capture) and `/review` (external-agent fresh-perspective review). Plus a third skill category — **cross-perspective skills** — distinct from maintenance and collaboration. Plus folder-as-state for cairn's own `plans/` (shipped plans → `plans/archive/`). Plus a `/note`-vs-cross-session-memory disambiguation table in `files/CLAUDE.md`.)
-- **Previous release:** v0.11.3 (adopt.md gains an ephemeral-sandbox pre-flight check: refuse install in claude.ai web/mobile chat, hosted notebooks, sandboxed evals, or any harness where filesystem writes don't reach the user's machine. Doc-only.)
-- **Earlier:** v0.11.2 (Category disambiguation — "What cairn is (and isn't)" section). v0.11.1 (Agent-side disambiguation + trigger phrases). v0.11.0 (Project subdirs for cross-project memory; closes #22).
+- **Latest:** Law 9 (`pre-merge-review`) added to `LAWS.md` (commit `5d5e58b`, doc-only) — codifies cairn's own dev discipline: release-shaped or multi-file PRs route through fresh-agent `/review` before merge. Distilled from the v0.12.x cycle, where 5/5 blind-spot misses lived in the adjacent-unchanged-files class and were caught only by `/review`. Mechanical-gate escalation candidate per [MEM cwar feedback/escalate-rule-to-mechanical-gate].
+- **Latest release:** v0.12.3 (sync user-facing docs to manifest, strip residual cwar coupling — `/spec` made visible in adopt.md tier counts + README "What you get"; `/review` worked example replaced with a cairn-side example; cairn-slug MEMORY.md indexed `feedback/habitat-bootstrap-three-surfaces`; `plans/v0.12-*` moved to `plans/archive/` to enforce folder-as-state). Doc-only patch — caught entirely by a fresh-session `/review` of the v0.12.x arc.
+- **Previous releases:** v0.12.2 (install-report version strings + format-migration attribution). v0.12.1 (SKILL.md subdir migration + `/review` + folder-as-state + cleanup). v0.12.0 (`/note` + `/spec` artifact-creation skills, introduced "cross-perspective" as a third skill category). v0.11.3 (adopt.md ephemeral-sandbox pre-flight). v0.11.2 (category disambiguation). v0.11.1 (agent-side disambiguation + trigger phrases). v0.11.0 (project subdirs for cross-project memory; closes #22).
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
-- **Empirical confirmation 2026-04-26:** v0.12.1 format migration validated mid-session — the `resume` skill registered in the harness's available-skills list immediately after the `.claude/skills/resume.md` → `.claude/skills/resume/SKILL.md` move, confirming the subdir format fixes the slash-invocation issue.
+- **Empirical confirmation 2026-04-26:** v0.12.1 format migration validated mid-session — the `resume` skill registered in the harness's available-skills list immediately after the `.claude/skills/resume.md` → `.claude/skills/resume/SKILL.md` move, confirming the subdir format fixes the slash-invocation issue. v0.12.x cycle's empirical gain: 5/5 blind-spot misses caught by fresh-agent `/review` (load-bearing for Law 9).
 
 ## What's durable
 
@@ -60,7 +60,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 |---|---|
 | ~~GoDaddy CNAME for `cairn.winnorton.com`~~ | **DONE 2026-04-25.** Domain resolves and serves the cairn-feedback-endpoint service JSON at root. TLS cert active. POST /feedback works; GET /feedback returns 404 (correct — POST-only). |
 | cwar worktree commit (not pushed) | A local commit on branch `claude/nice-curran-91ed55` deletes `docs/LAWS_OF_ENGINEERING.md`, cleans up 3 references in `AGENTS.md`, and adds three cairn-derived laws (8, 9, 10) to `docs/NEW_LAWS_OF_AI_AGENT_ENGINEERING.md`. User has not pushed. Merge or cherry-pick when ready. |
-| cwar-engine cairn adoption | **Discussed, not executed.** Recommended a la carte adoption: install memory + most skills; skip `LAWS.md` (cwar has AGENTS.md) and `plan.md` (cwar has richer workflow). Log v0.10 candidate: manifest-level include/exclude flags. |
+| ~~cwar-engine cairn adoption~~ | **DONE 2026-04-26.** Antigravity-Opus did a la carte adoption (v0.11.x → v0.12.2) into cwar-engine via a 3-stage review chain — 11 installed / 10 skipped, 16/16 checks pass, `cairn-version=0.12.2`. See [MEM project/re-adoption-flow-validated]. |
 
 ## Critical insight from the session
 
@@ -110,4 +110,4 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as Law 1:
 
 ---
 
-_Written 2026-04-24 at session's end by the builder agent. Cairn v0.9.1._
+_Written 2026-04-24 at session's end by the builder agent. Refreshed 2026-04-26 to reflect v0.12.3 + Law 9. Cairn v0.12.3._
