@@ -1,6 +1,6 @@
 # Skills — cairn
 
-Skills are reusable capabilities an agent can invoke mid-session. As of v0.12.0, each skill
+Skills are reusable capabilities an agent can invoke mid-session. As of v0.12.1, each skill
 is a **subdirectory** containing a `SKILL.md` file with YAML frontmatter at the top:
 
 ```

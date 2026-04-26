@@ -205,7 +205,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.12.0 — install preview (tier: full)
+cairn v0.12.2 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -316,7 +316,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.12.0 installed.
+cairn v0.12.2 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -352,7 +352,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.12.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.12.2/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -484,13 +484,15 @@ and `manifest.tiers`.
 
 For the authoritative list, always use the manifest at runtime — this table may drift.
 
-## v0.11.x → v0.12.0 format migration note
+## v0.11.x → v0.12.x format migration note
 
-v0.12.0 changes the skill format from flat `~/.claude/skills/<name>.md` to subdir
+v0.12.1 changes the skill format from flat `~/.claude/skills/<name>.md` to subdir
 `~/.claude/skills/<name>/SKILL.md`. This is the canonical Claude Code format, and flat-format
-skills don't reliably register as slash commands.
+skills don't reliably register as slash commands. (v0.12.0 introduced `/note` and `/spec`
+under the old flat format; v0.12.1 migrated everything to subdirs and is the version that
+actually fixes the slash-invocation issue.)
 
-**For re-adopters:** the v0.12.0 install will write the new subdir form alongside any
+**For re-adopters:** the v0.12.x install will write the new subdir form alongside any
 existing flat-format files (because `create-if-absent` only checks the new path). After a
 successful install, you can remove the old flat duplicates at your leisure:
 
