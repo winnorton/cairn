@@ -49,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.12.2`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.12.3`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -72,7 +72,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Three categories: **maintenance** (`tour`, `reflect`, `plan`, `note`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), and **cross-perspective** (`resume`, `review`) — see [skills taxonomy](#skills-taxonomy-maintenance-vs-collaboration) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `review`), and **artifact** (`note`, `spec`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -162,20 +162,19 @@ serve each:
   missed): via `/review`. Reads the diff PLUS adjacent unchanged files that the diff
   expects to be consistent with. Distinct from `/reflect` (which is same-agent post-hoc).
 
-These are **collaboration** and **cross-perspective skills**, distinct from the maintenance
-skills (reflect, plan, note, prune, audit, tour, feedback) that service the habitat itself.
-See the taxonomy below.
+These are **collaboration**, **cross-perspective**, and **artifact** skills, distinct
+from the maintenance skills (reflect, plan, prune, audit, tour, feedback) that service
+the habitat itself. See the taxonomy below.
 
-## Skills taxonomy: maintenance vs collaboration vs cross-perspective
+## Skills taxonomy
 
-Cairn's skills fall into three categories with different origins.
+Cairn's skills fall into four categories with different origins.
 
 **Maintenance skills — service the habitat:**
 
 - `tour` — onboard new users post-install.
 - `reflect` — end-of-task retrospective (post-hoc, same-agent).
-- `plan` — structured pre-flight before execution.
-- `note` — pre-emptive intent capture (one paragraph, in-repo, ephemeral).
+- `plan` — pre-action behavioral alignment (conversational, no file).
 - `prune` — retire stale entries by type.
 - `audit` — count citations, surface unused structures.
 - `feedback` — file issues to cairn's maintainer (three-level degradation).
@@ -192,13 +191,23 @@ Cairn's skills fall into three categories with different origins.
 - `review` — fresh agent reading a change set cold (catches what the work-author
   missed because they were "too close").
 
+**Artifact skills — produce in-tree planning files:**
+
+- `note` — pre-emptive intent capture; one paragraph, in-repo (`docs/notes/`),
+  dated. Cheap to write, cheap to delete, can be promoted to `/spec`.
+- `spec` — structured agent execution spec (`docs/specs/`) with phases, steps,
+  checkpoints, executor handoff. Distinct from `/plan` (behavioral, no file).
+
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the
 collaboration (see [`docs/research/collaboration-skills.md`](./docs/research/collaboration-skills.md)
-for the analysis). The cross-perspective skills emerged from observing where one agent's
-session leaves blind spots that only a fresh observer can catch — `resume` defeats
-namespace fragmentation between sessions; `review` defeats the work-author's
-mental-model anchoring on what they touched.
+for the analysis). The cross-perspective skills emerged from observing where one
+agent's session leaves blind spots that only a fresh observer can catch — `resume`
+defeats namespace fragmentation between sessions; `review` defeats the work-author's
+mental-model anchoring on what they touched. The artifact skills were imported from
+a downstream project's `/plan`-rework arc — they produce durable in-repo files with
+explicit lifecycles (folder-as-status), distinct from the maintenance skills'
+behavioral/conversational shape.
 
 **Design principle:** *observe the collaboration first, then package what you see.*
 Skills designed from observation solve problems that exist; skills designed from
@@ -248,7 +257,7 @@ between habitats.
 **How deep to go (tier).** A second axis: how cairn-specific do you want your habitat to be?
 
 - **`seed`** — `CLAUDE.md` + `MEMORY.md`. Two files. **Works with any agent** (Claude, GPT, Gemini, local LLM) that can read markdown. Minimum viable habitat = maximally portable habitat.
-- **`grow`** — adds `LAWS.md` + `reflect`/`plan`/`note`/`review` + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective `resume`. Durable conventions any careful agent can follow.
+- **`grow`** — adds `LAWS.md` + maintenance skills (`reflect`/`plan`) + artifact skills (`note`/`spec`) + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective skills (`resume`/`review`). Durable conventions any careful agent can follow.
 - **`structure`** — adds typed memory + hygiene skills (`tour`/`prune`/`audit`). Assumes cairn-aware tooling.
 - **`full`** — adds the `feedback` skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized.
 
@@ -267,6 +276,20 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.12.3 — Doc patch: fix v0.12.x consistency gaps that a fresh `/review` session
+caught after v0.12.2 shipped. (1) `adopt.md` tier counts and install preview were
+missing `/spec` — agents installed 21 files but consent + report claimed 20.
+(2) `README.md` "What you get" claimed three skill categories; cairn has four
+(artifact added in v0.12.0). `/note` was miscategorized as maintenance.
+(3) `/review` skill body itself still cited `cwar/.agents/workflows/execute-plan.md`
+as the worked example — exactly the cwar-coupling regression v0.12.1 stripped from
+`/note` and `/spec` but missed in `/review`. (4) cairn-slug `MEMORY.md` was missing
+the index entry for `feedback/habitat-bootstrap-three-surfaces` (file existed; index
+didn't list it). (5) `plans/v0.12-cairn-from-cwar-arc.md` still in `plans/` despite
+all three v0.12.x releases shipping — moved to `plans/archive/`. The fact that
+`/review` caught these in its own surrounding artifacts is the cleanest possible
+self-validation of the skill.
 
 v0.12.2 — Doc patch: fix install-report version strings. v0.12.1 shipped with `adopt.md`
 hardcoded "v0.12.0" in the install preview, post-install report, and pinned-version
