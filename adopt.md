@@ -43,9 +43,9 @@ into its own repo creates duplicate artifacts (cairn's project-root `LAWS.md`
 
 > *"You're running adopt inside cairn's own repo. Cairn doesn't adopt itself —
 > it ships templates for OTHER projects to adopt. If you want one of cairn's
-> skills locally for development, copy directly: `cp files/skills/<name>.md
-> .claude/skills/`. If you meant to adopt into a different project, change to
-> that directory and re-run."*
+> skills locally for development, copy directly: `mkdir -p .claude/skills/<name>
+> && cp files/skills/<name>/SKILL.md .claude/skills/<name>/SKILL.md`. If you
+> meant to adopt into a different project, change to that directory and re-run."*
 
 Then exit. Do not proceed with install.
 
@@ -138,11 +138,11 @@ the user.
 
 | User said | Install tier | Files |
 |---|---|---|
-| `adopt <url>` | `full` | 18 |
+| `adopt <url>` | `full` | 20 |
 | `adopt <url> --tier seed` | `seed` | 2 |
-| `adopt <url> --tier grow` | `grow` | 9 |
-| `adopt <url> --tier structure` | `structure` | 17 |
-| `adopt <url> --tier full` | `full` | 18 (explicit form of default) |
+| `adopt <url> --tier grow` | `grow` | 11 |
+| `adopt <url> --tier structure` | `structure` | 19 |
+| `adopt <url> --tier full` | `full` | 20 (explicit form of default) |
 
 Tiers are cumulative — `grow` includes `seed`; `structure` includes `grow`; `full`
 includes `structure`.
@@ -205,7 +205,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.11.3 — install preview (tier: full)
+cairn v0.12.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -213,23 +213,25 @@ ESSENTIAL — load-bearing from day one (seed tier):
 
 SCAFFOLDING — shape is important, content grows with you:
   <project>/.claude/LAWS.md                  — schema + 6 seed laws (grow)
-  ~/.claude/skills/reframe.md                — collaboration: rotate problem axis (grow)
-  ~/.claude/skills/bridge.md                 — collaboration: cross-session relay (grow)
-  ~/.claude/skills/advocate.md               — collaboration: end-user perspective (grow)
-  ~/.claude/skills/resume.md                 — collaboration: detect prior-session context (grow)
+  ~/.claude/skills/reframe/SKILL.md          — collaboration: rotate problem axis (grow)
+  ~/.claude/skills/bridge/SKILL.md           — collaboration: cross-session relay (grow)
+  ~/.claude/skills/advocate/SKILL.md         — collaboration: end-user perspective (grow)
+  ~/.claude/skills/resume/SKILL.md           — cross-perspective: detect prior-session context (grow)
+  ~/.claude/skills/review/SKILL.md           — cross-perspective: external review of a change set (grow)
   ~/.claude/memory/user/README.md            — user memory conventions (structure)
   ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
   ~/.claude/memory/project/README.md         — project memory conventions (structure)
   ~/.claude/memory/reference/README.md       — reference memory conventions (structure)
   ~/.claude/skills/README.md                 — skills authoring guide (structure)
-  ~/.claude/skills/tour.md                   — maintenance: onboarding (structure)
-  ~/.claude/skills/prune.md                  — maintenance: hygiene (structure)
-  ~/.claude/skills/audit.md                  — maintenance: citation report (structure)
+  ~/.claude/skills/tour/SKILL.md             — maintenance: onboarding (structure)
+  ~/.claude/skills/prune/SKILL.md            — maintenance: hygiene (structure)
+  ~/.claude/skills/audit/SKILL.md            — maintenance: citation report (structure)
 
 OPTIONAL — ergonomic; delete if you prefer less surface:
-  ~/.claude/skills/reflect.md                — maintenance: reflect (grow)
-  ~/.claude/skills/plan.md                   — maintenance: plan (grow)
-  ~/.claude/skills/feedback.md               — maintenance: file feedback (full)
+  ~/.claude/skills/reflect/SKILL.md          — maintenance: reflect (grow)
+  ~/.claude/skills/plan/SKILL.md             — maintenance: plan (grow)
+  ~/.claude/skills/note/SKILL.md             — maintenance: pre-emptive intent capture (grow)
+  ~/.claude/skills/feedback/SKILL.md         — maintenance: file feedback (full)
 
 Will also write (post-install):
   <project>/.claude/cairn-version            — version marker for re-adoption fast-path
@@ -314,7 +316,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.11.3 installed.
+cairn v0.12.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -326,7 +328,7 @@ Next: say `tour` and I'll walk you through what was installed and help you take
 the first concrete action.
 ```
 
-The `tour` skill (installed at `~/.claude/skills/tour.md`) will handle onboarding. Point
+The `tour` skill (installed at `~/.claude/skills/tour/SKILL.md`) will handle onboarding. Point
 the user at it rather than dumping a long "what to do" list — it's more actionable.
 
 Keep the report under ~200 words. No prose padding.
@@ -350,7 +352,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.10.9/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.12.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -459,23 +461,45 @@ bump may trigger multiple cases.
 | `files/CLAUDE.md` | `<project>/CLAUDE.md` | essential | seed |
 | `files/memory/MEMORY.md` | `~/.claude/memory/MEMORY.md` | essential | seed |
 | `files/LAWS.md` | `<project>/.claude/LAWS.md` | scaffolding | grow |
-| `files/skills/reflect.md` | `~/.claude/skills/reflect.md` | optional | grow |
-| `files/skills/plan.md` | `~/.claude/skills/plan.md` | optional | grow |
-| `files/skills/reframe.md` | `~/.claude/skills/reframe.md` | scaffolding | grow |
-| `files/skills/bridge.md` | `~/.claude/skills/bridge.md` | scaffolding | grow |
-| `files/skills/advocate.md` | `~/.claude/skills/advocate.md` | scaffolding | grow |
-| `files/skills/resume.md` | `~/.claude/skills/resume.md` | scaffolding | grow |
+| `files/skills/reflect/SKILL.md` | `~/.claude/skills/reflect/SKILL.md` | optional | grow |
+| `files/skills/plan/SKILL.md` | `~/.claude/skills/plan/SKILL.md` | optional | grow |
+| `files/skills/note/SKILL.md` | `~/.claude/skills/note/SKILL.md` | optional | grow |
+| `files/skills/review/SKILL.md` | `~/.claude/skills/review/SKILL.md` | scaffolding | grow |
+| `files/skills/reframe/SKILL.md` | `~/.claude/skills/reframe/SKILL.md` | scaffolding | grow |
+| `files/skills/bridge/SKILL.md` | `~/.claude/skills/bridge/SKILL.md` | scaffolding | grow |
+| `files/skills/advocate/SKILL.md` | `~/.claude/skills/advocate/SKILL.md` | scaffolding | grow |
+| `files/skills/resume/SKILL.md` | `~/.claude/skills/resume/SKILL.md` | scaffolding | grow |
 | `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding | structure |
 | `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding | structure |
 | `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding | structure |
 | `files/memory/reference/README.md` | `~/.claude/memory/reference/README.md` | scaffolding | structure |
 | `files/skills/README.md` | `~/.claude/skills/README.md` | scaffolding | structure |
-| `files/skills/tour.md` | `~/.claude/skills/tour.md` | scaffolding | structure |
-| `files/skills/prune.md` | `~/.claude/skills/prune.md` | scaffolding | structure |
-| `files/skills/audit.md` | `~/.claude/skills/audit.md` | scaffolding | structure |
-| `files/skills/feedback.md` | `~/.claude/skills/feedback.md` | optional | full |
+| `files/skills/tour/SKILL.md` | `~/.claude/skills/tour/SKILL.md` | scaffolding | structure |
+| `files/skills/prune/SKILL.md` | `~/.claude/skills/prune/SKILL.md` | scaffolding | structure |
+| `files/skills/audit/SKILL.md` | `~/.claude/skills/audit/SKILL.md` | scaffolding | structure |
+| `files/skills/feedback/SKILL.md` | `~/.claude/skills/feedback/SKILL.md` | optional | full |
 
 All entries use `mode: create-if-absent`. Role and tier definitions: see `manifest.roles`
 and `manifest.tiers`.
 
 For the authoritative list, always use the manifest at runtime — this table may drift.
+
+## v0.11.x → v0.12.0 format migration note
+
+v0.12.0 changes the skill format from flat `~/.claude/skills/<name>.md` to subdir
+`~/.claude/skills/<name>/SKILL.md`. This is the canonical Claude Code format, and flat-format
+skills don't reliably register as slash commands.
+
+**For re-adopters:** the v0.12.0 install will write the new subdir form alongside any
+existing flat-format files (because `create-if-absent` only checks the new path). After a
+successful install, you can remove the old flat duplicates at your leisure:
+
+```bash
+# Optional cleanup of v0.11.x flat-format skill files
+for skill in advocate audit bridge feedback plan prune reflect reframe resume tour; do
+  [ -f ~/.claude/skills/$skill.md ] && rm ~/.claude/skills/$skill.md
+done
+```
+
+Skip this step if you've made local edits to your old flat-format skills — diff against
+the new subdir versions first and merge by hand.

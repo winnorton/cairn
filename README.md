@@ -49,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.11.3`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.12.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -59,8 +59,8 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 > If you're working on cairn itself and want one of its skills locally, copy directly:
 >
 > ```bash
-> mkdir -p .claude/skills
-> cp files/skills/<skill-name>.md .claude/skills/
+> mkdir -p .claude/skills/<skill-name>
+> cp files/skills/<skill-name>/SKILL.md .claude/skills/<skill-name>/SKILL.md
 > ```
 >
 > Adopt cairn into *other* projects.
@@ -72,7 +72,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Two categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`) + **collaboration** (`reframe`, `bridge`, `advocate`) — see [skills taxonomy](#skills-taxonomy-maintenance-vs-collaboration) below |
+| `~/.claude/skills/` | Three categories: **maintenance** (`tour`, `reflect`, `plan`, `note`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), and **cross-perspective** (`resume`, `review`) — see [skills taxonomy](#skills-taxonomy-maintenance-vs-collaboration) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -154,20 +154,28 @@ serve each:
 - **End-user perspective** (observing how others experience what's shipped): prompted
   by `/advocate`. The builder sees the system they built; the end-user sees a cold
   start. `/advocate` rotates the observer position pre-ship.
+- **Pre-emptive intent capture** (filing thoughts that may or may not become real work):
+  via `/note`. One paragraph, in-repo, dated. Distinct from `/reflect` (post-hoc) and
+  from cross-session memory (user-space). Cheap to write, cheap to delete, cheap to
+  promote when work materializes.
+- **External-perspective review** (catching inconsistency-class bugs the work-author
+  missed): via `/review`. Reads the diff PLUS adjacent unchanged files that the diff
+  expects to be consistent with. Distinct from `/reflect` (which is same-agent post-hoc).
 
-These are **collaboration skills**, distinct from the maintenance skills (reflect,
-plan, prune, audit, tour, feedback) that service the habitat itself. See the
-taxonomy below.
+These are **collaboration** and **cross-perspective skills**, distinct from the maintenance
+skills (reflect, plan, note, prune, audit, tour, feedback) that service the habitat itself.
+See the taxonomy below.
 
-## Skills taxonomy: maintenance vs collaboration
+## Skills taxonomy: maintenance vs collaboration vs cross-perspective
 
-Cairn's skills fall into two categories with different origins.
+Cairn's skills fall into three categories with different origins.
 
 **Maintenance skills — service the habitat:**
 
 - `tour` — onboard new users post-install.
-- `reflect` — end-of-task retrospective.
+- `reflect` — end-of-task retrospective (post-hoc, same-agent).
 - `plan` — structured pre-flight before execution.
+- `note` — pre-emptive intent capture (one paragraph, in-repo, ephemeral).
 - `prune` — retire stale entries by type.
 - `audit` — count citations, surface unused structures.
 - `feedback` — file issues to cairn's maintainer (three-level degradation).
@@ -177,12 +185,20 @@ Cairn's skills fall into two categories with different origins.
 - `reframe` — generate alternative framings when convergent thinking is stuck.
 - `bridge` — structure cross-session context relay (parallel sessions).
 - `advocate` — simulate end-user perspective before shipping.
-- `resume` — detect and load context from a previous session (sequential sessions).
+
+**Cross-perspective skills — rotate the observer:**
+
+- `resume` — fresh session inheriting context from a prior one (sequential).
+- `review` — fresh agent reading a change set cold (catches what the work-author
+  missed because they were "too close").
 
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the
 collaboration (see [`docs/research/collaboration-skills.md`](./docs/research/collaboration-skills.md)
-for the analysis).
+for the analysis). The cross-perspective skills emerged from observing where one agent's
+session leaves blind spots that only a fresh observer can catch — `resume` defeats
+namespace fragmentation between sessions; `review` defeats the work-author's
+mental-model anchoring on what they touched.
 
 **Design principle:** *observe the collaboration first, then package what you see.*
 Skills designed from observation solve problems that exist; skills designed from
@@ -232,7 +248,7 @@ between habitats.
 **How deep to go (tier).** A second axis: how cairn-specific do you want your habitat to be?
 
 - **`seed`** — `CLAUDE.md` + `MEMORY.md`. Two files. **Works with any agent** (Claude, GPT, Gemini, local LLM) that can read markdown. Minimum viable habitat = maximally portable habitat.
-- **`grow`** — adds `LAWS.md` + `reflect`/`plan` skills. Durable conventions any careful agent can follow.
+- **`grow`** — adds `LAWS.md` + `reflect`/`plan`/`note`/`review` + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective `resume`. Durable conventions any careful agent can follow.
 - **`structure`** — adds typed memory + hygiene skills (`tour`/`prune`/`audit`). Assumes cairn-aware tooling.
 - **`full`** — adds the `feedback` skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized.
 
@@ -251,6 +267,27 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.12.1 — Skill format migration to canonical `~/.claude/skills/<name>/SKILL.md`
+subdirs (Claude Code's official format). Flat `.md` skills don't reliably register
+as slash commands; the new format fixes the bug. Adds `/review` (external-agent
+review skill, catches inconsistency-class bugs the work-author missed because
+they were "too close") — pairs with the v0.12.0 artifact skills. New fourth skill
+category: **cross-perspective** (`resume`, `review`) — distinct from maintenance,
+collaboration, and artifact. Plus folder-as-state for cairn's own `plans/` (shipped
+plans now live in `plans/archive/`). Plus a `/note`-vs-cross-session-memory
+disambiguation callout in `files/CLAUDE.md`. Plus `/note` and `/spec` cleaned up
+to remove cwar-specific worked-example coupling and use generic `docs/notes/` /
+`docs/specs/` paths. Re-adopters: see the migration note in adopt.md for cleanup
+of old flat-format skill files.
+
+v0.12.0 — Two new artifact-creation skills imported from a downstream project's
+`/plan`-rework arc: `/note` (pre-emptive intent capture — single paragraph,
+in-repo, ephemeral) and `/spec` (structured agent execution spec with phases,
+steps, checkpoints, executor handoff). New "Artifact skills" category added to
+the skill taxonomy alongside maintenance and collaboration. Distinct from cairn's
+existing `/plan` (behavioral pre-action alignment, conversational, no file output).
+v0.12.1 follows up with the format migration + /review + folder-as-state cleanup.
 
 v0.11.3 — adopt.md gains a second pre-flight check: refuse install in ephemeral
 sandboxes (claude.ai web/mobile chat, hosted notebooks, sandboxed evals) where
