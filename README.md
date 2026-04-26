@@ -49,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.12.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.12.2`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -267,6 +267,12 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.12.2 — Doc patch: fix install-report version strings. v0.12.1 shipped with `adopt.md`
+hardcoded "v0.12.0" in the install preview, post-install report, and pinned-version
+example URL — agents installing v0.12.1 reported "v0.12.0 installed" to users. Fixed
+in v0.12.2 along with similar stale references in HANDOFF.md and `files/skills/README.md`.
+Doc-only.
 
 v0.12.1 — Skill format migration to canonical `~/.claude/skills/<name>/SKILL.md`
 subdirs (Claude Code's official format). Flat `.md` skills don't reliably register

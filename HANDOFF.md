@@ -44,7 +44,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Previous release:** v0.11.3 (adopt.md gains an ephemeral-sandbox pre-flight check: refuse install in claude.ai web/mobile chat, hosted notebooks, sandboxed evals, or any harness where filesystem writes don't reach the user's machine. Doc-only.)
 - **Earlier:** v0.11.2 (Category disambiguation — "What cairn is (and isn't)" section). v0.11.1 (Agent-side disambiguation + trigger phrases). v0.11.0 (Project subdirs for cross-project memory; closes #22).
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
-- **Empirical confirmation 2026-04-26:** v0.12.0 format migration validated mid-session — the `resume` skill registered in the harness's available-skills list immediately after the `.claude/skills/resume.md` → `.claude/skills/resume/SKILL.md` move, confirming the subdir format fixes the slash-invocation issue.
+- **Empirical confirmation 2026-04-26:** v0.12.1 format migration validated mid-session — the `resume` skill registered in the harness's available-skills list immediately after the `.claude/skills/resume.md` → `.claude/skills/resume/SKILL.md` move, confirming the subdir format fixes the slash-invocation issue.
 
 ## What's durable
 
