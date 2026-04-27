@@ -8,8 +8,8 @@ shipped to adopters). It was added in v0.9.1 after the maintainer observed that 
 shipped a LAWS.md template for others without having one itself — the framework wasn't
 eating its own dog food.
 
-Cite by slug in durable output: `[LAW plan-meta]`, `[LAW scope-explicit]`, etc. Numbers
-are display-order only.
+Cite by slug in durable output: `[LAW load-meta-laws]`, `[LAW scope-explicit]`, etc.
+The slug is each law's only identity — no numbers, no positional references.
 
 ---
 
@@ -18,21 +18,21 @@ are display-order only.
 Every law in this file follows the same shape:
 
 ```
-### N. <Rule> *(slug: <short-slug>)*
+### <Rule> *(slug: <short-slug>)*
 
 **Why:** <motivation — often a past incident or constraint>
 
 **How to apply:** <when the rule kicks in>
 ```
 
-The five meta-rules from `files/LAWS.md` apply here too: observable not vibes, ranked
-by blast radius, Why + How to apply mandatory, laws expire, cite in durable output.
+The five meta-rules from `files/LAWS.md` apply here too: observable not vibes, slug-is-
+identity, Why + How to apply mandatory, laws expire, cite in durable output.
 
 ---
 
-## Cairn's development laws
+## Cairn's development laws (9)
 
-### 1. Load the project's meta-laws before making architectural decisions *(slug: load-meta-laws)*
+### Load the project's meta-laws before making architectural decisions *(slug: load-meta-laws)*
 
 **Why:** When an agent enters an AI-agent-engineering project, that project's
 meta-discipline documents (laws-of-*.md, PRINCIPLES.md, NEW_LAWS_OF_*.md, or equivalents)
@@ -49,7 +49,7 @@ cairn's own LAWS.md had already been shipped.
 3. If no such document exists in a project that looks like agent-infrastructure, flag
    that absence explicitly — propose creating one or confirm it's intentional.
 
-### 2. Name scope expansion explicitly at decision points *(slug: scope-explicit)*
+### Name scope expansion explicitly at decision points *(slug: scope-explicit)*
 
 **Why:** Cairn expanded from "export a bootstrap" to "multi-release framework with
 typed memory, tiers, slugs, collaboration skills, feedback endpoint, etc." over a
@@ -62,9 +62,9 @@ bug fix or small feature), explicitly name what scope is expanding and ask "is t
 still within the current effort, or is this a new effort?" Example prompt: *"This
 would add Y as a new concept cairn addresses — stay in scope or fork?"*
 
-### 3. Cite in the commit message, not just in the code *(slug: commit-cite)*
+### Cite in the commit message, not just in the code *(slug: commit-cite)*
 
-**Why:** Law 5 (cite in durable output) says citations must reach files — but files
+**Why:** The cite-in-durable-output meta-rule says citations must reach files — but files
 are often workspace-local. Commit messages ARE durable output that travels with the
 code. Citing laws/memories/issues in the commit message means the citation survives
 even if the work is copied, submoduled, or inherited into another habitat.
@@ -74,7 +74,7 @@ memory's guidance, cite the source in the commit message body, not just inline i
 code comments. Example: *"(per [LAW cadence]: reflect at natural checkpoints)"* in
 the commit body.
 
-### 4. When a pattern you want already exists in an adjacent part of your system, borrow it *(slug: borrow-adjacent)*
+### When a pattern you want already exists in an adjacent part of your system, borrow it *(slug: borrow-adjacent)*
 
 **Why:** Memories used slugs; laws used numbers. Inconsistency primed drift. Fixing
 it took five minutes once spotted — but spotting it required the active move of
@@ -85,7 +85,7 @@ needs a from-scratch solution. The v0.9 slug migration is the canonical case.
 format), check whether an adjacent part of your system already established a
 pattern for it. Prefer consistency unless there's a specific reason to diverge.
 
-### 5. Reflect before the session boundary, not after *(slug: session-end-reflect)*
+### Reflect before the session boundary, not after *(slug: session-end-reflect)*
 
 **Why:** The whole point of a habitat is cross-session coherence. If the reflection
 fires *after* the session ends (e.g., the user comes back and asks "what happened
@@ -97,7 +97,7 @@ up", "move to the next session", "come back here for analysis"), stop accepting 
 work and invoke `/reflect`. Produce memory candidates, law candidates, and a
 HANDOFF.md before the boundary — not after.
 
-### 6. Update HANDOFF.md before tagging a release *(slug: handoff-stays-current)*
+### Update HANDOFF.md before tagging a release *(slug: handoff-stays-current)*
 
 **Why:** HANDOFF.md is the bridge document the next session reads. If it drifts
 behind the actual release, it actively misleads — telling the next agent "we're at
@@ -113,7 +113,7 @@ any "open work" entries that may now be closed. Bundle the HANDOFF.md update int
 the same commit as the release artifacts (VERSION, manifest version, README
 status). One commit, one consistent view.
 
-### 7. Choose memory slug by content scope, not session location *(slug: choose-slug-by-scope)*
+### Choose memory slug by content scope, not session location *(slug: choose-slug-by-scope)*
 
 **Why:** Memory's slug determines which sessions can load it. Naive "write where
 the session is running" works for single-project setups but fragments across
@@ -136,7 +136,7 @@ migration work later.
 Avoid duplicating across slugs. When uncertain, default to the project where the
 work artifact is being produced.
 
-### 8. Survey available tools by verb in their description, not by name prefix *(slug: survey-tools-by-verb)*
+### Survey available tools by verb in their description, not by name prefix *(slug: survey-tools-by-verb)*
 
 **Why:** Agents underestimate the applicability of tools whose names carry a
 project prefix that doesn't match the current task. A tool named
@@ -167,7 +167,7 @@ Companion to cwar's NEW_LAWS Law 13 (Serialization Boundary), which captures
 the technical-content layer of the same episode. This law captures the
 process-meta layer.
 
-### 9. Route release-shaped PRs through `/review` by a fresh-perspective agent before merge *(slug: pre-merge-review)*
+### Route release-shaped PRs through `/review` by a fresh-perspective agent before merge *(slug: pre-merge-review)*
 
 **Why:** Single-pass review by the work-author re-confirms the author's mental
 model rather than challenging it. The author looks where they expect problems —
@@ -207,5 +207,5 @@ or the most recent commit message before allowing merge.
 
 <!--
   Add more cairn-development laws below as they emerge. Assign a slug per law.
-  Keep ranked by blast radius.
+  Slug is identity; don't number.
 -->

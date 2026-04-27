@@ -205,7 +205,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.12.3 — install preview (tier: full)
+cairn v0.13.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -317,7 +317,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.12.3 installed.
+cairn v0.13.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -353,7 +353,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.12.3/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.13.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -507,3 +507,34 @@ done
 
 Skip this step if you've made local edits to your old flat-format skills — diff against
 the new subdir versions first and merge by hand.
+
+## v0.12.x → v0.13.0 law-numbering migration note
+
+v0.13.0 drops numeric prefixes from law headings — slug becomes the only law identity.
+Existing slug citations (`[LAW plan]`, `[LAW cadence]`) keep working unchanged. **But:**
+legacy numeric citations (`[LAW 1]`, `[LAW 5]`) in your own notes, commits, or research
+docs no longer resolve to a specific law in `/audit`'s output, because the
+number-to-slug mapping is no longer in source-of-truth.
+
+**For re-adopters with legacy `[LAW N]` citations:**
+
+```bash
+# Find legacy citations in notes/commits/docs
+grep -rn '\[LAW [0-9]\+\]' . --include='*.md' --include='*.txt'
+git log --all --grep='\[LAW [0-9]\+\]' --oneline
+```
+
+For each match, look up which slug the number corresponded to in *your* `LAWS.md` —
+that's the historical mapping for *your* habitat. Convert by hand:
+
+```
+[LAW 1]  →  [LAW <slug-of-your-first-law>]
+[LAW 2]  →  [LAW <slug-of-your-second-law>]
+...
+```
+
+If you only had cairn's seed laws and never reordered them, the v0.12.x mapping was:
+`1=plan, 2=confirm, 3=assumptions, 4=prefer-edit, 5=root-cause, 6=cadence`.
+
+`/audit` will report any remaining numeric citations as "legacy citations needing manual
+conversion to slug" — finishable in one sweep.

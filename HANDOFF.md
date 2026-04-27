@@ -28,7 +28,7 @@ to a `/resume` in cairn's worktree:
   verify_plan_deliverables}`, `project/{cwar_cairn_adoption_plan, plan_drift_inventory}`,
   `reference/{cwar_meta_laws, cwar_perf_eslint_rules}`.
 
-Per Law 7 (`choose-slug-by-scope`) in cairn's own `LAWS.md`, future memory writes
+Per `[LAW choose-slug-by-scope]` in cairn's own `LAWS.md`, future memory writes
 should go to the slug that matches the scope of the content — not the slug where the
 session happens to be running.
 
@@ -40,11 +40,11 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.12.0 (Skill format migration to canonical `~/.claude/skills/<name>/SKILL.md` subdirs — fixes the slash-invocation reliability bug from [MEM project/cairn-skills-slash-invocation-unreliable]. Plus two new skills imported from cwar's `/plan`-rework arc: `/note` (pre-emptive intent capture) and `/review` (external-agent fresh-perspective review). Plus a third skill category — **cross-perspective skills** — distinct from maintenance and collaboration. Plus folder-as-state for cairn's own `plans/` (shipped plans → `plans/archive/`). Plus a `/note`-vs-cross-session-memory disambiguation table in `files/CLAUDE.md`.)
-- **Previous release:** v0.11.3 (adopt.md gains an ephemeral-sandbox pre-flight check: refuse install in claude.ai web/mobile chat, hosted notebooks, sandboxed evals, or any harness where filesystem writes don't reach the user's machine. Doc-only.)
-- **Earlier:** v0.11.2 (Category disambiguation — "What cairn is (and isn't)" section). v0.11.1 (Agent-side disambiguation + trigger phrases). v0.11.0 (Project subdirs for cross-project memory; closes #22).
+- **Latest release:** v0.13.0 (Slug-only law identity — drops Law N numbering. Completes the v0.9.0 slug migration; numeric prefixes in law headings removed, slug becomes the only identity, collection size moves to section headers. Meta-rule 2 rewritten as "Slug is identity, count is metadata." Plus connects the reflect↔resume loop in user-facing docs — README's new "Cross-session continuity" section, tour Step 5 names both verbs, `files/skills/README.md` Skill pairings. Migration note in `adopt.md` for re-adopters with `[LAW N]` citations.)
+- **Previous release:** v0.12.3 (Doc patch — fixed v0.12.x consistency gaps that fresh `/review` caught: missing /spec in adopt.md tier counts, miscategorized /note, /review's own cwar-coupling regression, missing MEMORY.md index entry, plan archival. The fact that /review caught these in its own surrounding artifacts is the cleanest possible self-validation of the skill.)
+- **Earlier:** v0.12.2 (install-report version strings). v0.12.1 (skill format migration to canonical subdir form + `/review` skill + folder-as-state for `plans/`). v0.12.0 (`/note` + `/spec` artifact-creation skills). v0.11.3 (ephemeral-sandbox pre-flight in adopt.md).
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
-- **Empirical confirmation 2026-04-26:** v0.12.1 format migration validated mid-session — the `resume` skill registered in the harness's available-skills list immediately after the `.claude/skills/resume.md` → `.claude/skills/resume/SKILL.md` move, confirming the subdir format fixes the slash-invocation issue.
+- **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/review` caught README body-text drift the author missed (the v0.9.0-era citation explainer at lines 116-117 + 122 — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/review` is built to catch.
 
 ## What's durable
 
@@ -59,8 +59,8 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 | Item | State |
 |---|---|
 | ~~GoDaddy CNAME for `cairn.winnorton.com`~~ | **DONE 2026-04-25.** Domain resolves and serves the cairn-feedback-endpoint service JSON at root. TLS cert active. POST /feedback works; GET /feedback returns 404 (correct — POST-only). |
-| cwar worktree commit (not pushed) | A local commit on branch `claude/nice-curran-91ed55` deletes `docs/LAWS_OF_ENGINEERING.md`, cleans up 3 references in `AGENTS.md`, and adds three cairn-derived laws (8, 9, 10) to `docs/NEW_LAWS_OF_AI_AGENT_ENGINEERING.md`. User has not pushed. Merge or cherry-pick when ready. |
-| cwar-engine cairn adoption | **Discussed, not executed.** Recommended a la carte adoption: install memory + most skills; skip `LAWS.md` (cwar has AGENTS.md) and `plan.md` (cwar has richer workflow). Log v0.10 candidate: manifest-level include/exclude flags. |
+| ~~cwar-engine cairn adoption~~ | **DONE 2026-04-26** per `[MEM project/re-adoption-flow-validated]`. v0.11.x → v0.12.2 a la carte adoption by Antigravity-Opus into cwar-engine via 3-stage review chain — 11 installed / 10 skipped, 16/16 checks pass. |
+| cwar worktree commit (not pushed) | Stale 2026-04-24 entry on branch `claude/nice-curran-91ed55` (deletes `docs/LAWS_OF_ENGINEERING.md`, cleans up `AGENTS.md` references, adds three cairn-derived laws to `docs/NEW_LAWS_OF_AI_AGENT_ENGINEERING.md`). State unverified; user to confirm whether merged or abandoned. |
 
 ## Critical insight from the session
 
@@ -72,8 +72,8 @@ Tax (rediscovered concepts the user had already captured), Confidence-Competence
 Ratchet (session expanded from "export bootstrap" to "multi-release framework" without
 explicit scope-expansion gates).
 
-Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as Law 1:
-**Load the project's meta-laws before making architectural decisions.**
+Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
+`[LAW load-meta-laws]`: **Load the project's meta-laws before making architectural decisions.**
 
 ## Session-to-session protocol (under test)
 
@@ -105,9 +105,10 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as Law 1:
   untrimmed backlog.
 - **If the next topic is cwar-engine adoption**, read `plans/v0.9-law-slugs.md` for the
   citation-stability context, then the a la carte recommendation in this file.
-- **Before any architectural change**, apply Law 1 of cairn's own LAWS: load meta-laws
-  for whatever project you're working in.
+- **Before any architectural change**, apply `[LAW load-meta-laws]` from cairn's own
+  LAWS: load meta-laws for whatever project you're working in.
 
 ---
 
-_Written 2026-04-24 at session's end by the builder agent. Cairn v0.9.1._
+_Originally written 2026-04-24 at session's end by the builder agent. Last updated
+2026-04-27 for cairn v0.13.0._

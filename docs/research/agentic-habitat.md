@@ -68,7 +68,7 @@ Agents need to know which parts of their habitat actually get used — otherwise
 
 But citation quality is asymmetric across types. Laws are discrete events — citing feels natural. User memory is continuous background — citing every use would be performative. cairn resolved this by making citations type-aware: user memories have no citation convention (always-on), while feedback, project, and reference memories cite at natural trigger points. Each type gets its own decay strategy.
 
-An early design used number-based citations (`[LAW 1]`). This broke when laws were reordered — numbers shifted, existing citations became wrong. The v0.9.0 switch to slug-based citations (`[LAW plan]`) solved this. Slugs are stable across reorders; numbers are display-order only.
+An early design used number-based citations (`[LAW 1]`). This broke when laws were reordered — numbers shifted, existing citations became wrong. The v0.9.0 switch to slug-based citations (`[LAW plan]`) solved this. Slugs are stable across reorders; numbers were retained as display-order markers, then removed entirely in v0.13.0 — leaving the slug as each law's only identity.
 
 ## Finding 5: Agent-to-maintainer feedback loops can be very fast
 

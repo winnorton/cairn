@@ -20,7 +20,7 @@ Citation conventions are type-aware:
 
 | Target | Citation pattern | Why this shape |
 |---|---|---|
-| Laws | `[LAW <slug>]` (e.g. `[LAW plan]`, `[LAW cadence]`) | Stable across reorders. Numeric `[LAW N]` still parses but is brittle — prefer slug. |
+| Laws | `[LAW <slug>]` (e.g. `[LAW plan]`, `[LAW cadence]`) | Slug is the law's only identity. Numeric `[LAW N]` citations from pre-slug archives may exist; flag for conversion when found. |
 | `feedback/` memory | `[MEM feedback/<name>]` | Fires discretely like mini-laws |
 | `project/` memory | `[MEM project/<name>]` | Cited when shaping a specific decision |
 | `reference/` memory | `[MEM reference/<name>]` | Cited at lookup time |
@@ -57,27 +57,27 @@ Do NOT invoke for:
    prior transcripts are accessible (Claude Code: `~/.claude/projects/<project>/` often
    contains session logs; Cowork: TBD — ask the user if uncertain).
 
-2. **Enumerate the habitat.** Load `LAWS.md` (law numbers + titles) and the three
-   citable memory subdirs (`feedback/`, `project/`, `reference/`). Skip `user/` — it's
-   not part of the citation audit.
+2. **Enumerate the habitat.** Load `LAWS.md` (slugs + titles from each law's heading) and
+   the three citable memory subdirs (`feedback/`, `project/`, `reference/`). Skip `user/` —
+   it's not part of the citation audit.
 
 3. **Count citations.** Regex patterns:
-   - Laws (preferred, slug form): `\[LAW ([a-z][a-z0-9-]*)\]` — matches `[LAW plan]`, `[LAW cadence]`, etc.
-   - Laws (deprecated, number form): `\[LAW (\d+)\]` — brittle; flag these in output as "candidates for migration to slug form."
+   - Laws (canonical, slug form): `\[LAW ([a-z][a-z0-9-]*)\]` — matches `[LAW plan]`, `[LAW cadence]`, etc.
+   - Laws (legacy, number form): `\[LAW (\d+)\]` — pre-slug archives only; numeric citations no longer resolve to a specific law since headings dropped numbers. Surface count as "legacy citations needing manual conversion to slug."
    - Memories: `\[MEM (feedback|project|reference)/([a-z0-9_-]+)\]`
 
-   When counting, resolve numeric citations to slugs by reading LAWS.md (each law's header
-   contains both). Report counts by slug; treat slug and number as the same law.
+   Report law counts by slug. Don't try to map numeric citations to slugs — that mapping
+   no longer exists in the source of truth.
 
 4. **Produce the report.** Grouped by category, ranked by citation count:
 
    ```
    Laws:
    Rank  Citations  Law
-     1   12         LAW 1: Plan before executing anything hard to reverse
-     2   8          LAW 3: Surface assumptions
+     1   12         LAW plan: Plan before executing anything hard to reverse
+     2   8          LAW assumptions: Surface assumptions
      …
-     N   0          LAW 7: <uncited candidate for prune>
+     N   0          LAW <slug>: <uncited candidate for prune>
 
    Feedback memory:
    Rank  Citations  Entry

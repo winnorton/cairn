@@ -49,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.12.3`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.13.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -91,6 +91,19 @@ Agents forget everything between sessions. Cairn is the opposite of forgetting:
 
 You build this up over time. Cairn just gives you the scaffold so you don't start from nothing.
 
+### Cross-session continuity — the reflect ↔ resume loop
+
+Memory, laws, and CLAUDE.md hold what carries forward. The *ritual* that keeps them
+alive is two paired skills:
+
+- **`/reflect`** at session-end — proposes memory and law candidates, and writes a
+  `HANDOFF.md` describing where the work stands.
+- **`/resume`** at session-start — probes for HANDOFF.md, memory at relevant slugs,
+  transcript junctions, and recent git activity, then synthesizes a compact orientation.
+
+Reflect produces, HANDOFF carries, resume reads. This loop turns "agent forgets
+everything between sessions" into "agent picks up where we left off."
+
 ## Extend
 
 - Add laws to `LAWS.md` as you hit "never again" or "always do this" moments.
@@ -100,13 +113,13 @@ You build this up over time. Cairn just gives you the scaffold so you don't star
 
 ## Usage signal (citations)
 
-Citation conventions are type-aware. Laws fire discretely and cite by **slug**, not number —
-numbers drift when laws are reordered; slugs are stable: `[LAW plan]`, `[LAW cadence]`.
-Memory is split into four types with different citation rules:
+Citation conventions are type-aware. Laws fire discretely and cite by **slug**:
+`[LAW plan]`, `[LAW cadence]`. The slug is each law's only identity — there's no
+numeric form. Memory is split into four types with different citation rules:
 
 | Type | Character | Citation | Why |
 |---|---|---|---|
-| Laws | Discrete triggers | `[LAW <slug>]` (e.g. `[LAW plan]`) | Stable across reorders — numbers are display-order only |
+| Laws | Discrete triggers | `[LAW <slug>]` (e.g. `[LAW plan]`) | Slug is the law's only identity — stable across reorders, no numeric form |
 | `user/` | Always-on background | **None** | Continuous; citing every response is noise |
 | `feedback/` | Fires discretely | `[MEM feedback/<name>]` | Acts like a mini-law |
 | `project/` | Shapes specific decisions | `[MEM project/<name>]` | Cite when it drove a decision |
@@ -277,6 +290,22 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
+v0.13.0 — Slug-only law identity (drops Law N numbering). Completes the v0.9.0 slug
+migration — v0.9.0 added slugs as the citation form but never removed the competing
+numeric form, leaving two valid-looking identities and a meta-rule trying to suppress
+one of them. Numbers also implied blast-radius ordering the laws didn't honor in
+practice. Fix: numeric prefixes removed from law headings in both `LAWS.md` and
+`files/LAWS.md`; slug becomes the only identity; collection size moves to section
+headers (`## Seed laws (6)`). Meta-rule 2 rewritten as "Slug is identity, count is
+metadata." Plus connects the reflect↔resume loop in user-facing docs — README's new
+"Cross-session continuity" subsection, tour Step 5 names both verbs, and a "Skill
+pairings" section in `files/skills/README.md`. Fresh `/review` caught README body-text
+drift the author missed (anchored on `LAWS.md`, didn't grep README's own usage-signal
+section) — exact gap class `[LAW pre-merge-review]` is built for. Re-adopters with
+legacy `[LAW N]` citations: see the migration note in `adopt.md`. The `/audit` skill
+flags numeric citations as "legacy needing manual conversion" rather than auto-resolving
+(the number-to-slug mapping no longer exists in source-of-truth).
+
 v0.12.3 — Doc patch: fix v0.12.x consistency gaps that a fresh `/review` session
 caught after v0.12.2 shipped. (1) `adopt.md` tier counts and install preview were
 missing `/spec` — agents installed 21 files but consent + report claimed 20.
@@ -413,7 +442,7 @@ case is plausible — and dangerous (would create duplicate `LAWS.md`, `CLAUDE.m
 v0.10.2 — Slug policy formalized after the second `/resume` validation surfaced the
 question: where SHOULD memory live in multi-project workflows? Files that are scope-
 local stay at one slug; cross-cutting agent-meta-knowledge picks one slug + declares
-a pointer in HANDOFF.md. New Law 7 `choose-slug-by-scope` in cairn's own LAWS.md
+a pointer in HANDOFF.md. New `[LAW choose-slug-by-scope]` in cairn's own LAWS.md
 codifies this. `files/memory/MEMORY.md` template gains a "Where memory should live"
 section. Cairn-native memory entries migrated from cwar's slug to cairn's slug.
 
@@ -441,8 +470,8 @@ as the meta-disciplinary source, `HANDOFF.md` for session-to-session bridging, a
 closed (userSkills dual-scope path detection parallel to #6's memory fix).
 
 v0.9.0 — Slug-based law identity (#18). Laws now cite by stable slug (`[LAW plan]`,
-`[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers.
-`/audit` matches both forms during transition. Evidence: cwar's AGENTS.md renumbered
+`[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers
+(removed entirely in v0.13.0). `/audit` matches both forms during transition. Evidence: cwar's AGENTS.md renumbered
 26→22→13 rules in one day, leaving citation debt in ESLint comments and cross-file
 references — cairn preempts the same pattern. See `plans/v0.9-law-slugs.md`.
 
