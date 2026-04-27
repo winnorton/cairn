@@ -113,13 +113,13 @@ everything between sessions" into "agent picks up where we left off."
 
 ## Usage signal (citations)
 
-Citation conventions are type-aware. Laws fire discretely and cite by **slug**, not number —
-numbers drift when laws are reordered; slugs are stable: `[LAW plan]`, `[LAW cadence]`.
-Memory is split into four types with different citation rules:
+Citation conventions are type-aware. Laws fire discretely and cite by **slug**:
+`[LAW plan]`, `[LAW cadence]`. The slug is each law's only identity — there's no
+numeric form. Memory is split into four types with different citation rules:
 
 | Type | Character | Citation | Why |
 |---|---|---|---|
-| Laws | Discrete triggers | `[LAW <slug>]` (e.g. `[LAW plan]`) | Stable across reorders — numbers are display-order only |
+| Laws | Discrete triggers | `[LAW <slug>]` (e.g. `[LAW plan]`) | Slug is the law's only identity — stable across reorders, no numeric form |
 | `user/` | Always-on background | **None** | Continuous; citing every response is noise |
 | `feedback/` | Fires discretely | `[MEM feedback/<name>]` | Acts like a mini-law |
 | `project/` | Shapes specific decisions | `[MEM project/<name>]` | Cite when it drove a decision |
@@ -290,6 +290,22 @@ list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
 
+v0.13.0 — Slug-only law identity (drops Law N numbering). Completes the v0.9.0 slug
+migration — v0.9.0 added slugs as the citation form but never removed the competing
+numeric form, leaving two valid-looking identities and a meta-rule trying to suppress
+one of them. Numbers also implied blast-radius ordering the laws didn't honor in
+practice. Fix: numeric prefixes removed from law headings in both `LAWS.md` and
+`files/LAWS.md`; slug becomes the only identity; collection size moves to section
+headers (`## Seed laws (6)`). Meta-rule 2 rewritten as "Slug is identity, count is
+metadata." Plus connects the reflect↔resume loop in user-facing docs — README's new
+"Cross-session continuity" subsection, tour Step 5 names both verbs, and a "Skill
+pairings" section in `files/skills/README.md`. Fresh `/review` caught README body-text
+drift the author missed (anchored on `LAWS.md`, didn't grep README's own usage-signal
+section) — exact gap class `[LAW pre-merge-review]` is built for. Re-adopters with
+legacy `[LAW N]` citations: see the migration note in `adopt.md`. The `/audit` skill
+flags numeric citations as "legacy needing manual conversion" rather than auto-resolving
+(the number-to-slug mapping no longer exists in source-of-truth).
+
 v0.12.3 — Doc patch: fix v0.12.x consistency gaps that a fresh `/review` session
 caught after v0.12.2 shipped. (1) `adopt.md` tier counts and install preview were
 missing `/spec` — agents installed 21 files but consent + report claimed 20.
@@ -454,8 +470,8 @@ as the meta-disciplinary source, `HANDOFF.md` for session-to-session bridging, a
 closed (userSkills dual-scope path detection parallel to #6's memory fix).
 
 v0.9.0 — Slug-based law identity (#18). Laws now cite by stable slug (`[LAW plan]`,
-`[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers.
-`/audit` matches both forms during transition. Evidence: cwar's AGENTS.md renumbered
+`[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers
+(removed entirely in v0.13.0). `/audit` matches both forms during transition. Evidence: cwar's AGENTS.md renumbered
 26→22→13 rules in one day, leaving citation debt in ESLint comments and cross-file
 references — cairn preempts the same pattern. See `plans/v0.9-law-slugs.md`.
 

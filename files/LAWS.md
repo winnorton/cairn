@@ -38,7 +38,7 @@ use the slug: `[LAW plan]`. Numbers are not used; the slug is the law's only ide
 Five meta-rules govern the laws themselves:
 
 1. **Observable, not vibes.** "Be careful" is not a law. "Never run `rm -rf` without confirmation" is.
-2. **Slug is identity, count is metadata.** Each law's identity is its slug (in the heading suffix); citations use that slug. Collection size goes in section headers (`## Seed laws (6)`), not in per-law numbering. Numeric prefixes invite "Law N" references that drift when laws are reordered.
+2. **Slug is identity, count is metadata.** Each law's identity is its slug (in the heading suffix); citations use that slug. Per-law numbering invites "Law N" references that drift when laws are reordered. Collection size, if shown, belongs in the section header (`## Seed laws (6)`) — not in per-law numbering.
 3. **Why + How to apply are mandatory.** Without them, the law doesn't survive contact with edge cases.
 4. **Laws expire.** Review this list periodically. Retire laws that no longer apply.
 5. **Cite by slug, in durable output.** When an agent applies a law, it cites inline by slug:
