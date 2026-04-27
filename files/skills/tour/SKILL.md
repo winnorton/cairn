@@ -51,8 +51,9 @@ Do NOT invoke for:
    - "Skim LAWS.md. The 6 seed laws apply broadly — read them and decide which to keep,
      edit, or delete. Add one domain-specific law of your own."
    - "Memory will grow on its own as we work together. You don't need to populate it now."
-   - "When this session ends and we have learnings worth keeping, say 'reflect' and I'll
-     propose entries."
+   - "When this session ends, say `reflect` — I'll propose memory entries and write a
+     `HANDOFF.md`. Next session, say `resume` and the agent picks up where we stopped.
+     Reflect ↔ resume is cairn's session-loop ritual; it's how persistence stays alive."
 
 ## Output
 

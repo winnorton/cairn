@@ -114,6 +114,14 @@ handoffs, producing stale artifacts with significant drift between claim and shi
 reality. Splitting into two verbs closes the per-file friction; folder-as-status closes
 the lifecycle hole.
 
+### Skill pairings
+
+`/reflect` and `/resume` form a load-bearing pair — the cross-session loop. `/reflect`
+at session-end produces memory entries and a `HANDOFF.md`; `/resume` at session-start
+reads them. Together they're the ritual that keeps persistence alive between sessions.
+Without the pairing, memory and laws sit in files but never get refreshed. With it,
+"agent forgets between sessions" becomes "agent picks up where we left off."
+
 Design principle: **observe the collaboration first, then package what you see.**
 Skills designed from observation solve problems that exist; skills designed from
 theory often solve problems that don't.

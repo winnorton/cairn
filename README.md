@@ -91,6 +91,19 @@ Agents forget everything between sessions. Cairn is the opposite of forgetting:
 
 You build this up over time. Cairn just gives you the scaffold so you don't start from nothing.
 
+### Cross-session continuity — the reflect ↔ resume loop
+
+Memory, laws, and CLAUDE.md hold what carries forward. The *ritual* that keeps them
+alive is two paired skills:
+
+- **`/reflect`** at session-end — proposes memory and law candidates, and writes a
+  `HANDOFF.md` describing where the work stands.
+- **`/resume`** at session-start — probes for HANDOFF.md, memory at relevant slugs,
+  transcript junctions, and recent git activity, then synthesizes a compact orientation.
+
+Reflect produces, HANDOFF carries, resume reads. This loop turns "agent forgets
+everything between sessions" into "agent picks up where we left off."
+
 ## Extend
 
 - Add laws to `LAWS.md` as you hit "never again" or "always do this" moments.
@@ -413,7 +426,7 @@ case is plausible — and dangerous (would create duplicate `LAWS.md`, `CLAUDE.m
 v0.10.2 — Slug policy formalized after the second `/resume` validation surfaced the
 question: where SHOULD memory live in multi-project workflows? Files that are scope-
 local stay at one slug; cross-cutting agent-meta-knowledge picks one slug + declares
-a pointer in HANDOFF.md. New Law 7 `choose-slug-by-scope` in cairn's own LAWS.md
+a pointer in HANDOFF.md. New `[LAW choose-slug-by-scope]` in cairn's own LAWS.md
 codifies this. `files/memory/MEMORY.md` template gains a "Where memory should live"
 section. Cairn-native memory entries migrated from cwar's slug to cairn's slug.
 

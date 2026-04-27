@@ -28,7 +28,7 @@ to a `/resume` in cairn's worktree:
   verify_plan_deliverables}`, `project/{cwar_cairn_adoption_plan, plan_drift_inventory}`,
   `reference/{cwar_meta_laws, cwar_perf_eslint_rules}`.
 
-Per Law 7 (`choose-slug-by-scope`) in cairn's own `LAWS.md`, future memory writes
+Per `[LAW choose-slug-by-scope]` in cairn's own `LAWS.md`, future memory writes
 should go to the slug that matches the scope of the content — not the slug where the
 session happens to be running.
 
@@ -72,8 +72,8 @@ Tax (rediscovered concepts the user had already captured), Confidence-Competence
 Ratchet (session expanded from "export bootstrap" to "multi-release framework" without
 explicit scope-expansion gates).
 
-Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as Law 1:
-**Load the project's meta-laws before making architectural decisions.**
+Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
+`[LAW load-meta-laws]`: **Load the project's meta-laws before making architectural decisions.**
 
 ## Session-to-session protocol (under test)
 
@@ -105,8 +105,8 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as Law 1:
   untrimmed backlog.
 - **If the next topic is cwar-engine adoption**, read `plans/v0.9-law-slugs.md` for the
   citation-stability context, then the a la carte recommendation in this file.
-- **Before any architectural change**, apply Law 1 of cairn's own LAWS: load meta-laws
-  for whatever project you're working in.
+- **Before any architectural change**, apply `[LAW load-meta-laws]` from cairn's own
+  LAWS: load meta-laws for whatever project you're working in.
 
 ---
 
