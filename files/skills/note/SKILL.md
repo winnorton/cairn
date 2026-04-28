@@ -29,9 +29,10 @@ Cheap to write, cheap to delete, cheap to promote later if it becomes real work.
 **Distinct from `/reflect`:** `/note` is pre-emptive (capture before action). `/reflect` is
 post-hoc (distill after action). Different lifecycles.
 
-**Distinct from cross-session memory:** `/note` files to the project repo. Cross-session
-agent memory (the `~/.claude/memory/` system) is a different verb — see "Filing destination"
-below for routing.
+**Distinct from cross-session memory:** `/note` files to `docs/notes/` in the project
+repo. Cross-session memory files to `agents/memory/` (also in the project repo) — both
+are repo-tracked, but they serve different shapes. See "Filing destination" below for
+routing.
 
 Do NOT use for:
 - Executor handoffs, multi-phase refactors, or anything that needs phases/steps/checkpoints.
@@ -42,9 +43,11 @@ Do NOT use for:
 
 ## Filing destination — `/note` vs cross-session agent memory
 
-`/note` files to the **project repo** (in version control, ships with the codebase, visible
-to anyone who clones). Cross-session **agent memory** lives in **user-space** (visible only
-to agents on this user's machine — e.g. `~/.claude/memory/`).
+`/note` files to `docs/notes/` in the project repo. Cross-session **agent memory** files
+to `agents/memory/` in the project repo (typed: `user/`, `feedback/`, `project/`,
+`reference/`). Both are repo-tracked and ship with the codebase. The distinction is
+*shape*, not *destination*: `/note` is a single-paragraph file-bound observation;
+memory entries are typed facts that shape future agent reasoning across files.
 
 Use this table to route:
 

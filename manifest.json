@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code, Antigravity, and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -53,16 +53,16 @@
       "description": "Project context template — fill in per work effort. Read every session."
     },
     {
-      "src": "files/memory/MEMORY.md",
-      "dest": "{userMemory}/MEMORY.md",
+      "src": "files/agents/memory/MEMORY.md",
+      "dest": "{projectRoot}/agents/memory/MEMORY.md",
       "mode": "create-if-absent",
       "role": "essential",
       "tier": "seed",
       "description": "Top-level memory index — the lookup entry point for all memory"
     },
     {
-      "src": "files/LAWS.md",
-      "dest": "{projectClaude}/LAWS.md",
+      "src": "files/agents/LAWS.md",
+      "dest": "{projectRoot}/agents/LAWS.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "grow",
@@ -133,32 +133,32 @@
       "description": "Detect and load context from a previous session — probes HANDOFF.md, memory at multiple slugs, transcript junctions, recent git activity. Defeats namespace fragmentation in session-to-session handoff."
     },
     {
-      "src": "files/memory/user/README.md",
-      "dest": "{userMemory}/user/README.md",
+      "src": "files/agents/memory/user/README.md",
+      "dest": "{projectRoot}/agents/memory/user/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
       "description": "User memory conventions — always-on background, no citation"
     },
     {
-      "src": "files/memory/feedback/README.md",
-      "dest": "{userMemory}/feedback/README.md",
+      "src": "files/agents/memory/feedback/README.md",
+      "dest": "{projectRoot}/agents/memory/feedback/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
       "description": "Feedback memory conventions — fires discretely, cite [MEM feedback/<name>]"
     },
     {
-      "src": "files/memory/project/README.md",
-      "dest": "{userMemory}/project/README.md",
+      "src": "files/agents/memory/project/README.md",
+      "dest": "{projectRoot}/agents/memory/project/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
       "description": "Project memory conventions — decision-shaping, cite [MEM project/<name>]"
     },
     {
-      "src": "files/memory/reference/README.md",
-      "dest": "{userMemory}/reference/README.md",
+      "src": "files/agents/memory/reference/README.md",
+      "dest": "{projectRoot}/agents/memory/reference/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",

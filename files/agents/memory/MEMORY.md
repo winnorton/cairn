@@ -50,31 +50,26 @@ If a memory feels important enough to cite *every time it fires*, it probably be
 - Cite at lookup → **reference memory**
 - Never cite (always-on) → **user memory**
 
-## Where memory should live: slug policy
+## Where memory lives: the repo
 
-When you work on a single project, this question doesn't matter — everything goes
-at one slug. When work spans projects (shared tooling informing multiple efforts,
-side projects relating to a primary one), choose slug by **scope of what's being
-remembered**:
+As of v0.14.0, memory lives in this repo at `agents/memory/` and is git-tracked.
+The repo IS the scope — no slug policy, no cross-slug pointers, no per-worktree
+ambiguity. One project = one memory tree = one git history.
 
-- **Project-specific facts** (codebase conventions, ongoing decisions, project
-  state, references to project-internal resources) → store at *this project's*
-  slug.
-- **Cross-cutting agent-meta-knowledge** (collaboration patterns, reframing,
-  general principles that apply regardless of which project) → pick one slug
-  (usually the project where the insight first emerged) and **declare a pointer
-  in `HANDOFF.md`'s `## Related memory paths` section** so other projects'
-  `/resume` invocations find them. Don't duplicate across slugs — two sources of
-  truth drift the moment one is edited.
-- **Per-worktree** (rare — work that's genuinely scoped to a single worktree) →
-  use the worktree's slug. Most worktree work is project-scoped, not
-  worktree-scoped; default to parent project's slug unless there's a reason.
+**Cross-machine sync.** `git push` / `git pull` is the bus. Work on machine A,
+commit memory, push; pull on machine B and the agent picks up where you left off.
 
-The `HANDOFF.md` `## Related memory paths` mechanism + `/resume` skill solve
-cross-slug discovery without forcing duplication. Use them; don't work around them.
+**Cross-project memory.** When a fact applies to *another* project (cross-cutting
+agent-meta-knowledge), file it in *that* project's repo, not this one. The repo
+boundary is the scope boundary. If you genuinely need a fact in two repos, write
+it twice — duplicated context is cheap; cross-repo pointers rot.
 
-When uncertain: pick the project where the work artifact is being produced. Let
-`HANDOFF.md` handle the cross-references.
+**Cross-machine personal preferences** (always-on `user/` profile that you'd want
+in every project regardless of repo) are the one case where repo-tracked memory
+is awkward. Two pragmatic moves: (a) put them in your shell or editor config and
+let agents read them via system prompt, (b) accept that personal preferences get
+written into each repo's `agents/memory/user/` and lived with as the cost of
+repo-as-bus simplicity.
 
 ## Where citations must live
 

@@ -38,7 +38,7 @@ start a server, or modify the user's shell. Everything is files.
 `manifest.json` (if present); if it contains `"name": "cairn"`, OR there's a
 `LAWS.md` at the repo root titled `Laws — cairn`, **STOP**. Adopting cairn
 into its own repo creates duplicate artifacts (cairn's project-root `LAWS.md`
-+ a new `<project>/.claude/LAWS.md` from the install; cairn's README + a new
++ a new `<project>/agents/LAWS.md` from the install; cairn's README + a new
 `<project>/CLAUDE.md`) and recursive confusion. Tell the user:
 
 > *"You're running adopt inside cairn's own repo. Cairn doesn't adopt itself —
@@ -152,7 +152,8 @@ or "I just want the minimum") — that's the moment to surface tier alternatives
 at first-time adoption. At that point, describe the tiers and ask which they prefer.
 
 **Fast-path check** — before walking the file list, look for a local version marker at
-`{projectClaude}/cairn-version`:
+`{projectRoot}/agents/cairn-version` (or legacy `{projectClaude}/cairn-version` for
+pre-v0.14.0 installs):
 
 - **Not found** → fresh install. Proceed to Step 3.
 - **Found and matches `manifest.version`** → report *"cairn vX.Y.Z already installed at
@@ -182,7 +183,7 @@ layers**, each with different tool access patterns — use the right one:
   mount** at a path like `/sessions/<session-name>/mnt/<folder>/`. File tools often can't
   write here — writes fail with *"blocked in this session — resolves to a protected
   location."* **Fall back to the shell** with `curl` to HTTP-fetch and redirect to disk:
-  `curl -sL {rawBase}/files/LAWS.md > .claude/LAWS.md`. Run `pwd` in the shell first to
+  `curl -sL {rawBase}/files/agents/LAWS.md > agents/LAWS.md`. Run `pwd` in the shell first to
   confirm the working directory resolves to the project root. Reads via file tools usually
   still work; only writes need the shell. **Do not** use heredocs to inline file content
   — fetch every file via HTTP (see Step 5 for the right-vs-wrong pattern).
@@ -205,24 +206,24 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.13.1 — install preview (tier: full)
+cairn v0.14.0 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
-  ~/.claude/memory/MEMORY.md                 — memory lookup entry point
+  <project>/agents/memory/MEMORY.md          — memory lookup entry point (git-tracked)
 
 SCAFFOLDING — shape is important, content grows with you:
-  <project>/.claude/LAWS.md                  — schema + 6 seed laws (grow)
+  <project>/agents/LAWS.md                   — schema + 6 seed laws (grow)
   ~/.claude/skills/reframe/SKILL.md          — collaboration: rotate problem axis (grow)
   ~/.claude/skills/bridge/SKILL.md           — collaboration: cross-session relay (grow)
   ~/.claude/skills/advocate/SKILL.md         — collaboration: end-user perspective (grow)
   ~/.claude/skills/resume/SKILL.md           — cross-perspective: detect prior-session context (grow)
   ~/.claude/skills/peer-review/SKILL.md      — cross-perspective: external review of a change set (grow)
   ~/.claude/skills/spec/SKILL.md             — artifact: structured executor handoff (grow)
-  ~/.claude/memory/user/README.md            — user memory conventions (structure)
-  ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
-  ~/.claude/memory/project/README.md         — project memory conventions (structure)
-  ~/.claude/memory/reference/README.md       — reference memory conventions (structure)
+  <project>/agents/memory/user/README.md     — user memory conventions (structure)
+  <project>/agents/memory/feedback/README.md — feedback memory conventions (structure)
+  <project>/agents/memory/project/README.md  — project memory conventions (structure)
+  <project>/agents/memory/reference/README.md — reference memory conventions (structure)
   ~/.claude/skills/README.md                 — skills authoring guide (structure)
   ~/.claude/skills/tour/SKILL.md             — maintenance: onboarding (structure)
   ~/.claude/skills/prune/SKILL.md            — maintenance: hygiene (structure)
@@ -235,7 +236,7 @@ OPTIONAL — ergonomic; delete if you prefer less surface:
   ~/.claude/skills/feedback/SKILL.md         — maintenance: file feedback (full)
 
 Will also write (post-install):
-  <project>/.claude/cairn-version            — version marker for re-adoption fast-path
+  <project>/agents/cairn-version             — version marker for re-adoption fast-path
 
 Proceed? (y/n)
 ```
@@ -272,13 +273,13 @@ reading these instructions, requiring a manual cleanup pass. Don't repeat that.
 
    ✅ **Right:**
    ```
-   curl -sL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
+   curl -sL {rawBase}/files/agents/LAWS.md > {projectRoot}/agents/LAWS.md
    ```
    or with your environment's HTTP-fetch tool, write the fetched bytes directly.
 
    ❌ **Wrong:**
    ```
-   cat > {projectClaude}/LAWS.md << 'EOF'
+   cat > {projectRoot}/agents/LAWS.md << 'EOF'
    # Laws — [Project / Effort Name]
    ... [full file body regenerated from context]
    EOF
@@ -298,7 +299,7 @@ reading these instructions, requiring a manual cleanup pass. Don't repeat that.
 — see Step 3), still HTTP-fetch — just pipe through the shell instead of file tools:
 
 ```
-curl -sL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
+curl -sL {rawBase}/files/agents/LAWS.md > {projectRoot}/agents/LAWS.md
 ```
 
 The shell fallback is about *where you write*, not *what you write*. Never let the
@@ -310,14 +311,14 @@ continue silently.
 ### Step 6 — Write version marker, then report
 
 **First, write the version marker.** After a successful install (or upgrade), write
-`{projectClaude}/cairn-version` containing just the installed version string (e.g. `0.3.3`).
+`{projectRoot}/agents/cairn-version` containing just the installed version string (e.g. `0.14.0`).
 No frontmatter, no comments — just the version on a single line. Create the parent
 directory if it doesn't exist. This enables the Step 2 fast-path on future re-adoptions.
 
 **Then report to the user:**
 
 ```
-cairn v0.13.1 installed.
+cairn v0.14.0 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -353,7 +354,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.13.1/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.14.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -460,8 +461,8 @@ bump may trigger multiple cases.
 | `src` | `dest` (Claude Code) | `role` | `tier` |
 |---|---|---|---|
 | `files/CLAUDE.md` | `<project>/CLAUDE.md` | essential | seed |
-| `files/memory/MEMORY.md` | `~/.claude/memory/MEMORY.md` | essential | seed |
-| `files/LAWS.md` | `<project>/.claude/LAWS.md` | scaffolding | grow |
+| `files/agents/memory/MEMORY.md` | `<project>/agents/memory/MEMORY.md` | essential | seed |
+| `files/agents/LAWS.md` | `<project>/agents/LAWS.md` | scaffolding | grow |
 | `files/skills/reflect/SKILL.md` | `~/.claude/skills/reflect/SKILL.md` | optional | grow |
 | `files/skills/plan/SKILL.md` | `~/.claude/skills/plan/SKILL.md` | optional | grow |
 | `files/skills/note/SKILL.md` | `~/.claude/skills/note/SKILL.md` | optional | grow |
@@ -471,10 +472,10 @@ bump may trigger multiple cases.
 | `files/skills/bridge/SKILL.md` | `~/.claude/skills/bridge/SKILL.md` | scaffolding | grow |
 | `files/skills/advocate/SKILL.md` | `~/.claude/skills/advocate/SKILL.md` | scaffolding | grow |
 | `files/skills/resume/SKILL.md` | `~/.claude/skills/resume/SKILL.md` | scaffolding | grow |
-| `files/memory/user/README.md` | `~/.claude/memory/user/README.md` | scaffolding | structure |
-| `files/memory/feedback/README.md` | `~/.claude/memory/feedback/README.md` | scaffolding | structure |
-| `files/memory/project/README.md` | `~/.claude/memory/project/README.md` | scaffolding | structure |
-| `files/memory/reference/README.md` | `~/.claude/memory/reference/README.md` | scaffolding | structure |
+| `files/agents/memory/user/README.md` | `<project>/agents/memory/user/README.md` | scaffolding | structure |
+| `files/agents/memory/feedback/README.md` | `<project>/agents/memory/feedback/README.md` | scaffolding | structure |
+| `files/agents/memory/project/README.md` | `<project>/agents/memory/project/README.md` | scaffolding | structure |
+| `files/agents/memory/reference/README.md` | `<project>/agents/memory/reference/README.md` | scaffolding | structure |
 | `files/skills/README.md` | `~/.claude/skills/README.md` | scaffolding | structure |
 | `files/skills/tour/SKILL.md` | `~/.claude/skills/tour/SKILL.md` | scaffolding | structure |
 | `files/skills/prune/SKILL.md` | `~/.claude/skills/prune/SKILL.md` | scaffolding | structure |
@@ -577,3 +578,39 @@ legacy `/review` skill name still points at the same gap-class (external-perspec
 review). Convert to `/peer-review` at your leisure; there's no audit gate against
 legacy `/review` citations because the skill name isn't a tracked-citation form (slug
 citations like `[LAW pre-merge-review]` are unaffected).
+
+## v0.13.x → v0.14.0 agents/ namespace migration
+
+v0.14.0 introduces an `agents/` umbrella in the project root for cairn's state files
+(LAWS.md, memory tree, version marker). Previously these lived inside `.claude/` (a
+vendor namespace) and `~/.claude/memory/` (vendor user-space). Vendor folders are
+"scope creep buckets" — anything Anthropic, Google, or another vendor decides to add
+ends up there, and we don't control the semantics. `agents/` is cairn-controlled and
+the name itself declares scope: anything not for agents shouldn't land there.
+
+**Migration is an additive install, not a destructive move.** v0.14.0's install lays
+new files at the new paths; legacy files at old paths remain until you remove them.
+
+**For re-adopters from any v0.x version with files at legacy paths:**
+
+- `<project>/.claude/LAWS.md` → migrate to `<project>/agents/LAWS.md`
+- `<project>/.claude/cairn-version` → migrate to `<project>/agents/cairn-version`
+- `~/.claude/memory/MEMORY.md` and typed READMEs → migrate to `<project>/agents/memory/...`
+
+For a solo adopter, the simplest path is one shell pass:
+
+```bash
+mkdir -p agents/memory
+[ -f .claude/LAWS.md ] && git mv .claude/LAWS.md agents/LAWS.md
+[ -f .claude/cairn-version ] && mv .claude/cairn-version agents/cairn-version
+# Memory was at ~/.claude/projects/<slug>/memory/ — copy to agents/memory/ if you want it git-tracked:
+# cp -r ~/.claude/projects/<slug>/memory/* agents/memory/   # solo dev choice; deferred for most
+git rm -rf .claude/  # if .claude/ now only holds vendor files (settings.json, etc.) you keep, skip this
+```
+
+**For multi-machine continuity:** the move puts memory in the repo, so `git push`/`git pull`
+becomes the cross-machine sync. This is the v0.14.0 unlock — git is now the memory bus.
+
+**Backward compat:** cairn skills don't read legacy `.claude/LAWS.md` or `~/.claude/memory/MEMORY.md`
+after v0.14.0. Migrate before re-adopting v0.14.0+ skills, or expect the agent to not find
+your old state.

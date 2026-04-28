@@ -69,10 +69,10 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 
 | File | Purpose |
 |---|---|
-| `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
-| `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `<project>/agents/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
+| `<project>/agents/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene. Git-tracked under `agents/`: the repo IS the memory bus. |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format; vendor folder because Claude Code's loader requires this path). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -290,6 +290,20 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.14.0 — `agents/` umbrella + git as memory bus. Memory and laws move out of vendor
+namespaces (`.claude/`, `~/.claude/memory/`) into a cairn-controlled `agents/` directory
+at the project root. The folder name encodes scope — anything not for agents shouldn't
+land there. Repo IS the memory bus: `git push` / `git pull` becomes cross-machine sync,
+`git log -- agents/memory/` is the activity feed, merge conflicts resolve like any other
+file. Drops slug policy and cross-slug HANDOFF pointers — the repo boundary IS the
+memory boundary. Skill format files (SKILL.md) stay at `~/.claude/skills/` because the
+loader requires that path; everything cairn-format is now under `agents/`. Migration:
+re-adopters move `.claude/LAWS.md` → `agents/LAWS.md`, `.claude/cairn-version` →
+`agents/cairn-version`, and (optionally) copy user-space memory at
+`~/.claude/projects/<slug>/memory/` into `agents/memory/` if they want it git-tracked.
+See migration note in `adopt.md`. Posture per `[MEM project/cairn-blend-strategy-pillars]`:
+stay above the storage layer in a vendor-neutral home. Plugin packaging deferred.
 
 v0.13.1 — Renames `/review` to `/peer-review` to disambiguate from Claude Code's
 built-in `/review` skill. The bare `/review` invocation in any Claude Code session

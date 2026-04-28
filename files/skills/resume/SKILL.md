@@ -57,30 +57,30 @@ If multiple HANDOFF.md files exist, prefer the one most recently modified.
 If the workspace is part of a multi-repo setup (e.g. cairn alongside cwar), also check
 adjacent project roots — a `HANDOFF.md` in a sibling project may be the real bridge.
 
-### 2. Memory directory probe (worktree-aware + HANDOFF-aware)
+### 2. Memory directory probe
 
-Memory may be project-scoped, user-global, or per-worktree depending on Claude Code
-configuration. **Probe multiple slugs.** Common locations:
+As of cairn v0.14.0, memory lives in the repo at `<project>/agents/memory/`. Read:
 
-- `~/.claude/memory/` (user-global)
-- `~/.claude/projects/<current-cwd-slug>/memory/` (project-scoped, current slug)
-- `~/.claude/projects/<parent-cwd-slug>/memory/` (parent slug — important for worktrees)
+- `<project>/agents/memory/MEMORY.md` — index entry point
+- `<project>/agents/memory/{user,feedback,project,reference}/*.md` — typed entries
 
-The slug is derived from the absolute path with separators replaced: `C:\Users\foo\bar`
-becomes `C--Users-foo-bar`. For a worktree at `<project>/.claude/worktrees/<name>/`, the
-parent slug points at `<project>` itself.
+For multi-machine continuity, run `git pull` first if the repo has unpulled commits —
+memory was committed by the previous session and is in upstream.
 
-**ALSO: if HANDOFF.md (from step 1) contains a `## Related memory paths` section,
-probe those paths too.** This is how cross-project memory bridges work — when a session
-in project A produced memory at project B's slug, HANDOFF.md in A declares the pointer
-so `/resume` knows to follow it. Example HANDOFF.md content:
+**Recent activity probe:** read `git log --oneline -20 -- agents/memory/` to see what
+was written/changed in the last few sessions. Surface "teammate or prior-session-X
+wrote `project/Y` 2h ago" alongside the loaded content.
 
-```markdown
-## Related memory paths
+**Legacy probe (pre-v0.14.0 installs only).** If `<project>/agents/memory/` doesn't
+exist but `~/.claude/projects/<slug>/memory/` does, the repo hasn't been migrated to
+the v0.14.0 namespace. Read from the legacy path and tell the user: *"Legacy
+user-space memory found at `~/.claude/projects/<slug>/memory/` — consider migrating
+to `<project>/agents/memory/` (v0.14.0 namespace) so it's git-tracked and
+cross-machine."*
 
-- `~/.claude/projects/C--Users-foo-projects-other-project/memory/` — primary memory
-  for this effort lives at this slug, not the current one
-```
+**HANDOFF.md cross-references.** If HANDOFF.md (from step 1) contains a `## Related
+memory paths` section pointing at other repos or paths, follow them. Cross-repo
+memory pointers exist when a fact applies to multiple projects.
 
 If memory is found at a sibling/parent/declared slug but not the current one, **call
 this out explicitly in the orientation** — it's a namespace-fragmentation finding the

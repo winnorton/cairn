@@ -3,7 +3,7 @@
 Non-negotiable rules for developing cairn itself. Violating one will break the project
 or the workflow.
 
-This file is cairn's own LAWS, distinct from `files/LAWS.md` (which is the *template*
+This file is cairn's own LAWS, distinct from `files/agents/LAWS.md` (which is the *template*
 shipped to adopters). It was added in v0.9.1 after the maintainer observed that cairn
 shipped a LAWS.md template for others without having one itself — the framework wasn't
 eating its own dog food.
@@ -25,7 +25,7 @@ Every law in this file follows the same shape:
 **How to apply:** <when the rule kicks in>
 ```
 
-The five meta-rules from `files/LAWS.md` apply here too: observable not vibes, slug-is-
+The five meta-rules from `files/agents/LAWS.md` apply here too: observable not vibes, slug-is-
 identity, Why + How to apply mandatory, laws expire, cite in durable output.
 
 ---
