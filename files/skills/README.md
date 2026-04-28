@@ -87,10 +87,11 @@ gap class that the work-author cannot see from inside their own session.
 
 - `resume/` — fresh session inheriting context from a prior one (defeats
   namespace-fragmentation between sessions).
-- `review/` — fresh agent reading a change set cold (catches inconsistency-class bugs
-  the author missed because they're "too close").
+- `peer-review/` — fresh agent reading a change set cold (catches inconsistency-class bugs
+  the author missed because they're "too close"). Named `peer-review` to disambiguate from
+  Claude Code's built-in `/review` skill.
 
-`/reflect` is post-hoc same-agent (different gap class than these); `/review` is
+`/reflect` is post-hoc same-agent (different gap class than these); `/peer-review` is
 pre-ship cross-agent. Both can fire on the same change set.
 
 ### Artifact skills — produce in-tree planning files

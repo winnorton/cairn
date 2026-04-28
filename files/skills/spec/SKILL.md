@@ -177,6 +177,6 @@ For `--from` promotions: same, plus the breadcrumb confirmation.
   intent paragraph stays preserved as a breadcrumb in `notes/_promoted/`.
 - `/plan` — cairn's behavioral pre-action alignment skill. Different verb, different
   output (conversational, not a file). `/plan` runs before; `/spec` runs after.
-- `/review` — when the spec's work is shipped and you want a fresh agent to read the
-  change set cold before merge. Catches inconsistency-class bugs the spec author and
-  executor missed because they were "too close."
+- `/peer-review` — when the spec's work is shipped and you want a fresh agent to read
+  the change set cold before merge. Catches inconsistency-class bugs the spec author
+  and executor missed because they were "too close."

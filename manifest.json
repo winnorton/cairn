@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code, Antigravity, and Cowork. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
@@ -93,12 +93,12 @@
       "description": "Pre-emptive intent capture — file a quick thought as a dated note in the project repo. Distinct from /reflect (post-hoc) and from cross-session memory (user-space). Includes the two-destinations disambiguation table."
     },
     {
-      "src": "files/skills/review/SKILL.md",
-      "dest": "{userSkills}/review/SKILL.md",
+      "src": "files/skills/peer-review/SKILL.md",
+      "dest": "{userSkills}/peer-review/SKILL.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "grow",
-      "description": "External-perspective review of a change set — reads diff PLUS adjacent unchanged files to catch inconsistency-class bugs the work-author missed. Distinct from /reflect (post-hoc same-agent)."
+      "description": "External-perspective review of a change set by a fresh agent who didn't author it — reads diff PLUS adjacent unchanged files to catch inconsistency-class bugs the work-author missed. Distinct from /reflect (post-hoc same-agent). Named /peer-review to disambiguate from Claude Code's built-in /review skill."
     },
     {
       "src": "files/skills/reframe/SKILL.md",
@@ -223,7 +223,7 @@
   "tiers": {
     "description": "Graduated adoption scope. Default install is 'full' (everything). Users who want a minimal, agent-portable habitat can request a lower tier via `adopt ... --tier <name>`. Each tier is cumulative — grow includes seed, structure includes grow, full includes structure.",
     "seed": "Agent-neutral core: CLAUDE.md + memory/MEMORY.md. Cross-session continuity, works with any agent (Claude, GPT, Gemini, local LLM) that can read markdown. The two-file minimum viable habitat.",
-    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect/note maintenance skills, the collaboration skills (reframe, bridge, advocate), the cross-perspective skills (resume, review). Still reasonably generic — content a non-Claude agent can use with a little orientation.",
+    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect/note maintenance skills, the collaboration skills (reframe, bridge, advocate), the cross-perspective skills (resume, peer-review). Still reasonably generic — content a non-Claude agent can use with a little orientation.",
     "structure": "Adds cairn's native hygiene loop: typed memory subdirectories, citation conventions, tour/prune/audit skills. Starts to assume cairn-aware tooling and conventions.",
     "full": "Adds cairn-ecosystem integrations like the feedback skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized; default unless user requests a lower tier."
   },

@@ -205,7 +205,7 @@ Before writing anything, show the user a compact preview:
 **For a `full` install** (default), group by role so users see what matters most:
 
 ```
-cairn v0.13.0 — install preview (tier: full)
+cairn v0.13.1 — install preview (tier: full)
 
 ESSENTIAL — load-bearing from day one (seed tier):
   <project>/CLAUDE.md                        — project context (read every session)
@@ -217,7 +217,7 @@ SCAFFOLDING — shape is important, content grows with you:
   ~/.claude/skills/bridge/SKILL.md           — collaboration: cross-session relay (grow)
   ~/.claude/skills/advocate/SKILL.md         — collaboration: end-user perspective (grow)
   ~/.claude/skills/resume/SKILL.md           — cross-perspective: detect prior-session context (grow)
-  ~/.claude/skills/review/SKILL.md           — cross-perspective: external review of a change set (grow)
+  ~/.claude/skills/peer-review/SKILL.md      — cross-perspective: external review of a change set (grow)
   ~/.claude/skills/spec/SKILL.md             — artifact: structured executor handoff (grow)
   ~/.claude/memory/user/README.md            — user memory conventions (structure)
   ~/.claude/memory/feedback/README.md        — feedback memory conventions (structure)
@@ -317,7 +317,7 @@ directory if it doesn't exist. This enables the Step 2 fast-path on future re-ad
 **Then report to the user:**
 
 ```
-cairn v0.13.0 installed.
+cairn v0.13.1 installed.
 
 Created:
   <list of files actually written, absolute paths>
@@ -353,7 +353,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.13.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.13.1/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -466,7 +466,7 @@ bump may trigger multiple cases.
 | `files/skills/plan/SKILL.md` | `~/.claude/skills/plan/SKILL.md` | optional | grow |
 | `files/skills/note/SKILL.md` | `~/.claude/skills/note/SKILL.md` | optional | grow |
 | `files/skills/spec/SKILL.md` | `~/.claude/skills/spec/SKILL.md` | scaffolding | grow |
-| `files/skills/review/SKILL.md` | `~/.claude/skills/review/SKILL.md` | scaffolding | grow |
+| `files/skills/peer-review/SKILL.md` | `~/.claude/skills/peer-review/SKILL.md` | scaffolding | grow |
 | `files/skills/reframe/SKILL.md` | `~/.claude/skills/reframe/SKILL.md` | scaffolding | grow |
 | `files/skills/bridge/SKILL.md` | `~/.claude/skills/bridge/SKILL.md` | scaffolding | grow |
 | `files/skills/advocate/SKILL.md` | `~/.claude/skills/advocate/SKILL.md` | scaffolding | grow |
@@ -538,3 +538,42 @@ If you only had cairn's seed laws and never reordered them, the v0.12.x mapping 
 
 `/audit` will report any remaining numeric citations as "legacy citations needing manual
 conversion to slug" — finishable in one sweep.
+
+## v0.13.0 → v0.13.1 /review → /peer-review rename note
+
+v0.13.1 renames cairn's `/review` skill to `/peer-review` to disambiguate from Claude
+Code's built-in `/review` skill. In any Claude Code session, the bare `/review` trigger
+resolves to the built-in — cairn's external-perspective review skill needs a distinct
+namespace to be reachable.
+
+**For re-adopters from any prior version that installed `/review`** (v0.12.1 onward):
+the v0.13.1 install will write `~/.claude/skills/peer-review/SKILL.md` alongside any
+existing `~/.claude/skills/review/SKILL.md` (because `create-if-absent` only checks the
+new path). The legacy file lingers and creates trigger ambiguity until cleaned up. The
+agent should detect the legacy file and offer to remove it during re-adoption:
+
+1. **Detect:** check whether `~/.claude/skills/review/SKILL.md` exists in the user's
+   resolved `{userSkills}` path.
+2. **Inform the user:**
+
+   > *"Detected legacy `review` skill from a prior cairn install at
+   > `~/.claude/skills/review/SKILL.md`. v0.13.1 renames this skill to `/peer-review`
+   > to disambiguate from Claude Code's built-in `/review`. The skill body is
+   > identical; only the directory name changed. Remove the legacy file? (y/n)"*
+
+3. **On y:** delete `~/.claude/skills/review/SKILL.md` and the empty parent
+   `~/.claude/skills/review/` directory. Report: *"Cleaned up legacy `review/`
+   directory."*
+4. **On n:** leave the file. Tell the user: *"Leaving the legacy file in place. Both
+   names will be discoverable to the agent — `/review` (cairn legacy + Claude Code
+   built-in, colliding) and `/peer-review` (cairn). Re-run cleanup when ready."*
+
+Skip the prompt entirely if `~/.claude/skills/review/SKILL.md` doesn't exist (no legacy
+install). If you've made local edits to the skill body, diff against the new
+`peer-review/SKILL.md` first and merge by hand before deleting.
+
+**For citations in your own notes / commits / research docs:** any reference to the
+legacy `/review` skill name still points at the same gap-class (external-perspective
+review). Convert to `/peer-review` at your leisure; there's no audit gate against
+legacy `/review` citations because the skill name isn't a tracked-citation form (slug
+citations like `[LAW pre-merge-review]` are unaffected).
