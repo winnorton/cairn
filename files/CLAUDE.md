@@ -36,7 +36,7 @@
 
 ## Hard rules
 
-See [LAWS.md](.claude/LAWS.md) for the non-negotiable rules for this effort.
+See [LAWS.md](agents/LAWS.md) for the non-negotiable rules for this effort.
 
 ## Notes vs cross-session memory
 
@@ -46,11 +46,14 @@ they answer different questions:
 - **`/note`** writes to `docs/notes/` in *this repo*. The note travels with the codebase,
   is visible to anyone who clones, and is right for thoughts bound to a specific
   file/system in this project. File-bound, repo-visible.
-- **Cross-session memory** writes to `~/.claude/memory/` in *user-space*. Not in version
-  control, not visible to cloners, agent-only. Right for facts that shape future agent
-  reasoning about this project regardless of what file they're touching.
+- **Cross-session memory** writes to `agents/memory/` in *this repo* (typed: `user/`,
+  `feedback/`, `project/`, `reference/`). Git-tracked, visible to anyone who clones,
+  agent-readable across sessions. Right for facts that shape future agent reasoning
+  about this project regardless of what file they're touching. Cross-machine sync
+  comes free with `git push`/`git pull`.
 
-When in doubt, prefer `/note` — repo-visible recovers cheaply; user-space-buried doesn't.
+Both destinations are repo-tracked. The distinction is *file-bound observation*
+(`/note`) vs *facts that shape future reasoning* (memory).
 
 ## Related context
 

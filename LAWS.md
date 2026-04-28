@@ -3,7 +3,7 @@
 Non-negotiable rules for developing cairn itself. Violating one will break the project
 or the workflow.
 
-This file is cairn's own LAWS, distinct from `files/LAWS.md` (which is the *template*
+This file is cairn's own LAWS, distinct from `files/agents/LAWS.md` (which is the *template*
 shipped to adopters). It was added in v0.9.1 after the maintainer observed that cairn
 shipped a LAWS.md template for others without having one itself — the framework wasn't
 eating its own dog food.
@@ -25,7 +25,7 @@ Every law in this file follows the same shape:
 **How to apply:** <when the rule kicks in>
 ```
 
-The five meta-rules from `files/LAWS.md` apply here too: observable not vibes, slug-is-
+The five meta-rules from `files/agents/LAWS.md` apply here too: observable not vibes, slug-is-
 identity, Why + How to apply mandatory, laws expire, cite in durable output.
 
 ---
@@ -167,19 +167,19 @@ Companion to cwar's NEW_LAWS Law 13 (Serialization Boundary), which captures
 the technical-content layer of the same episode. This law captures the
 process-meta layer.
 
-### Route release-shaped PRs through `/review` by a fresh-perspective agent before merge *(slug: pre-merge-review)*
+### Route release-shaped PRs through `/peer-review` by a fresh-perspective agent before merge *(slug: pre-merge-review)*
 
 **Why:** Single-pass review by the work-author re-confirms the author's mental
 model rather than challenging it. The author looks where they expect problems —
 the files they touched. The blind-spot class lives in *adjacent unchanged files*
 the author didn't touch this session. v0.12.x produced the canonical evidence:
 five separate misses across four releases, every one in the adjacent-files
-class, every one caught only by a fresh `/review` session. v0.12.0/.1 missed
+class, every one caught only by a fresh `/peer-review` session. v0.12.0/.1 missed
 adopt.md install-template version strings (user caught), v0.12.1 missed
-`/spec`'s docs propagation, `/review`'s own cwar coupling, the cairn-slug
-MEMORY.md index entry, and the plan-archival step (fresh `/review` caught all
-four). The same release that introduced `/review` shipped with the exact
-gap-class `/review` is meant to catch — five times. The law forces the gate
+`/spec`'s docs propagation, `/peer-review`'s own cwar coupling, the cairn-slug
+MEMORY.md index entry, and the plan-archival step (fresh `/peer-review` caught all
+four). The same release that introduced `/peer-review` shipped with the exact
+gap-class `/peer-review` is meant to catch — five times. The law forces the gate
 the skill alone doesn't enforce.
 
 **How to apply:** Before merging any PR on cairn that ships a release version
@@ -189,16 +189,16 @@ the skill alone doesn't enforce.
 1. Open the PR.
 2. Spawn a **fresh agent session** — different session, no shared context with
    the PR's author. The fresh agent must not have been in the build.
-3. Have the fresh agent invoke `/review` against the PR (the skill's anti-trigger
+3. Have the fresh agent invoke `/peer-review` against the PR (the skill's anti-trigger
    prevents author-self-review; that's the point).
 4. Address findings before merge, or document why they're deferred.
 5. Merge only after the chain completes.
 
 This is for cairn's *own* dev discipline, not for adopters' habits. (Adopters
-ship `/review` as a skill they invoke ad-hoc; cairn's release process treats it
+ship `/peer-review` as a skill they invoke ad-hoc; cairn's release process treats it
 as mandatory.) If the law fires often enough that compliance becomes routine,
 escalate to a mechanical gate per `[MEM cwar feedback/escalate-rule-to-mechanical-gate]`
-— a pre-merge hook that checks for a `/review`-shaped citation in the PR body
+— a pre-merge hook that checks for a `/peer-review`-shaped citation in the PR body
 or the most recent commit message before allowing merge.
 
 ---

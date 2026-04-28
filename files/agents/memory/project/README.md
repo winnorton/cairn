@@ -12,24 +12,15 @@ conversational replies that don't reach disk produce no audit signal.
 **Hygiene:** time-driven. Project state goes stale fast. `/prune` should visit project
 memory more often than other types.
 
-## Where to save: flat vs project-subdir
+## Where to save
 
-Layout depends on whether the memory store is shared across multiple projects.
+Project memory lives at `<project>/agents/memory/project/` (since v0.14.0 — repo IS
+the scope, no slug needed). Keep flat: `project/<entry>.md`. Citation:
+`[MEM project/<name>]`.
 
-- **Slug-separated stores** (Claude Code per-slug `~/.claude/projects/<slug>/memory/`)
-  — keep flat. The slug already separates projects; subdirs would duplicate that. Path
-  shape: `project/<entry>.md`. Citation: `[MEM project/<name>]`.
-
-- **Cross-project user-global stores** (e.g. Antigravity's
-  `~/.gemini/antigravity/memory/`, or `~/.claude/memory/` when used as a global
-  catch-all) — use a `project/<project-name>/` subdirectory layer. Every workspace
-  shares one tree, so without subdirs, entries from cwar-engine, cairn, and any
-  side-project pile flat and become unsearchable past ~20 entries. Path shape:
-  `project/<projectname>/<entry>.md`. Citation: `[MEM project/<projectname>/<name>]`.
-
-The `<projectname>` is conventionally the producing workspace's directory basename
-(e.g. `cwar-engine`, `cairn-mcp-server`). Pick by who shares the store: if memory
-is *only this project's*, flat; if *multiple projects* share the tree, subdir.
+Cross-project memory: file in *that* project's repo, not this one. The repo boundary
+is the memory boundary. If you genuinely need a fact in two repos, write it twice —
+cross-repo pointers rot faster than duplicated text.
 
 ## When to save project memory
 

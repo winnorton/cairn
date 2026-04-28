@@ -93,7 +93,7 @@ Do NOT invoke for:
      `path.basename(cwd)`, e.g. `cwar-engine`, `cairn`).
 
    When uncertain, default to subdir-by-project for cross-process consumers.
-   See `files/memory/project/README.md` for the layout rule.
+   See `files/agents/memory/project/README.md` for the layout rule.
 
 7. **Offer transport if the consumer path is locally writable.** After writing distillate,
    check whether the declared consumer path (e.g. `~/.gemini/antigravity/memory/`) is a
