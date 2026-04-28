@@ -1,20 +1,21 @@
 ---
-name: review
-description: External-perspective review of a change set before ship. Reads the diff PLUS
-  adjacent unchanged files that the diff expects to be consistent with, and flags
-  inconsistency-class bugs the work-author missed because they were "too close" to the
-  change. Use when the user says "review this PR", "fresh eyes on", "external review of",
-  "did I miss anything", "check this branch before merge", or hands you a PR/branch they
-  did not author. Distinct from /reflect — /review is pre-ship cross-agent fresh-perspective;
+name: peer-review
+description: External-perspective review of a change set before ship by a fresh agent who
+  did not author the change. Reads the diff PLUS adjacent unchanged files that the diff
+  expects to be consistent with, and flags inconsistency-class bugs the work-author missed
+  because they were "too close" to the change. Use when the user says "peer-review this
+  PR", "review this PR", "fresh eyes on", "external review of", "did I miss anything",
+  "check this branch before merge", or hands you a PR/branch they did not author. Distinct
+  from /reflect — /peer-review is pre-ship cross-agent fresh-perspective;
   /reflect is post-session same-agent distillate. Different gap classes; both can fire on
   the same change. Do NOT use for the agent's own in-flight work — fresh perspective
   requires you to NOT have been the author. If you wrote the change you're being asked
   to review, decline and route the user to a different agent or session.
 ---
 
-# Review
+# Peer Review
 
-External-perspective review of a change set. Catches the inconsistency-class bugs that
+External-perspective review of a change set by a fresh agent who didn't author it. Catches the inconsistency-class bugs that
 work-authors miss because they're anchored on what they touched and have a calcified
 mental model of what the unchanged files expect.
 
@@ -29,11 +30,13 @@ re-confirm the author's mental model rather than challenge it. The author looks 
 they *expect* problems to be — which is exactly the set of files they touched. The
 gap class lives in files they didn't touch. A fresh agent reads those cold.
 
-Cairn ships this skill in v0.12.x. Its first real test was a v0.12.x doc patch:
-the release that introduced `/review` (v0.12.1) shipped with stale tier counts in
-`adopt.md`, a "three categories" claim in README that v0.12.0 had already invalidated,
-and cwar-coupled worked examples in this very skill body — all caught by a fresh
-`/review` session reading the v0.12.x arc cold. The patch landed as v0.12.3.
+Cairn first shipped this skill in v0.12.1 (originally named `/review`; renamed to
+`/peer-review` in v0.13.1 to disambiguate from Claude Code's built-in `/review` skill).
+Its first real test was a v0.12.x doc patch: the release that introduced the skill
+shipped with stale tier counts in `adopt.md`, a "three categories" claim in README that
+v0.12.0 had already invalidated, and cwar-coupled worked examples in this very skill
+body — all caught by a fresh session reading the v0.12.x arc cold. The patch landed
+as v0.12.3.
 
 ## When to use
 
@@ -48,13 +51,13 @@ and cwar-coupled worked examples in this very skill body — all caught by a fre
 **Anti-trigger — do NOT invoke when:**
 - You authored the change you're being asked to review. Fresh perspective is the whole
   point; reviewing your own work re-creates the blind-spot you're supposed to catch.
-  Tell the user: *"I wrote this — for the gap-class /review catches, you need a session
+  Tell the user: *"I wrote this — for the gap-class /peer-review catches, you need a session
   that wasn't in the build. Want me to spawn one, or pick a different agent?"*
 - The work is in-flight (uncommitted, unstable, scope still moving). Wait until there's
   a coherent change set to read.
-- The user wants self-reflection on completed work — that's `/reflect`, not `/review`.
+- The user wants self-reflection on completed work — that's `/reflect`, not `/peer-review`.
 
-## What `/review` looks for (the gap-classes)
+## What `/peer-review` looks for (the gap-classes)
 
 Ranked by what fresh perspective uniquely catches:
 
@@ -93,7 +96,7 @@ mental model is encoded in what they did and didn't change.
 
 ### 3. Read adjacent UNCHANGED files (the blind-spot class)
 
-This is the step that distinguishes `/review` from `/reflect`. For each non-trivial
+This is the step that distinguishes `/peer-review` from `/reflect`. For each non-trivial
 concept introduced or modified in the diff:
 
 - Find files that **reference** the changed concept but were **not** in the diff.
@@ -165,7 +168,7 @@ Quality bar:
 
 - **`/reflect`** is post-hoc, same-agent. Different gap class. Both can fire on the
   same change.
-- **`/audit`** scans citations and structural integrity. `/review` reads for
+- **`/audit`** scans citations and structural integrity. `/peer-review` reads for
   judgement-class bugs. Use both for high-stakes changes.
-- **`/note`** is where deferred items from a `/review` should land if the author
+- **`/note`** is where deferred items from a `/peer-review` should land if the author
   defers them. The review surfaces them; `/note` files them so they don't evaporate.

@@ -49,7 +49,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.13.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.13.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -72,7 +72,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `review`), and **artifact** (`note`, `spec`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -172,7 +172,7 @@ serve each:
   from cross-session memory (user-space). Cheap to write, cheap to delete, cheap to
   promote when work materializes.
 - **External-perspective review** (catching inconsistency-class bugs the work-author
-  missed): via `/review`. Reads the diff PLUS adjacent unchanged files that the diff
+  missed): via `/peer-review`. Reads the diff PLUS adjacent unchanged files that the diff
   expects to be consistent with. Distinct from `/reflect` (which is same-agent post-hoc).
 
 These are **collaboration**, **cross-perspective**, and **artifact** skills, distinct
@@ -201,8 +201,9 @@ Cairn's skills fall into four categories with different origins.
 **Cross-perspective skills — rotate the observer:**
 
 - `resume` — fresh session inheriting context from a prior one (sequential).
-- `review` — fresh agent reading a change set cold (catches what the work-author
-  missed because they were "too close").
+- `peer-review` — fresh agent reading a change set cold (catches what the work-author
+  missed because they were "too close"). Named `peer-review` to disambiguate from Claude
+  Code's built-in `/review` skill.
 
 **Artifact skills — produce in-tree planning files:**
 
@@ -216,7 +217,7 @@ needed. The collaboration skills came from studying what the *human* does in the
 collaboration (see [`docs/research/collaboration-skills.md`](./docs/research/collaboration-skills.md)
 for the analysis). The cross-perspective skills emerged from observing where one
 agent's session leaves blind spots that only a fresh observer can catch — `resume`
-defeats namespace fragmentation between sessions; `review` defeats the work-author's
+defeats namespace fragmentation between sessions; `peer-review` defeats the work-author's
 mental-model anchoring on what they touched. The artifact skills were imported from
 a downstream project's `/plan`-rework arc — they produce durable in-repo files with
 explicit lifecycles (folder-as-status), distinct from the maintenance skills'
@@ -270,7 +271,7 @@ between habitats.
 **How deep to go (tier).** A second axis: how cairn-specific do you want your habitat to be?
 
 - **`seed`** — `CLAUDE.md` + `MEMORY.md`. Two files. **Works with any agent** (Claude, GPT, Gemini, local LLM) that can read markdown. Minimum viable habitat = maximally portable habitat.
-- **`grow`** — adds `LAWS.md` + maintenance skills (`reflect`/`plan`) + artifact skills (`note`/`spec`) + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective skills (`resume`/`review`). Durable conventions any careful agent can follow.
+- **`grow`** — adds `LAWS.md` + maintenance skills (`reflect`/`plan`) + artifact skills (`note`/`spec`) + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective skills (`resume`/`peer-review`). Durable conventions any careful agent can follow.
 - **`structure`** — adds typed memory + hygiene skills (`tour`/`prune`/`audit`). Assumes cairn-aware tooling.
 - **`full`** — adds the `feedback` skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized.
 
@@ -289,6 +290,18 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.13.1 — Renames `/review` to `/peer-review` to disambiguate from Claude Code's
+built-in `/review` skill. The bare `/review` invocation in any Claude Code session
+resolves to the built-in — the cairn skill was being silently shadowed for any cairn
+adopter on Claude Code. Updates: skill subdirectory rename
+(`files/skills/review/` → `files/skills/peer-review/`), frontmatter `name:` field,
+manifest src/dest paths, install preview, citations across LAWS.md / HANDOFF.md /
+README. New migration section in `adopt.md`: re-adopters from any version that
+installed the legacy `~/.claude/skills/review/SKILL.md` get prompted by the agent
+during re-adoption to clean up the legacy file. Posture going forward (per
+`[MEM project/cairn-blend-strategy-pillars]`): vendor namespace collisions are real;
+cairn claims distinct namespace per skill from here on.
 
 v0.13.0 — Slug-only law identity (drops Law N numbering). Completes the v0.9.0 slug
 migration — v0.9.0 added slugs as the citation form but never removed the competing
