@@ -16,17 +16,17 @@ After the v0.10.2 slug-policy migration, cairn-native memory lives at **cairn's 
 slug** and the cwar slug retains cross-cutting + cwar-native entries. Both are reachable
 to a `/resume` in cairn's worktree:
 
-- `~/.claude/projects/C--Users-winno-projects-cairn/memory/` — **cairn slug, 5 entries.**
+- `~/.claude/projects/C--Users-winno-projects-cairn/memory/` — **cairn slug.**
   Auto-loaded by `/resume` when running in cairn's worktree (it's the local slug).
-  Contains: `project/cairn`, `project/cairn_at_v101`, `project/session_handoff_link_test`,
-  `reference/cairn`, `reference/cairn_build_transcript`.
+  Holds cairn-native memory: project state and feedback specific to cairn's own
+  development, plus references to cairn artifacts. `/resume` probes for current
+  contents — exact entry list shifts with each reflection cycle.
 
-- `~/.claude/projects/C--Users-winno-projects-cwar-cwar-engine/memory/` — **cwar slug,
-  11 entries** (cross-cutting feedback + cwar-specific project/reference). `/resume`
-  finds these via this pointer. Contains: `feedback/{collaboration_style, reframing,
-  load_meta_laws, reflect_at_session_end, cite_in_commits, edit_tool_ghost,
-  verify_plan_deliverables}`, `project/{cwar_cairn_adoption_plan, plan_drift_inventory}`,
-  `reference/{cwar_meta_laws, cwar_perf_eslint_rules}`.
+- `~/.claude/projects/C--Users-winno-projects-cwar-cwar-engine/memory/` — **cwar slug.**
+  `/resume` finds these via this pointer. Holds cross-cutting feedback
+  (collaboration style, agent-behavior rules) that applies across both projects,
+  plus cwar-engine-specific project and reference entries. Relevant when cairn
+  work intersects cwar (re-adoption, cross-project patterns).
 
 Per `[LAW choose-slug-by-scope]` in cairn's own `LAWS.md`, future memory writes
 should go to the slug that matches the scope of the content — not the slug where the
@@ -49,8 +49,13 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 ## What's durable
 
 - **Repo:** every release, plan artifact, skill file, research doc.
-- **Plans directory:** `plans/v0.3-*` through `plans/v0.9-law-slugs.md` capture design rationale.
-- **Research directory:** `docs/research/` has 6 essays — agentic-habitat, two-file-habitat, feedback-velocity, habitat-transfer, cross-session-observation, collaboration-skills, human-interaction-patterns.
+- **Plans directory:** `plans/archive/` holds shipped plans (v0.3 through v0.12) per
+  the v0.12.1 folder-as-state convention; `plans/` itself stays empty until a new
+  plan is active.
+- **Research directory:** `docs/research/` has 7 essays + `open-questions.md` —
+  agentic-habitat, two-file-habitat, feedback-velocity, habitat-transfer,
+  collaboration-skills, human-interaction-patterns, distillate-to-production.
+  (`cross-session-observation` was consolidated into `habitat-transfer` in v0.10.7.)
 - **Feedback endpoint:** deployed to Cloud Run, tested.
 - **Memory (in this session's agent habitat):** `project/cairn`, `reference/cairn`, `reference/cairn_build_transcript`, `feedback/collaboration_style`, `feedback/reframing_as_human_function`.
 
@@ -75,15 +80,17 @@ explicit scope-expansion gates).
 Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 `[LAW load-meta-laws]`: **Load the project's meta-laws before making architectural decisions.**
 
-## Session-to-session protocol (under test)
+## Session-to-session protocol (validated)
 
 1. This session's transcript is accessible via a directory junction at
    `C:\Users\winno\Documents\Claude\Projects\cairn test\cairn_link\` — pointing at this
-   session's JSONL transcript in `~/.claude/projects/`.
-2. Next session can ingest the transcript to resume context.
-3. Validation of this handoff mechanism is the next session's first task.
-4. If transcript-based handoff works, this HANDOFF.md is a redundancy — useful but not
-   load-bearing. If it doesn't, HANDOFF.md is the fallback.
+   session's JSONL transcript in `~/.claude/projects/`. Used as a research corpus
+   for the human-interaction-patterns and collaboration-skills essays.
+2. The handoff mechanism was validated post-v0.10.1 per
+   `[MEM project/session_handoff_link_test]` and codified in the `/resume` skill,
+   which is the canonical way to load this file's context in a fresh session.
+3. HANDOFF.md is the durable fallback if transcript ingestion isn't available.
+   `/resume` reads both.
 
 ## Things I (the builder agent) would do differently
 
