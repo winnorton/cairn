@@ -483,8 +483,9 @@ as the meta-disciplinary source, `HANDOFF.md` for session-to-session bridging, a
 closed (userSkills dual-scope path detection parallel to #6's memory fix).
 
 v0.9.0 — Slug-based law identity (#18). Laws now cite by stable slug (`[LAW plan]`,
-`[LAW cadence]`) instead of drift-prone numbers. Numbers remain as display-order markers
-(removed entirely in v0.13.0). `/audit` matches both forms during transition. Evidence: cwar's AGENTS.md renumbered
+`[LAW cadence]`) instead of drift-prone numbers. Numbers initially remained as
+display-order markers (removed entirely in v0.13.0); `/audit` matched both forms
+during the transition. Evidence: cwar's AGENTS.md renumbered
 26→22→13 rules in one day, leaving citation debt in ESLint comments and cross-file
 references — cairn preempts the same pattern. See `plans/v0.9-law-slugs.md`.
 
