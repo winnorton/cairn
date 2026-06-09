@@ -3,7 +3,7 @@ name: spec
 description: Research the codebase and write a structured agent execution spec for a non-trivial
   code change. Use when there's a real implementation to drive — typically a Flash handoff or
   multi-session refactor with phases, steps, checkpoints, executor handoff. Drops in
-  `docs/specs/`. Two `--from` modes: `/spec --from docs/notes/NOTE_X.md` promotes a note to a
+  `docs/specs/`. Two `--from` modes — `/spec --from docs/notes/NOTE_X.md` promotes a note to a
   spec (moves the note to `_promoted/`); `/spec --from docs/specs/SPEC_..._NN_TOPIC.md`
   elaborates a `/program`-produced stub in place (fills phases/steps, no move). Do NOT use for
   lightweight intent capture (use /note for that — single paragraph, no research). Distinct
