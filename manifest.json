@@ -211,6 +211,22 @@
       "role": "scaffolding",
       "tier": "grow",
       "description": "Artifact-creation skill: write a structured agent execution spec (docs/specs/) with phases, steps, checkpoints, executor handoff. For non-trivial code changes that need an executor handoff. Distinct from /plan (behavioral, conversational) and from /note (single-paragraph intent capture)."
+    },
+    {
+      "src": "files/skills/program/SKILL.md",
+      "dest": "{userSkills}/program/SKILL.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Program-of-specs authoring: produce one master coordination doc + N workstream child stubs in docs/specs/ for substantial work that exceeds a single spec's scope. Bakes in no-deferral discipline, cross-cutting axes coverage (telemetry/diagnostics/rollback per workstream), informal axes-sign-off + commit-then-/peer-review at the master gate, and program-internal N-label bookkeeping for review-iteration traceability. Two invocation modes: cold-start and promote-from-spec (when a single /spec outgrew one file). Stubs are elaborated by `/spec --from`."
+    },
+    {
+      "src": "files/skills/round-review/SKILL.md",
+      "dest": "{userSkills}/round-review/SKILL.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's §5 DoD criterion-by-criterion against the diff, surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
     }
   ],
 

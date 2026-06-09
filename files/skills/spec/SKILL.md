@@ -3,7 +3,9 @@ name: spec
 description: Research the codebase and write a structured agent execution spec for a non-trivial
   code change. Use when there's a real implementation to drive — typically a Flash handoff or
   multi-session refactor with phases, steps, checkpoints, executor handoff. Drops in
-  `docs/specs/`. Promotes notes to specs via `/spec --from <note-path>`. Do NOT use for
+  `docs/specs/`. Two `--from` modes: `/spec --from docs/notes/NOTE_X.md` promotes a note to a
+  spec (moves the note to `_promoted/`); `/spec --from docs/specs/SPEC_..._NN_TOPIC.md`
+  elaborates a `/program`-produced stub in place (fills phases/steps, no move). Do NOT use for
   lightweight intent capture (use /note for that — single paragraph, no research). Distinct
   from cairn's existing `/plan` skill, which is a behavioral pre-action alignment verb;
   `/spec` is the artifact-creation verb that produces a file the executor follows.
@@ -48,18 +50,64 @@ implementation artifact, not the alignment.
 - `/spec [SPEC_NAME | AUTO] [description] [@annotations...]` — Create from a fresh task description.
 - `/spec --from docs/notes/NOTE_X.md` — **Promote a note to a spec.** Read the note for
   intent, do research, write the spec, leave a breadcrumb in `notes/_promoted/`.
+- `/spec --from docs/specs/SPEC_X_NN_TOPIC.md` — **Elaborate a `/program` stub in place.**
+  Read the stub (Goal / Scope / Gate / Telemetry / Diagnostics / Rollback already filled
+  by `/program`) + the program master it cites, then write the Phases / Steps /
+  Pre-flight / Post-flight / Executor Handoff sections into the same file. No move,
+  no breadcrumb — the stub already lives where it should.
 - `/spec` (no arguments) — Review & revise the current conversation's draft if one exists.
 
 ## Steps
 
 ### 1. Parse input
 
-**If `--from <note-path>`:**
-1. Read the note at `<note-path>` in full.
+**If `--from <path>`:** open the source file, then discriminate by **content** (header
+line) — not by path alone, since path-only matching misfires on archived or promoted
+files.
+
+**Guard — reject these paths up front (regardless of contents):**
+- `docs/specs/archive/...` — shipped specs, never re-elaborate.
+- `docs/specs/_promoted/...` — note-promotion breadcrumbs, never treat as a stub.
+- `docs/notes/_promoted/...` — already-promoted notes; tell the user the note has
+  already been promoted and point at the resulting spec.
+
+If a guarded path is supplied, abort with a one-line message naming the violation.
+
+**Discriminate by source shape:**
+
+| Header / location | Mode | Behavior |
+|---|---|---|
+| `docs/notes/NOTE_*.md` (and not in `_promoted/`) | Promote note → spec | Write a new spec; move the note to `_promoted/`; add a breadcrumb. |
+| `docs/specs/SPEC_*.md` with first-line `Status:` (or `**Status:**`) matching `STUB` (case-insensitive) | Elaborate `/program` stub | Fill phases/steps **in place**; flip `Status:` to `READY FOR EXECUTOR`; no move. |
+| `docs/specs/SPEC_*.md` without a `Status: STUB` header | Already-elaborated spec | Treat as `/spec` review-and-revise (Step below), not as `--from`. Warn the user. |
+
+**Source is a note (promote-to-spec):**
+1. Read the note at `<path>` in full.
 2. Treat the note's body as the task description.
 3. Use AUTO naming to generate `SPEC_<topic>.md` from the note's topic.
 4. After writing the spec, move the note: `git mv docs/notes/NOTE_X_<date>.md docs/notes/_promoted/NOTE_X_<date>.md`.
 5. Add a header line to the moved note: `> Promoted to docs/specs/SPEC_<topic>.md on <date>`.
+
+**Source is a `/program` stub (elaborate-in-place):**
+1. Read the stub at `<path>` in full. Confirm the `Status:` header reads `STUB`
+   (allow either `Status: STUB` or `**Status:** STUB` — `/program` writes the bold
+   form, but match either for robustness). Confirm the stub references a program
+   master via a `Program:` or `[SPEC_..._00_PROGRAM](...)` link. If neither holds,
+   the file is not a `/program` stub — abort and tell the user.
+2. The stub already contains: Goal, Scope, Files, Gate, Telemetry hook, Diagnostics
+   path, Rollback story, Depends-on, Program-master link.
+3. Read the program master the stub references — focus on `§2 Contract Surfaces`,
+   `§3 Resolved Design Decisions`, `§5 Parallel Execution Protocol`. These are the
+   shared contracts every child cites.
+4. Do research per Step 3 below, scoped to the stub's `Files` and `Scope` sections.
+5. **Elaborate in place** — write the Phases / Steps / Pre-flight / Post-flight /
+   Executor Handoff / Review Checklist sections into the **same file**. Replace the
+   stub's "TO BE ELABORATED" placeholder. Preserve the stub's existing fields
+   (Goal/Scope/Gate/etc.) — they're contract surface, not draft prose.
+6. Change the file's `Status:` header from `STUB` to `READY FOR EXECUTOR` (preserve
+   the bold form if the stub used it).
+7. Do **NOT** `git mv`, rename, or move the file. Do NOT write a breadcrumb. The stub
+   already lives at the correct path.
 
 **If no arguments:** review-and-revise the current conversation's draft (if any) into a
 structured spec.
@@ -169,7 +217,10 @@ against: planning rules that are only rhetorical accumulate stale artifacts beca
 
 For new specs: a confirmation under ~150 words listing path, phase count, open questions.
 
-For `--from` promotions: same, plus the breadcrumb confirmation.
+For `--from` note-promotions: same, plus the `_promoted/` breadcrumb confirmation.
+
+For `--from` stub-elaborations: same, plus confirmation that the file's `Status:` header
+flipped from `STUB` to `READY FOR EXECUTOR`. No move; the path is unchanged.
 
 ## Companion skills
 
@@ -180,3 +231,6 @@ For `--from` promotions: same, plus the breadcrumb confirmation.
 - `/peer-review` — when the spec's work is shipped and you want a fresh agent to read
   the change set cold before merge. Catches inconsistency-class bugs the spec author
   and executor missed because they were "too close."
+- `/program` — the orchestration verb that produces `/spec` stubs to elaborate. When
+  work is too big for one spec, `/program` decomposes it into a master + N stubs;
+  `/spec --from docs/specs/SPEC_..._NN_TOPIC.md` fills each stub in place.

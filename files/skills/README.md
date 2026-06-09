@@ -108,12 +108,19 @@ active folder is live, `archive/` is shipped, no STATUS field).
 - `spec/` — write a structured agent execution spec (`docs/specs/`) with phases, steps,
   checkpoints, executor handoff. Distinct from `plan/` (behavioral alignment) — `spec/`
   produces a file the executor follows.
+- `program/` — author a program-of-specs (one master coordination doc + N workstream
+  child stubs in `docs/specs/`) for substantial work that exceeds a single spec's
+  scope. Bakes in no-deferral discipline and cross-cutting axes coverage. Stubs are
+  elaborated by `/spec --from <stub>`. Use when work spans parallel-team workstreams
+  with cross-cutting concerns (telemetry, diagnostics, CI gates) — otherwise `/spec`
+  alone suffices.
 
 The artifact pattern came from observing a downstream project's plan-rework arc: a
 single-verb `/plan` was being used both for one-paragraph thoughts and for heavy executor
 handoffs, producing stale artifacts with significant drift between claim and shipped
-reality. Splitting into two verbs closes the per-file friction; folder-as-status closes
-the lifecycle hole.
+reality. Splitting into two verbs (`/note`, `/spec`) closes the per-file friction;
+folder-as-status closes the lifecycle hole. `/program` extends the same pattern upward
+when one spec isn't enough.
 
 ### Skill pairings
 
