@@ -69,12 +69,31 @@ If any apply, refuse and tell the user:
 
 Then exit. Do not fake an install into your sandbox.
 
-Determine which environment you are running in. Use this decision tree:
+Determine which environment you are running in. The harness you're running inside is the
+authoritative signal — if your system prompt or process info names it, use that. Otherwise
+use the filesystem probes below.
 
-1. Does the current working directory have a `.claude/` folder, **or** is there a
-   `~/.claude/` directory accessible? → **Claude Code**.
-2. Do you have Cowork-specific workspace APIs, or a workspace marker file? → **Cowork**.
-3. Neither clear? → **Ask the user** which environment they're in before continuing.
+**Critical:** "filesystem markers exist" ≠ "I'm running in that harness." A machine may
+have both `~/.claude/` and `~/.pi/agent/` installed; the question is which harness *this
+session* lives in. When in doubt, ask.
+
+Decision tree:
+
+1. Are you running inside **Pi** (pi.dev)? Markers: system-prompt mentions Pi or
+   pi-specific tool names; `~/.pi/agent/AGENTS.md` exists; the `pi` CLI is in PATH.
+   → **Pi**.
+2. Are you running inside **Claude Code**? Markers: claude-desktop entrypoint;
+   `~/.claude/` exists with skills/memory dirs; system prompt mentions Claude Code.
+   → **Claude Code**.
+3. Are you running inside **Cowork**? Markers: Cowork-specific workspace APIs, workspace
+   marker file. → **Cowork**.
+4. None clear? → **Ask the user** which environment they're in before continuing.
+
+Note on Antigravity (Google): cairn's memory + skill layer adopts successfully into
+Antigravity at `~/.gemini/antigravity/memory/` (validated empirically; Antigravity's
+agent independently remaps cairn's path variables to its conventions). Antigravity's
+skill loading mechanism is internal and not externally documented; the install path
+is the same as Claude Code's pattern but Antigravity-specific.
 
 Record the environment. All path resolution below depends on it.
 
@@ -174,6 +193,43 @@ For **Claude Code**, the variables resolve as:
 - `{userSkills}` → `~/.claude/skills`
 - `{projectClaude}` → `<cwd>/.claude`
 - `{projectRoot}` → `<cwd>` (the user's current project directory)
+
+For **Pi** (pi.dev), the variables resolve as:
+- `{userClaude}` → `~/.pi/agent`
+- `{userMemory}` → `~/.pi/agent/memory` (cairn creates on demand; separate from Pi's
+  `pi-hermes-memory` package's SQLite store — the two coexist, don't conflict)
+- `{userSkills}` → `~/.pi/agent/skills` (canonical user-global; Pi also discovers
+  `<project>/.pi/skills/` and `<project>/.agents/skills/` for project-scoped)
+- `{projectClaude}` → `<cwd>/.pi` (primary) or `<cwd>/.agents` (v0.14.0-aligned
+  alternative — Pi loader discovers both paths)
+- `{projectRoot}` → `<cwd>`
+
+**Pi-specific notes:**
+
+- **Auto-loaded context file is AGENTS.md, not CLAUDE.md.** Pi auto-loads
+  `~/.pi/agent/AGENTS.md` at session start (analog of Claude Code's CLAUDE.md
+  auto-load). Cairn's CLAUDE.md template content lands as AGENTS.md in Pi habitats.
+  If `~/.pi/agent/AGENTS.md` already exists with user content, **never overwrite**;
+  per `create-if-absent` mode, skip and tell the user the file is preserved. If you
+  must add cairn-shipped content to an existing AGENTS.md, ask the user to append a
+  `## Cairn` section themselves (same ownership-boundary rule as v0.14.0 design).
+- **Skill format is identical to Claude Code.** `<name>/SKILL.md` subdir with YAML
+  frontmatter. Cairn's existing skill files install to `~/.pi/agent/skills/` unchanged.
+  Pi invokes as `/skill:<name>`; Claude Code invokes as `/<name>`. Skill descriptions
+  still match by trigger phrases, so adopters can use either invocation form once
+  installed.
+- **Pi is the primary executor for cairn-authored `/spec` and `/program` artifacts.**
+  Adopters running Pi sessions typically read a spec file (`docs/specs/SPEC_*.md`)
+  and execute it phase-by-phase. The cairn skill suite is *authoring*-focused; for
+  Pi-only adopters, the minimum useful install is `seed` (AGENTS.md + MEMORY.md) plus
+  `/note` and `/feedback` for capturing findings outside the spec's success criteria.
+  The full `grow`/`structure` suites don't hurt Pi but most maintenance/collaboration
+  skills don't fire in pure-execution context.
+- **Pi has `@juicesharp/rpiv-todo` for compaction-surviving phase orchestration.**
+  Cairn does NOT ship a competing `/todo` skill. When advising Pi adopters on
+  multi-phase spec execution, point them at rpiv-todo for the orchestration spine
+  (prefix todos with the spec phase identifier — e.g. `P1_05:` — for clean rollups
+  during `/round-review`).
 
 For **Cowork**, resolve relative to the workspace root. Cowork has **two distinct storage
 layers**, each with different tool access patterns — use the right one:

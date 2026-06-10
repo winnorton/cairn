@@ -1,8 +1,9 @@
 # cairn
 
 A portable agent environment — memory, laws, skills, and context templates that your agent
-installs into any work effort with one prompt. Works in Claude Code, Antigravity, and Cowork.
-Domain-agnostic: software, writing, research, personal knowledge management, anything.
+installs into any work effort with one prompt. Works in Claude Code, Antigravity, and Pi
+(pi.dev). Domain-agnostic: software, writing, research, personal knowledge management,
+anything.
 
 > A *cairn* is a stack of stones that travelers leave to guide those following. This is the
 > configured environment you leave for future agent sessions — and the one they inherit.
@@ -17,7 +18,7 @@ the agent reads them, behavior changes. That's the whole product.
 - Files that ship with one prompt (`adopt cairn`).
 - A vocabulary your agent uses across sessions (skills + typed memory + laws).
 - Compatible with any harness that reads markdown context (Claude Code, Antigravity,
-  Cursor, Cowork, etc.).
+  Pi, Cursor, Cowork, etc.).
 
 **Cairn is NOT:**
 - An agent runtime (≠ LangGraph, AG2, AutoGen, Devin).

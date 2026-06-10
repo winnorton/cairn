@@ -2,14 +2,15 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
   "version": "0.13.1",
-  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code, Antigravity, and Cowork. Domain-agnostic. Graduated adoption via tiers.",
+  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code, Antigravity, and Pi (pi.dev). Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
 
   "pathVariables": {
     "userClaude": {
-      "description": "User-global Claude config directory",
+      "description": "User-global agent config directory (env-agnostic name; root for agent-installed content)",
       "claude-code": "~/.claude",
+      "pi": "~/.pi/agent",
       "cowork": "probe: workspace-level .claude/ or equivalent user-scoped config; ask user if uncertain"
     },
     "userMemory": {
@@ -20,25 +21,41 @@
         "note": "<project-slug> is the project's absolute path with slashes/colons replaced by hyphens (e.g. C:\\Users\\winno\\projects\\foo -> C--Users-winno-projects-foo).",
         "resolution": "See adopt.md Step 1: probe filesystem for existing memory, or check system-prompt directives, or ask user. Do not default blindly."
       },
+      "pi": {
+        "user-global": "~/.pi/agent/memory",
+        "project-scoped": "~/.pi/agent/projects-memory/<projectname>/memory",
+        "note": "<projectname> is typically the project root directory basename. Pi's pi-hermes-memory package uses a separate SQLite-backed store; cairn typed-markdown memory lands here independently and does NOT compete with pi-hermes-memory. The directory may not exist until first install — create on demand.",
+        "resolution": "See adopt.md Step 1: probe for ~/.pi/agent/ marker. Default to user-global unless system-prompt or filesystem signal indicates project-scoped use."
+      },
       "cowork": "{userClaude}/memory"
     },
     "userSkills": {
-      "description": "Skill directory. Claude Code has TWO conventions (same pattern as userMemory) — detect which one this session uses before resolving. Wrong path = silent-failure install (skills land where the agent never loads them). v0.12+ ships skills as subdirs containing SKILL.md (canonical Claude Code format); flat .md is no longer supported reliably.",
+      "description": "Skill directory. Claude Code and Pi have TWO conventions each (same pattern as userMemory) — detect which this session uses before resolving. Wrong path = silent-failure install (skills land where the agent never loads them). v0.12+ ships skills as subdirs containing SKILL.md — canonical for both Claude Code AND Pi, which use the identical format.",
       "claude-code": {
         "user-global": "~/.claude/skills",
         "project-scoped": "<project>/.claude/skills",
         "resolution": "See adopt.md Step 1: probe filesystem for existing skills, or check session conventions, or ask user. Do not default blindly."
       },
+      "pi": {
+        "user-global": "~/.pi/agent/skills",
+        "project-scoped": "<project>/.pi/skills",
+        "alternative-project": "<project>/.agents/skills",
+        "format-note": "Identical to Claude Code: subdir + SKILL.md with YAML frontmatter (name <=64 chars lowercase+hyphens, description <=1024 chars, optional license/compatibility/metadata/allowed-tools). Pi invokes as /skill:<name>; Claude Code invokes as /<name>.",
+        "v0.14-note": "<project>/.agents/skills/ aligns with cairn's v0.14.0 <project>/agents/ umbrella — Pi loader auto-discovers both .pi/ and .agents/ paths.",
+        "resolution": "See adopt.md Step 1: probe for ~/.pi/agent/ marker. Default to user-global unless project work specifically benefits from project-scoped install."
+      },
       "cowork": "{userClaude}/skills"
     },
     "projectClaude": {
-      "description": "Project-scoped Claude config (applies to current work effort only)",
+      "description": "Project-scoped agent config (applies to current work effort only)",
       "claude-code": "{cwd}/.claude",
+      "pi": "{cwd}/.pi (primary) OR {cwd}/.agents (v0.14.0-aligned alternative; Pi loader recognizes both)",
       "cowork": "{workspaceRoot}/.claude"
     },
     "projectRoot": {
       "description": "Root of the current work effort",
       "claude-code": "{cwd}",
+      "pi": "{cwd}",
       "cowork": "{workspaceRoot}"
     }
   },

@@ -87,6 +87,18 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
 - **Skill catalog drift swept** (this interim) — `files/skills/README.md` and
   `tour/SKILL.md` artifact category now include `/program` and `/round-review`.
   Previously stale by 1–2 skills.
+- **Pi (pi.dev) added as first-class environment** (2026-06-09). `manifest.json`
+  gains `pi:` resolutions for all five `pathVariables`. `adopt.md` Step 1 detection
+  adds a Pi branch; Step 3 documents Pi-specific path resolution + the AGENTS.md
+  auto-load convention + the rpiv-todo orchestration substrate cairn does NOT
+  duplicate. README headline triplet now reads "Claude Code, Antigravity, and Pi"
+  (Cowork demoted but still present in pathVariables for backward compat). Pi's
+  primary role is as the executor for `/spec` and `/program` artifacts authored in
+  Claude Code or Antigravity; the cairn skill format (`<name>/SKILL.md` subdir) is
+  identical to Claude Code's, so existing skill files install unchanged. Validation
+  evidence: Pi session `019eaed6` executed `SPEC_VAST_TERRAIN_P1_05_WORKER_STAGE_RUNNER`
+  cleanly (83 tool calls, zero errors, write > edit ratio) with zero cairn skills
+  installed — the spec format itself is the executor contract.
 
 ## What's durable
 

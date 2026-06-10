@@ -17,12 +17,26 @@ for the index.
 
 - **Latest tag:** v0.13.1 (renamed `/review` → `/peer-review` to disambiguate from
   Claude Code's built-in `/review`).
+- **Primary environments (3):** Claude Code, Antigravity (Google), and Pi (pi.dev).
+  Roles split asymmetrically: **Claude Code + Antigravity are primary authoring
+  environments** (where `/spec`, `/program`, `/round-review`, and most cairn skills
+  fire). **Pi is the primary executor** for `/spec`- and `/program`-produced
+  artifacts — Pi reads a spec and executes phase-by-phase using its own
+  `@juicesharp/rpiv-todo` package for compaction-surviving orchestration. Validated
+  by Pi session `019eaed6` executing `SPEC_VAST_TERRAIN_P1_05_WORKER_STAGE_RUNNER`
+  cleanly with zero cairn skills installed — the cairn `/spec` format is the
+  executor contract. Cowork stays in `manifest.json` for backward compat but is no
+  longer in the primary triplet. Per-env path resolutions in
+  [manifest.json](manifest.json) `pathVariables`. Pi adoption details in
+  [adopt.md](adopt.md) Step 3.
 - **In flight as of v0.13.1:** v0.14.0 architectural shift — pull state out of vendor
   namespaces (`~/.claude/memory/`, `<project>/.claude/`) into a cairn-controlled
   `<project>/agents/` directory. Spec at `docs/specs/SPEC_AGENTS_UMBRELLA.md`
   (untracked at draft). Forced by 2026-05 Claude Code sandbox restrictions on writes
   that combine curl-fetched content + `.claude/*` paths. Skill files stay at
-  `~/.claude/skills/` (Claude Code loader requirement). Read the spec before
+  `~/.claude/skills/` (Claude Code loader requirement). The v0.14 `<project>/agents/`
+  path also naturally aligns with Pi's `<project>/.agents/skills/` discovery
+  convention — cross-env unification falls out of the move. Read the spec before
   touching `manifest.json`, `adopt.md`, or path conventions.
 - **Open design threads:** see `docs/notes/` — in-repo memory tier (v0.14-adjacent),
   `/cairn-introspect` skill candidate (gate at 3+ instances), supervisor pattern
