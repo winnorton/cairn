@@ -278,9 +278,13 @@ Round out the master with the remaining required sections:
 
 | Phase | Spec | Status | Owner | Depends on |
 |---|---|---|---|---|
-| 01 | `SPEC_<NAME>_01_<TOPIC>.md` | OPEN | — | (foundational) |
-| 02 | ... | OPEN | — | 01 |
+| 01 | [`SPEC_<NAME>_01_<TOPIC>.md`](SPEC_<NAME>_01_<TOPIC>.md) | OPEN | — | (foundational) |
+| 02 | [`SPEC_<NAME>_02_<TOPIC>.md`](SPEC_<NAME>_02_<TOPIC>.md) | OPEN | — | 01 |
 | ... | ... | ... | ... | ... |
+
+Spec entries are markdown links (sibling-relative inside the master). When this table —
+or any subset of its rows — is rendered in a chat reply to the user, keep the links.
+See the **Spec-link discipline** standing instruction below.
 
 Executors claim rows by marking `Status: in-progress, Owner: <name/model>` and mark
 `COMPLETE` when their workstream merges. The status table is the orchestration state
@@ -381,6 +385,97 @@ Tell the user:
   mechanical) or `/spec --from docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md` to elaborate
   the stub into a full plan first."*
 
+## Status reporting templates (post-authoring)
+
+After the program is authored and execution begins, the most common output shape is a
+**status report** to the user — "what shipped, what's executable, what's blocked, what's
+next." These reports are not part of program authoring but ARE part of operating the
+program. Three templates the skill explicitly endorses. All three obey the
+**Spec-link discipline** standing instruction — every spec mention is a markdown link.
+
+### A. Shipped report — single spec just landed
+
+Use when one executor finishes one workstream:
+
+```markdown
+## [<Phase>.<NN> <Topic>](docs/specs/_archive/SPEC_<NAME>_<NN>_<TOPIC>.md) SHIPPED ✅
+
+| Commit | What |
+|---|---|
+| `<hash>` | <commit subject> |
+
+### Files landed
+| Path | Lines | Role |
+|---|---|---|
+| `<path>` | <count> | <one-line role> |
+
+### Gates verified
+| Gate | Result |
+|---|---|
+| `<command>` | ✅ <result> |
+
+### Unblocks
+- ✅ [<Phase>.<NN> <Topic>](docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md) — <what's now executable>
+
+### Next bottleneck-unlocks
+[<Phase>.<NN>](docs/specs/...) · [<Phase>.<NN>](docs/specs/...) — pick one or say which.
+```
+
+### B. Program state — current snapshot grouped by lifecycle
+
+Use when the user asks "where are we" or "list status." Group by **lifecycle phase**
+(shipped → partially shipped → executable → blocked), not by track:
+
+```markdown
+## <Program name> state
+
+### Shipped (in `docs/specs/_archive/`)
+| Spec | What | Commit |
+|---|---|---|
+| [<Phase>.<NN> <Topic>](docs/specs/_archive/SPEC_..._NN_TOPIC.md) | <one-line> | `<hash>` |
+
+### Partially shipped (specs still live)
+| Spec | Status |
+|---|---|
+| [<Phase>.<NN> <Topic>](docs/specs/SPEC_..._NN_TOPIC.md) | Phase 0 + Step A wired; Step B unblocked, Step C blocked on <NN> |
+
+### Executable now (elaborated, awaiting executor)
+| Spec | Track | Blocked-or-unblocked |
+|---|---|---|
+| [<Phase>.<NN> <Topic>](docs/specs/SPEC_..._NN_TOPIC.md) | <track> | <one-line dep state> |
+
+### Coordination layer (still live)
+[Top master](docs/specs/SPEC_<NAME>_00_PROGRAM.md) · [<Phase> master](docs/specs/...) · ...
+
+### Recommended next moves
+| Action | Spec links |
+|---|---|
+| Highest-leverage parallel pair | [<NN>](docs/specs/...) ‖ [<NN>](docs/specs/...) — independent tracks |
+| Land follow-ups for X | [<NN> Steps B+C](docs/specs/...) — both now unblocked |
+```
+
+### C. Execute list — concise next-moves table
+
+Use when the user asks specifically for execution recommendations:
+
+```markdown
+| Action | Spec links | Rationale |
+|---|---|---|
+| <action> | [<NN>](docs/specs/...) ‖ [<NN>](docs/specs/...) | <one-line> |
+```
+
+### Reference shape
+
+The gold-standard shape: every spec is a link; lifecycle groupings are explicit; the
+"Coordination layer" footer points back at all masters with one-line link list;
+"Recommended next moves" closes with actionable spec links. Match that shape across all
+three templates — consistency makes status reports skimmable across sessions.
+
+If the executor model produces a status report without links — for instance ``"P1.04
+SHIPPED, unblocks P5.01 Step C and P1.05"`` — that's the failure mode this section
+exists to prevent. The user should be able to click any spec name and land in the right
+file.
+
 ## Required sections in the program master (the spec)
 
 The master MUST contain these sections in this order. Section names are normative —
@@ -479,6 +574,16 @@ session:
   Gate B (full master + stubs) is **commit-then-`/peer-review`**: stage the files,
   commit, then run review on the change set. Findings get absorbed via Step 9's N-label
   bookkeeping. Iterate until the user says "approve."
+- **Spec-link discipline** — every mention of a spec in any output (status tables,
+  shipped reports, "what unblocks what" listings, execute lists, conversation replies)
+  is a markdown link to the spec file's current path. No bare `P1.04` or
+  `SPEC_X_NN_TOPIC` references. Use relative paths from repo root: `docs/specs/...`
+  for live specs, the project's archive directory (e.g. `docs/specs/_archive/...` or
+  `docs/planning/archive/...`) for shipped specs after lifecycle move. Apply the same
+  discipline to commit hashes when a remote URL is available. The user should never
+  have to ask "where's that spec?" — the link IS the answer. This is load-bearing for
+  multi-session orchestration where status reports are the primary output shape; see
+  the **Status reporting templates** section below.
 
 ## Output
 
