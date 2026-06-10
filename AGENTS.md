@@ -74,7 +74,7 @@ for the index.
 Edits to `files/**` change what adopters get on their next `adopt cairn` run.
 Edits outside `files/**` change cairn-the-repo only.
 
-## Skills defined by this project (15)
+## Skills defined by this project (16)
 
 Listed by category — full descriptions in
 [`files/skills/README.md`](files/skills/README.md):
@@ -101,6 +101,7 @@ Listed by category — full descriptions in
 - [`spec`](files/skills/spec/SKILL.md) — structured agent execution spec (`docs/specs/`)
 - [`program`](files/skills/program/SKILL.md) — program-of-specs (master + N workstream stubs)
 - [`round-review`](files/skills/round-review/SKILL.md) — review one round of executor output against a program, draft R+1 stubs + round master
+- [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — author a self-improving prompt for tough tasks done in many iterative passes over partitions (corpus mining, refactor sweeps, doc backfill, audits). The only artifact skill whose output evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass
 
 Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with frontmatter
 (schema in [`files/skills/README.md`](files/skills/README.md)) AND add a matching entry

@@ -99,6 +99,24 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   evidence: Pi session `019eaed6` executed `SPEC_VAST_TERRAIN_P1_05_WORKER_STAGE_RUNNER`
   cleanly (83 tool calls, zero errors, write > edit ratio) with zero cairn skills
   installed — the spec format itself is the executor contract.
+- **`/prompt-evolve` skill added** (2026-06-09). New artifact-category skill —
+  total skills goes 15 → 16. Authors a self-improving, version-controlled prompt
+  for tough tasks done in many iterative passes over partitions (corpus mining,
+  codebase refactor sweeps, doc backfill, bug triage, audits — any task where
+  work doesn't fit one execution, partitions are obvious, each pass produces
+  output AND insight, and the insight would otherwise be lost between passes).
+  Primary mode is `--from <SPEC>` — promotes the evolving-prompt deliverable
+  embedded in a `/spec` into a standalone artifact at
+  `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a 7-phase
+  scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report →
+  **Self-Improvement**) with 5 non-negotiable items: Phase 6 absolute-path
+  inline, CHANGELOG format, fallback matrix scaffold, Pending Re-run staging,
+  idempotence statement. Promotion semantics differ from `/spec --from <note>`
+  and `/program --from <spec>`: the source spec STAYS IN PLACE (covers more
+  than the prompt). Pattern surfaced from two real instances: fishing-agent's
+  `data-pop-prompt` (Gmail → SQLite, by year, 7 CHANGELOG versions v1→v3.6)
+  and purduebb's `MINING_PROMPT.md` (web → JSON, by season XOR topic).
+  Generalizes to 8 task classes documented in the skill body.
 
 ## What's durable
 

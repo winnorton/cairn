@@ -39,8 +39,9 @@ Do NOT invoke for:
    - `skills/` — reusable capabilities organized into four categories: maintenance
      (`reflect`, `plan`, `prune`, `audit`, `tour`, `feedback`), collaboration (`reframe`,
      `bridge`, `advocate`), cross-perspective (`resume`, `peer-review`), and artifact
-     (`note`, `spec`, `program`, `round-review`). See `files/skills/README.md` for the
-     taxonomy. Add your own by dropping a `<name>/SKILL.md` subdirectory here.
+     (`note`, `spec`, `program`, `round-review`, `prompt-evolve`). See
+     `files/skills/README.md` for the taxonomy. Add your own by dropping a
+     `<name>/SKILL.md` subdirectory here.
 
 3. **Pick the highest-leverage first action.** Usually: fill in `CLAUDE.md`'s "What this is"
    section. One paragraph. The agent reads this every session, so spending 60 seconds here

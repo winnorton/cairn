@@ -120,6 +120,16 @@ active folder is live, `archive/` is shipped, no STATUS field).
   stub specs for the gaps plus an R+1 round master that's a self-contained dispatch
   target. Loop exits when the skill writes zero R+1 stubs. Closes the orchestration
   loop: `/program` → `/spec --from` → executor → `/round-review` → next dispatch.
+- `prompt-evolve/` — author a self-improving, version-controlled prompt for tough tasks
+  done in many iterative passes over partitions (corpus mining, codebase refactor sweeps,
+  doc backfill, bug triage, audits, etc.). Primary mode is `--from <SPEC>`: promotes the
+  evolving-prompt deliverable embedded in a `/spec` into a standalone artifact at
+  `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase
+  scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report →
+  **Self-Improvement**) with Phase 6 absolute-path mandate, CHANGELOG format, fallback
+  matrix, pending-re-run staging, and idempotence guarantee. Distinct from every other
+  artifact skill: the artifact evolves over its lifetime — Phase 6 self-edits accumulate
+  lessons each pass, and the prompt's CHANGELOG IS its institutional memory.
 
 The artifact pattern came from observing a downstream project's plan-rework arc: a
 single-verb `/plan` was being used both for one-paragraph thoughts and for heavy executor

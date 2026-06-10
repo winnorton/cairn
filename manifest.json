@@ -244,6 +244,14 @@
       "role": "scaffolding",
       "tier": "structure",
       "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's §5 DoD criterion-by-criterion against the diff, surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
+    },
+    {
+      "src": "files/skills/prompt-evolve/SKILL.md",
+      "dest": "{userSkills}/prompt-evolve/SKILL.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Prompt-evolve verb: author a self-improving, version-controlled prompt for tough tasks done in many iterative passes over partitions (corpus mining, codebase refactor sweeps, doc backfill, bug triage, audits — any task where work doesn't fit in one execution, partitions are obvious, each pass produces both output AND insight, and the insight would otherwise be lost between passes). Primary mode is `--from <SPEC>` — promotes an evolving-prompt deliverable embedded in a /spec into a standalone artifact at `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report → **Self-Improvement**) with five non-negotiable enforcement items: (1) Phase 6 absolute-path inline as the edit target, (2) CHANGELOG with v1 entry + v2+ format template, (3) empty TOOL-FAILURE FALLBACK MATRIX section ready to grow, (4) Pending Re-run staging in the FINAL REPORT, (5) idempotence statement. The /prompt-evolve artifact is the only skill output that evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass, and the CHANGELOG IS its institutional memory. Promotion semantics differ from /spec --from <note> and /program --from <spec>: the source spec STAYS IN PLACE (the spec covers more than the prompt; only one deliverable is extracted)."
     }
   ],
 

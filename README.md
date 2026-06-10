@@ -73,7 +73,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`, `program`, `round-review`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -220,6 +220,14 @@ Cairn's skills fall into four categories with different origins.
   against a `/program` master. Walks the master's §5 DoD criterion-by-criterion
   against the diff; drafts R+1 stub specs and a self-contained R+1 round master
   for the gaps. Loop exits when this skill writes zero R+1 stubs.
+- `prompt-evolve` — author a self-improving, version-controlled prompt for
+  tough tasks done in many iterative passes over partitions (corpus mining,
+  codebase refactor sweeps, doc backfill, bug triage, audits). Primary mode
+  is `--from <SPEC>` — promotes the evolving-prompt deliverable embedded in
+  a `/spec` into a standalone artifact at `prompt-evolve/<NAME>_PROMPT.md`.
+  Distinct from every other artifact skill: the output evolves over its
+  lifetime — Phase 6 self-edits accumulate lessons each pass, and the
+  prompt's CHANGELOG IS its institutional memory.
 
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the
