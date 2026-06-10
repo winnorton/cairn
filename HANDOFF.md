@@ -4,11 +4,17 @@
 boundary. Read it first. It exists because session boundaries are where signal goes to die
 unless explicitly preserved.
 
-> **Recommended entry point:** invoke `/resume` (cairn v0.10.1+) at session start. The
-> skill probes HANDOFF.md, memory at multiple project slugs (worktree-aware AND any
-> `## Related memory paths` declared below), transcript junctions, and recent git
-> activity, then synthesizes orientation. If `/resume` isn't available in your habitat,
-> read this file directly and follow the manual paths below.
+> **Repo-root entry point (canonical, added 2026-06):** read [AGENTS.md](AGENTS.md) at
+> the repo root. It's the cairn-itself agent context — layout, 15 skills, key laws by
+> slug, design DNA, current state (v0.13.1 + v0.14.0 in flight). Claude Code auto-loads
+> [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
+> in this repo, AGENTS.md is the orientation you want before anything else.
+
+> **Recommended entry point for prior-session inheritance:** invoke `/resume` (cairn
+> v0.10.1+) at session start. The skill probes HANDOFF.md, memory at multiple project
+> slugs (worktree-aware AND any `## Related memory paths` declared below), transcript
+> junctions, and recent git activity, then synthesizes orientation. If `/resume` isn't
+> available in your habitat, read this file directly and follow the manual paths below.
 
 ## Related memory paths
 
@@ -45,6 +51,42 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Earlier:** v0.12.3 (Doc patch — fixed v0.12.x consistency gaps that fresh `/peer-review` caught). v0.12.2 (install-report version strings). v0.12.1 (skill format migration to canonical subdir form + `/peer-review` skill + folder-as-state for `plans/`). v0.12.0 (`/note` + `/spec` artifact-creation skills). v0.11.3 (ephemeral-sandbox pre-flight in adopt.md).
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
+
+## Interim work since v0.13.1 (post-release, pre-v0.14.0)
+
+Captured here to keep `[LAW handoff-stays-current]` honest between releases. None of
+this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
+
+- **Design notes filed** (`docs/notes/`, all `Status: open`):
+  - `NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md` — `/cairn-introspect` skill candidate,
+    gate at 3+ observed instances (currently 1).
+  - `NOTE_SUPERVISOR_PATTERN_2026-04-26.md` — generic supervisor analogue to cwar's
+    `agent-supervisor.ts`. Deferred awaiting empirical signal from cwar's autoSubmit
+    experiment.
+  - `NOTE_INREPO_MEMORY_TIER_2026-04-27.md` — in-repo memory tier for multi-dev
+    scenarios. Addressed incidentally by v0.14.0's `agents/` move.
+  - `NOTE_V0.13.0_FOLLOWUPS_2026-04-27.md` — small follow-up items (tour skill format
+    drift was real at filing time; folded in during this interim along with the
+    artifact-category expansion to include `/program` + `/round-review`).
+- **v0.14.0 spec drafted** at `docs/specs/SPEC_AGENTS_UMBRELLA.md` (untracked at this
+  write). Promoted via `/spec --from` from `NOTE_AGENTS_UMBRELLA_2026-04-30.md`
+  (now at `docs/notes/_promoted/`). Major architectural shift: state moves out of
+  vendor namespaces (`~/.claude/memory/`, `<project>/.claude/`) into a cairn-controlled
+  `<project>/agents/` directory at the project root. Forced by 2026-05 Claude Code
+  sandbox restrictions on writes combining curl-fetched content + `.claude/*` paths.
+  Skill files stay at `~/.claude/skills/` (loader requirement). Read the spec before
+  touching `manifest.json`, `adopt.md`, or path conventions.
+- **`/program` skill enhanced** (commit `8530390`, 2026-06-09) — added Status reporting
+  templates section + Spec-link discipline standing instruction + §9 status-table link
+  example. Driven by a session where executor status reports kept producing unlinked
+  spec mentions despite repeat user feedback; the discipline is now baked in.
+- **Repo-root agent context added** (commit `6193436`, 2026-06-09) — new `AGENTS.md`
+  and `CLAUDE.md` at the repo root. Cairn-itself meta (distinct from `files/CLAUDE.md`,
+  the template shipped to adopters). Names the load-bearing laws by slug, lists all 15
+  skills with links, surfaces design DNA + current state to fresh agents.
+- **Skill catalog drift swept** (this interim) — `files/skills/README.md` and
+  `tour/SKILL.md` artifact category now include `/program` and `/round-review`.
+  Previously stale by 1–2 skills.
 
 ## What's durable
 
@@ -105,17 +147,27 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 
 ## For the next agent
 
-- **Don't start by re-reading everything.** Load: repo README, `LAWS.md` (cairn's own,
-  at root), the latest 1-2 plan artifacts in `plans/`, and this file. That's enough
-  context to pick up.
+- **Start with [AGENTS.md](AGENTS.md) at the repo root.** It's the canonical agent
+  context for working on cairn itself — layout, 15 skills, key laws by slug, design
+  DNA, current state. Then load this file (HANDOFF.md) for cross-session continuity,
+  and `LAWS.md` for the full law set. Skip the v0.x plan artifacts unless you're
+  digging into a specific release's design rationale — `docs/research/` is usually
+  the better starting point for the "why" archive.
 - **Check `gh issue list --repo winnorton/cairn --state open`** for the current
   untrimmed backlog.
-- **If the next topic is cwar-engine adoption**, read `plans/v0.9-law-slugs.md` for the
-  citation-stability context, then the a la carte recommendation in this file.
+- **If the next topic is v0.14.0**, read `docs/specs/SPEC_AGENTS_UMBRELLA.md` (the
+  in-flight spec) and the promoted breadcrumb at
+  `docs/notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md`. The spec extends a parked
+  prototype at commit `345241a`.
+- **If the next topic is cwar-engine adoption**, read `plans/archive/v0.9-law-slugs.md`
+  for the citation-stability context, then the a la carte recommendation in this file.
 - **Before any architectural change**, apply `[LAW load-meta-laws]` from cairn's own
-  LAWS: load meta-laws for whatever project you're working in.
+  LAWS: load meta-laws for whatever project you're working in. For cairn-on-cairn that
+  means AGENTS.md + the relevant `docs/research/` paper before touching structure.
 
 ---
 
 _Originally written 2026-04-24 at session's end by the builder agent. Last updated
-2026-04-28 for cairn v0.13.1._
+2026-06-09 for the interim work since v0.13.1 (notes filed, v0.14.0 spec drafted,
+`/program` enhancements, repo-root AGENTS.md + CLAUDE.md added, skill-catalog drift
+swept). Next refresh: at v0.14.0 tag time per [LAW handoff-stays-current]._

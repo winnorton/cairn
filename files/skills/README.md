@@ -114,6 +114,12 @@ active folder is live, `archive/` is shipped, no STATUS field).
   elaborated by `/spec --from <stub>`. Use when work spans parallel-team workstreams
   with cross-cutting concerns (telemetry, diagnostics, CI gates) — otherwise `/spec`
   alone suffices.
+- `round-review/` — trust-but-verify an autonomous executor's round of work against a
+  `/program`-produced master. Walks the master's §5 DoD criterion-by-criterion against
+  the diff (the executor's status files are NOT authoritative; disk wins). Drafts R+1
+  stub specs for the gaps plus an R+1 round master that's a self-contained dispatch
+  target. Loop exits when the skill writes zero R+1 stubs. Closes the orchestration
+  loop: `/program` → `/spec --from` → executor → `/round-review` → next dispatch.
 
 The artifact pattern came from observing a downstream project's plan-rework arc: a
 single-verb `/plan` was being used both for one-paragraph thoughts and for heavy executor
