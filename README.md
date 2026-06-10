@@ -72,7 +72,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`, `program`, `round-review`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -211,6 +211,14 @@ Cairn's skills fall into four categories with different origins.
   dated. Cheap to write, cheap to delete, can be promoted to `/spec`.
 - `spec` — structured agent execution spec (`docs/specs/`) with phases, steps,
   checkpoints, executor handoff. Distinct from `/plan` (behavioral, no file).
+- `program` — author a program-of-specs (one master coordination doc + N
+  workstream child stubs in `docs/specs/`) for substantial work that exceeds a
+  single spec's scope. Bakes in no-deferral discipline + cross-cutting axes
+  coverage. Stubs are elaborated by `/spec --from <stub>`.
+- `round-review` — trust-but-verify an autonomous executor's round of work
+  against a `/program` master. Walks the master's §5 DoD criterion-by-criterion
+  against the diff; drafts R+1 stub specs and a self-contained R+1 round master
+  for the gaps. Loop exits when this skill writes zero R+1 stubs.
 
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the
