@@ -1,0 +1,14 @@
+# /audit citation-durability counter — Enhancement — Note
+
+> **Filed:** 2026-06-09 · **By:** Claude Opus 4.7 (via fresh-agent `/session-distill` on foundational cairn build session, NEW_LAWS lens) · **Status:** open (gate-watch, 1/3 instances)
+
+The fresh-agent NEW_LAWS-lens distillation surfaced an `[LAW citation-durability]` inversion *in the foundational session itself* (now at `docs/origin/748aff00-...jsonl`): at L1420, the agent acknowledged in real time that *"I've cited laws, noted memory candidates, and surfaced insights repeatedly — almost all of it conversational, almost none written to durable files."* The law was being violated and recognized simultaneously. Cairn's response at v0.8.0 was to add proactive-trigger language to `/reflect` so the in-session reflection step would fire at natural checkpoints. That solves *invocation*. It does NOT solve the deeper part of the law — that citations should land in durable artifacts *mid-session* rather than be accumulated conversationally until the end (or never). **Candidate enhancement to `/audit`:** add a counter for *"LAW slugs cited in this session's transcript but not landed in `docs/`, `HANDOFF.md`, commit messages, or skill bodies."* At session end, the audit report tells the user `"X law slugs cited this session; Y landed in files; X−Y were conversational only."` High `X−Y` delta = the law was working (the agent's reasoning honored it) but not writing (no durable trace). Pairs cleanly with the existing slug-counting in `/audit`. Source: foundational session L1420 (the meta-confession). 3-instance gate: currently **1/3** — watch for recurrence.
+
+- **Why `/audit` and not a new skill:** the existing `/audit` already counts citations in durable output. Adding a complementary count of conversational-only citations is one report-line addition + one transcript-scan, not a new verb.
+- **What it surfaces:** the delta between *"the agent acted as if the LAW applied"* (cited it inline in chat) and *"the agent wrote the LAW into something durable"* (landed it in a file or commit). High delta = recoverable mid-session if the session is still live; permanent loss if the session ends.
+- **Why this isn't `/reflect`'s job:** `/reflect` writes lessons end-of-session. The citation-durability inversion happens *mid-session* and degrades over time if not caught. `/audit` running at session end can surface the delta but can't recover it for past sessions — only `/reflect` can do that. The pairing is: `/audit` measures; `/reflect` rescues.
+- **Gate-watch signal:** if a future distillation surfaces a session where load-bearing LAW slugs are cited heavily in chat but rarely reach disk, count as +1 toward gate.
+
+---
+
+*Note — pre-emptive intent capture. If two more instances surface, propose the `/audit` extension directly — single-skill enhancement; no spec needed.*
