@@ -208,7 +208,7 @@ schema is the defense.
 Waves overlap, they don't barrier. A workstream in Wave 1 starts as soon as its specific
 deps in Wave 0 are reviewable, not when all of Wave 0 is done.
 
-**Parallel execution protocol** (§5 in the master) — project-tailored, but typically
+**Parallel execution protocol** (§9.3 in the master) — project-tailored, but typically
 includes:
 
 1. One worktree per workstream (mechanical: `git worktree add ...`). Parallel agents
@@ -302,7 +302,7 @@ file — it lives in the master, not in a sidecar.
 
 ### 7. Stub file generation
 
-For each workstream entry in §3 / §9, write a stub child file at
+For each workstream entry in §9.1 (the workstream registry), write a stub child file at
 `docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md`. The stub contains:
 
 ```markdown
@@ -333,7 +333,7 @@ For each workstream entry in §3 / §9, write a stub child file at
 
 ---
 
-Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md`. The elaborating session reads the master at §2 (contract surfaces), §3 (resolved decisions), §5 (parallel-execution protocol), and the workstream entry for this phase before drafting.
+Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md`. The elaborating session reads the master at §2 (contract surfaces), §3 (resolved decisions), §9.3 (parallel-execution protocol), and the workstream's §9.1 entry for this phase before drafting.
 ```
 
 Stubs are hand-off-ready: an executor can claim the row in §9, read the master + stub,
@@ -492,7 +492,7 @@ agents and reviewers grep for them.
 | 6 | RISKS | Table with child-attribution column |
 | 7 | WHY THIS SHAPE | Bulleted technical-design rationale |
 | 8 | OPERATIONAL POLICY | Project-tailored (CI, ratchet, baselines, etc.) |
-| 9 | PARALLELIZATION GRAPH + STATUS TABLE | DAG + the orchestration state file |
+| 9 | PARALLELIZATION GRAPH + STATUS TABLE | Container for all parallel-execution structure. Sub-sections — §9.1 Workstream registry (the workstream list, with Goal/Scope/Depends-on/Parallel-safe-with/Files/Gate/Telemetry-hook/Diagnostics-path/Rollback-story per entry); §9.2 Dependency DAG (ASCII or markdown graph + wave grouping); §9.3 Parallel-execution protocol (worktree isolation, contract freeze, per-workstream peer-review loop, serialized integration, programmatic counts); §9.4 Status table (the orchestration state file — claim / complete / blocked per row). |
 | 10 | FIRST-ACTION CHECKLIST | Concrete numbered steps for the first executor |
 | 11 | ARCHITECTURAL RATIONALE FOR THE PROGRAM SHAPE | Why this is a program, not a single spec |
 
@@ -567,8 +567,8 @@ session:
   after Phase 1." If something is genuinely unknown, that's `§3.deferrals` with a
   named round, not silence.
 - **Parallel-team default** — Assume executor teams will work in parallel unless the
-  user says otherwise. §5 protocol assumes worktree isolation; §9 status table assumes
-  multiple owners.
+  user says otherwise. §9.3 protocol assumes worktree isolation; §9.4 status table
+  assumes multiple owners.
 - **Spawn subagents proactively for executor-style work** — When child specs are
   elaborated and one or more workstreams are ready to execute (concrete Goal, Scope,
   Files, parallel-safe-with declared), invoke subagents directly rather than asking
