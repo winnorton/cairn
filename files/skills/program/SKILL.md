@@ -582,6 +582,17 @@ session:
   Jun 10 14:41); standing consent isn't standing if the agent asks every time.
   Exceptions — sequential-only work (one workstream blocks all others), or the user
   has explicitly asked for an in-session implementation.
+- **Surface session metadata at handoff-shaped moments** — When the user signals a
+  context-switch ("commit and push", "stand by for completion", external-executor
+  dispatch, `/reflect` closing a major work unit, or any prompt that implies they're
+  about to leave this session), the response MUST include the current session ID and
+  transcript path in a clearly-visible location — typically a small block at the
+  bottom alongside the next-dispatch line, OR a one-line header on the response. The
+  signal this rule is leaking: the user typing "session id and path?", "what is the
+  current sessionid and location?", or similar metadata queries. Each occurrence is
+  the prior output failing to volunteer it. Reason: cwar session `601821ab` produced
+  2 instances (Jun 9 23:50, Jun 10 00:55) and `817c311b` produced 1 more (Jun 11
+  01:07) — 3+ instances across two distinct sessions, gate met.
 - **Close every output with the next dispatch line** — When ending any response
   that completes a step in the orchestration loop (master drafted, peer-review
   absorbed, stubs written, executor round verified, gap identified, etc.), the

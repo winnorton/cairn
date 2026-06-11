@@ -318,6 +318,13 @@ These are operating defaults; the user does not re-prompt per session:
   is what `/spec --from` reads downstream.
 - **Loop exit is when this skill writes zero stubs.** If everything passes, the report
   says so explicitly; the program is done.
+- **Surface session metadata at handoff-shaped moments.** Round-review reports are
+  themselves a handoff moment — the user takes the report to another session, an
+  external executor, or back to their planning agent. The report MUST include the
+  current session ID and transcript path (typically alongside the next-dispatch line
+  at the bottom). Same reasoning as `/program`'s equivalent standing instruction;
+  3+ instances of "session id and path?"-class queries across two cwar sessions
+  (601821ab, 817c311b).
 - **Close every report with the next dispatch line.** The Output section already
   promises this; the standing instruction here is reinforcement — never end a
   `/round-review` invocation without the exact paste-shaped prompt for the user's
