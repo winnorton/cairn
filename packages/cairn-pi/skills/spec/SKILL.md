@@ -148,7 +148,13 @@ Create the file at `docs/specs/SPEC_<NAME>.md`:
   — folder location is the status (active in `specs/`, shipped after `git mv` to `archive/`).
 - **Human Intent section:** verbatim original request, extracted symptom/goal, scope,
   success criterion.
-- **Pre-flight section:** baseline commands the executor runs first.
+- **Pre-flight section:** baseline commands the executor runs first, each with its
+  expected result. Write it as a **halting gate**, not a warm-up — instruct the
+  executor explicitly: if any expectation fails (wrong path, missing VCS state,
+  absent tooling, baseline mismatch), STOP and surface the mismatch before Phase 1
+  rather than absorbing the surprise. (Evidence: Pi session `019eb7b5` skipped a
+  failing-expectation pre-flight and executed a git-commit protocol in a directory
+  with no `.git`.)
 - **Numbered Phases:** each contains numbered STEPs that target exactly one file each.
   - Each STEP: show the CURRENT code, then the REPLACEMENT code, then explain WHY each
     change matters.
@@ -170,6 +176,11 @@ Create the file at `docs/specs/SPEC_<NAME>.md`:
 - **Show exact code.** Every STEP shows current code + replacement code. No "update as needed."
 - **One file per STEP.** Three files = three STEPs.
 - **Checkpoint after every phase.** Run the project's lint/test gate at minimum.
+- **Declare the shell dialect.** Authoring harness ≠ executing harness. Write
+  pre-flight/checkpoint commands shell-portably where possible; otherwise tag the
+  block with its dialect (`# PowerShell — translate if your shell is POSIX`) so a
+  bash-tool executor translates instead of paste-failing. (Evidence: two hard
+  PowerShell-in-bash errors in Pi-on-Windows executor sessions, 2026-06-11.)
 - **Estimate scope, not time.** Files/systems/tests touched, NOT wall-clock days. Agent
   time anchors are unreliable.
 - **Respect repo-level Hard Rules.** If the task could tempt the executor toward a known

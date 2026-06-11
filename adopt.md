@@ -233,7 +233,10 @@ For **Pi** (pi.dev), the variables resolve as:
   command, version-locked to the cairn release, upgradable through Pi's package
   manager. The curl flow remains the fallback when npm is unreachable and the only
   channel for the rest of the catalog. Package source: `packages/cairn-pi/` in the
-  cairn repo.
+  cairn repo. **Migration from curl-era installs:** after installing the package,
+  remove any adopt-era copies of the six packaged skills from `~/.pi/agent/skills/`
+  — duplicates can shadow the package copies, and installs predating Step 5's
+  fetch-validation may contain corrupt `404: Not Found` bodies.
 - **Pi has `@juicesharp/rpiv-todo` for compaction-surviving phase orchestration.**
   Cairn does NOT ship a competing `/todo` skill. When advising Pi adopters on
   multi-phase spec execution, point them at rpiv-todo for the orchestration spine
@@ -247,7 +250,7 @@ layers**, each with different tool access patterns — use the right one:
   mount** at a path like `/sessions/<session-name>/mnt/<folder>/`. File tools often can't
   write here — writes fail with *"blocked in this session — resolves to a protected
   location."* **Fall back to the shell** with `curl` to HTTP-fetch and redirect to disk:
-  `curl -sL {rawBase}/files/LAWS.md > .claude/LAWS.md`. Run `pwd` in the shell first to
+  `curl -sfL {rawBase}/files/LAWS.md > .claude/LAWS.md`. Run `pwd` in the shell first to
   confirm the working directory resolves to the project root. Reads via file tools usually
   still work; only writes need the shell. **Do not** use heredocs to inline file content
   — fetch every file via HTTP (see Step 5 for the right-vs-wrong pattern).
@@ -337,7 +340,7 @@ reading these instructions, requiring a manual cleanup pass. Don't repeat that.
 
    ✅ **Right:**
    ```
-   curl -sL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
+   curl -sfL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
    ```
    or with your environment's HTTP-fetch tool, write the fetched bytes directly.
 
@@ -358,12 +361,22 @@ reading these instructions, requiring a manual cleanup pass. Don't repeat that.
 2. If the resolved `dest` already exists and `mode` is `create-if-absent`, skip.
 3. Ensure parent directories exist (`mkdir -p` the parent).
 4. Write the fetched bytes to the destination.
+5. **Validate what landed.** The `-f` flag (in the `curl -sfL` form above) makes
+   HTTP errors fail the fetch instead of writing the error body to disk — but
+   belt-and-suspenders check the written file too: every cairn-shipped `.md`
+   file starts with `---` (SKILL.md frontmatter) or `#` (a markdown heading).
+   If a written file starts with anything else — the canonical symptom is a
+   14-byte body reading `404: Not Found` — delete that file, report which
+   fetch failed, and stop. Validated 2026-06-11: a pre-validation Pi install
+   carried `404: Not Found` bodies as `program/SKILL.md` and
+   `round-review/SKILL.md`, silently shadowing real skills until a
+   `/session-distill` run found them.
 
 **In environments where file tools can't write** (e.g., Cowork's `.claude/` protection
 — see Step 3), still HTTP-fetch — just pipe through the shell instead of file tools:
 
 ```
-curl -sL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
+curl -sfL {rawBase}/files/LAWS.md > {projectClaude}/LAWS.md
 ```
 
 The shell fallback is about *where you write*, not *what you write*. Never let the

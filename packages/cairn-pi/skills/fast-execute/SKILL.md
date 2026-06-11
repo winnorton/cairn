@@ -152,11 +152,25 @@ detect by scanning the spec's section headers:
 
 1. Read the spec end-to-end.
 2. Run the spec's `Pre-flight` block (typically `npm run build && lint && test`).
+   **Pre-flight is a halting gate, not a warm-up** — compare every result against
+   the spec's stated expectations. If any expectation fails (wrong path, missing
+   VCS state, absent tooling, baseline mismatch), STOP: flip the sentinel to
+   `.blocked` with a note (Step 7, condition 4) instead of absorbing the surprise
+   and proceeding. (Evidence: Pi session `019eb7b5` skipped pre-flight and spent
+   the round running a git-commit protocol in a directory with no `.git`.)
 3. Execute each `Phase N` in order, with the per-phase `CHECKPOINT` verifications after each.
 4. Run the spec's `Post-flight` block (final verification + commit-message template).
 5. Spec complete when the spec's `Success criterion` numbered list is verifiable (typically in the Human Intent section near the top).
 
 **In either case** — if your harness offers `/goal` (Antigravity) or equivalent, you may invoke it to delegate execution — `/goal execute <spec-path>`. Otherwise execute the checklist directly.
+
+**Shell-dialect check.** Spec command blocks may be written in a different shell
+dialect than your harness's shell (PowerShell-authored spec, POSIX-bash executor is
+the standard cross-harness split). Translate commands to your shell before running —
+do not paste-and-fail. A block tagged `# PowerShell — translate if your shell is
+POSIX` (per `/spec`'s dialect rule) is the explicit signal; untagged blocks still
+deserve a one-glance dialect sniff (`$env:`, `Get-ChildItem`, backtick continuations
+are PowerShell tells).
 
 Stop executing when the DoD or Success-criterion is satisfied OR when execution hits a hard block that requires planning-agent attention (see Step 7).
 
