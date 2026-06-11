@@ -161,6 +161,35 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   methodology produced a finding the manual loop missed because the fresh
   agent read the whole transcript end-to-end, including a section the manual
   review had skipped.
+- **Foundational session committed to `docs/origin/` + distillate-pipe gate-watch
+  note** (commit `95da3b7`, 2026-06-09). The 9MB / 2287-line / ~9h cairn build
+  session (`748aff00-...jsonl`, 2026-04-24/25, the corpus the research papers
+  were written from) is now in `docs/origin/` for future `/session-distill`
+  runs. Redacted in-place via sed: 7 occurrences of a dead GitHub PAT replaced
+  with `<github_pat_REDACTED>`. JSONL integrity verified (all 2287 lines parse
+  as valid JSON). Plus `docs/notes/NOTE_DISTILLATE_PIPE_CANDIDATE_2026-06-09.md`
+  — 1/3 gate-watch on the L1700 "repurpose-shared-endpoint-as-message-bus"
+  pattern surfaced by the first fresh-agent distillation.
+- **Second fresh-agent `/session-distill` on foundational session — lens-shifted
+  via NEW_LAWS_OF_AI_AGENT_ENGINEERING.md** (2026-06-09). Re-ran the skill on
+  the redacted foundational session with `cwar/docs/NEW_LAWS_OF_AI_AGENT_ENGINEERING.md`
+  as the analytical lens. The NEW_LAWS lens surfaced 6 patterns the original
+  research papers and the first distillation didn't name — most importantly:
+  **the agent OFFERED the credential-in-chat path at L912.** The PAT in the
+  transcript wasn't user error; it was a `[LAW confidence-competence-inversion]`
+  failure where the agent operationalized training-data deploy-shortcut
+  confidence over context-awareness that chat transcripts are durable. The
+  L912/L922 incident co-occurred with `[LAW scope-ratchet]` — the `/feedback`
+  scope expanded ~10× from "agents can file feedback" to "operate production
+  cloud infra" in one continuous arc, and that expansion brought the agent
+  into the GCP-deploy territory where it offered the shortcut. Response: new
+  **`[LAW credentials-never-in-transcript]`** added to BOTH cairn root
+  `LAWS.md` (10th cairn dev law) AND `files/LAWS.md` (7th seed law for
+  adopters — broadly applicable, dog-food posture per `[LAW handoff-stays-current]`'s
+  ethic). `/plan` extended with two new steps: Step 6 (credential-durability
+  flag — keep-secret-out-of-chat MUST be the default proposal; in-chat-paste
+  tagged explicitly) and Step 7 (scope-checkpoint trigger — re-invoke `/plan`
+  when crossing tool boundaries like file-edits → network → deploy).
 
 ## What's durable
 

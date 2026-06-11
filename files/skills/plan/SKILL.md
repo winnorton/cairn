@@ -53,7 +53,43 @@ Do NOT invoke for:
    your default with their window-aware judgment. Only include when the timing actually
    matters — don't perform timing awareness for every trivial plan.
 
-6. **Present and wait.** Show the plan in under ~150 words. End with a single clear question:
+6. **Surface credential-durability if any step touches secrets.** Per
+   `[LAW credentials-never-in-transcript]`: if any step requires a credential
+   (API key, PAT, OAuth token, password, deploy secret), the plan MUST enumerate
+   at least one path that keeps the secret OUTSIDE the chat transcript (env file
+   the agent doesn't read; shell prompt for paste; `gcloud secrets create`;
+   `gh auth login` from a separate terminal; etc.). If an in-chat-paste path is
+   offered as an alternative, tag it explicitly:
+
+   > *"⚠️ Alternative — pasting `<credential>` here will land it in the
+   > durable session transcript. Only use this if you accept that the transcript
+   > persists wherever it gets stored."*
+
+   The keep-secret-out-of-chat path MUST be the default proposal. In-chat-paste
+   is a fallback the agent proposes ONLY if the user requests it after seeing
+   the default. Source incident: cairn's foundational build session offered a
+   PAT-in-chat path as a peer option to keep-the-token — user took the offered
+   path; the token lived in the transcript for ~6 weeks before discovery.
+
+7. **Scope-checkpoint trigger — re-invoke `/plan` when crossing tool-boundaries.**
+   Per `[LAW scope-explicit]`: when a session that started in one tool domain
+   crosses into another mid-execution (file edits → network calls; local code
+   → deploy commands; analysis → infrastructure changes), STOP and re-invoke
+   `/plan` before proceeding. The scope expanded; the original plan may not
+   cover the new domain's blast radius. Especially load-bearing when the new
+   domain is one where credentials are needed — `[LAW scope-ratchet]` (cwar
+   NEW_LAWS Law 4) and `[LAW credentials-never-in-transcript]` co-fire when
+   scope expansion brings the agent into infra territory. Re-invoking `/plan`
+   surfaces both dimensions at once.
+
+   In the cairn foundational session, the `/feedback` skill scope expanded
+   ~10× from "agents can file feedback" to "operate production cloud infra"
+   in one continuous arc — and that expansion brought the agent into the
+   GCP-deploy territory where it offered the credential-in-chat shortcut.
+   A scope-checkpoint trigger at the file-edits → cloud-deploy boundary
+   would have caught both failure modes before they co-occurred.
+
+8. **Present and wait.** Show the plan in under ~150 words. End with a single clear question:
    "Proceed with this plan?" Do not start executing until the user says yes.
 
 ## Output
@@ -62,6 +98,22 @@ A compact plan with:
 - Goal (one line)
 - Steps (numbered, tagged with [R]/[!]/[?])
 - Assumptions (bulleted if any)
+- Credential-durability flag (if any step touches secrets — per Step 6)
 - The confirmation gate question
 
 Nothing else. No preamble. No commentary.
+
+## When to re-invoke /plan mid-execution
+
+Per Step 7 above: cross a tool boundary, re-plan. Specific triggers:
+
+- File edits → network calls (HTTP, SSH, deploy)
+- Local code → infrastructure changes (cloud, DNS, secrets)
+- Analysis-only → execution that has external blast radius
+- Single-repo work → multi-repo work
+- Read-only operations → write operations against shared state
+
+When any of these fires, the agent stops, names the boundary crossing, and
+re-invokes `/plan` for the new scope. This is the operational mechanism for
+honoring `[LAW scope-explicit]` and preventing `[LAW scope-ratchet]` from
+firing silently.

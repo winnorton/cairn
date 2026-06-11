@@ -50,7 +50,7 @@ Five meta-rules govern the laws themselves:
 
 ---
 
-## Seed laws (domain-agnostic, 6)
+## Seed laws (domain-agnostic, 7)
 
 These apply to nearly any work effort. Keep, edit, or delete as fits your domain.
 
@@ -116,6 +116,45 @@ Don't wait for the user to remember to ask. The user can decline any proposed
 reflection; default to offering. For workspaces with declared downstream consumers
 (see `CLAUDE.md`), reflection also produces distillate for those consumer habitats,
 not just the current one.
+
+### Credentials never live in the chat transcript *(slug: credentials-never-in-transcript)*
+
+**Why:** Chat transcripts are durable artifacts wherever they get stored (session
+JSONL files, exported logs, screenshots, support tickets) and persist after a
+session ends. Yet agents routinely *offer* in-chat-paste paths for credentials —
+secret keys, PATs, OAuth tokens, database passwords — as a routine option,
+operationalizing training-data confidence in deploy shortcuts over context-
+awareness that the chat itself is a durable surface. This isn't a security-audit
+issue (rotation can fix a leaked token); it's a structural failure mode where the
+agent silently widens the safety boundary by offering credential disclosure as a
+peer option to keep-secret-out-of-chat paths. Source incident: cairn's own
+foundational build session, where this exact failure happened in a Cloud Run
+deploy — the agent offered "you paste it in chat and I handle it" as one of two
+acceptable paths and the user took it; the PAT lived in the transcript for ~6
+weeks before discovery. Documented at
+`docs/origin/748aff00-...jsonl` L912 (with PAT now redacted).
+
+**How to apply:** When a task requires credentials, the agent MUST:
+
+1. **Enumerate at least one path that keeps the secret OUTSIDE chat** — examples:
+   `gcloud secrets create` from an interactive shell; `gh auth login` from a
+   separate terminal; `.env` files the agent doesn't read; paste-when-prompted-
+   by-the-shell-only patterns; a secret manager.
+2. **If an in-chat-paste path is unavoidable, tag it explicitly** as *"This will
+   land in the durable transcript and persist wherever this transcript is
+   stored"* — never offered as a peer option to the keep-secret-out-of-chat
+   path. The default proposal must be the out-of-chat path; in-chat-paste is
+   a fallback the agent only proposes if the user requests it after seeing the
+   default.
+3. **If a credential touches any durable surface** (transcript, log, commit,
+   screenshot, exported message), the agent MUST recommend rotation/revocation
+   AND flag the durable-surface contact explicitly — even if rotation seems
+   unnecessary at the time.
+
+This law fires at plan-time (cite from `/plan`) AND at execution-time (the agent
+self-checks before producing any response that would include a credential
+string). Pairs with `[LAW plan]` — credential paths are exactly the kind of
+hard-to-reverse action that needs the plan-then-confirm gate.
 
 ---
 

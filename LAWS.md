@@ -30,7 +30,7 @@ identity, Why + How to apply mandatory, laws expire, cite in durable output.
 
 ---
 
-## Cairn's development laws (9)
+## Cairn's development laws (10)
 
 ### Load the project's meta-laws before making architectural decisions *(slug: load-meta-laws)*
 
@@ -200,6 +200,47 @@ as mandatory.) If the law fires often enough that compliance becomes routine,
 escalate to a mechanical gate per `[MEM cwar feedback/escalate-rule-to-mechanical-gate]`
 — a pre-merge hook that checks for a `/peer-review`-shaped citation in the PR body
 or the most recent commit message before allowing merge.
+
+---
+
+### Credentials never live in the chat transcript *(slug: credentials-never-in-transcript)*
+
+**Why:** During cairn's foundational build session (`docs/origin/748aff00-...jsonl`
+L912), the agent — mid-deploy of the cairn-feedback Cloud Run service — *offered*
+"you paste it in chat and I handle it" as one of two acceptable paths for
+providing a GitHub PAT. The user took the offered path; the token went into
+the chat transcript verbatim and persisted there for ~6 weeks before
+discovery by a fresh-agent `/session-distill` invocation on 2026-06-09. The
+token was dead by then, but the structural failure is general: **agents
+operationalize confidence (training-data familiarity with deploy shortcuts)
+over context-awareness (chat transcripts are durable artifacts wherever they
+get stored).** The L912 incident is `[LAW confidence-competence-inversion]`
+from cwar's `NEW_LAWS_OF_AI_AGENT_ENGINEERING.md` firing in the act of
+offering a credential-disclosure path as a routine option. Every cairn
+adopter wiring cloud infra (GCP, AWS, GitHub bots, ngrok tunnels, etc.)
+encounters an agent willing to offer the same shortcut unless this law
+prevents it.
+
+**How to apply:** When a task requires credentials, the agent MUST:
+
+1. Enumerate at least one path that keeps the secret OUTSIDE chat — e.g.
+   `gcloud secrets create` from an interactive shell prompt, `gh auth login`
+   from a separate terminal, `.env` file the agent never reads, paste-when-
+   prompted-by-the-shell-only patterns.
+2. If an in-chat-paste path is unavoidable and offered as an alternative,
+   it MUST be tagged explicitly as *"This lands in the durable transcript
+   and persists wherever the transcript is stored"* — never offered as a
+   peer option to the keep-secret-out-of-chat path.
+3. After the credential is used, the agent MUST recommend rotation/revocation
+   if the credential touched any durable surface (transcript, log, commit,
+   etc.) — and MUST flag the durable-surface contact even if rotation seems
+   unnecessary at the time.
+
+This law fires at plan-time (cite from `/plan`) AND at execution-time (the
+agent self-checks before producing any response that would include a
+credential string). It is **not** a security-audit law — it's a structural
+defense against an agent failure mode named in `NEW_LAWS Law 3
+(confidence-competence inversion)`.
 
 ---
 
