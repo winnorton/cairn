@@ -278,12 +278,22 @@ PHASE 7 — FINAL REPORT
 
 - **DATA MODEL** — what target paths/tables this prompt writes to
 - **SCHEMA / RULES YOU MUST KNOW** — invariants that prevent destructive writes
-- **COST DISCIPLINE** (if budget gates apply) — how to check budget before running
+- **STOP CONDITION** — pick a variant from the Execution strategies catalog
+  (budget-gated, run-until-dry, or a new one the project surfaces). One paragraph
+  naming the variant + what Phase 0 probes for it. NOT cost-discipline-by-default
+  — that's only one variant.
+- **COVERAGE STRATEGY** (optional, recommended when partition space > ~10) —
+  pick a variant from the Execution strategies catalog (naive sequential,
+  bootstrap-then-fill, or new). Drives Phase 1's target-selection logic.
 - **CANONICAL IDs / DEDUP MEMORY** — empty template with one example row
 - **PARTITION ANCHORS** — empty template with one example row
 - **DO-NOT-CONFUSE** — empty template (different entities with similar names)
 - **NAMING & CONSISTENCY** — canonical taxonomies (location IDs, species names,
   module conventions, voice rules)
+- **EXECUTION STRATEGIES** (optional) — explicitly enumerate which strategy
+  variants this prompt picked, and any new project-local strategies that don't
+  yet exist in the cairn catalog. Future agents reading the prompt know what
+  the design choices were.
 
 ### 4. Diff preview (when extracting from inline draft)
 
@@ -344,8 +354,17 @@ what the partition variable is, and what tools the executor needs>
 ## SCHEMA / RULES YOU MUST KNOW
 <from spec>
 
-## COST DISCIPLINE (if applicable)
-<from spec>
+## STOP CONDITION
+<from spec — pick a variant: budget-gated, run-until-dry, or other; name what
+Phase 0 probes>
+
+## COVERAGE STRATEGY (optional)
+<from spec — pick a variant: naive sequential, bootstrap-then-fill, or other;
+applies when partition space is large>
+
+## EXECUTION STRATEGIES (record which variants were picked)
+<single paragraph naming which catalog variants this prompt uses, plus any
+project-local strategies that aren't yet in the cairn catalog>
 
 ## CANONICAL IDs / DEDUP MEMORY (fill after first passes)
 ```
@@ -456,28 +475,89 @@ Tell the user, under ~250 words:
 
 ## Reference shape — worked examples
 
-Two real instances exist in projects this user maintains. Both follow the
-canonical scaffold described above. Read them when authoring a new
-prompt-evolve artifact to see what mature CHANGELOG entries, canonical-IDs
-tables, and fallback matrices look like in practice.
+Two real instances exist. Both follow the canonical scaffold above; both have
+running CHANGELOGs proving the self-improvement loop executes; both have surfaced
+execution strategies (see next section) the scaffold itself doesn't mandate.
 
 **Fishing agent (corpus mining, partition: year):**
 
 - Template: `C:\Users\winno\projects\fish\fishing-agent\data-pop-prompt.template.txt`
   (sanitized; no PII; v1 only)
 - Live evolved: `C:\Users\winno\projects\fish\fishing-agent\data-pop-prompt.txt`
-  (~1058 lines; CHANGELOG v1 → v3.6; populated CANONICAL CONTACT IDs section
-  with 50+ entries; populated YEAR-BY-YEAR NARRATIVE ANCHORS for 2005–2025)
+  (~1058 lines; CHANGELOG v1 → v3.6; CANONICAL CONTACT IDs populated with 50+
+  entries across many merges; YEAR-BY-YEAR NARRATIVE ANCHORS for 2005–2025; rich
+  fallback matrix documenting FTS5 path-split, PB collision rule, get_thread
+  token cap)
 
 **Purdue basketball (web → JSON, partition: season XOR topic):**
 
-- Spec: `C:\Users\winno\projects\purduebb\docs\specs\SPEC_PURDUE_BASKETBALL_HISTORY.md`
-  (contains v1 prompt inline as a fenced block)
-- Live prompt (post-extraction): `C:\Users\winno\projects\purduebb\program\history\MINING_PROMPT.md`
+- Spec (archived after execution): `C:\Users\winno\projects\purduebb\docs\specs\archive\SPEC_PURDUE_BASKETBALL_HISTORY.md`
+- Live prompt: `C:\Users\winno\projects\purduebb\program\history\MINING_PROMPT.md`
+  (~150 lines; CHANGELOG **v1 → v2** with the v2 entry written by the executor
+  that ran the 1968-69 demo pass — proves the Phase 6 self-edit loop fires under
+  real execution; canonical IDs populated with the 1968-69 roster; all 5
+  enforcement items present from authoring)
 
-When in doubt about scaffold shape, look at the fishing live-evolved file.
-That's the gold standard for what a mature prompt-evolve artifact looks like
-after multiple partitions.
+When in doubt about scaffold shape at multi-partition maturity, look at the
+fishing live-evolved file. When in doubt about Phase 6 self-edit discipline at
+v1 → v2 transition, look at the purduebb file.
+
+## Execution strategies (accumulating catalog)
+
+The 7-phase scaffold + 5 enforcement items above are **invariant** — they fire on
+every prompt this skill produces, regardless of project. But every prompt also
+makes project-specific choices about *how* to execute the scaffold. Those choices
+are **execution strategies**: variant, optional, named patterns that accumulate
+in this catalog as new projects surface them.
+
+The distinction matters because conflating them ossifies the skill. The scaffold
+is small and stable; the strategy catalog is open-ended and grows.
+
+Two strategies named so far. Each new project running `/prompt-evolve` may
+surface more.
+
+### Strategy: Stop condition
+
+How does the prompt decide when to stop iterating on a partition?
+
+| Variant | When to use | Surfaced by |
+|---|---|---|
+| **Budget-gated** | External-API cost is metered; hosted LLM inference has token budget; rate-limits matter. Phase 0 probes a budget; the run stops on exhaustion; pending writes go to "Pending Re-run." | fishing-agent |
+| **Run-until-dry** | Compute is free (self-hosted inference, internal-only systems); completeness matters more than throughput. Re-run the same partition until a full pass surfaces no new data; only then mark complete. Naturally pairs with `coverage:"complete"` being earned, not assumed. | purduebb |
+
+The generated prompt's scaffold has a `## STOP CONDITION` section near the top.
+The project picks which variant applies and writes one paragraph naming it. Phase
+0 then probes whatever signal that variant needs (budget remaining, server
+health, etc.).
+
+### Strategy: Partition walking
+
+How does the prompt walk a partition space larger than ~10 partitions?
+
+| Variant | When to use | Surfaced by |
+|---|---|---|
+| **Naive sequential** | Partitions are few (≤10) OR the prompt is already mature (canonical IDs / narrative anchors / fallback matrix are well-populated from a prior corpus). Simplest walk: oldest → newest, one per run. | fishing-agent (after a few years) |
+| **Bootstrap-then-fill** | Partition space is large (decades, hundreds of modules, etc.) AND the prompt is starting from v1. Stage A: sparse strides (5-year, 20-year, every-10th-module) across the full range to mature the prompt's accumulating state before going deep. Stage B: sequential fill once strides are populated. Reduces per-partition cost on later partitions because the prompt is already smart. | purduebb |
+
+The generated prompt's scaffold has an optional `## COVERAGE STRATEGY` section.
+When present, it picks the walking variant; Phase 1's target-selection logic
+follows.
+
+### Adding new strategies
+
+When a new project running `/prompt-evolve` surfaces an execution strategy that
+doesn't fit the named variants above:
+
+1. Document the strategy in the generated prompt's `## EXECUTION STRATEGIES`
+   section as `<NAME> strategy: <one-paragraph description>` so the project's
+   future agents understand what was chosen.
+2. If the strategy recurs in a second project, propose adding it to this catalog
+   via `/feedback` or a PR to cairn. 3-instance gate from
+   `NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md` applies: name it here when it's
+   surfaced in 3 projects.
+
+The catalog grows; the scaffold doesn't. Strategies that don't recur stay
+project-local.
 
 ## Standing instructions (defaults baked in — do not re-prompt)
 
