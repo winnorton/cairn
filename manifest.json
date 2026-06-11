@@ -246,6 +246,14 @@
       "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's §5 DoD criterion-by-criterion against the diff, surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
     },
     {
+      "src": "files/skills/fast-execute/SKILL.md",
+      "dest": "{userSkills}/fast-execute/SKILL.md",
+      "mode": "create-if-absent",
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Fast-execute verb — turn an autonomous executor agent (Google Antigravity Flash, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in docs/specs/, picks up /round-review-produced round masters, executes per their §4 first-action checklist, marks completion via sentinel atomic-flip (.ready → .claimed → .done), and re-arms its timer. Removes the dispatch-prompt friction from multi-round /program loops — Opus writes the round master + .ready sentinel; the executor picks it up automatically on the next poll. Default poll 300s; stop on explicit STOP.signal OR 3 consecutive empty polls OR malformed inbox. Tightly coupled to /round-review's output shape. Do NOT use in harnesses without timer primitives (fall back to manual /goal execute <master>) or for one-shot dispatches."
+    },
+    {
       "src": "files/skills/prompt-evolve/SKILL.md",
       "dest": "{userSkills}/prompt-evolve/SKILL.md",
       "mode": "create-if-absent",
