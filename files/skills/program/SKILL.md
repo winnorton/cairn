@@ -569,6 +569,33 @@ session:
 - **Parallel-team default** — Assume executor teams will work in parallel unless the
   user says otherwise. §5 protocol assumes worktree isolation; §9 status table assumes
   multiple owners.
+- **Spawn subagents proactively for executor-style work** — When child specs are
+  elaborated and one or more workstreams are ready to execute (concrete Goal, Scope,
+  Files, parallel-safe-with declared), invoke subagents directly rather than asking
+  the user "should I spawn?" The user chose `/program` over `/spec` — that choice IS
+  the standing consent for parallel execution. The signal this rule is leaking: the
+  user typing "spawn sonnet agents", "address all issues, spawn where appropriate",
+  or repeating "execute X" because the prior round didn't fan out. Each occurrence
+  is an agent-side close failure, not a user request — you waited where the user
+  had already authorized. Reason: cwar session `601821ab` produced 3+ instances of
+  the user re-authorizing parallel execution mid-session (Jun 9 23:08, Jun 10 13:19,
+  Jun 10 14:41); standing consent isn't standing if the agent asks every time.
+  Exceptions — sequential-only work (one workstream blocks all others), or the user
+  has explicitly asked for an in-session implementation.
+- **Close every output with the next dispatch line** — When ending any response
+  that completes a step in the orchestration loop (master drafted, peer-review
+  absorbed, stubs written, executor round verified, gap identified, etc.), the
+  bottom of the response MUST contain the exact paste-shaped prompt for the user's
+  next move. Examples — `/peer-review docs/specs/SPEC_X_00_PROGRAM.md` after a
+  master commit; `/goal execute docs/specs/SPEC_X_R<N>_00_MASTER.md` after
+  `/round-review`; `/spec --from docs/specs/SPEC_X_NN_STUB.md` after stub
+  generation. If there is genuinely no next dispatch (program shipped + archived,
+  or the loop exited cleanly), say so explicitly — "no next action — program
+  complete." The signal this rule is leaking: the user typing "next step?",
+  "what's next?", or "list the next specs". Each occurrence is the prior output
+  failing to close. Reason: cwar session `601821ab` produced 4+ instances of
+  "next step?"-class prompts (Jun 9 14:32, Jun 9 16:47, Jun 10 11:25, Jun 10 11:48);
+  recurring "what now?" is an agent-side gap, not a user question.
 - **Two gates with distinct shapes** — Gate A (axes pass) is **informal user sign-off**
   in conversation; the artifact isn't a change set yet, so `/peer-review` doesn't fit.
   Gate B (full master + stubs) is **commit-then-`/peer-review`**: stage the files,

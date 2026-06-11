@@ -318,6 +318,15 @@ These are operating defaults; the user does not re-prompt per session:
   is what `/spec --from` reads downstream.
 - **Loop exit is when this skill writes zero stubs.** If everything passes, the report
   says so explicitly; the program is done.
+- **Close every report with the next dispatch line.** The Output section already
+  promises this; the standing instruction here is reinforcement — never end a
+  `/round-review` invocation without the exact paste-shaped prompt for the user's
+  next move (typically `/goal execute docs/specs/SPEC_X_R<N>_00_MASTER.md`, or
+  `no next action — program complete` if the loop exited cleanly). The signal this
+  rule is leaking: the user typing "next step?" or "what's next?" after a report.
+  Each occurrence is an agent-side close failure. Reason: cwar session `601821ab`
+  produced 4+ instances of "next step?"-class prompts; same pattern as
+  `/program`'s equivalent standing instruction.
 
 ## Output
 
