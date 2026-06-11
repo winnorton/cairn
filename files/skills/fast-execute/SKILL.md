@@ -1,6 +1,6 @@
 ---
 name: fast-execute
-description: Turn an autonomous executor agent (Google Antigravity Flash, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in `docs/specs/`, picks up `/round-review`-produced round masters, executes their first-action checklist, marks completion, and re-arms its timer. Removes dispatch-prompt friction from multi-round `/program` loops — Opus writes the round master plus a sibling `.ready` sentinel; the executor picks it up automatically on the next poll; the loop runs without continuous user attention. Protocol — sentinel atomic-flip (`.ready` → `.claimed` → executed → `.done`), default poll 300s, stop on explicit `STOP.signal` OR 3 consecutive empty polls OR malformed inbox. Tightly coupled to `/round-review`'s output shape (round master at `docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md`). Do NOT use in harnesses without timer primitives (fall back to manual `/goal execute <master>`) or for one-shot dispatches where polling overhead exceeds value.
+description: Turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in `docs/specs/`, picks up dispatched specs — single `/spec`-produced specs (`SPEC_<NAME>.md`) OR `/round-review`-produced round masters (`SPEC_<NAME>_R<N>_00_MASTER.md`) — executes per the spec body, marks completion via sentinel atomic-flip (`.ready` → `.claimed` → `.done`), and re-arms its timer. Removes dispatch-prompt friction whether you batch single specs over time (the more common shape) or run multi-round `/program` loops. Default poll 300s. Stop on explicit `STOP.signal`, 3 consecutive empty polls, malformed inbox, or an unelaborated `/program` stub. Path-rejection guards on `docs/specs/archive/` and `docs/specs/_promoted/`. Do NOT use in harnesses without timer primitives (fall back to manual `/goal execute <path>`) or for true one-shot dispatches where the polling-tail wait exceeds manual-prompt cost.
 ---
 
 # Fast Execute
@@ -88,26 +88,30 @@ is the manual fallback when a timer primitive isn't available.
 Look for files matching the pattern:
 
 ```
-docs/specs/SPEC_*_R<N>_00_MASTER.md.ready
+docs/specs/SPEC_*.md.ready
 ```
 
-Each `*.ready` file is a sentinel. The file it sentinels is the same path
-without `.ready` — e.g. `SPEC_MAP_PROCESS_TELEMETRY_R2_00_MASTER.md.ready`
-sentinels `SPEC_MAP_PROCESS_TELEMETRY_R2_00_MASTER.md`.
+This matches BOTH shapes:
+- **Single-spec dispatch** (the more common shape) — e.g. `SPEC_PURDUEBB_DB_MIGRATION.md.ready` sentinels `SPEC_PURDUEBB_DB_MIGRATION.md`.
+- **Round-master dispatch** — e.g. `SPEC_MAP_PROCESS_TELEMETRY_R2_00_MASTER.md.ready` sentinels the round master.
 
-**The sentinel pattern is atomic.** The planning agent writes the round
-master first, THEN creates the `.ready` sentinel. Until the sentinel exists,
-the master is not safe to read (it may be half-written). When the sentinel
-exists, the master is committed and ready.
+The polling-daemon works for both — the lifecycle (sentinel atomic-flip) is identical; only Step 4's execution discipline branches on the spec's structure.
 
-If **zero** `.ready` files exist:
+**Path-rejection guard.** Skip any `.ready` sentinel under these paths even if it exists:
+- `docs/specs/archive/...` — shipped specs, not re-executable.
+- `docs/specs/_promoted/...` — note-promotion breadcrumbs, not specs.
+
+**The sentinel pattern is atomic.** The planning agent writes the spec first, THEN creates the `.ready` sentinel. Until the sentinel exists, the spec is not safe to read (it may be half-written). When the sentinel exists, the spec is committed and ready.
+
+If **zero** `.ready` files exist (after the path-rejection guard):
 - Increment idle-poll counter.
 - If idle-poll counter exceeds stop threshold (default 3) → STOP (Step 6).
 - Otherwise, schedule next poll (Step 5).
 
 If **one or more** `.ready` files exist:
 - Pick the OLDEST by mtime (FIFO). One per wake — do not drain the queue.
-- Proceed to Step 3.
+- **Stub-rejection sub-check.** Read the first ~30 lines of the sentinel's target spec. If a `Status: STUB` or `**Status:** STUB` header is present, this is an unelaborated `/program` stub that needs `/spec --from <path>` first. Atomic-flip the sentinel `.ready` → `.stub-rejected`, log to the user (the planning agent needs to elaborate before re-arming), and proceed to the next candidate. Do NOT execute.
+- Otherwise, proceed to Step 3.
 
 If **a `STOP.signal` file** exists at `docs/specs/STOP.signal`:
 - STOP (Step 6).
@@ -130,27 +134,31 @@ under you), log it and return to Step 2.
 
 ### 4. Execute
 
-Read the round master file the sentinel referenced (now `SPEC_X_R<N>_00_MASTER.md`,
-the bare name). Follow its `§4 First-action checklist` per the `/round-review`
-output convention:
+Read the spec file the sentinel referenced (now the bare name without `.claimed`).
+The execution discipline branches on the spec's **structure**, not its name —
+detect by scanning the spec's section headers:
 
-1. Read this round master end-to-end.
-2. Read the original program master (`SPEC_<NAME>_00_PROGRAM.md`) for shared
-   contracts.
+**If the spec has a `§4 First-action checklist` section** (round-master shape, produced by `/round-review`):
+
+1. Read the round master end-to-end.
+2. Read the original program master (`SPEC_<NAME>_00_PROGRAM.md`) it references for shared contracts.
 3. Read any referenced notes / prior baselines.
 4. Inventory the working tree.
-5. Execute the R<N> stubs per §1 (the round's execution-order graph).
-6. For each stub: either elaborate via `/spec --from <stub>` first, OR execute
-   directly using the stub's Goal/Scope/Gate fields.
+5. Execute the R<N> stubs per the round master's §1 execution-order graph.
+6. For each stub — either elaborate via `/spec --from <stub>` first, OR execute directly using the stub's Goal/Scope/Gate fields.
+7. Round complete when the round master's `§3 Round-level Definition of Done` numbered criteria all hold.
 
-If your harness offers `/goal` (Antigravity) or equivalent, you may invoke it
-to delegate execution: `/goal execute docs/specs/SPEC_X_R<N>_00_MASTER.md`.
-Otherwise execute the checklist directly.
+**If the spec has `Phases / Steps / Pre-flight / Post-flight` sections** (single-spec shape, the more common case, produced by `/spec`):
 
-**Per `/round-review`'s `§3 Round-level Definition of Done`, the round is
-complete when all the §3 numbered criteria hold.** Stop executing when §3
-is satisfied OR when execution hits a hard block that requires planning-agent
-attention (see Step 7).
+1. Read the spec end-to-end.
+2. Run the spec's `Pre-flight` block (typically `npm run build && lint && test`).
+3. Execute each `Phase N` in order, with the per-phase `CHECKPOINT` verifications after each.
+4. Run the spec's `Post-flight` block (final verification + commit-message template).
+5. Spec complete when the spec's `Success criterion` numbered list is verifiable (typically in the Human Intent section near the top).
+
+**In either case** — if your harness offers `/goal` (Antigravity) or equivalent, you may invoke it to delegate execution — `/goal execute <spec-path>`. Otherwise execute the checklist directly.
+
+Stop executing when the DoD or Success-criterion is satisfied OR when execution hits a hard block that requires planning-agent attention (see Step 7).
 
 ### 5. Mark completion — outbox sentinel
 
