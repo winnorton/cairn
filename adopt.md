@@ -220,11 +220,20 @@ For **Pi** (pi.dev), the variables resolve as:
   installed.
 - **Pi is the primary executor for cairn-authored `/spec` and `/program` artifacts.**
   Adopters running Pi sessions typically read a spec file (`docs/specs/SPEC_*.md`)
-  and execute it phase-by-phase. The cairn skill suite is *authoring*-focused; for
-  Pi-only adopters, the minimum useful install is `seed` (AGENTS.md + MEMORY.md) plus
-  `/note` and `/feedback` for capturing findings outside the spec's success criteria.
-  The full `grow`/`structure` suites don't hurt Pi but most maintenance/collaboration
-  skills don't fire in pure-execution context.
+  and execute it phase-by-phase. For pure-execution adopters, the minimum useful
+  install is `seed` (AGENTS.md + MEMORY.md) plus `/note` and `/feedback` for
+  capturing findings outside the spec's success criteria. The full `grow`/`structure`
+  suites don't hurt Pi but most maintenance/collaboration skills don't fire in
+  pure-execution context.
+- **The authoring/orchestration loop installs natively via Pi's package manager —
+  prefer it over this curl flow for those six skills.**
+  `pi install npm:@winnorton/cairn-pi` ships `spec`, `program`, `round-review`,
+  `fast-execute`, `peer-review`, and `note` as a pi package (invoked `/skill:spec`
+  etc.; add `-l` for a project-local install recorded in `.pi/settings.json`). One
+  command, version-locked to the cairn release, upgradable through Pi's package
+  manager. The curl flow remains the fallback when npm is unreachable and the only
+  channel for the rest of the catalog. Package source: `packages/cairn-pi/` in the
+  cairn repo.
 - **Pi has `@juicesharp/rpiv-todo` for compaction-surviving phase orchestration.**
   Cairn does NOT ship a competing `/todo` skill. When advising Pi adopters on
   multi-phase spec execution, point them at rpiv-todo for the orchestration spine

@@ -66,6 +66,20 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 >
 > Adopt cairn into *other* projects.
 
+### Pi (pi.dev) fast path
+
+The `/spec` + `/program` authoring-and-orchestration loop also ships as a native
+pi package:
+
+```
+pi install npm:@winnorton/cairn-pi
+```
+
+Six skills land as `/skill:spec`, `/skill:program`, `/skill:round-review`,
+`/skill:fast-execute`, `/skill:peer-review`, and `/skill:note`. The adopt flow
+above still covers the full catalog; the package is the one-command path for
+Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi/).
+
 ## What you get
 
 | File | Purpose |

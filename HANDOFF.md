@@ -190,6 +190,17 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   flag — keep-secret-out-of-chat MUST be the default proposal; in-chat-paste
   tagged explicitly) and Step 7 (scope-checkpoint trigger — re-invoke `/plan`
   when crossing tool boundaries like file-edits → network → deploy).
+- **`packages/cairn-pi/` npm package authored** (2026-06-11) — ships the six-skill
+  authoring loop (`spec`, `program`, `round-review`, `fast-execute`, `peer-review`,
+  `note`) to Pi as a native pi package (`pi install npm:@winnorton/cairn-pi`),
+  extending Pi from executor-only to a full authoring environment. Skill copies are
+  byte-identical to `files/skills/` — sync + drift guard in
+  `packages/cairn-pi/scripts/sync-skills.mjs`, wired to `prepublishOnly`, with
+  VERSION lockstep and the 1024-char description cap enforced mechanically. Fixed
+  `round-review`'s frontmatter description over the canonical cap at source
+  (1051 → 1021 chars). Pull-forward of the Pi slice of the v0.15.x "plugin
+  packaging" thread per `SPEC_AGENTS_UMBRELLA.md` open question 2. Spec:
+  `docs/specs/SPEC_CAIRN_PI_PACKAGE.md`.
 
 ## What's durable
 
