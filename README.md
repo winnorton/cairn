@@ -73,7 +73,7 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`), and **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -205,6 +205,13 @@ Cairn's skills fall into four categories with different origins.
 - `peer-review` — fresh agent reading a change set cold (catches what the work-author
   missed because they were "too close"). Named `peer-review` to disambiguate from Claude
   Code's built-in `/review` skill.
+- `session-distill` — fresh agent reading a past session JSONL transcript cold,
+  through cairn's improvement lens. Produces a structured report of patterns
+  recognized, skill candidates with 3-instance gate check, law candidates,
+  memory candidates, and environment-support gaps. This is the **formalization
+  of the methodology that produced cairn itself** — the transcript-analysis
+  loop the research papers documented, the same loop that surfaced `/reframe`,
+  `/bridge`, `/advocate`, and most of the collaboration-skills taxonomy.
 
 **Artifact skills — produce in-tree planning files:**
 

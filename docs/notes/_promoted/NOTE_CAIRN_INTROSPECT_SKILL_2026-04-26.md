@@ -1,6 +1,8 @@
 # /cairn-introspect — Skill Idea — Note
 
-> **Filed:** 2026-04-26 · **By:** Claude Opus (cairn-side session) · **Status:** open
+> **Promoted to** [files/skills/session-distill/SKILL.md](../../../files/skills/session-distill/SKILL.md) **on 2026-06-09.** The proposed `/cairn-introspect` name was renamed to `/session-distill` for namespace safety — cairn-prefixed names are fragile (per `[MEM project/cairn-blend-strategy-pillars]`); the `/session-distill` compound pairs cleanly with cairn's existing "distillate" vocabulary from `/reflect`. The 3-instance gate this note named was met during the 2026-06-09 cairn session — 6+ instances observed in a single session (Pi struggling cwar cleanup; Pi clean vast-terrain execution; Claude Code cairn build; the foundational `748aff00` build session; fishing-agent's evolving prompt; purduebb's MINING_PROMPT). Note kept as the promotion breadcrumb per the `/spec --from <note>` convention.
+
+> **Filed:** 2026-04-26 · **By:** Claude Opus (cairn-side session) · **Status:** promoted (was: open)
 
 A candidate skill that produces a self-contained prompt the user pastes into a fresh
 agent session to review a just-completed cairn-using session — specifically through

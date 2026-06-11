@@ -74,7 +74,7 @@ for the index.
 Edits to `files/**` change what adopters get on their next `adopt cairn` run.
 Edits outside `files/**` change cairn-the-repo only.
 
-## Skills defined by this project (16)
+## Skills defined by this project (17)
 
 Listed by category — full descriptions in
 [`files/skills/README.md`](files/skills/README.md):
@@ -95,6 +95,7 @@ Listed by category — full descriptions in
 ### Cross-perspective — rotate the observer
 - [`resume`](files/skills/resume/SKILL.md) — fresh session inheriting context from a prior one
 - [`peer-review`](files/skills/peer-review/SKILL.md) — fresh agent reading a change set cold
+- [`session-distill`](files/skills/session-distill/SKILL.md) — fresh agent reading a past session JSONL cold through cairn's improvement lens; formalizes the transcript-analysis methodology that produced cairn itself (`/reframe`, `/bridge`, `/advocate`, and the collaboration-skills taxonomy all came from this loop)
 
 ### Artifact — produce in-tree planning files
 - [`note`](files/skills/note/SKILL.md) — single-paragraph in-tree capture (`docs/notes/`)

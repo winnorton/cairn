@@ -117,6 +117,30 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   `data-pop-prompt` (Gmail → SQLite, by year, 7 CHANGELOG versions v1→v3.6)
   and purduebb's `MINING_PROMPT.md` (web → JSON, by season XOR topic).
   Generalizes to 8 task classes documented in the skill body.
+- **`/session-distill` skill added** (2026-06-09). New cross-perspective-category
+  skill — total skills goes 16 → 17. **Formalizes cairn's foundational
+  methodology** — the transcript-analysis loop documented in
+  `docs/research/collaboration-skills.md` and `human-interaction-patterns.md`,
+  the same loop that produced `/reframe`, `/bridge`, `/advocate`, and most of
+  the collaboration-skills taxonomy. Reads a past agent session JSONL
+  transcript (Pi or Claude Code format, auto-detected) cold and produces a
+  structured analysis of cairn-improvement findings — patterns recognized
+  against a seeded catalog, skill candidates with 3-instance gate check, law
+  candidates, memory candidates, environment-support gaps. Reports by default;
+  never auto-applies changes; user-side "do it" gates any cairn-side change.
+  Promoted from `docs/notes/_promoted/NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md`
+  after the 3-instance gate was met in a single session (6+ instances observed
+  on 2026-06-09: Pi struggling cwar cleanup; Pi clean vast-terrain execution;
+  Claude Code cairn build session 601821ab; the foundational 748aff00 build
+  session; fishing-agent; purduebb). The proposed `/cairn-introspect` name was
+  renamed to `/session-distill` for namespace safety per
+  `[MEM project/cairn-blend-strategy-pillars]` — cairn-prefixed names are
+  fragile; the `/session-distill` compound pairs cleanly with cairn's existing
+  "distillate" vocabulary from `/reflect`. The seeded pattern catalog lists 8+
+  previously-named patterns (cross-session relay → /bridge, reframing →
+  /reframe, etc.) so new findings get matched against history rather than
+  re-invented. Forms a self-improvement triangle with `/reflect` (in-session
+  pair) and `/resume` (consumer of improved habitat).
 
 ## What's durable
 

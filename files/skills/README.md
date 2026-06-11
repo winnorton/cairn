@@ -90,6 +90,15 @@ gap class that the work-author cannot see from inside their own session.
 - `peer-review/` — fresh agent reading a change set cold (catches inconsistency-class bugs
   the author missed because they're "too close"). Named `peer-review` to disambiguate from
   Claude Code's built-in `/review` skill.
+- `session-distill/` — fresh agent reading a past session's JSONL transcript cold,
+  through cairn's improvement lens. Produces a structured report of patterns recognized
+  (matched against a seeded catalog), skill candidates with 3-instance gate check, law
+  candidates, memory candidates, environment-support gaps. This is the **formalization
+  of the methodology that produced cairn itself** — the transcript-analysis loop
+  documented in the research papers (see `docs/research/collaboration-skills.md` and
+  `human-interaction-patterns.md`). Reports by default; never auto-applies; user "do it"
+  gates any cairn-side change. Cousin to `/peer-review` (same observer-rotation
+  mechanic; transcript instead of diff).
 
 `/reflect` is post-hoc same-agent (different gap class than these); `/peer-review` is
 pre-ship cross-agent. Both can fire on the same change set.
