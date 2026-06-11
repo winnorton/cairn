@@ -585,6 +585,25 @@ session:
   multi-session orchestration where status reports are the primary output shape; see
   the **Status reporting templates** section below.
 
+  **Compaction-survival sub-rule (post-reinjection requirement, added 2026-06-09):**
+  When an auto-compaction summary fires during a session running this skill, the
+  very next assistant turn after the compaction MUST re-state the Spec-link
+  discipline in working state — either inline in a thinking block, or as an
+  explicit *"Resuming `/program` with spec-link discipline active"* sentence at
+  the top of the response — BEFORE producing any status output. Reason: cairn
+  build session `601821ab` proved this rule isn't compaction-resistant on its
+  own — the user gave the same feedback twice in one session (at L1096 and again
+  at L1948), separated by an auto-compaction. The first instance produced this
+  discipline; the second proved it didn't survive the context reset.
+
+  **Generalization (applies to every Standing Instruction in this section):**
+  Discipline that lives only in the skill's session-load needs explicit
+  post-compaction reinforcement. When an auto-compaction fires mid-session,
+  re-state every active standing instruction this skill enforces before
+  resuming. The compaction summary contains *what's been done*; it doesn't
+  reliably preserve *what discipline governs how future output is shaped*.
+  Re-stating is the cheap defense.
+
 ## Output
 
 A confirmation under ~200 words listing:

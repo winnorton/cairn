@@ -292,7 +292,7 @@ these, the skill matches and cites:
 |---|---|---|
 | Stub-spec-executed-anyway | cwar session `019ea817…` (the orphan-cleanup struggle) | Documented in `/spec` spec-discipline; future `[LAW elaborate-stub-before-execute]` candidate |
 | Silent-rm-on-Windows | Same cwar session | Environment trap; informed `/spec` git-rm-vs-rm guidance |
-| Status-report-without-spec-links | Claude Code session `601821ab` (the cairn-build with `/program` use) | `/program`'s "Spec-link discipline" standing instruction + Status reporting templates section |
+| Status-report-without-spec-links (originally; **also confirmed at L1948 post-compaction** in same session) | Claude Code session `601821ab` (the cairn-build with `/program` use) | `/program`'s "Spec-link discipline" standing instruction + Status reporting templates section + **compaction-survival sub-rule** (added 2026-06-09 after first fresh-agent `/session-distill` invocation found the L1948 recurrence — see catalog note below) |
 | Self-improving prompt | fishing-agent `data-pop-prompt` + purduebb `MINING_PROMPT.md` (2 instances) | `/prompt-evolve` |
 | Execution-strategies as a catalog separate from scaffold | purduebb v2 surfacing run-until-dry + bootstrap-then-fill | `/prompt-evolve` execution-strategies catalog |
 | Pi-as-executor (zero-cairn-skills works because spec IS the contract) | Pi vast-terrain session `019eaed6` | Pi added as first-class environment |
@@ -305,9 +305,27 @@ these, the skill matches and cites:
 |---|---|---|
 | Experimental design (cross-platform test creation) | 1 instance | Need 2 more for /experiment |
 | Pre-compaction discipline (save state before token overflow) | 1 instance | Need 2 more for /pre-compaction or a law |
+| Executor-overreach-with-overclaim (flips DoD provisional → VERIFIED without artifact; silent scope absorption; gate-weakening) | 2 instances (both in session `601821ab` cleanup C1/C2) | Need 1 more for a law candidate `[LAW elaborate-DoD-with-artifact-or-keep-provisional]` |
 
 When you find a new pattern that doesn't fit the catalog, **name it** in your
 report and note current instance count toward the 3-instance gate.
+
+### Catalog note — discipline-doesn't-survive-compaction (added 2026-06-09)
+
+The first fresh-agent invocation of this skill on session `601821ab` — the
+same session that originally produced `/program`'s Spec-link discipline —
+found a SECOND instance of the same pattern at L1948, separated from the
+original L1096 by an auto-compaction. The first instance produced the
+discipline; the second proved the discipline didn't survive the context
+reset. Generalization: **any standing instruction shipped to a skill needs
+explicit post-compaction reinforcement, not just session-load**.
+
+This is now baked into `/program`'s Spec-link discipline as a compaction-
+survival sub-rule. The same posture extends to every other Standing
+Instruction in `/program` and (by extrapolation) other skills with persistent
+behavioral expectations across long sessions. Watch for this pattern in
+future distillations — sessions with auto-compactions are high-yield for
+discipline-decay findings.
 
 ## Standing instructions (defaults baked in — do not re-prompt)
 

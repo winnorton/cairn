@@ -141,6 +141,26 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   /reframe, etc.) so new findings get matched against history rather than
   re-invented. Forms a self-improvement triangle with `/reflect` (in-session
   pair) and `/resume` (consumer of improved habitat).
+- **First real `/session-distill` invocation validates skill design** (2026-06-09).
+  Spawned a fresh general-purpose agent to run `/session-distill` on Claude Code
+  session `601821ab` — the same session that originally produced `/program`'s
+  Spec-link discipline. **The skill found a pattern the manual distillation
+  missed:** the same user feedback ("always link to the spec being mentioned")
+  fired TWICE in that session, at L1096 *and* L1948, separated by an
+  auto-compaction. The first instance produced the discipline; the second
+  proved the discipline didn't survive the context reset. Result: added a
+  **compaction-survival sub-rule** to `/program`'s Spec-link discipline
+  standing instruction — when an auto-compaction summary fires, the next
+  assistant turn MUST re-state the discipline before resuming status output.
+  Generalization (also documented in `/program`): every Standing Instruction
+  shipped to a skill needs explicit post-compaction reinforcement, not just
+  session-load. Also updated `/session-distill`'s catalog entry for
+  status-report-without-spec-links to note the L1948 recurrence, and added
+  "executor-overreach-with-overclaim" as a 2/3-instance open candidate based
+  on the same fresh-agent finding. Validates the skill's design intent — the
+  methodology produced a finding the manual loop missed because the fresh
+  agent read the whole transcript end-to-end, including a section the manual
+  review had skipped.
 
 ## What's durable
 
