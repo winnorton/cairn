@@ -129,6 +129,14 @@ active folder is live, `archive/` is shipped, no STATUS field).
   stub specs for the gaps plus an R+1 round master that's a self-contained dispatch
   target. Loop exits when the skill writes zero R+1 stubs. Closes the orchestration
   loop: `/program` → `/spec --from` → executor → `/round-review` → next dispatch.
+- `fast-execute/` — the consumer-side verb of the artifact lifecycle: turns an
+  autonomous executor (Antigravity Flash, Pi, or any harness with timer + file-read
+  primitives) into a polling daemon that watches a sentinel-file inbox in
+  `docs/specs/`, picks up dispatched specs (single specs or `/round-review` round
+  masters), executes per the spec body, and marks completion via sentinel
+  atomic-flip (`.ready` → `.claimed` → `.done`). The one artifact skill that
+  consumes planning files rather than producing them — it closes the dispatch
+  seam of the orchestration loop.
 - `prompt-evolve/` — author a self-improving, version-controlled prompt for tough tasks
   done in many iterative passes over partitions (corpus mining, codebase refactor sweeps,
   doc backfill, bug triage, audits, etc.). Primary mode is `--from <SPEC>`: promotes the

@@ -87,7 +87,7 @@ Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi
 | `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/CLAUDE.md` | Project context template — fill in per effort |
 | `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -241,6 +241,11 @@ Cairn's skills fall into four categories with different origins.
   against a `/program` master. Walks the master's §5 DoD criterion-by-criterion
   against the diff; drafts R+1 stub specs and a self-contained R+1 round master
   for the gaps. Loop exits when this skill writes zero R+1 stubs.
+- `fast-execute` — polling-daemon executor for dispatched specs: watches a
+  sentinel-file inbox in `docs/specs/`, executes (single specs or round
+  masters), and flips sentinels (`.ready` → `.claimed` → `.done`). The
+  consumer-side verb of the artifact loop — pairs with `round-review` to
+  close the dispatch seam.
 - `prompt-evolve` — author a self-improving, version-controlled prompt for
   tough tasks done in many iterative passes over partitions (corpus mining,
   codebase refactor sweeps, doc backfill, bug triage, audits). Primary mode

@@ -25,13 +25,14 @@ for the index.
   `@juicesharp/rpiv-todo` package for compaction-surviving orchestration. Validated
   by Pi session `019eaed6` executing `SPEC_VAST_TERRAIN_P1_05_WORKER_STAGE_RUNNER`
   cleanly with zero cairn skills installed — the cairn `/spec` format is the
-  executor contract. Cowork stays in `manifest.json` for backward compat but is  no longer in the primary triplet. Per-env path resolutions in
+  executor contract. Cowork stays in `manifest.json` for backward compat but is
+  no longer in the primary triplet. Per-env path resolutions in
   [manifest.json](manifest.json) `pathVariables`. Pi adoption details in
   [adopt.md](adopt.md) Step 3. The six-skill authoring loop (spec, program,
   round-review, fast-execute, peer-review, note) also installs natively in Pi via
   `pi install npm:@winnorton/cairn-pi` — source in `packages/cairn-pi/`, sync'd
   from `files/skills/` with a drift guard (see
-  [docs/specs/SPEC_CAIRN_PI_PACKAGE.md](docs/specs/SPEC_CAIRN_PI_PACKAGE.md)).
+  [docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md](docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md)).
 - **In flight as of v0.13.1:** v0.14.0 architectural shift — pull state out of vendor
   namespaces (`~/.claude/memory/`, `<project>/.claude/`) into a cairn-controlled
   `<project>/agents/` directory. Spec at `docs/specs/SPEC_AGENTS_UMBRELLA.md`
@@ -49,8 +50,7 @@ for the index.
 
 - `files/skills/<name>/SKILL.md` — the skill body + YAML frontmatter (the
   `description:` field is load-bearing — agents use it to decide whether to invoke)
-- `files/skills/README.md` — the skill catalog and category groupings (currently lags
-  by one skill — `round-review` not yet folded in)
+- `files/skills/README.md` — the skill catalog and category groupings
 - `files/LAWS.md`, `files/CLAUDE.md`, `files/memory/` — supporting context templates
   shipped to adopters. Editing these changes what every future adopter gets.
 - `LAWS.md` (repo root) — cairn's *own* 9 laws governing how cairn itself is developed
@@ -82,7 +82,7 @@ for the index.
 Edits to `files/**` change what adopters get on their next `adopt cairn` run.
 Edits outside `files/**` change cairn-the-repo only.
 
-## Skills defined by this project (17)
+## Skills defined by this project (18)
 
 Listed by category — full descriptions in
 [`files/skills/README.md`](files/skills/README.md):
@@ -110,6 +110,7 @@ Listed by category — full descriptions in
 - [`spec`](files/skills/spec/SKILL.md) — structured agent execution spec (`docs/specs/`)
 - [`program`](files/skills/program/SKILL.md) — program-of-specs (master + N workstream stubs)
 - [`round-review`](files/skills/round-review/SKILL.md) — review one round of executor output against a program, draft R+1 stubs + round master
+- [`fast-execute`](files/skills/fast-execute/SKILL.md) — polling-daemon executor: watches a sentinel-file inbox in `docs/specs/`, executes dispatched specs, marks completion via sentinel atomic-flip. The consumer-side verb of the artifact loop
 - [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — author a self-improving prompt for tough tasks done in many iterative passes over partitions (corpus mining, refactor sweeps, doc backfill, audits). The only artifact skill whose output evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass
 
 Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with frontmatter

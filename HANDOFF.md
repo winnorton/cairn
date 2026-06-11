@@ -199,8 +199,10 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   VERSION lockstep and the 1024-char description cap enforced mechanically. Fixed
   `round-review`'s frontmatter description over the canonical cap at source
   (1051 → 1021 chars). Pull-forward of the Pi slice of the v0.15.x "plugin
-  packaging" thread per `SPEC_AGENTS_UMBRELLA.md` open question 2. Spec:
-  `docs/specs/SPEC_CAIRN_PI_PACKAGE.md`.
+  packaging" thread per `SPEC_AGENTS_UMBRELLA.md` open question 2. Local-path
+  `pi install` validated 2026-06-11 (registers in `pi list`, removes cleanly);
+  **npm publish (Phase 6) still pending — the package is not yet installable
+  from npm.** Spec: `docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md`.
 
 ## What's durable
 

@@ -15,7 +15,7 @@ Key orientation pointers (all detailed in AGENTS.md):
   `adopt.md`, or path conventions.
 - **Design rationale lives in [docs/research/](docs/research/)** — 9 papers explaining
   *why* each architectural choice exists. Consult before adding/changing structure.
-- **15 skills** under `files/skills/<name>/SKILL.md`. New skill = new subdirectory +
+- **18 skills** under `files/skills/<name>/SKILL.md`. New skill = new subdirectory +
   matching entries in [AGENTS.md](AGENTS.md) and [files/skills/README.md](files/skills/README.md).
 - **Hard rules** in [LAWS.md](LAWS.md); session handoff in [HANDOFF.md](HANDOFF.md)
   (must update in the same commit as `VERSION` per `[LAW handoff-stays-current]`).

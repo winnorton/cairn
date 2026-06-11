@@ -14,7 +14,7 @@
 //     (the canonical SKILL.md cap shared by Claude Code and Pi)
 //   - package.json version === <repo>/VERSION (lockstep releases)
 
-import { copyFileSync, mkdirSync, readFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -35,7 +35,7 @@ function frontmatter(raw, file) {
     return {};
   }
   const name = (m[1].match(/(?:^|\n)name:[ \t]*(.+)/) ?? [])[1]?.trim();
-  const desc = (m[1].match(/(?:^|\n)description:[ \t]*([\s\S]*)$/) ?? [])[1]
+  const desc = (m[1].match(/(?:^|\n)description:[ \t]*([\s\S]*?)(?=\n[A-Za-z][\w-]*:|$)/) ?? [])[1]
     ?.replace(/\r?\n[ \t]+/g, " ")
     .trim();
   return { name, desc };
@@ -87,6 +87,22 @@ for (const skill of SKILLS) {
     mkdirSync(dirname(destPath), { recursive: true });
     copyFileSync(srcPath, destPath);
     console.log(`synced ${skill}`);
+  }
+}
+
+// Orphaned copies: a dir under skills/ no longer in SKILLS would otherwise pass
+// --check and still ship (package.json "files" includes all of skills/).
+let shipped = [];
+try {
+  shipped = readdirSync(join(pkgRoot, "skills"), { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name);
+} catch {
+  /* skills/ absent — first sync run creates it */
+}
+for (const dir of shipped) {
+  if (!SKILLS.includes(dir)) {
+    errors.push(`orphaned copy skills/${dir}/ not in the SKILLS array — delete it or re-add the skill`);
   }
 }
 
