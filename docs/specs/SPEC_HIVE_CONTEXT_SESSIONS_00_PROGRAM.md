@@ -334,6 +334,15 @@ Wave 2 (integration / closure)
 Executors claim a row by setting `Status: in-progress, Owner: <name/model>` and mark
 `COMPLETE` when the workstream merges. This table is the orchestration state file.
 
+> **Merge note (2026-06-13):** all 10 workstreams shipped and merged to `main` across
+> three repos. `cairn-mcp-server`'s four per-wave commits (`7117763`, `7cc5bd4`,
+> `6e7c050`, `2b040b6`) were **squashed to `8ff43a0`** on merge — GitHub push protection
+> flagged a Stripe-format string in the redaction test's planted-secret fixtures, so the
+> fixtures now assemble secret-shaped strings at runtime and history was collapsed to one
+> clean commit. The pre-squash hashes above are historical. `cairn` (merge `9057bc7`) and
+> `cairn-sessions` keep per-commit history. `cairn-sessions` is local-only (no remote yet —
+> publishing the session corpus is a pending visibility decision).
+
 ## §10 FIRST-ACTION CHECKLIST
 
 1. Read this master end-to-end, especially §2 (contracts) and §4 (hard contract).
