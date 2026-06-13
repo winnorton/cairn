@@ -30,7 +30,7 @@ identity, Why + How to apply mandatory, laws expire, cite in durable output.
 
 ---
 
-## Cairn's development laws (10)
+## Cairn's development laws (11)
 
 ### Load the project's meta-laws before making architectural decisions *(slug: load-meta-laws)*
 
@@ -241,6 +241,40 @@ agent self-checks before producing any response that would include a
 credential string). It is **not** a security-audit law — it's a structural
 defense against an agent failure mode named in `NEW_LAWS Law 3
 (confidence-competence inversion)`.
+
+---
+
+### Own cairn's namespace; never depend on folders we don't own *(slug: own-your-namespace)*
+
+**Why:** Two failure modes have already bitten cairn and will keep biting. (1)
+**Namespace collision** — `/review` was silently shadowed by Claude Code's
+built-in until the v0.13.1 rename to `/peer-review`. (2) **Dependency on folders
+we don't own** — cairn hand-wrote state into vendor dirs (`~/.claude/`,
+`~/.gemini/`, `~/.pi/agent/`), and the parked v0.14 `agents/` umbrella draft
+chose a generic folder that collides with the `.agents/skills/` discovery path
+*both* Pi and agy now claim (agy binary-verified 2026-06-13 — the literal
+`{workspace}/.agents/skills` is hard-coded in the agy binary). Names and folders
+we don't own can change semantics under us without notice. The maintainer named
+these (2026-06-13) as the two primary risks to avoid going forward; see
+`[MEM feedback/own-namespace-no-vendor-folder-deps]`.
+
+**How to apply:** Before committing to any cairn artifact — folder, skill name,
+package, command, file — clear two gates:
+
+1. **Do we own the name?** Prefer cairn-namespaced (`.cairn/`, `cairn-*`,
+   `@<scope>/cairn-*`) over generic (`agents/`, `review`) or vendor-shared. On
+   collision with a vendor name, rename — don't coexist (precedent: `/review` →
+   `/peer-review`).
+2. **Do we own the folder?** Cairn state (memory, laws, context) lives in
+   `<project>/.cairn/` — never hand-written into a vendor config dir. Skills
+   reach a vendor's skill dir only via a cairn-named PACKAGE that the vendor's
+   own installer places (e.g. `@winnorton/cairn-pi`, a `cairn` Claude Code
+   plugin). The single permitted touch of a vendor-owned context file
+   (`CLAUDE.md`/`AGENTS.md`) is one user-written import line pointing into
+   `.cairn/`.
+
+Ownership is the design default; deviate only with a named reason in durable
+output.
 
 ---
 
