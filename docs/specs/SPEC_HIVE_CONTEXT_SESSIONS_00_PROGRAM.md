@@ -340,8 +340,8 @@ Executors claim a row by setting `Status: in-progress, Owner: <name/model>` and 
 > flagged a Stripe-format string in the redaction test's planted-secret fixtures, so the
 > fixtures now assemble secret-shaped strings at runtime and history was collapsed to one
 > clean commit. The pre-squash hashes above are historical. `cairn` (merge `9057bc7`) and
-> `cairn-sessions` keep per-commit history. `cairn-sessions` is local-only (no remote yet —
-> publishing the session corpus is a pending visibility decision).
+> `cairn-sessions` keep per-commit history. `cairn-sessions` is now a **private** GitHub
+> repo (`winnorton/cairn-sessions`, created 2026-06-13, default branch `main`).
 
 > **Post-program operationalization (2026-06-13).** The program shipped the ingestion
 > *machinery*; two follow-ons make it *run autonomously on the Spark lab*:
@@ -352,9 +352,9 @@ Executors claim a row by setting `Status: in-progress, Owner: <name/model>` and 
 >   validation is the deploy CHECKPOINT 3.
 > - **Deploy — `spark/specs/SPEC_CAIRN_SESSIONS_DEPLOY.md`** (in the spark repo): the
 >   spark agent's runbook to deploy the corpus + `cairn-ingest` sidecar + systemd timers
->   on `nuc-util`, distilling on the Spark coding lane, pushing findings to a **private**
->   `cairn-sessions` remote. Pending: create the private remote; deploy; the laptop-side
->   federation for Claude Code + Antigravity sessions (D2 made concrete).
+>   on `nuc-util`, distilling on the Spark coding lane, pushing findings to the **private**
+>   `cairn-sessions` remote (created 2026-06-13). Pending: the spark agent runs the deploy;
+>   the laptop-side federation for Claude Code + Antigravity sessions (D2 made concrete).
 
 ## §10 FIRST-ACTION CHECKLIST
 
