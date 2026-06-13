@@ -9,7 +9,7 @@ Turn the bare `cairn-sessions/` folder into a structured, git-tracked corpus wit
 - `git init` the `cairn-sessions` repo; first commit lays down the master §2.2 layout (`normalized/`, `findings/`, `schema/`, `MANIFEST.md` placeholder, `README.md`).
 - `.gitignore` raw globs (`raw/`, `*.jsonl`, `*.pb`, `*.raw`) — raw stays OUT of git per locked storage model.
 - Move the existing stray 9 MB `748aff00…jsonl` into a gitignored `raw/` (or out entirely) — it is NOT committed.
-- Define the federation model: per-project `<project>/agents/sessions/` layout + the dedup-on-`id`+`content_hash` sync contract with the shared repo (v1 = scripted/manual; daemon deferred D2).
+- Define the federation model: per-project `<project>/.cairn/sessions/` layout (realigned from `agents/sessions/` per SPEC_CAIRN_OWNERSHIP / `[LAW own-your-namespace]`) + the dedup-on-`id`+`content_hash` sync contract with the shared repo (v1 = scripted/manual; daemon deferred D2).
 - Document the storage policy + visibility/privacy posture in `README.md`.
 
 ## Telemetry hook

@@ -54,8 +54,10 @@ substrate.
 2. A **structured, git-tracked `cairn-sessions` corpus** — `normalized/`, `manifest/`,
    `findings/`, `schema/` — with raw transcripts kept OUT of git (reproducible from the
    source harness).
-3. A **federation model**: per-project `<project>/agents/sessions/` ↔ the shared
-   `cairn-sessions` repo, deduped by session id + content hash.
+3. A **federation model**: per-project `<project>/.cairn/sessions/` ↔ the shared
+   `cairn-sessions` repo, deduped by session id + content hash. (Per-project path
+   realigned from `agents/sessions/` to `.cairn/sessions/` per SPEC_CAIRN_OWNERSHIP /
+   `[LAW own-your-namespace]` — the `agents/` umbrella was superseded by `.cairn/`.)
 4. A **redaction safety gate** — systematic secret-scrubber run inside normalization AND
    as a corpus pre-commit hook. Nothing un-scrubbed lands.
 5. **Three working adapters** — Claude Code, Pi, Antigravity (`.pb`) — each emitting the
@@ -188,7 +190,7 @@ pre-commit hook (defense in depth). `[LAW credentials-never-in-transcript]`.
 
 | Decision | Resolution | Rationale |
 |---|---|---|
-| Corpus home | **BOTH** per-project `<project>/agents/sessions/` AND shared `cairn-sessions` repo, federated | User-locked. Per-project keeps a session near its work; the shared repo is the cross-project, cross-harness hive (the "multiplayer substrate"). |
+| Corpus home | **BOTH** per-project `<project>/.cairn/sessions/` AND shared `cairn-sessions` repo, federated | User-locked. Per-project keeps a session near its work; the shared repo is the cross-project, cross-harness hive (the "multiplayer substrate"). Per-project path realigned `agents/sessions/`→`.cairn/sessions/` per SPEC_CAIRN_OWNERSHIP. |
 | Storage model | Normalized + manifest + findings in git; **raw OUT** (gitignored, reproducible) | User-locked. Raw is 9 MB+/session; normalized is ≪ that. Keeps clones lean; raw recoverable from source harness. |
 | Harness coverage | **All three at once** — Claude Code, Pi, Antigravity `.pb` | User-locked. Cross-harness is the whole point; fixtures (WS 07) force one real sample per harness. |
 | Envelope format | Single JSON doc per session (`<id>.envelope.json`), `schema_version`'d, `events[]` array | Easier for tools to consume than streaming JSONL; compact; schema-validatable in CI. |
