@@ -319,7 +319,7 @@ feat(ws02): import-bridge spec + files/.cairn/CLAUDE.md header note
 - Created files/.cairn/CLAUDE.md with import-line header note (cairn-managed sentinel)
 - Zero vendor-path write targets in WS02 scope (master §4 hard-contract clear)
 
-Program: SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md · Wave 0 · Parallel-safe-with: 01, 12
+Program: SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md · Wave 0 · Parallel-safe-with: 12 (NOT WS01 — runs after it on files/.cairn/CLAUDE.md, see §9.5)
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```

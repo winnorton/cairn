@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_01_CAIRN_STATE_LAYOUT
 
-**Status:** READY FOR EXECUTOR · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** none (foundational, Wave 0) · **Parallel-safe-with:** 02, 12
+**Status:** READY FOR EXECUTOR · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** none (foundational, Wave 0) · **Parallel-safe-with:** 12 (NOT parallel-safe with WS02 on `files/.cairn/CLAUDE.md` — WS01 owns the body via `git mv`, WS02 prepends its header after; see master §9.5)
 
 ## Goal
 Define and template the cairn-owned `<project>/.cairn/` state directory — the namespace that replaces every vendor-dir cairn write.

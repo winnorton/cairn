@@ -280,7 +280,7 @@ console.log(
 
 **Current state:** No `sync-config.json` exists in `packages/cairn-claude/`.
 
-**IMPORTANT:** The cairn-claude skill list is determined by WS03's elaboration. Before writing this file, read `packages/cairn-claude/package.json` (or WS03's spec) to find the authoritative list.
+**IMPORTANT:** The cairn-claude skill list is determined by WS03's elaboration. Before writing this file, read `packages/cairn-claude/sync-config.json` / `plugin.json` (or WS03's spec) to find the authoritative list — cairn-claude has NO `package.json`.
 
 **Replacement (create new file, substituting the WS03-determined list):**
 
@@ -507,6 +507,7 @@ on:
       - "files/skills/**"
       - "packages/*/skills/**"
       - "packages/*/package.json"
+      - "packages/*/plugin.json"
       - "packages/*/sync-config.json"
       - "scripts/sync-skills.mjs"
       - "VERSION"
@@ -515,6 +516,7 @@ on:
       - "files/skills/**"
       - "packages/*/skills/**"
       - "packages/*/package.json"
+      - "packages/*/plugin.json"
       - "packages/*/sync-config.json"
       - "scripts/sync-skills.mjs"
       - "VERSION"

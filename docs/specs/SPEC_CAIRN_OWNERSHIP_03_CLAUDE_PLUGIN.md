@@ -206,12 +206,12 @@ REPLACEMENT (create with this content):
 
 ```json
 {
-  "skills": ["./skills"],
+  "skills": ["spec", "program", "..."],
   "versionFile": "plugin.json"
 }
 ```
 
-WHY: per §2.4 (single source of truth contract, frozen by WS11), each package declares its version-source file via a `versionFile` key in `sync-config.json`. For non-npm packages like this plugin, `versionFile` points to `plugin.json`. The shared `scripts/sync-skills.mjs` guard reads `sync-config.json` at startup to discover which file to consult for the version lockstep check — it does NOT hardcode `plugin.json` by name. This is the contract surface WS11's shared guard depends on; do not rename or omit this file.
+WHY: per §2.4 (single source of truth contract, frozen by WS11), each package declares (a) its skill set and (b) its version-source file in `sync-config.json`. **`skills` is an explicit array of skill NAMES** — the full catalog this plugin ships; populate it from the programmatic skill list resolved in pre-flight (do NOT write `["./skills"]` here — that directory-path form is the *plugin.json* discovery field, NOT the sync-config format the shared `scripts/sync-skills.mjs` (WS11) reads to know which `files/skills/<name>/` to sync). `versionFile` points to `plugin.json` (non-npm plugin, no `package.json`); the shared guard reads `sync-config.json` at startup to discover both — it does NOT hardcode `plugin.json` by name. This is the contract surface WS11's shared guard depends on; do not rename or omit this file.
 
 ### STEP 2.3 — Create `packages/cairn-claude/scripts/sync-skills.mjs`
 
