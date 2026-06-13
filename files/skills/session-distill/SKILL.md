@@ -267,6 +267,42 @@ When applied:
   user to file).
 - **Project-side finding** → `/note` in the project repo.
 
+## Session corpus and findings ledger (HIVE_CONTEXT_SESSIONS, v0.5.0)
+
+The `cairn-sessions` repo is the cross-harness corpus that backs this skill. Sessions
+from Claude Code, Pi, and Antigravity normalize to a canonical envelope via
+`cairn-mcp-server` adapters (`claude-code.ts`, `pi.ts`, `antigravity.ts`) and land under
+`normalized/<harness>/<project_slug>/<id>.envelope.json`.
+
+**Corrected claim on format detection:** the `session-distill` skill's original
+frontmatter claimed Pi auto-detection via `transcript.ts`. In practice, `transcript.ts`
+handled only Claude Code JSONL; Pi sessions were not parseable before v0.5.0. The `pi.ts`
+adapter added in v0.5.0 is the first real Pi parser. The auto-detect table in §Step 1
+(first-line signal heuristics) now maps directly to the `detect.ts` dispatcher in
+`cairn-mcp-server/src/adapters/detect.ts`.
+
+**Distillation findings accumulate.** When `session_distill` is invoked with
+`envelope_path` (pointing at a committed corpus envelope) and `write_findings: true`, it
+persists a `Finding` document to `cairn-sessions/findings/<id>.findings.json` and appends
+a row to `findings/LEDGER.md`. The next distillation run loads prior pattern names from
+the ledger before analyzing, so patterns are recognized rather than re-derived — this is
+the compounding mechanism the program was built to enable.
+
+To use this path:
+
+```
+session_distill({
+  envelope_path: "/path/to/cairn-sessions/normalized/<harness>/<slug>/<id>.envelope.json",
+  write_findings: true,
+  corpus_root: "/path/to/cairn-sessions"
+})
+```
+
+The existing `transcript_path` and `payload` inputs are unchanged. The corpus and findings
+ledger are optional infrastructure — the skill works exactly as before without them.
+
+See `cairn/docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md` for the full program.
+
 ## The catalog of recognized patterns (seed)
 
 Patterns cairn has already named through prior session-distill instances —

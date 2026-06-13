@@ -144,6 +144,20 @@ itself. The ones that fire most often:
 Cite by slug (`[LAW <slug>]`) in any durable output the law shaped — that's how the
 `/audit` skill earns its signal.
 
+## HIVE_CONTEXT_SESSIONS program (shipped, 2026-06-13)
+
+The `cairn-sessions` corpus and `cairn-mcp-server` v0.5.0 session-ingestion tooling
+are now live across all three harnesses (Claude Code, Pi, Antigravity). The corpus at
+`~/projects/cairn/cairn-sessions` holds normalized envelopes from all three harnesses
+(4 sessions committed as fixtures), a findings ledger (`findings/LEDGER.md`), and three
+JSON Schemas. The ingestion pipeline (`gather` / `manifest` / `corpus_status` MCP tools +
+`normalizeAuto`) normalizes any raw transcript to a canonical envelope, scrubs secrets
+(defense-in-depth: in-normalization + pre-commit hook in cairn-sessions), and deduplicates
+on `content_hash`. `session_distill` now accepts `envelope_path` to consume corpus
+envelopes directly and write compounding findings. The compounding mechanism — prior
+pattern names from `findings/*.json` seeding the next distillation — is now operational.
+See the program master at `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md`.
+
 ## Design DNA
 
 Patterns this project leans on hard. Carry them through every new piece of work:
