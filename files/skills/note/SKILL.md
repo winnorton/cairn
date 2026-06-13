@@ -6,9 +6,10 @@ description: File a quick thought, debug finding, or feature sketch into the pro
   suggests follow-up work and the user wants to capture it (bare `/note` after the
   suggestion). Distinct from /reflect — this is pre-emptive intent capture (one paragraph,
   in-repo, ephemeral); /reflect is post-hoc session distillate (memory writes, often
-  user-space). Distinct from cross-session agent memory — this lives in the project repo
-  (visible to anyone who clones); memory lives in user-space (visible only to agents on
-  this user's machine). Do NOT use for executor handoffs or multi-step refactor plans —
+  user-space). Distinct from cross-session agent memory — this lives in `docs/notes/` in the project
+  repo (ephemeral, human-visible at `ls`); memory lives in `.cairn/memory/` (agent-indexed,
+  persists across sessions, same repo but different purpose). Do NOT use for executor
+  handoffs or multi-step refactor plans —
   those need a heavier shape that this skill deliberately doesn't carry.
 ---
 
@@ -29,9 +30,10 @@ Cheap to write, cheap to delete, cheap to promote later if it becomes real work.
 **Distinct from `/reflect`:** `/note` is pre-emptive (capture before action). `/reflect` is
 post-hoc (distill after action). Different lifecycles.
 
-**Distinct from cross-session memory:** `/note` files to the project repo. Cross-session
-agent memory (the `~/.claude/memory/` system) is a different verb — see "Filing destination"
-below for routing.
+**Distinct from cross-session memory:** `/note` files to `docs/notes/` in the project repo
+(ephemeral, human-readable, git-tracked intent capture). Cross-session **agent memory** lives
+in `.cairn/memory/` in the same repo — also git-tracked, but agent-indexed across sessions
+rather than ephemeral. See "Filing destination" below for routing.
 
 Do NOT use for:
 - Executor handoffs, multi-phase refactors, or anything that needs phases/steps/checkpoints.
@@ -42,9 +44,10 @@ Do NOT use for:
 
 ## Filing destination — `/note` vs cross-session agent memory
 
-`/note` files to the **project repo** (in version control, ships with the codebase, visible
-to anyone who clones). Cross-session **agent memory** lives in **user-space** (visible only
-to agents on this user's machine — e.g. `~/.claude/memory/`).
+`/note` files to `docs/notes/` in the **project repo** (ephemeral intent capture — version
+controlled, visible to anyone who clones, cheap to delete once acted on). Cross-session
+**agent memory** lives in `.cairn/memory/` — also in the project repo, but agent-indexed for
+durable cross-session reasoning rather than ephemeral capture.
 
 Use this table to route:
 
@@ -55,12 +58,12 @@ Use this table to route:
 | "What would a fresh session need to see when running `ls docs/notes/`?" | `/note` (yes, by design) |
 | "What facts about this project shape future agent reasoning broadly?" | Cross-session memory |
 | "Is this an architectural pattern other agents need internalized?" | Cross-session memory |
-| "Should this fact survive the project being cloned to a new machine?" | Cross-session memory if generic; `/note` if project-bound |
+| "Should this fact persist across sessions and be visible to the agent automatically?" | Cross-session memory (`.cairn/memory/`) |
 
 Both can fire for the same observation, answering different questions. **When in doubt,
-prefer `/note`.** Repo-visible beats user-space-buried — a note in the repo can be deleted
-later if it turns out too generic; a memory entry that should have been in-repo is
-silently invisible to future cloners.
+prefer `/note`.** Ephemeral-and-deletable beats durable-and-indexed — a note in `docs/notes/`
+can be promoted to a `.cairn/memory/` entry later; a memory entry added prematurely
+creates agent-context clutter without being pruned.
 
 ## Steps
 

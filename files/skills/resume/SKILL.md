@@ -57,29 +57,34 @@ If multiple HANDOFF.md files exist, prefer the one most recently modified.
 If the workspace is part of a multi-repo setup (e.g. cairn alongside cwar), also check
 adjacent project roots — a `HANDOFF.md` in a sibling project may be the real bridge.
 
-### 2. Memory directory probe (worktree-aware + HANDOFF-aware)
+### 2. Memory directory probe
 
-Memory may be project-scoped, user-global, or per-worktree depending on Claude Code
-configuration. **Probe multiple slugs.** Common locations:
+Memory lives at `<project>/.cairn/memory/` — git-tracked, project-local, no vendor path
+needed. **Probe the canonical path first; fall back to legacy vendor paths for v0.13.x
+migrations.**
 
-- `~/.claude/memory/` (user-global)
-- `~/.claude/projects/<current-cwd-slug>/memory/` (project-scoped, current slug)
-- `~/.claude/projects/<parent-cwd-slug>/memory/` (parent slug — important for worktrees)
+Primary probe (v0.14.0+ adopted cairn):
+
+- `<cwd>/.cairn/memory/` (canonical post-WS01 location)
+
+Fallback probes (v0.13.x installs not yet migrated — WS09):
+
+- `~/.claude/projects/<current-cwd-slug>/memory/` (old Claude Code project-scoped slug)
+- `~/.claude/projects/<parent-cwd-slug>/memory/` (old parent slug — worktree installs)
 
 The slug is derived from the absolute path with separators replaced: `C:\Users\foo\bar`
-becomes `C--Users-foo-bar`. For a worktree at `<project>/.claude/worktrees/<name>/`, the
-parent slug points at `<project>` itself.
+becomes `C--Users-foo-bar`.
 
 **ALSO: if HANDOFF.md (from step 1) contains a `## Related memory paths` section,
 probe those paths too.** This is how cross-project memory bridges work — when a session
-in project A produced memory at project B's slug, HANDOFF.md in A declares the pointer
-so `/resume` knows to follow it. Example HANDOFF.md content:
+in project A produced memory at project B's `.cairn/memory/`, HANDOFF.md in A declares
+the pointer so `/resume` knows to follow it. Example HANDOFF.md content:
 
 ```markdown
 ## Related memory paths
 
-- `~/.claude/projects/C--Users-foo-projects-other-project/memory/` — primary memory
-  for this effort lives at this slug, not the current one
+- `/path/to/other-project/.cairn/memory/` — primary memory for this effort lives in
+  the sibling project, not the current one
 ```
 
 If memory is found at a sibling/parent/declared slug but not the current one, **call

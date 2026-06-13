@@ -83,10 +83,13 @@ Do NOT invoke for:
    transport it — via copy, symlink, or git submodule — into the consumer habitat.
 
    File naming convention depends on the consumer's memory store layout:
-   - **Slug-separated consumer** (per-project memory tree):
+   - **Cairn-adopting consumer** (per-project `.cairn/memory/` tree — the default for any
+     project that has run `adopt`):
      `distillate/<consumer-name>/<type>/<slug>.md`
+     → transport to `<consumer-project>/.cairn/memory/<type>/<slug>.md`
    - **Cross-project user-global consumer** (e.g. Antigravity's
-     `~/.gemini/antigravity/memory/`, where multiple workspaces share one tree):
+     `~/.gemini/antigravity/memory/`, where multiple workspaces share one tree — applies
+     to non-cairn consumers or legacy v0.13.x installs):
      `distillate/<consumer-name>/<type>/<this-project>/<slug>.md` — the
      `<this-project>` subdir prevents pile-up when many workspaces feed one
      consumer. Use the producing workspace's directory basename (typically
@@ -96,7 +99,8 @@ Do NOT invoke for:
    See `files/.cairn/memory/project/README.md` for the layout rule.
 
 7. **Offer transport if the consumer path is locally writable.** After writing distillate,
-   check whether the declared consumer path (e.g. `~/.gemini/antigravity/memory/`) is a
+   check whether the declared consumer path (e.g. `<consumer-project>/.cairn/memory/` for
+   cairn-adopting consumers, or `~/.gemini/antigravity/memory/` for Antigravity) is a
    real directory the current process can write to. If yes, ask:
 
    > *"Distillate written to `distillate/<consumer>/`. Also copy to `<consumer-path>/`
