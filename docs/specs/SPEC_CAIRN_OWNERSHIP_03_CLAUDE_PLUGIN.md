@@ -153,6 +153,74 @@ Example comment shape (fill in actual findings):
 -->
 ```
 
+<!-- PHASE-1-VERIFIED: 2026-06-13
+  executor: Claude Sonnet 4.6, feat/cairn-ownership-v0.14.0
+
+  MANIFEST LOCATION: .claude-plugin/plugin.json (NOT plugin.json at the root)
+  The manifest must live at <plugin-root>/.claude-plugin/plugin.json.
+  The spec's STEP 2.1 target path "packages/cairn-claude/plugin.json" is therefore
+  INCORRECT — the actual path must be "packages/cairn-claude/.claude-plugin/plugin.json".
+  This deviation is applied to Phase 2 build (STEP 2.1).
+
+  MANIFEST REQUIRED FIELDS: name (string, no spaces, kebab-case), version (optional semver),
+  description (optional), author (optional object: {name, email, url}). All fields are
+  optional except name.
+
+  SKILLS FIELD: optional, for ADDITIONAL skill directories beyond the auto-discovered
+  "skills/" directory at the plugin root. The harness auto-discovers skills/<name>/SKILL.md;
+  the "skills" field in plugin.json adds MORE directories. For cairn, the skills/ tree at
+  the plugin root is sufficient — the "skills" field in plugin.json can be omitted.
+  The spec's "skills": ["./skills"] in STEP 2.1 is therefore cargo-cult — kept for
+  explicitness but functionally redundant (auto-discovery handles it).
+
+  MARKETPLACE MODEL: install uses marketplaces, not direct local paths.
+  "claude plugin install <local-path>" does NOT work — returns "not found in any marketplace."
+  Install model:
+    1. Add a marketplace (local dir, GitHub, git, npm, url):
+       claude plugin marketplace add <source>
+    2. Then install from that marketplace:
+       claude plugin install <plugin-name>@<marketplace-name>
+  OR: use --plugin-dir <path> at claude startup for one-session-only plugin loading.
+  OR: configure extraKnownMarketplaces in settings.json with inline plugin list.
+
+  GITHUB/MONOREPO INSTALL: for a plugin in a subdir, use "git-subdir" source type in the
+  marketplace entry:
+    { "source": "git-subdir", "url": "winnorton/cairn", "path": "packages/cairn-claude",
+      "ref": "main" }
+  There is NO "github:owner/repo//subpath@branch" syntax in claude plugin install.
+  The README's install command must use the marketplace model, not a direct URL install.
+
+  VALIDATE COMMAND: claude plugin validate <path> — validates a plugin manifest.
+  LIST/VERIFY: claude plugin list
+  DISABLE/ENABLE: claude plugin disable <name>, claude plugin enable <name>
+  UNINSTALL: claude plugin uninstall <name>
+
+  MARKETPLACE SOURCE TYPES (in .claude-plugin/marketplace.json plugins[].source):
+    - string: relative path from marketplace root to plugin root
+    - {source:"npm", package:...} — npm package
+    - {source:"pip", package:...} — Python package
+    - {source:"url", url:..., ref?, sha?} — git URL (https:// or git@)
+    - {source:"github", repo:"owner/repo", ref?, sha?} — GitHub shorthand (full repo)
+    - {source:"git-subdir", url:"owner/repo or https:// or git@", path:"subdir", ref?, sha?}
+      — monorepo subdir, sparse-cloned (CORRECT SOURCE TYPE for cairn)
+
+  PHASE 4/5 INSTALL PATH CORRECTION: Direct local-path install does not work.
+  To install locally: add a "directory" or "file" source marketplace pointing at the local
+  package, then install from it. OR use --plugin-dir for session-only loading.
+  To install from GitHub: the cairn repo needs a .claude-plugin/marketplace.json at its root
+  OR a separate marketplace pointing at cairn. Simplest production path:
+    1. Place a .claude-plugin/marketplace.json at cairn repo root listing the cairn plugin.
+    2. claude plugin marketplace add github:winnorton/cairn
+    3. claude plugin install cairn@cairn  (or the marketplace name)
+  This DEVIATES from STEP 4.1 and STEP 5.1 assumptions in the spec.
+
+  PHASE 4 STATUS: UNVERIFIED — install path requires marketplace setup; live Claude Code
+  session needed. See surfaced probes.
+
+  STATUS: verified (manifest format + validate confirmed); install model UNVERIFIED (pending
+  marketplace setup in a live Claude Code session).
+-->
+
 **CHECKPOINT 1**
 
 ```powershell

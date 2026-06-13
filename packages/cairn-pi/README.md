@@ -11,6 +11,30 @@ pi install npm:@winnorton/cairn-pi        # user-global (~/.pi/agent/npm/)
 pi install -l npm:@winnorton/cairn-pi     # project-local (.pi/npm/, recorded in .pi/settings.json — team-shareable)
 ```
 
+### Connect cairn state (one user step)
+
+After installing the package, add one line to your project's `AGENTS.md` so Pi can read cairn's memory, laws, and context:
+
+```
+@./.cairn/CLAUDE.md
+```
+
+This line imports the cairn-generated context from `<project>/.cairn/CLAUDE.md` — the file produced by `adopt cairn`. Pi auto-loads `AGENTS.md` at session start; the import gives the agent access to project laws, typed memory, and cairn context. This is the only vendor-file touch cairn requests; the user adds it, not the agent.
+
+**cairn state lives in `<project>/.cairn/`** (git-tracked, project-local). The layout:
+
+```
+<project>/.cairn/
+├── CLAUDE.md         # imported by your AGENTS.md (see above)
+├── LAWS.md           # project laws
+├── memory/
+│   ├── MEMORY.md     # index
+│   └── user/ feedback/ project/ reference/
+└── cairn-version     # version marker
+```
+
+If you haven't run `adopt cairn` yet, do that first to create the `.cairn/` tree. See [cairn README](https://github.com/winnorton/cairn) for the full adopt flow.
+
 ## What you get
 
 | Skill | Invoke in Pi | Role in the loop |
