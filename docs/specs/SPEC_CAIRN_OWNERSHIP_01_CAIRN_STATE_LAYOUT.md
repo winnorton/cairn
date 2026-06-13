@@ -6,10 +6,19 @@
 Define and template the cairn-owned `<project>/.cairn/` state directory — the namespace that replaces every vendor-dir cairn write.
 
 ## Scope
-- The §2.1 tree: `.cairn/{CLAUDE.md, LAWS.md, memory/{MEMORY.md, user/, feedback/, project/, reference/}, context/, cairn-version}`.
+- The §2.1 tree: `.cairn/{CLAUDE.md, LAWS.md, memory/{MEMORY.md, user/, feedback/, project/, reference/}, context/, sessions/, cairn-version}`.
 - Relocate the template tree from `files/{CLAUDE.md,LAWS.md,memory/}` → `files/.cairn/...` (mirrors the parked prototype's `files/agents/` move, but to `.cairn/`).
+- Create `files/.cairn/sessions/` as a reserved, empty directory — HIVE-owned (§2.6); this workstream creates it but does NOT own or populate it.
 - Establish that ALL cairn state is git-tracked inside the adopter's repo; no `~/.*` or `.claude`/`.agents` write target.
+- This workstream does NOT seed `<project>/CLAUDE.md` — that file is fully user-owned per master §2.1/§3; the manifest carries no `{projectRoot}/CLAUDE.md` entry.
+- `files/.cairn/CLAUDE.md` is owned by this workstream (via `git mv`). WS02 runs AFTER this workstream on that file and ONLY prepends a header — see "WS01↔WS02 ordering" note below.
 - Freeze the layout as Contract §2.1 for Wave 1.
+
+## WS01↔WS02 ordering — `files/.cairn/CLAUDE.md` is NOT parallel-safe
+
+This workstream (WS01) owns the **body** of `files/.cairn/CLAUDE.md` via `git mv` from `files/CLAUDE.md`. WS02 (import-bridge) runs **after** WS01 on this file and **only prepends a header** — it never overwrites the body. Per master §9.5, these two workstreams are both Wave 0 but are **NOT parallel-safe** with respect to `files/.cairn/CLAUDE.md`. The integration order is strict: WS01 lands first; WS02 prepends after.
+
+Executor constraint: do not run WS01 and WS02 simultaneously in the same worktree or with overlapping edits to `files/.cairn/CLAUDE.md`. The sequencing is enforced at integration time, not by git — both workstreams may author in separate worktrees, but `files/.cairn/CLAUDE.md` must be resolved by first merging WS01, then applying WS02's header-prepend on top.
 
 ## Telemetry hook
 N/A: markdown framework, no runtime telemetry.
@@ -90,16 +99,17 @@ New-Item -ItemType Directory -Path files\.cairn\memory\project  -Force | Out-Nul
 New-Item -ItemType Directory -Path files\.cairn\memory\reference -Force | Out-Null
 New-Item -ItemType Directory -Path files\.cairn\memory\user     -Force | Out-Null
 New-Item -ItemType Directory -Path files\.cairn\context         -Force | Out-Null
+New-Item -ItemType Directory -Path files\.cairn\sessions        -Force | Out-Null
 ```
 
 ```bash
 # POSIX equivalent
-mkdir -p files/.cairn/memory/{feedback,project,reference,user} files/.cairn/context
+mkdir -p files/.cairn/memory/{feedback,project,reference,user} files/.cairn/context files/.cairn/sessions
 ```
 
-**Why:** `git mv` (Phase 2) requires the parent directories to exist. Creating them now makes the skeleton greppable and confirms there are no permission issues before content moves.
+**Why:** `git mv` (Phase 2) requires the parent directories to exist. Creating them now makes the skeleton greppable and confirms there are no permission issues before content moves. `sessions/` is created here as a reserved placeholder — it is HIVE-owned (master §2.6) and must exist in the skeleton so adopters have the directory from day one; this workstream does NOT populate it.
 
-**After this step:** `ls files/.cairn/` shows `memory/` and `context/`. Both are empty.
+**After this step:** `ls files/.cairn/` shows `memory/`, `context/`, and `sessions/`. All are empty.
 
 ---
 
@@ -138,8 +148,8 @@ printf '0.14.0' > files/.cairn/cairn-version
 # CP-1a: skeleton directories exist
 Test-Path files\.cairn\memory\feedback; Test-Path files\.cairn\memory\project
 Test-Path files\.cairn\memory\reference; Test-Path files\.cairn\memory\user
-Test-Path files\.cairn\context
-# Expected: True for each
+Test-Path files\.cairn\context; Test-Path files\.cairn\sessions
+# Expected: True for each (sessions/ is the HIVE-reserved slot — created empty)
 
 # CP-1b: cairn-version file present and correct
 Get-Content files\.cairn\cairn-version
@@ -455,6 +465,7 @@ $required = @(
   "files\.cairn\memory\reference\README.md",
   "files\.cairn\memory\user\README.md",
   "files\.cairn\context",
+  "files\.cairn\sessions",
   "files\.cairn\cairn-version"
 )
 $required | ForEach-Object { "$_`: $(Test-Path $_)" }
@@ -485,7 +496,7 @@ git status --short
 feat(ws01): move template tree to files/.cairn/ — freeze §2.1 layout
 
 - git mv files/{CLAUDE.md,LAWS.md,memory/**} → files/.cairn/
-- add files/.cairn/context/ (reserved, empty) and files/.cairn/cairn-version (0.14.0)
+- add files/.cairn/context/ (reserved, empty), files/.cairn/sessions/ (reserved, HIVE-owned, empty), and files/.cairn/cairn-version (0.14.0)
 - update files/skills/reflect/SKILL.md: memory/project path → files/.cairn/...
 - update files/.cairn/CLAUDE.md: .claude/LAWS.md pointer → .cairn/LAWS.md
 - manifest.json/adopt.md/AGENTS.md/HANDOFF.md/README.md: deferred to WS06/08/10
@@ -516,6 +527,10 @@ Co-Authored-By: <executor-model-id> <noreply@anthropic.com>
 
 **The constraint most likely to cause a mistake:** using `mv`/`Copy-Item` instead of `git mv`. If git mv is bypassed, `git status` shows the old path as deleted (D) and the new path as an untracked file (??) rather than a rename (R). Recovery: `git add files/.cairn/<name>` (stages the new file), then `git status` should show R once both sides are staged.
 
+**Second most likely mistake:** running WS01 and WS02 concurrently and letting them both edit `files/.cairn/CLAUDE.md`. WS01 owns the body (the git mv establishes this); WS02 only prepends a header afterward. They are NOT parallel-safe on that file. Do not merge WS02 until WS01 has landed.
+
+**Third most likely mistake:** creating or writing `<project>/CLAUDE.md`. Do not do this. The user creates it; cairn never seeds it.
+
 **Scope boundary — do not touch:**
 - `manifest.json` — owned by WS06
 - `adopt.md` — owned by WS08
@@ -541,11 +556,14 @@ A peer-reviewer (fresh agent, did not author) checks:
 - [ ] All 7 template files (`CLAUDE.md`, `LAWS.md`, `memory/MEMORY.md`, four type-READMEs) appear in `files/.cairn/` at the §2.1 paths.
 - [ ] `files/.cairn/cairn-version` contains exactly `0.14.0`.
 - [ ] `files/.cairn/context/` directory exists (§2.1 reserved slot).
+- [ ] `files/.cairn/sessions/` directory exists and is empty (HIVE-reserved slot — created by WS01, not owned or populated by it).
 - [ ] `files/CLAUDE.md`, `files/LAWS.md`, `files/memory/` are gone from the old locations.
 - [ ] `git log --follow files/.cairn/CLAUDE.md` shows rename history (not a fresh file).
 - [ ] `rg "\.claude/LAWS\.md" files/.cairn/CLAUDE.md` returns zero.
 - [ ] `rg "files/memory/project/README" files/skills/reflect/SKILL.md` returns zero.
 - [ ] No file was written outside `files/.cairn/` or `files/skills/reflect/` by this workstream.
+- [ ] `<project>/CLAUDE.md` was NOT created, seeded, or written by this workstream (user-owned per master §2.1/§3; manifest carries no `{projectRoot}/CLAUDE.md` entry).
+- [ ] WS02 has NOT yet run on `files/.cairn/CLAUDE.md` at the point this WS's commit lands — the file contains only the body content from `git mv`, no WS02 header prepend (ordering enforced at integration; both workstreams are Wave 0 but NOT parallel-safe on this file per master §9.5).
 - [ ] DoD#1 grep (PF-POST-3) returns zero for files this workstream owns.
 - [ ] No vendor path (`~/.claude`, `~/.gemini`, `~/.pi`, `.claude/`, `.agents/`) appears in any file this spec created or edited — unless accompanied by `<!-- migration-ref -->` (there should be zero such lines in this workstream's files; migration text belongs in WS08/WS09).
 - [ ] Commit message cites `[LAW own-your-namespace]` and names the §2.1 contract.

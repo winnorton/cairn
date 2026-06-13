@@ -163,7 +163,7 @@ pi install npm:@winnorton/cairn-pi
 ```
 
 This installs `spec`, `program`, `round-review`, `fast-execute`, `peer-review`,
-`prompt-evolve`, `session-distill`, and `note` as a Pi package (invoked as
+and `note` as a Pi package (invoked as
 `/skill:spec` etc.; add `-l` for a project-local install recorded in
 `.pi/settings.json`). Version-locked to the cairn release; upgradable via Pi's
 package manager.
@@ -725,7 +725,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 
 ```powershell
 # PowerShell — run only after /peer-review passes with no blockers
-git mv docs/specs/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md docs/specs/_promoted/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md
+git mv docs/specs/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md docs/specs/archive/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md
 ```
 
 ---
@@ -737,6 +737,8 @@ git mv docs/specs/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md docs/specs/_promoted/
 1. `C:/Users/winno/projects/cairn/cairn/docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` — §4 (hard contract / forbidden write targets / sentinel), §2.1 (`.cairn/` layout), §2.2 (import line). These are load-bearing constraints; re-read §4 before every step.
 2. `C:/Users/winno/projects/cairn/cairn/adopt.md` — the current file you are rewriting. Read it end-to-end first to understand the structure before editing.
 3. `C:/Users/winno/projects/cairn/cairn/docs/notes/NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11.md` — "Verified facts (agy 1.0.7)" and "adopt.md gap" sections. These are the only agy facts on file; do not invent agy Step text beyond what they support.
+
+**Step 3 is the fast-path re-adoption check.** The program master (§9.5 integration notes, WS09 cross-reference) refers to a "Step 2 fast-path"; in this rewrite that logic lands in **Step 3** ("Resolve the cairn state path" — the `cairn-version` marker check). WS09's reference to the fast-path resolves to Step 3 of this rewritten `adopt.md`.
 
 **The one constraint most likely to cause a mistake:**
 

@@ -187,6 +187,24 @@ Expected: zero matches. If `.cairn/` already appears, a prior WS touched these f
 
 **File:** `AGENTS.md`
 
+### STEP 1.3 — Confirm HIVE_CONTEXT_SESSIONS section is preserved in AGENTS.md
+
+**Per program master §2.6 (HIVE coordination):** the `## HIVE_CONTEXT_SESSIONS program (shipped, 2026-06-13)` section currently in `AGENTS.md` (the "cairn-sessions corpus, cairn-mcp-server v0.5.0, ingest CLI/program" block) MUST be carried forward intact when the surrounding Current-state and Layout content is updated. Do NOT delete or truncate it. Steps 1.1 and 1.2 target specific blocks (the "In flight" bullet and the env-roles bullet); the HIVE section is a separate named section and is not touched by those edits.
+
+**Verify the HIVE section is still present after Steps 1.1 and 1.2:**
+
+```powershell
+rg -n "HIVE_CONTEXT_SESSIONS" AGENTS.md
+# Expected: at least one match (the section heading must survive the edit)
+
+rg -n "cairn-mcp-server|cairn-sessions|normalizeAuto|envelope_path" AGENTS.md
+# Expected: matches confirming the corpus/tooling details are intact
+```
+
+If either grep returns zero: the HIVE section was accidentally dropped. Restore it from `git diff` or the original content — its heading is `## HIVE_CONTEXT_SESSIONS program (shipped, 2026-06-13)` and it describes the cairn-sessions corpus at `~/projects/cairn/cairn-sessions`, the `gather`/`manifest`/`corpus_status` MCP tools, the `normalizeAuto`/adapter/redaction pipeline, and the `session_distill` `envelope_path` branch.
+
+**File:** `AGENTS.md` (read-only check — no edit required here; this step is verification only)
+
 **CHECKPOINT after Phase 1:**
 
 ```powershell
@@ -205,9 +223,13 @@ rg -n "\.cairn/" AGENTS.md
 # Verify env-role correction landed
 rg -n "Antigravity is the primary coding" AGENTS.md
 # Expected: one match
+
+# Verify HIVE section survived
+rg -n "HIVE_CONTEXT_SESSIONS" AGENTS.md
+# Expected: at least one match
 ```
 
-If any check fails: re-read Step 1.1 and 1.2, compare exact indentation, and re-apply. Do not proceed to Phase 2 until all four pass.
+If any check fails: re-read the relevant step, compare exact indentation, and re-apply. Do not proceed to Phase 2 until all five pass.
 
 ---
 
@@ -324,6 +346,15 @@ If any non-changelog match remains: re-apply Steps 3.1 and 3.2.
 ---
 
 ## Phase 4 — Fix `HANDOFF.md` stale "In flight" and v0.14 references
+
+> **HIVE carry-forward constraint (program master §2.6):** `HANDOFF.md` contains a
+> `## HIVE_CONTEXT_SESSIONS program — shipped 2026-06-13` section describing the
+> cross-harness session corpus (`cairn-sessions`), `cairn-mcp-server` v0.5.0
+> (`gather`/`manifest`/`corpus_status` tools, `normalizeAuto` pipeline), and the
+> `session_distill` `envelope_path` branch. This section MUST be carried forward
+> intact. Steps 4.1–4.4 target specific blocks (meta-block, interim-work bullet,
+> "For the next agent" pointer, footer) — they do not touch the HIVE section. If
+> any step accidentally drops that section, restore it before continuing.
 
 ### STEP 4.1 — Update the HANDOFF.md intro meta-block
 
@@ -450,9 +481,19 @@ rg -n "15 skills" HANDOFF.md
 # Verify program master link present
 rg -n "SPEC_CAIRN_OWNERSHIP_00_PROGRAM" HANDOFF.md
 # Expected: at least two matches (the updated bullets)
+
+# Verify HIVE section survived (program master §2.6 carry-forward)
+rg -n "HIVE_CONTEXT_SESSIONS" HANDOFF.md
+# Expected: at least one match
+
+rg -n "cairn-mcp-server|cairn-sessions" HANDOFF.md
+# Expected: matches confirming the corpus/tooling details are intact
 ```
 
-If any check fails: re-apply the relevant step.
+If any check fails: re-apply the relevant step. If the HIVE section is missing, restore
+it — its heading is `## HIVE_CONTEXT_SESSIONS program — shipped 2026-06-13` and it
+describes `cairn-sessions`, `cairn-mcp-server` v0.5.0 tools, and the program master at
+`docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md`.
 
 ---
 
@@ -639,6 +680,24 @@ rg -n "18 skills|Skills defined.*\(18\)" AGENTS.md CLAUDE.md
 # Expected: matches confirming 18 in both files
 ```
 
+**V-8 — HIVE sections carried forward in AGENTS.md and HANDOFF.md (program master §2.6):**
+
+```powershell
+# AGENTS.md: HIVE section must survive the env-role + in-flight rewrites
+rg -n "HIVE_CONTEXT_SESSIONS" AGENTS.md
+# Expected: at least one match (section heading intact)
+
+rg -n "cairn-mcp-server|cairn-sessions|normalizeAuto|envelope_path" AGENTS.md
+# Expected: matches confirming corpus/tooling details intact
+
+# HANDOFF.md: HIVE section must survive the v0.14 pointer + meta-block rewrites
+rg -n "HIVE_CONTEXT_SESSIONS" HANDOFF.md
+# Expected: at least one match (section heading intact)
+
+rg -n "cairn-mcp-server|cairn-sessions" HANDOFF.md
+# Expected: matches confirming corpus/tooling details intact
+```
+
 **Commit message template:**
 
 ```
@@ -647,10 +706,12 @@ docs(ownership): WS10 — update README/AGENTS/HANDOFF/CLAUDE.md to .cairn/ mode
 - README "What you get" table: vendor-path rows → .cairn/ + package-install rows
 - AGENTS.md: correct env-roles (Antigravity primary coding, Claude specs/reviews;
   Pi supported-not-primary); replace stale agents/-umbrella "in-flight" block with
-  .cairn/ + program master pointer; remove false .agents/skills Pi-alignment line
+  .cairn/ + program master pointer; remove false .agents/skills Pi-alignment line;
+  HIVE_CONTEXT_SESSIONS section carried forward intact (§2.6)
 - CLAUDE.md: replace dead SPEC_AGENTS_UMBRELLA pointer with program master link
 - HANDOFF.md: retire SPEC_AGENTS_UMBRELLA references; update v0.14 interim-work
-  bullet and "For the next agent" pointer; correct skill count (15→18)
+  bullet and "For the next agent" pointer; correct skill count (15→18);
+  HIVE_CONTEXT_SESSIONS section carried forward intact (§2.6)
 - docs/research/**:  no forward-facing vendor-path descriptions found; all
   path mentions are historical evidence (left intact)
 
@@ -705,3 +766,5 @@ A fresh reviewer (not the executor) should verify:
 - [ ] DoD#8 grep returns zero: `rg -n "v0.14-note|v0.14.0-aligned|\.agents/skills" manifest.json AGENTS.md`
 - [ ] No step introduced a write to `~/.claude`, `~/.gemini`, `~/.pi`, `.claude/`, or `.agents/` (the §4 forbidden targets).
 - [ ] WS12 renames (if any) are reflected in all three skill-listing locations (README taxonomy, AGENTS.md list, CLAUDE.md count).
+- [ ] `AGENTS.md` `## HIVE_CONTEXT_SESSIONS program (shipped, 2026-06-13)` section is present and intact — the cairn-sessions corpus, `cairn-mcp-server` v0.5.0 tooling, `normalizeAuto` pipeline, and `session_distill` `envelope_path` details must not be dropped (program master §2.6 carry-forward).
+- [ ] `HANDOFF.md` `## HIVE_CONTEXT_SESSIONS program — shipped 2026-06-13` section is present and intact — the `cairn-sessions` corpus summary and `cairn-mcp-server` v0.5.0 tool list must not be dropped (program master §2.6 carry-forward).

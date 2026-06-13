@@ -8,6 +8,7 @@ Update every skill body that probes a vendor memory path so it probes `<project>
 ## Scope
 - **Programmatic enumeration** (not a frozen list): `rg -l "~/.claude/memory|~/.pi/agent/memory|\.claude/projects/.*memory|<slug>" files/skills/` → the affected set.
 - Known candidates: `resume`, `reflect`, `note`, `session-distill`, `audit` (probe/cite memory locations).
+- **`session-distill` and `audit` are excluded from the sweep:** a pre-flight `rg` confirms neither contains a hardcoded `~/.claude/memory/` probe — `session-distill`'s vendor-path lines are a "where do session JSONL files live" location table (corpus integration, not a cairn state probe), and `audit`'s single vendor-path mention is a transcript-location hint, not a memory write target.
 - Rewrite probes to `.cairn/memory/`; preserve each skill's logic — only the *path* changes.
 - Update the `/note`-vs-cross-session-memory framing where it asserts user-space vs repo (now both are repo-local under `.cairn/`).
 
@@ -424,6 +425,8 @@ git diff --name-only
 # Expected: ONLY the three in-scope SKILL.md files appear in the diff.
 # If files/skills/session-distill/SKILL.md or files/skills/audit/SKILL.md appear, STOP.
 # Those files must not have been touched — their vendor-path mentions are NOT memory probes.
+# CRITICAL: session-distill's "Session corpus and findings ledger" section is HIVE-owned
+# corpus integration (master §2.6); do NOT touch it. Revert session-distill immediately.
 
 # V-4: Diagnostic check — the stub's Gate criterion.
 Write-Host "=== V-4: Gate rg — zero vendor-memory probes in skill bodies ==="
@@ -473,7 +476,7 @@ After merge, move this spec to the completed archive:
 
 ```powershell
 # PowerShell — from repo root
-git mv docs/specs/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md docs/specs/_promoted/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md
+git mv docs/specs/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md docs/specs/archive/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md
 ```
 
 ---
@@ -487,7 +490,7 @@ git mv docs/specs/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md docs/specs/_promot
 
 **The one constraint most likely to cause a mistake:**
 
-`session-distill/SKILL.md` has THREE vendor-path lines (lines 83–85) that look like memory probe paths but are NOT — they are a "where do session JSONL files live" table for READING transcripts. Do NOT touch those lines. WS07 scope is strictly `files/skills/resume`, `files/skills/note`, and `files/skills/reflect`. If the Pre-flight V-3 check shows session-distill in the diff, stop and revert immediately.
+`session-distill/SKILL.md` has THREE vendor-path lines (lines 83–85) that look like memory probe paths but are NOT — they are a "where do session JSONL files live" table for READING transcripts. Do NOT touch those lines. In addition, `session-distill/SKILL.md` contains a **"Session corpus and findings ledger"** section that must be PRESERVED verbatim — it is HIVE corpus integration (per master §2.6), not a vendor-path probe, and is owned by the HIVE effort across separate repos (`cairn-mcp-server`, `cairn-sessions`). Do not edit, relocate, or delete that section under any circumstances. WS07 scope is strictly `files/skills/resume`, `files/skills/note`, and `files/skills/reflect`. If the Pre-flight V-3 check shows session-distill in the diff, stop and revert immediately.
 
 **Recovery for common failures:**
 
@@ -510,7 +513,7 @@ A fresh peer-reviewer (did NOT author this spec or the edits) checks:
 - [ ] `note/SKILL.md`: routing table last row updated; "when in doubt" rationale updated for post-WS01 world.
 - [ ] `reflect/SKILL.md`: cairn-adopting consumer case (`.cairn/memory/`) appears BEFORE the Antigravity case in the file-naming list.
 - [ ] `reflect/SKILL.md`: Antigravity path (`~/.gemini/antigravity/memory/`) is PRESERVED (it is a legitimate external consumer, not a cairn write target).
-- [ ] `session-distill/SKILL.md` is UNCHANGED (vendor paths there are session-LOCATION table, not cairn memory probes).
+- [ ] `session-distill/SKILL.md` is UNCHANGED (vendor paths there are session-LOCATION table, not cairn memory probes; the "Session corpus and findings ledger" section is HIVE-owned corpus integration per master §2.6 — must be preserved verbatim).
 - [ ] `audit/SKILL.md` is UNCHANGED (the one vendor ref is a transcript-location hint, not a memory probe).
 - [ ] `files/skills/README.md` is UNCHANGED (out of scope).
 - [ ] `rg -n "\.cairn/memory" files/skills/resume/SKILL.md files/skills/note/SKILL.md files/skills/reflect/SKILL.md` returns 1+ match per file.

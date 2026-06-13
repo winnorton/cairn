@@ -51,6 +51,12 @@ This section is READ-ONLY context that grounds the executor's sweep; it is not f
 **Known agy global-skills residue (from `~/.gemini/config/skills/`, verified 2026-06-13):**
 `advocate, audit, bridge, feedback, note, plan, program, prune, reflect, reframe, resume, review` (legacy), `spec, tour` — plus stale flat-format duplicates and `review/` (legacy name).
 
+**HIVE_CONTEXT_SESSIONS artifacts (per §2.6; added by peer-review finding):**
+These are introduced by the HIVE program and must be included in the namespace audit per `[LAW own-your-namespace]`. Expectation is zero renames (all already cairn-scoped).
+- Repos: `cairn-mcp-server`, `cairn-sessions`
+- CLI binary: `cairn-ingest` (the ingest CLI bin)
+- MCP tool names (registered by `cairn-mcp-server`): `gather`, `manifest`, `corpus_status`, `session_distill`, `distillate_dock`
+
 ### Harness built-in / reserved command reference
 
 **Claude Code built-in slash commands** (source: cairn repo references + knowledge cutoff Aug 2025):
@@ -229,7 +235,7 @@ pi --help 2>/dev/null | grep -E '^\s+/' || true
 | `review` | agy `~/.gemini/config/skills/review/` | Legacy name (pre-v0.13.1); conflicts with Claude Code built-in `/review` | Phase 3 Step 3.2: cleanup instruction in adopt.md migration section |
 | flat `advocate.md`, `bridge.md`, `plan.md`, `reflect.md`, `reframe.md`, `resume.md`, `README.md` | agy `~/.gemini/config/skills/` | Stale pre-v0.12.1 flat format | Phase 3 Step 3.2: cleanup instruction in adopt.md migration section |
 
-**ACTION for `plan`:** The word "plan" is a common verb; Claude Code may register it (cannot confirm without live verification at elaboration time). The executor MUST run Phase 3 Step 3.1 to confirm. If it IS a CC built-in, escalate to a rename (precedent: `/review` → `/peer-review`).
+**ACTION for `plan`:** The word "plan" is a common verb; Claude Code may register it (cannot confirm without live verification at elaboration time). The executor MUST run Phase 3 Step 3.1 to confirm. If it IS a CC built-in, do NOT rename unilaterally — see Phase 3 Step 3.1 for the required escalation path (file a note, surface to the program orchestrator, wait for sign-off before any rename, because WS03 and WS08 reference skills by their current names).
 
 **WHY the adopt-era agy list matters:** Skills installed by an old `adopt cairn` run into `~/.gemini/config/skills/` via agent curl are NOT the same as skills installed via `cairn` Claude Code plugin + `agy plugin import claude`. The adopt-era residue represents the OLD install model being replaced by this program. WS12's job is to flag names that need to be clean in the NEW model.
 
@@ -258,6 +264,39 @@ pi --help 2>/dev/null | grep -E '^\s+/' || true
 | `cairn` | Claude Code plugin registry | VERIFY REQUIRED (WS03) | The name `cairn` for the Claude Code plugin — executor must confirm this name is available / not reserved. If Claude Code has a plugin named `cairn` already, a scoped or prefixed name is needed (e.g. `cairn-skills`). WS03 owns resolution; WS12 flags it as a check item. |
 | `cairn-agy` | agy marketplace (if used) | RESERVED — not yet built | WS04 dependency; name reserved per §2.3. |
 
+### STEP 2.4 — Sweep HIVE_CONTEXT_SESSIONS cairn-namespaced artifacts (per §2.6)
+
+**WHY:** The master §2.6 explicitly requires WS12 to inventory the HIVE-introduced cairn-namespaced artifacts and confirm each against `[LAW own-your-namespace]`. These artifacts live in separate repos (`cairn-mcp-server`, `cairn-sessions`) that the OWNERSHIP program does not touch, but they are still cairn-namespace artifacts and must be confirmed clean.
+
+**ACTION:** Confirm each artifact against the namespace law. The expectation (per §2.6) is zero renames — all are already cairn-scoped.
+
+**WORKING TABLE:**
+
+| HIVE artifact | Type | Naming check | Status | Notes |
+|---|---|---|---|---|
+| `cairn-mcp-server` | Git repo / package name | `cairn-` prefix → cairn-scoped | OWNED | Distinct from all known vendor repos/packages. |
+| `cairn-sessions` | Git repo / package name | `cairn-` prefix → cairn-scoped | OWNED | Distinct from all known vendor repos/packages. |
+| `cairn-ingest` | CLI binary name | `cairn-` prefix → cairn-scoped | OWNED | No known conflict with Claude Code, agy, or Pi CLI bins. |
+| `gather` | MCP tool name | Generic verb — check MCP tool registry | VERIFY REQUIRED | Common English verb; MCP tool namespaces are server-scoped (MCP protocol prefixes by server name at call time), so collision risk is lower than slash commands. Confirm that Claude Code's MCP tool invocation model scopes by server — if so, `gather` is server-scoped to `cairn-mcp-server` and OWNED. |
+| `manifest` | MCP tool name | Generic noun — check MCP tool registry | VERIFY REQUIRED | Same scoping note as `gather`. If MCP tools are server-scoped at runtime, no collision with other MCP servers' `manifest` tools. Confirm the scoping model. |
+| `corpus_status` | MCP tool name | Descriptive compound — check MCP tool registry | OWNED | Sufficiently specific; no known conflict. |
+| `session_distill` | MCP tool name | Descriptive compound — check MCP tool registry | OWNED | Descriptive; no known conflict. |
+| `distillate_dock` | MCP tool name | Descriptive compound — check MCP tool registry | OWNED | Descriptive; no known conflict. |
+
+**VERIFICATION ACTION for `gather` and `manifest`:**
+
+```powershell
+# Shell dialect: PowerShell
+# Confirm Claude Code MCP tool invocation scoping (server-prefixed vs. flat)
+# MCP tools invoked as use_mcp_tool(server_name, tool_name, ...) — server_name scopes the call
+# The collision surface is flat tool_name only if the harness exposes all tools in a single namespace
+claude --help 2>&1 | Select-String -Pattern 'mcp|tool' -CaseSensitive:$false | Select-Object -First 10
+```
+
+**EXPECTED RESULT:** MCP tools in Claude Code are server-scoped at the protocol level (the MCP spec uses `server_name` + `tool_name`). If confirmed, `gather` and `manifest` are scoped to `cairn-mcp-server` and are OWNED with no rename needed. If the harness exposes all MCP tools in a single flat namespace without server prefix, these generic names would need cairn-prefixed alternatives (`cairn_gather`, `cairn_manifest`).
+
+**CHECKPOINT 2.4:** If MCP tool scoping is confirmed (server-prefixed at runtime): update `gather` and `manifest` to OWNED in the table. If unconfirmed or flat-namespace risk: mark `VERIFY REQUIRED (MCP scoping model)` in the report §6. In either case, record the finding in the collision report §5 (extend it to cover HIVE artifacts). The expectation is zero renames; surface any deviation to the program orchestrator.
+
 **CHECKPOINT Phase 2:** The executor now has a populated collision table. Items with `VERIFY REQUIRED` or `UNVERIFIED` must be resolved in Phase 3 before the report is final. Items with `OWNED` and `No action` are clean.
 
 ---
@@ -281,16 +320,18 @@ Get-ChildItem "$env:USERPROFILE\.claude\skills\plan" -ErrorAction SilentlyContin
 
 **EXPECTED RESULT — CLEAN:** `plan` is not a Claude Code built-in. Update the table: `plan → OWNED`. No rename needed.
 
-**EXPECTED RESULT — COLLISION:** `plan` IS a Claude Code built-in. In that case:
-- The resolution is a rename (precedent: `/review` → `/peer-review`)
-- Proposed rename: `cairn-plan` or `plan-session` (cairn-namespaced, descriptive)
-- The rename touches: `files/skills/plan/` directory → new name; `manifest.json` dest entry; `files/skills/README.md` catalog entry; `AGENTS.md` skill list; `adopt.md` migration note; `packages/cairn-pi/` if `plan` is in the Pi package (it is not — cairn-pi ships 6 skills, `plan` is not among them)
-- Record the rename decision in the report with rationale citing `[LAW own-your-namespace]`
-- A rename of a shipped skill is a user-visible breaking change: adopt.md must get a migration note per the `/review` → `/peer-review` precedent
+**EXPECTED RESULT — COLLISION:** `plan` IS a Claude Code built-in. In that case, **do NOT rename unilaterally**. WS03 and WS08 reference skills by their current names; an uncoordinated rename creates orphaned references across at minimum `manifest.json`, `adopt.md`, `AGENTS.md`, and any WS03/WS08 skill-invocation text. The required escalation path is:
+
+1. **File a note** at `docs/notes/NOTE_PLAN_SKILL_CC_COLLISION_<date>.md` documenting the confirmed collision, the live harness evidence, and the proposed rename candidate (`cairn-plan` or `plan-session`).
+2. **Surface to the program orchestrator** via the §9.4 status table comment or direct hand-off: mark `plan: CONFIRMED CC COLLISION — escalated, rename pending orchestrator sign-off` in the collision report's §6 UNVERIFIED/Pending section.
+3. **Halt the rename in WS12.** Do not execute Phase 5 Step 5.1 for `plan` until the orchestrator explicitly authorizes the rename and coordinates with WS03/WS08 owners.
+4. Record the finding in the report with rationale citing `[LAW own-your-namespace]` and note the cross-WS dependency (WS03, WS08 must update their step text; WS09 migration section must add the rename note).
+
+A rename of a shipped skill is a user-visible breaking change — the precedent (`/review` → `/peer-review`) required a patch release and migration note. The orchestrator must sign off before WS12 executes it.
 
 **WHY:** The `/review` collision cost a patch release and a migration note. Catching a similar collision in `plan` here prevents the same pattern.
 
-**CHECKPOINT 3.1:** One of two outcomes: `plan → OWNED` (no action, update table) or `plan → COLLIDES, rename to <new-name>` (execute rename in this phase). Record outcome in working table and in the draft report.
+**CHECKPOINT 3.1:** One of two outcomes: `plan → OWNED` (no action, update table) or `plan → COLLIDES, escalated — rename pending orchestrator sign-off` (file note, update report §6, halt rename until sign-off). Record outcome in working table and in the draft report. Do NOT proceed to Phase 5 Step 5.1 for `plan` unless the orchestrator has explicitly authorized the rename.
 
 ### STEP 3.2 — Document agy adopt-era residue as migration instruction
 
@@ -395,6 +436,21 @@ Test-Path "docs\specs\COLLISION_REPORT_NAMESPACE_AUDIT.md"
 |---|---|---|---|
 | @winnorton/cairn-pi | npm | OWNED | ... |
 | cairn (plugin) | CC registry | AVAILABLE / CONFLICT | ... |
+
+## §5b HIVE_CONTEXT_SESSIONS artifact sweep (per master §2.6)
+
+| HIVE artifact | Type | Status | Notes |
+|---|---|---|---|
+| cairn-mcp-server | git repo / package | OWNED | cairn-prefixed |
+| cairn-sessions | git repo / package | OWNED | cairn-prefixed |
+| cairn-ingest | CLI binary | OWNED | cairn-prefixed |
+| gather | MCP tool name | OWNED / VERIFY (MCP scoping) | Server-scoped if MCP protocol confirmed |
+| manifest | MCP tool name | OWNED / VERIFY (MCP scoping) | Server-scoped if MCP protocol confirmed |
+| corpus_status | MCP tool name | OWNED | Descriptive compound |
+| session_distill | MCP tool name | OWNED | Descriptive compound |
+| distillate_dock | MCP tool name | OWNED | Descriptive compound |
+
+> `[LAW own-your-namespace]` finding: all HIVE artifacts are cairn-scoped (repo names, CLI bin, and MCP tool names). MCP tools are server-scoped at the protocol level. Zero renames expected.
 
 ## §6 UNVERIFIED items (require follow-up)
 
@@ -546,8 +602,9 @@ Select-String -Path "docs\specs\COLLISION_REPORT_NAMESPACE_AUDIT.md" -Pattern "L
 ```
 audit(namespace): WS12 namespace collision audit complete
 
-Swept all 18 cairn skill names, 3 folder names, 2 package names against
-Claude Code, agy, and Pi built-ins per [LAW own-your-namespace].
+Swept all 18 cairn skill names, 3 folder names, 2 package names, and
+8 HIVE_CONTEXT_SESSIONS artifacts against Claude Code, agy, and Pi
+built-ins per [LAW own-your-namespace].
 
 Report: docs/specs/COLLISION_REPORT_NAMESPACE_AUDIT.md
 
@@ -590,7 +647,7 @@ The Background section's collision table is elaboration-time analysis, NOT groun
 
 - *"PF-1 returns a count other than 18":* Do not assume the elaboration-time list is correct. Run `(Get-ChildItem "files\skills" -Directory | Where-Object { $_.Name -ne "README" }).Name` and build the actual list. Update Phase 2's sweep rows to match.
 - *"Phase 1 built-in enumeration returns no output" (claude --help unavailable):* Do not halt. Mark all Claude Code entries in Phase 2 as `UNVERIFIED (live check unavailable)`. Complete the rest of the sweep with reference data. Flag in §6 of the report. The audit is still valuable; the executor documents the gap rather than blocking.
-- *"Phase 3 finds a confirmed collision":* The rename procedure is in Step 5.1. Do not coexist with the collision — the precedent is explicit (the master §3: "On collision with a vendor name, rename — don't coexist"). The rename is not optional; only the specific new name is a judgment call (prefer cairn-namespaced: `cairn-<verb>` or `<verb>-session`).
+- *"Phase 3 finds a confirmed collision":* File a `docs/notes/` note documenting the evidence and proposed rename candidate, then surface to the program orchestrator (§9.4 status table) before executing any rename. Do NOT rename unilaterally — WS03 and WS08 reference skills by their current names, so a rename requires cross-WS coordination. The rename is ultimately not optional (the master §3: "On collision with a vendor name, rename — don't coexist"), but the orchestrator must sign off and coordinate before WS12 applies it. Once authorized, the rename procedure is in Step 5.1 (prefer cairn-namespaced: `cairn-<verb>` or `<verb>-session`).
 - *"The collision report file already exists" (PF-6 returns True):* Read the existing report. If it is from a previous executor run, amend rather than overwrite — add a new `## Run <date>` section at the top. If it is a stub or empty file, overwrite.
 
 ---
@@ -604,13 +661,15 @@ Before marking WS12 COMPLETE in the program's §9.4 status table, verify:
 - [ ] Phase 2 collision table has a Status for every one of the 18 skill names (no blank rows)
 - [ ] Phase 2 folder sweep confirms `.cairn/` is uncontested
 - [ ] Phase 2 package sweep entry for `cairn` plugin name is filled in (AVAILABLE, CONFLICT, or UNVERIFIED)
+- [ ] Phase 2 Step 2.4 HIVE artifact sweep complete: all 8 HIVE artifacts have a Status in the working table; MCP tool scoping model confirmed or flagged as VERIFY REQUIRED in report §5b
 - [ ] Phase 3 `plan` verification ran and result recorded in Phase 2 table
 - [ ] Phase 3 agy residue finding recorded in the report's §3 Legacy residue section
 - [ ] Phase 4 collision report exists at `docs/specs/COLLISION_REPORT_NAMESPACE_AUDIT.md`
 - [ ] Report §6 UNVERIFIED section contains only items explicitly handed to WS03/WS09
 - [ ] Report §9 re-run instructions are present (mechanical check for future skill additions)
 - [ ] Report cites `[LAW own-your-namespace]`
-- [ ] If any rename was applied: all 5 surfaces updated (dir, frontmatter, manifest, README, AGENTS.md); CHECKPOINT 5.1 passed
+- [ ] If `plan` collision CONFIRMED: docs/notes/ note filed, escalated to orchestrator in §9.4, NO unilateral rename executed; if `plan` OWNED: table updated accordingly
+- [ ] If any rename was applied (orchestrator-authorized): all 5 surfaces updated (dir, frontmatter, manifest, README, AGENTS.md); CHECKPOINT 5.1 passed
 - [ ] Post-flight PO-1 through PO-5 all pass
 - [ ] Commit message cites `[LAW own-your-namespace]` and lists WS03/WS09 handoffs
 - [ ] No step wrote to `~/.claude/`, `~/.gemini/`, `~/.pi/`, `<project>/.claude/`, `<project>/.agents/`, `CLAUDE.md`, or `AGENTS.md` (§4 hard contract)

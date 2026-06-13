@@ -194,10 +194,26 @@ WHY each field:
 - `"version": "0.13.1"` — lockstep with `VERSION` (enforced by sync script Phase 3). If VERSION reads differently in pre-flight, use that value.
 - `"skills": ["./skills"]` — the harness extension point, mirroring cairn-pi's `"pi": {"skills": ["./skills"]}`. Adjust the field name if Phase 1 found a different key (e.g., `"skillsPath"`, `"skills_dir"`, or auto-discovery with no declaration needed).
 - No `scripts` or `devDependencies` — this package is markdown-only; the sync script is a dev tool that never ships in the installed plugin.
+- **NO `package.json`** — cairn-claude is a non-npm plugin (§3 resolved decision: "cairn-claude packaging"). A `package.json` solely to satisfy a guard is cargo-cult. Do NOT create one.
 
-**If Phase 1 found a different manifest filename** (e.g., `package.json` with a `"claude"` field, or no manifest needed because skills are auto-discovered): apply the correct name and shape here and note the deviation in the PHASE-1-VERIFIED comment.
+**If Phase 1 found a different manifest filename** (e.g., a manifest with a `"claude"` field, or no manifest needed because skills are auto-discovered): apply the correct name and shape here and note the deviation in the PHASE-1-VERIFIED comment.
 
-### STEP 2.2 — Create `packages/cairn-claude/scripts/sync-skills.mjs`
+### STEP 2.2 — Create `packages/cairn-claude/sync-config.json`
+
+CURRENT STATE: file does not exist.
+
+REPLACEMENT (create with this content):
+
+```json
+{
+  "skills": ["./skills"],
+  "versionFile": "plugin.json"
+}
+```
+
+WHY: per §2.4 (single source of truth contract, frozen by WS11), each package declares its version-source file via a `versionFile` key in `sync-config.json`. For non-npm packages like this plugin, `versionFile` points to `plugin.json`. The shared `scripts/sync-skills.mjs` guard reads `sync-config.json` at startup to discover which file to consult for the version lockstep check — it does NOT hardcode `plugin.json` by name. This is the contract surface WS11's shared guard depends on; do not rename or omit this file.
+
+### STEP 2.3 — Create `packages/cairn-claude/scripts/sync-skills.mjs`
 
 CURRENT STATE: file does not exist.
 
@@ -210,8 +226,9 @@ REPLACEMENT (create with this content):
 // Source of truth: <repo>/files/skills/<name>/SKILL.md. The copies under
 // packages/cairn-claude/skills/ are committed build artifacts so the plugin installs
 // from a local path or GitHub subpath with no build step. Byte drift between source
-// and copy fails --check, which is wired to prepublishOnly — an out-of-sync plugin
-// cannot be published.
+// and copy fails --check, which is wired to a repo CI check (owned by WS11) —
+// an out-of-sync plugin fails CI. A plugin has no prepublishOnly (that is an npm lifecycle
+// hook; this package has no package.json).
 //
 // Also enforced here:
 //   - frontmatter `name:` equals the directory name and matches the canonical
@@ -224,10 +241,18 @@ import { copyFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = resolve(pkgRoot, "..", "..");
+
+// Read sync-config.json to discover the version-source file (§2.4 contract surface for WS11).
+// For this non-npm plugin the versionFile is "plugin.json"; do NOT hardcode that name here.
+const syncConfig = JSON.parse(readFileSync(join(pkgRoot, "sync-config.json"), "utf8"));
+const versionFile = syncConfig.versionFile; // e.g. "plugin.json"
+
 // ALL skills ship in the Claude plugin — it is the full-catalog distribution.
 // cairn-pi ships only the 6-skill authoring loop; the Claude plugin ships all 18.
 // Source: files/skills/ directories (live count from pre-flight step 3).
-// To trim: remove names from this array; run npm run sync; delete orphaned copies.
+// To trim: remove names from this array; run `node scripts/sync-skills.mjs`; delete orphaned copies.
 const SKILLS = [
   "advocate", "audit", "bridge", "fast-execute", "feedback",
   "note", "peer-review", "plan", "program", "prompt-evolve",
@@ -238,8 +263,6 @@ const SKILLS = [
 const MAX_DESCRIPTION = 1024;
 const NAME_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
-const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const repoRoot = resolve(pkgRoot, "..", "..");
 const check = process.argv.includes("--check");
 
 const errors = [];
@@ -257,11 +280,13 @@ function frontmatter(raw, file) {
   return { name, desc };
 }
 
-const pluginJson = JSON.parse(readFileSync(join(pkgRoot, "plugin.json"), "utf8"));
+// Version lockstep: read the file named by sync-config.json's versionFile (e.g. plugin.json).
+// Do NOT hardcode "plugin.json" — the versionFile key is the §2.4 contract surface.
+const manifestJson = JSON.parse(readFileSync(join(pkgRoot, versionFile), "utf8"));
 const repoVersion = readFileSync(join(repoRoot, "VERSION"), "utf8").trim();
-if (pluginJson.version !== repoVersion) {
+if (manifestJson.version !== repoVersion) {
   errors.push(
-    `version lockstep: plugin.json has ${pluginJson.version}, VERSION has ${repoVersion}`,
+    `version lockstep: ${versionFile} has ${manifestJson.version}, VERSION has ${repoVersion}`,
   );
 }
 
@@ -333,12 +358,13 @@ console.log(
 );
 ```
 
-WHY: identical logic to `packages/cairn-pi/scripts/sync-skills.mjs` per `[LAW borrow-adjacent]`, with three changes:
-1. `plugin.json` (not `package.json`) as the version-lockstep source — adjust if Phase 1 found a different manifest filename.
-2. `SKILLS` array is ALL 18 skills (the Claude plugin is the full-catalog channel; cairn-pi is the 6-skill authoring-loop-only channel).
-3. Error messages reference `node scripts/sync-skills.mjs` instead of `npm run sync` (the plugin package has no npm wrapper — run node directly).
+WHY: identical logic to `packages/cairn-pi/scripts/sync-skills.mjs` per `[LAW borrow-adjacent]`, with four changes:
+1. Reads `sync-config.json` at startup and uses its `versionFile` key to locate the version-source manifest — indirection required by §2.4 so the shared WS11 guard works for both npm and non-npm packages without hardcoding `plugin.json`.
+2. Version-lockstep check reads the file named by `versionFile` (`plugin.json` for this non-npm plugin) — no `package.json` anywhere.
+3. `SKILLS` array is ALL 18 skills (the Claude plugin is the full-catalog channel; cairn-pi is the 6-skill authoring-loop-only channel).
+4. Error messages reference `node scripts/sync-skills.mjs` instead of `npm run sync` — this package has no `package.json` and therefore no npm wrapper; run node directly. The guard wires to CI (owned by WS11), NOT `prepublishOnly` (a plugin has no npm publish lifecycle).
 
-### STEP 2.3 — Create `packages/cairn-claude/README.md`
+### STEP 2.4 — Create `packages/cairn-claude/README.md`
 
 CURRENT STATE: file does not exist.
 
@@ -419,7 +445,7 @@ MIT
 
 WHY: The README surfaces the GitHub install path (load-bearing for WS04's `agy plugin import claude`, which targets the same URL), the agy cross-harness note (so WS04 doesn't need a separate install artifact), and the source-of-truth pointer consistent with cairn-pi's README.
 
-### STEP 2.4 — Create `packages/cairn-claude/LICENSE`
+### STEP 2.5 — Create `packages/cairn-claude/LICENSE`
 
 CURRENT STATE: file does not exist.
 
@@ -464,17 +490,27 @@ $p = Get-Content packages/cairn-claude/plugin.json | ConvertFrom-Json
 $p.name, $p.version, $p.skills
 # EXPECT: cairn  0.13.1  ./skills (or the skills array from Phase 1)
 
-# All four files exist:
+# All five files exist (note: NO package.json):
 @(
   "packages/cairn-claude/plugin.json",
+  "packages/cairn-claude/sync-config.json",
   "packages/cairn-claude/scripts/sync-skills.mjs",
   "packages/cairn-claude/README.md",
   "packages/cairn-claude/LICENSE"
 ) | ForEach-Object { Test-Path $_ }
-# EXPECT: True True True True
+# EXPECT: True True True True True
+
+# sync-config.json has the required keys:
+$sc = Get-Content packages/cairn-claude/sync-config.json | ConvertFrom-Json
+$sc.versionFile
+# EXPECT: plugin.json
+
+# No package.json — this is a non-npm plugin:
+Test-Path packages/cairn-claude/package.json
+# EXPECT: False
 ```
 
-If `node --check` rejects the script: most likely a smart-quote or truncated line from manual transcription — re-apply STEP 2.2 exactly.
+If `node --check` rejects the script: most likely a smart-quote or truncated line from manual transcription — re-apply STEP 2.3 exactly.
 
 ---
 
@@ -635,7 +671,7 @@ claude plugin list
 claude plugin uninstall cairn
 ```
 
-If the GitHub install syntax differs from `github:owner/repo//subpath@branch` — verify the correct Claude Code GitHub install syntax from Phase 1 Step 1.1 probe output and update the README.md Step 2.3 accordingly.
+If the GitHub install syntax differs from `github:owner/repo//subpath@branch` — verify the correct Claude Code GitHub install syntax from Phase 1 Step 1.1 probe output and update the README.md (STEP 2.4) accordingly.
 
 ---
 
@@ -696,11 +732,11 @@ git mv docs/specs/SPEC_CAIRN_OWNERSHIP_03_CLAUDE_PLUGIN.md `
 
 **Critical files to read first, in order:**
 
-1. **`packages/cairn-pi/scripts/sync-skills.mjs`** — the exact pattern being replicated. Read before writing STEP 2.2's script; differences from the template are intentional (plugin.json vs package.json, all-18 SKILLS vs 6-skill subset, node-direct vs npm-run invocation).
+1. **`packages/cairn-pi/scripts/sync-skills.mjs`** — the exact pattern being replicated. Read before writing STEP 2.3's script; key differences from the template are intentional: (a) reads `sync-config.json` at startup and uses its `versionFile` key (indirection required by §2.4) rather than hardcoding `plugin.json`; (b) no `package.json` anywhere — `sync-config.json` + `plugin.json` replace it; (c) SKILLS array is all-18 vs cairn-pi's 6-skill subset; (d) run via `node scripts/sync-skills.mjs` not `npm run sync`; (e) CI-check not prepublishOnly.
 2. **`docs/notes/NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11.md`** — the empirical probe of agy's plugin format. The key finding: `agy plugin import claude` exists and is verified in agy 1.0.7. WS04 depends on the GitHub URL that Phase 5 publishes; don't delay Phase 5.
 3. **`docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` §4** — the hard ownership contract. Every STEP in this spec must satisfy the four rules; the most likely trap is Phase 4 (install validation), which must go through `claude plugin install` (the vendor's CLI) and never through an agent `Write` into `~/.claude/`.
 
-**The one constraint most likely to cause a mistake:** Phase 1 is a HALTING gate, not a formality. If the Claude Code plugin format turns out to differ from `plugin.json + skills/ array` (e.g., it uses `package.json` with a `"claude"` field, or skills are auto-discovered without declaration), the manifest you create in STEP 2.1 and the version-lockstep check in STEP 2.2 must match what Phase 1 actually found. Building on an unverified assumption here breaks WS04's `agy plugin import claude` dependency.
+**The one constraint most likely to cause a mistake:** Phase 1 is a HALTING gate, not a formality. If the Claude Code plugin format turns out to differ from `plugin.json + skills/ array` (e.g., it uses a different manifest file, or skills are auto-discovered without declaration), the manifest you create in STEP 2.1, the `versionFile` in STEP 2.2's `sync-config.json`, and the version-lockstep check in STEP 2.3 must all match what Phase 1 actually found. Building on an unverified assumption here breaks WS04's `agy plugin import claude` dependency.
 
 **The second constraint (ownership):** the plugin name in `plugin.json` MUST be `cairn` (per §2.3, frozen by WS03). The directory `packages/cairn-claude/` is a packaging detail; the installed plugin name is `cairn`. Do not rename to `cairn-claude` in the manifest.
 
@@ -718,6 +754,8 @@ git mv docs/specs/SPEC_CAIRN_OWNERSHIP_03_CLAUDE_PLUGIN.md `
 
 - [ ] Phase 1 PHASE-1-VERIFIED comment is present in this spec with actual findings (not left as the example template).
 - [ ] `plugin.json` fields match what Phase 1 verified; `name` is `cairn`; `version` matches `VERSION` file.
+- [ ] `sync-config.json` present at `packages/cairn-claude/sync-config.json`; `versionFile` key is `"plugin.json"`.
+- [ ] `package.json` does NOT exist anywhere under `packages/cairn-claude/` — this is a non-npm plugin; `Test-Path packages/cairn-claude/package.json` returns False.
 - [ ] `scripts/sync-skills.mjs` passes `node --check`; `node … --check` is green with 18 skills (or the live pre-flight count).
 - [ ] 18 skill copies (or live count) are byte-identical to `files/skills/` sources (CHECKPOINT 3 PowerShell loop shows no DRIFT lines).
 - [ ] `skills/README.md` was NOT copied (it is not a skill; the sync script's orphan check would catch it if mistakenly added).

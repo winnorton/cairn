@@ -9,7 +9,7 @@ Generalize cairn-pi's `sync-skills.mjs` into a shared guard so every distributio
 - One source of truth: `files/skills/<name>/SKILL.md` (Contract §2.4).
 - Sync + `--check` covering BOTH `packages/cairn-pi/` and `packages/cairn-claude/` (WS03).
 - Enforce: byte-identity, frontmatter `description` ≤ 1024, `name` == dir, version-lockstep with `VERSION`, no orphaned copies (the checks already in cairn-pi's guard).
-- Wire `--check` to `prepublishOnly` (npm) + a repo CI step (covers the plugin + sources).
+- Wire `--check` to `prepublishOnly` for npm packages (cairn-pi only) + a repo CI step covering all packages including the non-npm cairn-claude plugin (which has no `prepublishOnly` hook — master §2.4, §3).
 
 ## Telemetry hook
 N/A: dev tooling, not shipped runtime.
@@ -21,10 +21,10 @@ N/A: dev tooling, not shipped runtime.
 `git revert`; the guard is dev-time only, never in a published tarball.
 
 ## Gate
-`--check` green across all packages, wired to prepublish + CI; a planted drift/over-cap/orphan each fails the check.
+`--check` green across all packages, wired to `prepublishOnly` for npm packages (cairn-pi) and to CI for the non-npm plugin (cairn-claude); a planted drift/over-cap/orphan/version-lockstep each fails the check.
 
 ## Files
-shared `scripts/sync-skills.mjs` (or per-package), CI config, `packages/*/package.json` scripts.
+shared `scripts/sync-skills.mjs`, `packages/*/sync-config.json` sidecars, `packages/*/scripts/sync-skills.mjs` delegates, CI config (`.github/workflows/sync-guard.yml`), `packages/cairn-pi/package.json` scripts. `packages/cairn-claude/` has no `package.json` — version source is `plugin.json` per `sync-config.json`.
 
 ---
 
@@ -119,12 +119,13 @@ Expected: "absent — CI to be created". If workflows exist, read them before Ph
 //   node scripts/sync-skills.mjs --pkg <rel-path-to-package> --check  # check mode
 //
 // The package directory must contain sync-config.json:
-//   { "skills": ["name1", "name2", ...] }
+//   { "skills": ["name1", "name2", ...], "versionFile": "package.json" }
+//   (for npm packages like cairn-pi; use "plugin.json" for the non-npm cairn-claude plugin)
 //
 // Enforced:
 //   - frontmatter `name:` equals dir name and matches ^[a-z0-9][a-z0-9-]{0,63}$
 //   - frontmatter `description:` <= 1024 chars (after YAML line-folding)
-//   - package.json `version` === <repo>/VERSION
+//   - version in <pkg>/<versionFile> === <repo>/VERSION
 //   - no orphaned copies (dirs in <pkg>/skills/ not in the skills list)
 //   - byte-identity between source and copy (--check mode)
 
@@ -147,12 +148,15 @@ if (!pkgArg) {
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const pkgRoot = resolve(repoRoot, pkgArg);
 
-// Load per-package skill list from sync-config.json
+// Load per-package config from sync-config.json
 let SKILLS;
+let versionFile;
 try {
   const cfg = JSON.parse(readFileSync(join(pkgRoot, "sync-config.json"), "utf8"));
   if (!Array.isArray(cfg.skills) || cfg.skills.length === 0) throw new Error("skills must be a non-empty array");
+  if (!cfg.versionFile) throw new Error("versionFile must be declared (e.g. \"package.json\" or \"plugin.json\")");
   SKILLS = cfg.skills;
+  versionFile = cfg.versionFile;
 } catch (err) {
   console.error(`Cannot load ${pkgRoot}/sync-config.json: ${err.message}`);
   process.exit(1);
@@ -173,11 +177,18 @@ function frontmatter(raw, file) {
   return { name, desc };
 }
 
-// Version lockstep
-const pkg = JSON.parse(readFileSync(join(pkgRoot, "package.json"), "utf8"));
+// Version lockstep — read from the versionFile declared in sync-config.json
+// (package.json for npm packages, plugin.json for the non-npm cairn-claude plugin)
+let pkgVersionData;
+try {
+  pkgVersionData = JSON.parse(readFileSync(join(pkgRoot, versionFile), "utf8"));
+} catch (err) {
+  errors.push(`version lockstep: cannot read ${versionFile}: ${err.message}`);
+  pkgVersionData = {};
+}
 const repoVersion = readFileSync(join(repoRoot, "VERSION"), "utf8").trim();
-if (pkg.version !== repoVersion) {
-  errors.push(`version lockstep: package.json has ${pkg.version}, VERSION has ${repoVersion}`);
+if (pkgVersionData.version !== repoVersion) {
+  errors.push(`version lockstep: ${versionFile} has ${pkgVersionData.version}, VERSION has ${repoVersion}`);
 }
 
 // Sync or check each skill
@@ -258,11 +269,12 @@ console.log(
 
 ```json
 {
-  "skills": ["fast-execute", "note", "peer-review", "program", "round-review", "spec"]
+  "skills": ["fast-execute", "note", "peer-review", "program", "round-review", "spec"],
+  "versionFile": "package.json"
 }
 ```
 
-**Why:** Externalizes the cairn-pi SKILLS array so the shared script can read it. The list matches the existing `SKILLS` constant in `packages/cairn-pi/scripts/sync-skills.mjs` exactly — no behavioral change.
+**Why:** Externalizes the cairn-pi SKILLS array so the shared script can read it. The list matches the existing `SKILLS` constant in `packages/cairn-pi/scripts/sync-skills.mjs` exactly — no behavioral change. The `versionFile: "package.json"` key declares that version-lockstep is checked against `package.json`, which is correct for this npm package (master §2.4, §3).
 
 ### Step 1.3 — Create `packages/cairn-claude/sync-config.json`
 
@@ -274,13 +286,14 @@ console.log(
 
 ```json
 {
-  "skills": ["<skill-1-from-WS03>", "<skill-2-from-WS03>"]
+  "skills": ["<skill-1-from-WS03>", "<skill-2-from-WS03>"],
+  "versionFile": "plugin.json"
 }
 ```
 
 If `packages/cairn-claude/` does not yet have a `skills/` directory or the package is incomplete, STOP — WS03 is not done. The `sync-config.json` must list exactly the skills WS03 committed to `packages/cairn-claude/skills/`.
 
-**Why:** Same pattern as cairn-pi — declarative, next to the package, no logic in the list itself.
+**Why:** Same pattern as cairn-pi — declarative, next to the package, no logic in the list itself. The `versionFile: "plugin.json"` key is mandatory (master §2.4, §3): `cairn-claude` is a non-npm plugin that ships NO `package.json`; version-lockstep is therefore checked against `plugin.json`. Never add `package.json` to `cairn-claude` to satisfy this check — that would be cargo-cult (§3 resolved decision).
 
 ### Step 1.4 — Update `packages/cairn-pi/scripts/sync-skills.mjs` to delegate to the shared script
 
@@ -311,16 +324,28 @@ process.exit(result.status ?? 1);
 
 **Why:** Keeps `npm run sync` / `npm run check` working from inside the cairn-pi package (the existing developer workflow), while routing through the shared logic. No duplication of the 118-line body.
 
-### Step 1.5 — Create `packages/cairn-claude/scripts/sync-skills.mjs`
+### Step 1.5 — Install `packages/cairn-claude/scripts/sync-skills.mjs`
 
-**Current state:** No scripts directory exists under `packages/cairn-claude/` (WS03 created the package but likely did not add the sync delegate).
+**Current state — ACTIVE PRE-FLIGHT READ (do NOT assume):**
 
-**Replacement (create new file — same delegate pattern as Step 1.4):**
+```bash
+# POSIX / bash — check whether WS03 already created this file:
+ls packages/cairn-claude/scripts/sync-skills.mjs 2>/dev/null && echo "EXISTS" || echo "ABSENT"
+```
+
+```powershell
+# PowerShell equivalent:
+if (Test-Path packages/cairn-claude/scripts/sync-skills.mjs) { "EXISTS" } else { "ABSENT" }
+```
+
+**Branch A — file is ABSENT:** WS03 did not create it. Create the directory and write the thin delegate (same pattern as Step 1.4):
 
 ```javascript
 #!/usr/bin/env node
 // Delegates to the shared sync guard at <repo>/scripts/sync-skills.mjs.
-// Run via `npm run sync` or `npm run check` from packages/cairn-claude/.
+// Invoked directly: node scripts/sync-skills.mjs --pkg packages/cairn-claude [--check]
+// (cairn-claude is a non-npm plugin — no prepublishOnly hook; this delegate is for
+//  manual invocation and is called by the CI step in Phase 3.)
 import { resolve } from "node:path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -338,7 +363,28 @@ const result = spawnSync(
 process.exit(result.status ?? 1);
 ```
 
-**Why:** Same delegate pattern; allows `cd packages/cairn-claude && npm run check` to work identically to the cairn-pi workflow.
+**Branch B — file EXISTS (WS03 placed a sync script here):** Do NOT keep WS03's version — it will contain package-specific logic that is now superseded by the shared guard. Replace the entire file with the thin delegate shown in Branch A above. The purpose of this replacement is to eliminate any duplicated logic and ensure the shared script at `scripts/sync-skills.mjs` is the single source of truth.
+
+To replace:
+```bash
+# POSIX — overwrite with the delegate body (copy-paste the Branch A script):
+cat > packages/cairn-claude/scripts/sync-skills.mjs << 'EOF'
+<paste Branch A script here>
+EOF
+```
+```powershell
+# PowerShell — open the file in your editor or use Write-Host redirect:
+Set-Content packages/cairn-claude/scripts/sync-skills.mjs '<Branch A script content>'
+```
+
+After writing (either branch), verify:
+```bash
+node packages/cairn-claude/scripts/sync-skills.mjs --help 2>&1 || true
+# Should print usage from the shared script (shared script's --help behavior),
+# not crash with "Cannot find module".
+```
+
+**Why:** WS03 may or may not have added a sync delegate; the static "ABSENT" assumption that appeared in the original spec draft becomes wrong the moment WS03 lands. This active check ensures the executor never silently duplicates or clobbers logic. Branch B exists because WS03 and WS11 run in parallel worktrees that serialize at integration — the delegate is always the correct final shape regardless of what WS03 wrote.
 
 **CHECKPOINT — Phase 1:**
 
@@ -361,7 +407,7 @@ Expected: both commands exit 0 with "check OK — N skills in sync, lockstep 0.1
 
 ## Phase 2 — Wire `prepublishOnly` and package-local scripts
 
-**Goal:** Ensure `npm publish` from either package runs `--check` automatically, and package-local `npm run sync` / `npm run check` still work via the delegate.
+**Goal:** Ensure `npm publish` from the npm package (cairn-pi) runs `--check` automatically via `prepublishOnly`; confirm the non-npm plugin (cairn-claude) is guarded exclusively by CI (Phase 3), not `prepublishOnly`; and verify package-local `npm run sync` / `npm run check` still work via the delegate for cairn-pi.
 
 ### Step 2.1 — Update `packages/cairn-pi/package.json` scripts
 
@@ -387,41 +433,45 @@ Expected: both commands exit 0 with "check OK — N skills in sync, lockstep 0.1
 
 **Why:** No change needed — the delegate script (Step 1.4) passes `--check` through `process.argv.slice(2)`, so `prepublishOnly` still invokes check mode correctly via the new shared script. Confirm by running `npm run check` from inside `packages/cairn-pi/` after Phase 1 completes.
 
-If the cairn-pi package.json uses `"node scripts/sync-skills.mjs"` (which now delegates), the scripts stay identical. If WS03 wired `packages/cairn-claude/package.json` differently, adjust Step 2.2 accordingly.
+Note: `packages/cairn-claude` is NOT an npm package and gets NO `prepublishOnly` — see Step 2.2.
 
-### Step 2.2 — Update `packages/cairn-claude/package.json` to add sync scripts
+### Step 2.2 — `packages/cairn-claude` does NOT get `prepublishOnly`
 
-**Current state:** Read `packages/cairn-claude/package.json` — WS03 may or may not have added these scripts.
+**Key constraint (master §2.4, §3):** `cairn-claude` is a **non-npm plugin** — it ships `plugin.json` only, with NO `package.json`. There is therefore no `prepublishOnly` lifecycle hook available. The sync guard for `cairn-claude` runs **exclusively via the CI job in Phase 3**. Do not add a `package.json` to `cairn-claude` solely to satisfy this step — that is cargo-cult and is explicitly rejected in §3.
 
-If the scripts block is absent or missing `sync`/`check`/`prepublishOnly`, add (merge into the existing scripts block):
+**What to do instead:**
 
-```json
-"scripts": {
-  "sync": "node scripts/sync-skills.mjs",
-  "check": "node scripts/sync-skills.mjs --check",
-  "prepublishOnly": "node scripts/sync-skills.mjs --check"
-}
+1. Confirm that `packages/cairn-claude/` contains only `plugin.json` (plus `skills/` and `sync-config.json` from Steps 1.3 and 1.5). If WS03 has added a `package.json` for unrelated reasons, note it and skip this step — do not add `scripts` or `prepublishOnly` to it without re-confirming with the master.
+
+2. The delegate script at `packages/cairn-claude/scripts/sync-skills.mjs` (created in Step 1.5) can be invoked directly from the repo root for manual checks:
+
+```bash
+node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
 ```
 
-**Why:** Mirrors the cairn-pi pattern exactly so every package enforces sync before publish. `prepublishOnly` runs on `npm publish` and `npm pack`; it does not run on `npm install` by adopters.
+This invocation is what Phase 3's CI YAML runs. No npm lifecycle hook is needed or appropriate.
+
+**Why:** An npm `prepublishOnly` hook only protects against publishing a drifted tarball. `cairn-claude` is a Claude Code plugin installed via a GitHub URL, not via `npm publish`. The CI check (Phase 3) is the correct gate — it catches drift on every PR regardless of publish mechanism.
 
 **CHECKPOINT — Phase 2:**
 
 ```bash
 # POSIX / bash:
 cd packages/cairn-pi && npm run check && cd ../..
-cd packages/cairn-claude && npm run check && cd ../..
+# cairn-claude: invoke the shared script directly (no npm lifecycle for non-npm plugin)
+node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
 ```
 
 ```powershell
 # PowerShell:
 Set-Location packages/cairn-pi; npm run check; Set-Location ../..
-Set-Location packages/cairn-claude; npm run check; Set-Location ../..
+# cairn-claude: invoke the shared script directly (no npm lifecycle for non-npm plugin)
+node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
 ```
 
-Expected: both exit 0. If cairn-claude's `npm run check` fails with "Cannot find module scripts/sync-skills.mjs", the `scripts/` directory or delegate file from Phase 1 is missing — go back and create Step 1.5.
+Expected: both exit 0. If cairn-pi's `npm run check` fails with "Cannot find module scripts/sync-skills.mjs", the delegate or shared script from Phase 1 is missing — go back and check Steps 1.1 and 1.4. If the cairn-claude check fails, re-check Steps 1.3 and 1.5.
 
-Recovery: if `npm run check` fails with a version lockstep error, the package.json `version` field doesn't match `VERSION`. Do not fix the version here — that is WS05's responsibility for cairn-pi. For cairn-claude, check what WS03 set and align. If neither WS05 nor WS03 has addressed version lockstep yet, note the issue and leave the version field for those workstreams; the CI gate (Phase 3) will catch it on the merge PR.
+Recovery: if `npm run check` fails with a version lockstep error, the `package.json` `version` field (cairn-pi) doesn't match `VERSION`. Do not fix the version here — that is WS05's responsibility. For cairn-claude a version lockstep error means `plugin.json` version doesn't match `VERSION` — that is WS03's responsibility. If neither WS05 nor WS03 has addressed version lockstep yet, note the issue and leave the version field for those workstreams; the CI gate (Phase 3) will catch it on the merge PR.
 
 ---
 
@@ -577,6 +627,8 @@ Expected: exits 1, prints "orphaned copy skills/orphan-test/".
 
 ### Step 4.4 — Plant a version lockstep break and confirm --check fails
 
+**4.4a — cairn-pi (versionFile: package.json):**
+
 ```bash
 # POSIX — temporarily set wrong version in cairn-pi's package.json:
 node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('packages/cairn-pi/package.json','utf8'));const orig=p.version;p.version='0.0.0-test';fs.writeFileSync('packages/cairn-pi/package.json',JSON.stringify(p,null,2)+'\n');console.log('set to 0.0.0-test, was '+orig)"
@@ -596,6 +648,28 @@ git checkout -- packages/cairn-pi/package.json
 ```
 
 Expected: exits 1, prints "version lockstep: package.json has 0.0.0-test, VERSION has 0.13.1".
+
+**4.4b — cairn-claude (versionFile: plugin.json):**
+
+```bash
+# POSIX — temporarily set wrong version in cairn-claude's plugin.json:
+node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('packages/cairn-claude/plugin.json','utf8'));p.version='0.0.0-test';fs.writeFileSync('packages/cairn-claude/plugin.json',JSON.stringify(p,null,2)+'\n')"
+node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
+echo "exit code: $?"
+git checkout -- packages/cairn-claude/plugin.json
+```
+
+```powershell
+# PowerShell:
+$p = Get-Content packages/cairn-claude/plugin.json | ConvertFrom-Json
+$p.version = "0.0.0-test"
+$p | ConvertTo-Json -Depth 10 | Set-Content packages/cairn-claude/plugin.json
+node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
+Write-Host "exit code: $LASTEXITCODE"
+git checkout -- packages/cairn-claude/plugin.json
+```
+
+Expected: exits 1, prints "version lockstep: plugin.json has 0.0.0-test, VERSION has 0.13.1". This confirms that the guard reads the `versionFile` key from `sync-config.json` (plugin.json), NOT a hard-coded `package.json`.
 
 ### Step 4.5 — Confirm --check is green after all revert operations
 
@@ -674,7 +748,7 @@ After the commit lands, open `docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` §9
 
 1. `packages/cairn-pi/scripts/sync-skills.mjs` — the existing 118-line precedent. Every rule in the shared script must be traceable to behavior already present here.
 2. `packages/cairn-pi/sync-config.json` (after Step 1.2 creates it) or equivalently the `SKILLS` constant on line 22 of the existing script — the source-of-truth list for cairn-pi.
-3. `packages/cairn-claude/package.json` + `packages/cairn-claude/skills/` — to know what WS03 committed before writing the cairn-claude sync-config.
+3. `packages/cairn-claude/plugin.json` + `packages/cairn-claude/skills/` — to know what WS03 committed before writing the cairn-claude sync-config. Note: cairn-claude ships NO `package.json`; version-lockstep is read from `plugin.json` via `versionFile` in `sync-config.json` (master §2.4, §3).
 
 **The one constraint most likely to cause a mistake:**
 
@@ -685,7 +759,7 @@ WS03 (cairn-claude package) must be COMPLETE before Phase 1, Step 1.3. If `packa
 - `--check` fails with "missing copy" for a skill you just added to `sync-config.json`: run sync mode first (`node scripts/sync-skills.mjs --pkg packages/<name>`) to generate the copy from source, then re-run `--check`.
 - `spawnSync` in the delegate returns status 1 with no output: the shared script path is wrong — verify that `resolve(repoRoot, "scripts", "sync-skills.mjs")` correctly resolves. Run `node -e "const {resolve}=require('path');console.log(resolve(__dirname,'../..','scripts','sync-skills.mjs'))"` from `packages/<name>/scripts/`.
 - CI workflow doesn't appear in Actions: GitHub requires `.github/workflows/` to exist on the default branch. Push to a PR branch; the workflow will trigger on the PR.
-- Version lockstep error in CI: the package.json `version` is WS05's (cairn-pi) or WS03's (cairn-claude) responsibility. If their versioning hasn't landed yet, note the failure and do not merge WS11 until they do.
+- Version lockstep error in CI: for cairn-pi, `package.json` `version` is WS05's responsibility; for cairn-claude, `plugin.json` `version` is WS03's responsibility (cairn-claude has no `package.json`). If either workstream's versioning hasn't landed yet, note the failure and do not merge WS11 until they do.
 
 ---
 
@@ -694,10 +768,11 @@ WS03 (cairn-claude package) must be COMPLETE before Phase 1, Step 1.3. If `packa
 Before requesting peer-review, confirm each item:
 
 - [ ] `scripts/sync-skills.mjs` exists at repo root with `--pkg` parameter and `sync-config.json` sidecar pattern.
-- [ ] `packages/cairn-pi/sync-config.json` lists exactly the 6 skills currently shipped (fast-execute, note, peer-review, program, round-review, spec).
-- [ ] `packages/cairn-claude/sync-config.json` lists exactly the skills WS03 committed.
-- [ ] `packages/cairn-pi/scripts/sync-skills.mjs` is the thin delegate (no duplicated logic); `packages/cairn-claude/scripts/sync-skills.mjs` is the same pattern.
-- [ ] Both packages' `package.json` include `sync`, `check`, and `prepublishOnly` scripts pointing at `scripts/sync-skills.mjs`.
+- [ ] `packages/cairn-pi/sync-config.json` lists exactly the 6 skills currently shipped (fast-execute, note, peer-review, program, round-review, spec) AND declares `"versionFile": "package.json"`.
+- [ ] `packages/cairn-claude/sync-config.json` lists exactly the skills WS03 committed AND declares `"versionFile": "plugin.json"` (NOT `package.json` — cairn-claude ships no `package.json`).
+- [ ] `packages/cairn-pi/scripts/sync-skills.mjs` is the thin delegate (no duplicated logic); `packages/cairn-claude/scripts/sync-skills.mjs` is the same delegate pattern (whether created fresh or replaced from WS03's version).
+- [ ] `packages/cairn-pi/package.json` includes `sync`, `check`, and `prepublishOnly` scripts pointing at `scripts/sync-skills.mjs` (the delegate).
+- [ ] `packages/cairn-claude/` does NOT have `prepublishOnly` wired (it is a non-npm plugin; the CI step in Phase 3 is the sole gate for cairn-claude — master §2.4, §3).
 - [ ] `.github/workflows/sync-guard.yml` exists and has a step per package.
 - [ ] All four Phase 4 failure modes (drift, missing, orphan, version) were tested and failed; all reverted; both packages are green.
 - [ ] `git diff --name-only packages/cairn-pi/skills/` is empty — no skill copy bytes changed.

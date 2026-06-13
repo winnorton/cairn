@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_02_IMPORT_BRIDGE
 
-**Status:** READY FOR EXECUTOR · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** none (foundational, Wave 0) · **Parallel-safe-with:** 01, 12
+**Status:** READY FOR EXECUTOR · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** WS01 (for `files/.cairn/CLAUDE.md` — must run after WS01 moves/creates that file; foundational in all other respects) · **Parallel-safe-with:** 12 (NOT parallel-safe with WS01 on `files/.cairn/CLAUDE.md` — see §9.5 merge-map)
 
 ## Goal
 Specify the single user-written import line — the only edit cairn ever asks a user to make to a vendor-owned context file.
@@ -39,12 +39,15 @@ Run all three commands before Phase 1. If any expectation fails, STOP and surfac
 Get-Content "docs/specs/SPEC_CAIRN_OWNERSHIP_02_IMPORT_BRIDGE.md" | Select-String "READY FOR EXECUTOR"
 # Expected: one match on the status line. Zero matches means the file was not updated yet — check your working tree.
 
-# Command 2: confirm files/.cairn/ does NOT yet exist (WS01 creates it; this workstream only
-# touches adopt.md and the new files/.cairn/CLAUDE.md header note).
-Test-Path "files/.cairn"
-# Expected: False. If True, WS01 landed before you — read files/.cairn/CLAUDE.md before Phase 2
-# to understand what header text is already present, then skip Phase 2 Step 1 if a header note
-# already exists.
+# Command 2: check whether files/.cairn/CLAUDE.md already exists (WS01 owns the body; WS02 prepends
+# the header). WS02's Phase 2 requires WS01 to have created this file first (master §9.5).
+Test-Path "files/.cairn/CLAUDE.md"
+# Expected: True (WS01 has already run) OR False (WS01 has not yet run).
+# If False: WS01 must land before you run Phase 2 — proceed with Phase 1 only and return for Phase 2
+#   after WS01 completes.
+# If True: read files/.cairn/CLAUDE.md before Phase 2 to understand WS01's body content.
+#   Check whether the "cairn-managed" header is already present — if yes, Phase 2 Step 1 is idempotent
+#   (skip the write). If no, proceed with the prepend in Phase 2 Step 1 Case A.
 
 # Command 3: confirm adopt.md does NOT yet contain a user-action import-line Step for .cairn.
 Select-String -Path "adopt.md" -Pattern "\.cairn/CLAUDE\.md" -SimpleMatch
@@ -53,7 +56,7 @@ Select-String -Path "adopt.md" -Pattern "\.cairn/CLAUDE\.md" -SimpleMatch
 # it verbatim (or skip Phase 1 Step 2 if already done).
 ```
 
-**Halting gate:** proceed only when all three expectations pass (status line present, `.cairn/` absent, no existing import Step in adopt.md).
+**Halting gate:** proceed only when these conditions hold: (1) status line present; (2) for Phase 2 — `files/.cairn/CLAUDE.md` EXISTS (WS01 must have run first); (3) no existing import Step in adopt.md. If `files/.cairn/CLAUDE.md` is absent, Phase 1 may run but Phase 2 must wait for WS01.
 
 ---
 
@@ -138,48 +141,25 @@ Select-String -Path "docs/specs/SPEC_CAIRN_OWNERSHIP_02_IMPORT_BRIDGE.md" `
 
 ---
 
-## Phase 2 — Create files/.cairn/CLAUDE.md with the import-reference header note
+## Phase 2 — Prepend import-reference header note to files/.cairn/CLAUDE.md
 
-WS01 creates the `files/.cairn/` template tree. WS02 owns the header note in `files/.cairn/CLAUDE.md` that tells the agent (and the user reading the file) how the import line connects this file to the project's CLAUDE.md. These steps are safe to execute even if WS01 is running in parallel — WS02 only adds the header comment; WS01 handles the rest of the file body.
+WS01 creates the `files/.cairn/` template tree and owns the body of `files/.cairn/CLAUDE.md` (moved from wherever it previously lived). WS02 PREPENDS the `<!-- cairn-managed -->` import-note header to that file — it never replaces or overwrites WS01's body content. Per master §9.5 merge-map, WS02 is NOT parallel-safe with WS01 on this file: **WS01 must have completed its `files/.cairn/CLAUDE.md` work before WS02 runs Phase 2.**
 
-**Dependency note:** if WS01 has already created `files/.cairn/CLAUDE.md`, read the existing file first. Only add the header note if one is absent — never overwrite WS01's content.
+**Hard prerequisite for Phase 2:** confirm WS01 has moved/created `files/.cairn/CLAUDE.md` before proceeding. If `files/.cairn/CLAUDE.md` does not yet exist, STOP — WS01 must land first (master §9.5: "WS01 (owns body via `git mv`) → WS02 (prepend import-note header, never overwrite)").
 
-### Step 1 — Create files/.cairn/CLAUDE.md (if WS01 has not done so)
+### Step 1 — Prepend the import-reference header note to files/.cairn/CLAUDE.md
 
-**Current state:** `files/.cairn/` does not exist (confirmed in Pre-flight command 2).
+**Case A — WS01 has run and `files/.cairn/CLAUDE.md` exists (the normal and expected case):**
 
-**Action:** create the directory and file with the import-reference header note.
-
-```powershell
-# PowerShell
-New-Item -ItemType Directory -Path "files/.cairn" -Force
-```
-
-**New content for `files/.cairn/CLAUDE.md`:**
-
-```markdown
-<!-- cairn-managed: do not edit directly -->
-<!--
-  This file is the cairn-owned context block for this project.
-  It is NOT auto-loaded by any harness — you must import it with a single line
-  in your project's CLAUDE.md (Claude Code) or AGENTS.md (Pi/agy):
-
-      @./.cairn/CLAUDE.md
-
-  The adopting agent shows you that line during install (adopt.md Step 6);
-  you add it. Cairn never writes to CLAUDE.md or AGENTS.md on your behalf.
-  See: https://github.com/winnorton/cairn — §2.2 (import-line contract).
--->
-
-```
-
-**Why:** the header note makes the import convention self-documenting for any adopter who opens the file. The `<!-- cairn-managed -->` sentinel is consistent with the pattern used in WS01's other template files; it signals that content below is maintained by cairn, not customized by the adopter. The import-line instruction is reproduced verbatim so an adopter who adds this file to a new project without running the full adopt flow knows exactly what to do.
-
-**Write it now:**
+Read the existing file, check whether the `<!-- cairn-managed -->` header is already present (e.g., if this step is being re-run). If it is already present, skip the write — the header is idempotent; do not duplicate it. If it is absent, prepend the header block to the top of the existing body, preserving every byte of WS01's content below it.
 
 ```powershell
-# PowerShell — write files/.cairn/CLAUDE.md
-$content = @'
+# PowerShell — prepend header to WS01's existing file body
+$existingBody = Get-Content "files/.cairn/CLAUDE.md" -Raw
+if ($existingBody -match '<!-- cairn-managed') {
+    Write-Host "Header already present — skipping prepend (idempotent)."
+} else {
+    $header = @'
 <!-- cairn-managed: do not edit directly -->
 <!--
   This file is the cairn-owned context block for this project.
@@ -194,18 +174,21 @@ $content = @'
 -->
 
 '@
-Set-Content -Path "files/.cairn/CLAUDE.md" -Value $content -NoNewline
+    Set-Content -Path "files/.cairn/CLAUDE.md" -Value ($header + $existingBody) -NoNewline
+    Write-Host "Header prepended. WS01 body preserved intact."
+}
 ```
 
 ```bash
-# POSIX bash alternative
-mkdir -p files/.cairn
-cat > files/.cairn/CLAUDE.md << 'ENDOFFILE'
-<!-- cairn-managed: do not edit directly -->
+# POSIX bash alternative — prepend header to WS01's existing file body
+if grep -q 'cairn-managed' files/.cairn/CLAUDE.md; then
+  echo "Header already present — skipping prepend (idempotent)."
+else
+  header='<!-- cairn-managed: do not edit directly -->
 <!--
   This file is the cairn-owned context block for this project.
   It is NOT auto-loaded by any harness — you must import it with a single line
-  in your project's CLAUDE.md (Claude Code) or AGENTS.md (Pi/agy):
+  in your project'\''s CLAUDE.md (Claude Code) or AGENTS.md (Pi/agy):
 
       @./.cairn/CLAUDE.md
 
@@ -214,24 +197,41 @@ cat > files/.cairn/CLAUDE.md << 'ENDOFFILE'
   See: https://github.com/winnorton/cairn -- §2.2 (import-line contract).
 -->
 
-ENDOFFILE
+'
+  printf '%s' "$header" > /tmp/cairn_header.md
+  cat /tmp/cairn_header.md files/.cairn/CLAUDE.md > /tmp/cairn_combined.md
+  mv /tmp/cairn_combined.md files/.cairn/CLAUDE.md
+  echo "Header prepended. WS01 body preserved intact."
+fi
 ```
 
-**CHECKPOINT B — verify the file was written:**
+**Case B — `files/.cairn/CLAUDE.md` does NOT exist (WS01 has not yet run):**
+
+STOP. Do not create the file from scratch. WS01 owns the body; WS02 only prepends. Coordinate with the executor running WS01 and return to Phase 2 only after WS01 has delivered `files/.cairn/CLAUDE.md`.
+
+**Why this design:** the header note makes the import convention self-documenting for any adopter who opens the file. The `<!-- cairn-managed -->` sentinel is consistent with WS01's other template files; it signals that the file is maintained by cairn. Prepending (not replacing) is the only shape that respects the §9.5 ownership boundary — WS01 owns the body; WS02 owns the header. `Set-Content` on the full content with the header prefix followed by the preserved body achieves a true prepend without clobbering.
+
+**CHECKPOINT B — verify the prepend succeeded:**
 
 ```powershell
 # PowerShell
 Test-Path "files/.cairn/CLAUDE.md"
-# Expected: True
+# Expected: True (file must already exist, created by WS01)
 
-Get-Content "files/.cairn/CLAUDE.md" | Select-String "cairn-managed"
-# Expected: one match on the first line.
+(Get-Content "files/.cairn/CLAUDE.md")[0] | Select-String "cairn-managed"
+# Expected: one match — the header is the FIRST line of the file.
 
 Get-Content "files/.cairn/CLAUDE.md" | Select-String "@./.cairn/CLAUDE.md"
 # Expected: one match inside the comment block.
+
+# Confirm WS01 body is still present (adjust this pattern to whatever WS01's body
+# actually contains — the point is that WS01's content appears AFTER the header).
+(Get-Content "files/.cairn/CLAUDE.md").Count
+# Expected: MORE lines than the header alone (8 header lines + blank + WS01 body).
+# If the count equals exactly the header-only line count, WS01's body was clobbered — stop.
 ```
 
-If any check fails: delete `files/.cairn/CLAUDE.md` and re-run Step 1.
+If any check fails: do NOT re-run `Set-Content` blindly. Recover WS01's original content from git (`git show HEAD:files/.cairn/CLAUDE.md` or from WS01's worktree), then re-run Step 1 Case A.
 
 ---
 
@@ -336,7 +336,7 @@ No archive action — spec files stay in `docs/specs/` as living references. WS1
 
 1. `docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` §2.2 (import-line contract, frozen), §4 (hard contract — the one invariant you cannot violate).
 2. `adopt.md` — current Step 6 region (lines 388–413) so you understand where WS08 will insert the canonical Step.
-3. `docs/specs/SPEC_CAIRN_OWNERSHIP_01_CAIRN_STATE_LAYOUT.md` — if WS01 has run first, `files/.cairn/CLAUDE.md` may already exist; read it before Phase 2 to avoid clobbering WS01 content.
+3. `docs/specs/SPEC_CAIRN_OWNERSHIP_01_CAIRN_STATE_LAYOUT.md` — **WS01 is a hard prerequisite for Phase 2.** WS01 must have moved/created `files/.cairn/CLAUDE.md` before WS02 runs Phase 2. Read WS01's output file before Phase 2 to confirm the body is present and understand its structure; WS02's prepend must leave every byte of WS01's body intact below the header.
 
 **The one constraint most likely to cause a mistake:**
 
@@ -346,10 +346,11 @@ No archive action — spec files stay in `docs/specs/` as living references. WS1
 
 | Failure | Recovery |
 |---|---|
-| CHECKPOINT B fails — file not written | Delete any partial `files/.cairn/CLAUDE.md`; re-run Phase 2 Step 1 |
+| CHECKPOINT B fails — header not on line 1 or body count too low | Do NOT delete the file (it may contain WS01's body). Recover WS01's original content from git; re-run Phase 2 Step 1 Case A (prepend, not replace). |
 | Phase 3 Step 1 finds a vendor-path string in `files/.cairn/CLAUDE.md` | Edit the file to remove the offending string; re-run Phase 3 Step 1 |
 | Phase 3 Step 2 finds an agent-write pattern in the canonical Step | Edit Phase 1 Step 2 wording to use user-imperative ("you add it"); re-run check |
-| WS01 has already written `files/.cairn/CLAUDE.md` | Read existing content; add only the import-reference header if absent; never overwrite |
+| WS01 has NOT yet written `files/.cairn/CLAUDE.md` | STOP Phase 2. Phase 1 may complete independently. Return to Phase 2 only after WS01 lands. |
+| Phase 2 CHECKPOINT B — WS01 body appears clobbered | Recover WS01's content via `git show HEAD:files/.cairn/CLAUDE.md` or from WS01's worktree; re-run Phase 2 Step 1 Case A (prepend, not replace). |
 | adopt.md already has the import Step (WS08 ran first) | Skip Phase 1 Step 2 write action; verify the existing wording matches this spec's canonical text; note any discrepancy for WS08 |
 
 ---
@@ -363,7 +364,8 @@ A fresh-agent peer-reviewer (opus, not the WS02 author) confirms:
 - [ ] The canonical user-action Step wording (Phase 1 Step 2) says "you add it" / "Cairn never writes" — NOT "I will write" or any agent-write form.
 - [ ] No step in this spec instructs cairn to write to `CLAUDE.md`, `AGENTS.md`, `~/.claude/**`, `~/.gemini/**`, or `~/.pi/**`.
 - [ ] The `@./.cairn/CLAUDE.md` token appears verbatim in both the canonical Step (Phase 1 Step 2) and the `files/.cairn/CLAUDE.md` header note.
-- [ ] The Pre-flight halting gate includes a check confirming `files/.cairn/` does not yet exist, so this spec is safe to run before WS01.
+- [ ] The Pre-flight halting gate confirms that Phase 2 requires `files/.cairn/CLAUDE.md` to exist (WS01 must have run first); the spec does NOT claim to be parallel-safe with WS01 on that file.
+- [ ] Phase 2 Step 1 uses a PREPEND pattern (read existing body, insert header at top, write combined result) — never a bare `Set-Content` / `cat >` that clobbers WS01's body.
 - [ ] The Phase 3 hard-contract checks are executable commands, not prose promises.
 - [ ] No frozen/hardcoded file lists appear — any "count of X files" uses a programmatic command form (this spec has no such counts; confirm there is nothing to ratchet).
 - [ ] The commit message template includes the program reference line and the Wave 0 designation.

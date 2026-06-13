@@ -196,16 +196,14 @@ If JSON parse fails: the edit introduced a syntax error — revert the edit with
 
 ## Phase 3 — Rewrite `files` entries: state dests to `.cairn/`, skills to package-delivered
 
-**Goal:** every `"dest"` in the `files` array must either (a) point to `{projectRoot}/.cairn/...` for state files, or (b) be replaced with a `"package"` delivery descriptor for skill files. No `{userMemory}`, `{userSkills}`, `{projectClaude}` references survive.
+**Goal:** every `"dest"` in the `files` array must either (a) point to `{projectRoot}/.cairn/...` for state files, or (b) be replaced with a `"package"` delivery descriptor for skill files. No `{userMemory}`, `{userSkills}`, `{projectClaude}`, or `{projectRoot}/CLAUDE.md` references survive. (`{projectRoot}/CLAUDE.md` is fully user-owned — the manifest carries no such entry per master §2.1/§3.)
 
 The current file has:
-- 1 entry → `{projectRoot}/CLAUDE.md` (keep as-is — this is the project CLAUDE.md template, not a cairn-state file; it is a user-seeded file, not a cairn write target after adoption)
 - 5 entries → `{userMemory}/...` (rewrite to `{projectRoot}/.cairn/memory/...`)
 - 1 entry → `{projectClaude}/LAWS.md` (rewrite to `{projectRoot}/.cairn/LAWS.md`)
-- 19 entries → `{userSkills}/...` (convert to package-delivered descriptors)
-- 1 entry → `{userSkills}/README.md` (skills README — convert to package-delivered)
+- 18 SKILL.md entries + the skills/README.md = 19 package-delivered entries → `{userSkills}/...` (convert to package-delivered descriptors)
 
-**Total `"files"` entries: 27 (verified by `rg -c '"dest"' manifest.json` = 27).**
+**Total `"files"` entries: 26 (verified by `rg -c '"dest"' manifest.json` = 26). After reshape: 6 state entries with `.cairn/` dests + 19 package-delivered skill entries + 1 dropped (CLAUDE.md) = 25 remaining entries.**
 
 ### Step 3.1 — Rewrite MEMORY.md dest
 
@@ -224,7 +222,7 @@ The current file has:
 **REPLACEMENT**:
 ```json
     {
-      "src": "files/memory/MEMORY.md",
+      "src": "files/.cairn/memory/MEMORY.md",
       "dest": "{projectRoot}/.cairn/memory/MEMORY.md",
       "mode": "create-if-absent",
       "role": "essential",
@@ -233,7 +231,7 @@ The current file has:
     },
 ```
 
-**WHY:** Memory is project-local cairn state, lives under `{projectRoot}/.cairn/memory/` per §2.1.
+**WHY:** Memory is project-local cairn state, lives under `{projectRoot}/.cairn/memory/` per §2.1. The `src` must point to `files/.cairn/memory/MEMORY.md` because WS01 moved the template tree there; a stale `src` causes WS08's fetch to 404 (master §2.5).
 
 ### Step 3.2 — Rewrite LAWS.md dest
 
@@ -252,7 +250,7 @@ The current file has:
 **REPLACEMENT**:
 ```json
     {
-      "src": "files/LAWS.md",
+      "src": "files/.cairn/LAWS.md",
       "dest": "{projectRoot}/.cairn/LAWS.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
@@ -261,11 +259,11 @@ The current file has:
     },
 ```
 
-**WHY:** LAWS.md is cairn-owned project state; `{projectClaude}` pointed at `.claude/` (vendor-owned). Now lives in `{projectRoot}/.cairn/` per §2.1.
+**WHY:** LAWS.md is cairn-owned project state; `{projectClaude}` pointed at `.claude/` (vendor-owned). Now lives in `{projectRoot}/.cairn/` per §2.1. The `src` must be `files/.cairn/LAWS.md` because WS01 moved the template there; a stale `src` causes WS08's fetch to 404 (master §2.5).
 
 ### Step 3.3 — Rewrite typed-memory README dests (4 entries)
 
-These four entries all follow the same pattern: `{userMemory}/<type>/README.md` → `{projectRoot}/.cairn/memory/<type>/README.md`.
+These four entries all follow the same pattern: `src` from `files/memory/<type>/README.md` → `files/.cairn/memory/<type>/README.md`; `dest` from `{userMemory}/<type>/README.md` → `{projectRoot}/.cairn/memory/<type>/README.md`. Both `src` and `dest` must be updated in lockstep.
 
 **CURRENT** (4 entries — apply the same substitution pattern to each):
 ```json
@@ -291,10 +289,10 @@ These four entries all follow the same pattern: `{userMemory}/<type>/README.md` 
     },
 ```
 
-**REPLACEMENT** (same descriptions, only dests change):
+**REPLACEMENT** (same descriptions; both `src` and `dest` updated):
 ```json
     {
-      "src": "files/memory/user/README.md",
+      "src": "files/.cairn/memory/user/README.md",
       "dest": "{projectRoot}/.cairn/memory/user/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
@@ -302,7 +300,7 @@ These four entries all follow the same pattern: `{userMemory}/<type>/README.md` 
       "description": "User memory conventions — always-on background, no citation"
     },
     {
-      "src": "files/memory/feedback/README.md",
+      "src": "files/.cairn/memory/feedback/README.md",
       "dest": "{projectRoot}/.cairn/memory/feedback/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
@@ -310,7 +308,7 @@ These four entries all follow the same pattern: `{userMemory}/<type>/README.md` 
       "description": "Feedback memory conventions — fires discretely, cite [MEM feedback/<name>]"
     },
     {
-      "src": "files/memory/project/README.md",
+      "src": "files/.cairn/memory/project/README.md",
       "dest": "{projectRoot}/.cairn/memory/project/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
@@ -318,7 +316,7 @@ These four entries all follow the same pattern: `{userMemory}/<type>/README.md` 
       "description": "Project memory conventions — decision-shaping, cite [MEM project/<name>]"
     },
     {
-      "src": "files/memory/reference/README.md",
+      "src": "files/.cairn/memory/reference/README.md",
       "dest": "{projectRoot}/.cairn/memory/reference/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
@@ -327,7 +325,7 @@ These four entries all follow the same pattern: `{userMemory}/<type>/README.md` 
     },
 ```
 
-**WHY:** Typed memory subdirs are cairn state, co-located with MEMORY.md under `{projectRoot}/.cairn/memory/` per §2.1.
+**WHY:** Typed memory subdirs are cairn state, co-located with MEMORY.md under `{projectRoot}/.cairn/memory/` per §2.1. The `src` paths must point to `files/.cairn/memory/<type>/README.md` because WS01 moved the template tree there; a stale `src` causes WS08's fetch to 404 (master §2.5).
 
 ### Step 3.4 — Convert all 19 skill entries to package-delivered descriptors
 
@@ -363,9 +361,9 @@ The `src` stays (it is the single source of truth per §2.4). The `dest` field i
     },
 ```
 
-Apply this pattern to **all 19 skill entries** (reflect, plan, note, peer-review, reframe, bridge, advocate, resume, README, tour, prune, audit, feedback, spec, program, round-review, fast-execute, prompt-evolve, session-distill). Only `src`, `role`, `tier`, and `description` carry over unchanged.
+Apply this pattern to all 19 package-delivered entries: **18 SKILL.md entries** (reflect, plan, note, peer-review, reframe, bridge, advocate, resume, tour, prune, audit, feedback, spec, program, round-review, fast-execute, prompt-evolve, session-distill) **+ the skills/README.md** (a package-bundled index, not a skill itself). Only `src`, `role`, `tier`, and `description` carry over unchanged.
 
-The skills README entry (`src: "files/skills/README.md"`) uses the same pattern — it is bundled in the packages.
+The skills/README.md entry (`src: "files/skills/README.md"`) uses the same delivery-object pattern — it is bundled inside the packages alongside the SKILL.md files.
 
 **CHECKPOINT after Phase 3:**
 ```powershell
@@ -385,18 +383,23 @@ Select-String -Path C:\Users\winno\projects\cairn\cairn\manifest.json -Pattern '
 Select-String -Path C:\Users\winno\projects\cairn\cairn\manifest.json -Pattern '\{projectClaude\}'
 # Expected: zero matches
 
-# CP-3e: count .cairn dest entries (expect 6: CLAUDE.md is projectRoot not cairn, so: MEMORY.md + LAWS.md + 4 typed READMEs = 6 entries with {projectRoot}/.cairn/)
+# CP-3e: count .cairn dest entries (MEMORY.md + LAWS.md + 4 typed READMEs = 6 entries with {projectRoot}/.cairn/)
 Select-String -Path C:\Users\winno\projects\cairn\cairn\manifest.json -Pattern '\.cairn/'
 # Expected: 6 matches
 
 # CP-3f: count delivery method entries (expect 19)
 Select-String -Path C:\Users\winno\projects\cairn\cairn\manifest.json -Pattern '"method": "package"'
 # Expected: 19 matches
+
+# CP-3g: state file src paths are under files/.cairn/ (master §2.5 lockstep — stale src 404s WS08's fetch)
+rg '"src": "files/(CLAUDE|LAWS|memory)' C:\Users\winno\projects\cairn\cairn\manifest.json
+# Expected: zero matches (all state file srcs should now be "files/.cairn/..." — no plain "files/LAWS.md" or "files/memory/..." should survive)
 ```
 
 If CP-3b, CP-3c, or CP-3d still show matches: a dest was missed — search by the remaining match's line number and re-apply the rewrite.
 If CP-3e shows fewer than 6: one of the memory/laws dests was not updated.
 If CP-3f shows fewer than 19: a skill entry still has the old `dest` shape — find it via `Select-String -Pattern '{userSkills}'` and complete the conversion.
+If CP-3g shows any match: a state file's `src` was not updated in lockstep with its `dest` — find the entry and update the `src` to `files/.cairn/...`.
 
 ---
 
@@ -458,6 +461,14 @@ rg -n "userMemory|userSkills|userClaude|projectClaude" C:\Users\winno\projects\c
 rg -c '\.cairn/' C:\Users\winno\projects\cairn\cairn\manifest.json
 # Expected: 6
 
+# PF-final-4b: no state file src still points to stale pre-WS01 location (master §2.5 lockstep)
+rg '"src": "files/(CLAUDE|LAWS|memory)' C:\Users\winno\projects\cairn\cairn\manifest.json; if ($LASTEXITCODE -eq 1) { "PASS: zero matches" } else { "FAIL: stale src paths found — update to files/.cairn/..." }
+# Expected: PASS: zero matches
+
+# PF-final-4c: no {projectRoot}/CLAUDE.md entry exists (user-owned, never seeded — master §2.1/§3)
+rg 'projectRoot\}/CLAUDE\.md' C:\Users\winno\projects\cairn\cairn\manifest.json; if ($LASTEXITCODE -eq 1) { "PASS: zero matches" } else { "FAIL: CLAUDE.md entry must be dropped" }
+# Expected: PASS: zero matches
+
 # PF-final-5: all 19 skills are package-delivered
 rg -c '"method": "package"' C:\Users\winno\projects\cairn\cairn\manifest.json
 # Expected: 19
@@ -478,14 +489,16 @@ feat(manifest): reshape manifest.json to .cairn/ dests + package-delivered skill
 
 - version bumped 0.13.1 → 0.14.0
 - pathVariables: drop userClaude/userMemory/userSkills/projectClaude; add cairnRoot
-- state file dests rewritten to {projectRoot}/.cairn/{LAWS.md,memory/...}
-- 19 skill entries converted from {userSkills}/... dests to package delivery descriptors
+- {projectRoot}/CLAUDE.md entry dropped (user-owned, never seeded per §2.1/§3)
+- state file src+dest rewritten in lockstep to files/.cairn/... / {projectRoot}/.cairn/...
+- 18 SKILL.md entries + skills/README.md (19 total) converted from {userSkills}/... dests to package delivery descriptors
 - false .agents/skills alignment text (v0.14-note, v0.14.0-aligned) fully removed
 - description updated to reflect .cairn/ model and package distribution
 
 Part of SPEC_CAIRN_OWNERSHIP program (WS06); depends on WS01.
 rg "v0.14-note|v0.14.0-aligned|\.agents/skills" manifest.json → zero (DoD#8).
 rg "userMemory|userSkills|projectClaude" manifest.json → zero.
+rg '"src": "files/(CLAUDE|LAWS|memory)' manifest.json → zero (src lockstep).
 node -e "JSON.parse(...)" → valid.
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
@@ -505,7 +518,9 @@ git -C C:\Users\winno\projects\cairn\cairn mv docs/specs/SPEC_CAIRN_OWNERSHIP_06
 2. `C:\Users\winno\projects\cairn\cairn\docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` §2 (CONTRACT SURFACES) and §4 (HARD CONTRACT) — the invariants your edits must preserve.
 3. `C:\Users\winno\projects\cairn\cairn\docs/specs/SPEC_CAIRN_OWNERSHIP_01_CAIRN_STATE_LAYOUT.md` — WS06 depends on WS01; the `.cairn/` directory layout must be frozen there before you finalize the dests here (if WS01 is not COMPLETE, wait).
 
-**The one constraint most likely to cause a mistake:** Phase 3 Step 3.4 converts 19 skill entries. It is easy to miss one entry mid-list, especially if the entries are processed manually. After Step 3.4, run CP-3f (`rg -c '"method": "package"'`) immediately — if the count is not 19, you missed an entry. Do not proceed to Phase 4 until CP-3f passes.
+**The two constraints most likely to cause a mistake:**
+1. Phase 3 Step 3.4 converts 19 package-delivered entries. It is easy to miss one entry mid-list, especially if the entries are processed manually. After Step 3.4, run CP-3f (`rg -c '"method": "package"'`) immediately — if the count is not 19, you missed an entry. Do not proceed to Phase 4 until CP-3f passes.
+2. State file `src` and `dest` must be updated in lockstep. Run CP-3g after Steps 3.1–3.3 to confirm no stale `files/LAWS.md` or `files/memory/...` src remains — a stale src causes WS08's fetch to 404 silently.
 
 **Recovery for common failures:**
 
@@ -527,12 +542,13 @@ A fresh reviewer (who did NOT write these edits) checks:
 - [ ] `rg "userMemory|userSkills|userClaude|projectClaude" manifest.json` returns zero
 - [ ] `manifest.json` contains exactly 2 `pathVariables` entries: `projectRoot` and `cairnRoot`
 - [ ] `cairnRoot` description makes no reference to vendor paths (`~/.claude`, `~/.pi`, `~/.gemini`, `.agents/`)
-- [ ] All 5 former `{userMemory}` dests are now `{projectRoot}/.cairn/memory/...`
-- [ ] The former `{projectClaude}/LAWS.md` dest is now `{projectRoot}/.cairn/LAWS.md`
-- [ ] All 19 former `{userSkills}/...` dests are now `"delivery": { "method": "package", ... }` objects
+- [ ] All 5 former `{userMemory}` dests are now `{projectRoot}/.cairn/memory/...` — AND each `src` is updated in lockstep to `files/.cairn/memory/...`
+- [ ] The former `{projectClaude}/LAWS.md` dest is now `{projectRoot}/.cairn/LAWS.md` — AND its `src` is `files/.cairn/LAWS.md`
+- [ ] 18 SKILL.md entries + the skills/README.md (19 total), formerly `{userSkills}/...` dests, are now `"delivery": { "method": "package", ... }` objects
 - [ ] `version` is `"0.14.0"` not `"0.13.1"`
 - [ ] `description` mentions `.cairn/` and the package names
-- [ ] `{projectRoot}/CLAUDE.md` entry (the project CLAUDE.md template) is unchanged — it is NOT a cairn-state file
+- [ ] No `{projectRoot}/CLAUDE.md` entry exists — it is fully user-owned and the manifest must not carry it (master §2.1/§3)
+- [ ] `rg '"src": "files/(CLAUDE|LAWS|memory)' manifest.json` returns zero (stale src would 404 WS08's fetch)
 - [ ] No vendor path (`~/.claude`, `~/.pi`, `~/.gemini`, `~/.agents`) appears in any `dest` or `delivery` field
 - [ ] No step in this spec tells the executor to write to any path outside `manifest.json` itself (single-file discipline — WS06 touches ONLY `manifest.json`)
 - [ ] Commit is NOT made in the worktree — the spec says to hand off to main context first per §9.3
