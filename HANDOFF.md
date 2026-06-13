@@ -52,6 +52,18 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
 
+## HIVE_CONTEXT_SESSIONS program — shipped 2026-06-13
+
+The cross-harness session corpus + ingestion pipeline is now live. `cairn-sessions`
+(at `~/projects/cairn/cairn-sessions`) holds normalized envelopes from all three
+harnesses (Claude Code, Pi, Antigravity) with a findings ledger and three JSON Schemas.
+`cairn-mcp-server` v0.5.0 adds `gather`, `manifest`, and `corpus_status` MCP tools plus
+the `normalizeAuto` / adapter / redaction pipeline, and extends `session_distill` with
+an `envelope_path` branch that writes compounding findings to the ledger. A pre-commit
+hook in `cairn-sessions/.githooks/pre-commit` blocks staging any secret-shaped content.
+CI: `npm run validate-corpus` + `node test/*.mjs` + `.github/workflows/ci.yml`.
+Program master: `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md`.
+
 ## Interim work since v0.13.1 (post-release, pre-v0.14.0)
 
 Captured here to keep `[LAW handoff-stays-current]` honest between releases. None of
