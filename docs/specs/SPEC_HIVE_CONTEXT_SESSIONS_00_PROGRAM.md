@@ -343,6 +343,19 @@ Executors claim a row by setting `Status: in-progress, Owner: <name/model>` and 
 > `cairn-sessions` keep per-commit history. `cairn-sessions` is local-only (no remote yet —
 > publishing the session corpus is a pending visibility decision).
 
+> **Post-program operationalization (2026-06-13).** The program shipped the ingestion
+> *machinery*; two follow-ons make it *run autonomously on the Spark lab*:
+> - **WS 11 — [SPEC_HIVE_CONTEXT_SESSIONS_11_INGEST_CLI.md](SPEC_HIVE_CONTEXT_SESSIONS_11_INGEST_CLI.md)**
+>   (built, `cairn-mcp-server` main `4734325`): the `cairn-ingest` CLI (`gather`/`distill`/
+>   `status`) + the **Spark LLM distiller** — distillation routed through a local
+>   OpenAI-compatible endpoint (deepseek-v4-flash). Distill validated via mock; live
+>   validation is the deploy CHECKPOINT 3.
+> - **Deploy — `spark/specs/SPEC_CAIRN_SESSIONS_DEPLOY.md`** (in the spark repo): the
+>   spark agent's runbook to deploy the corpus + `cairn-ingest` sidecar + systemd timers
+>   on `nuc-util`, distilling on the Spark coding lane, pushing findings to a **private**
+>   `cairn-sessions` remote. Pending: create the private remote; deploy; the laptop-side
+>   federation for Claude Code + Antigravity sessions (D2 made concrete).
+
 ## §10 FIRST-ACTION CHECKLIST
 
 1. Read this master end-to-end, especially §2 (contracts) and §4 (hard contract).
