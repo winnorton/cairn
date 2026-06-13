@@ -5,7 +5,7 @@
 > **Supersedes:** [SPEC_AGENTS_UMBRELLA](_promoted/SPEC_AGENTS_UMBRELLA.md) (the parked v0.14 `agents/` draft — outdated premise + drifted anchors per the 2026-06-13 revalidation).
 > **Governing law:** `[LAW own-your-namespace]` (cairn root `LAWS.md`, added this session). **Memory:** `[MEM feedback/own-namespace-no-vendor-folder-deps]`.
 >
-> **Revision history:** Drafted 2026-06-13 as a program (not a single spec) — see §11.
+> **Revision history:** Drafted 2026-06-13 as a program (not a single spec) — see §11. Pass 1 fresh-agent review (5 lenses, 0-author) surfaced 2 blockers + 11 should-fix/nit, all absorbed: N1 (WS09 "move"→copy-verify-delete, blocker), N2 (WS09 Pi-residue removal gated on replacement-installed, blocker), N3 (`<!-- migration-ref -->` sentinel for DoD#1 grep, §4+§5), N4 (WS04/08 adopt agy-branch dep edge), N5 (WS01/09 define/implement reword), N6 (dep fixes: 09+05, 10+12, 11+07), N7 (.agents-alignment grep in DoD#8), N8 (WS09 Cowork + import-line-as-migration-step + cairn-version fast-path + committed fixture), N9 (breadcrumb wording, WS05 link, parallel-safe symmetry).
 
 ## §0 LEAD FINDING
 
@@ -88,18 +88,20 @@ The load-bearing invariant every workstream must hold, derived from `[LAW own-yo
 3. **The sole vendor-file edit cairn requests is one user-written import line**, shown by the agent, applied by the user.
 4. **Every cairn artifact name is collision-checked** against the target harness's built-ins before ship (WS12).
 
+**Migration-reference exception (the ONE allowed appearance of vendor paths in a cairn-shipped file).** `adopt.md`'s migration section must NAME old vendor paths to tell the user where their v0.13.x files live. Every such line carries the sentinel `<!-- migration-ref -->`. That sentinel marks instruction text the user reads — never a cairn write target — and is the only context in which a `~/.claude` / `~/.gemini` / `~/.pi` / `.claude/` string may appear in a shipped file. WS09 applies it; the §5 DoD#1 grep excludes sentinel-bearing lines. One token, one owner (WS09), one verifier (DoD#1).
+
 Any workstream step that violates 1–4 has the wrong shape — stop and re-derive. This contract is what a fresh reviewer checks first.
 
 ## §5 DEFINITION OF DONE (program-level, verifiable)
 
-1. `rg -n "~/.claude|~/.gemini|~/.pi/agent|projectClaude}/LAWS|userMemory" adopt.md manifest.json files/` returns **zero** cairn-write targets (references inside migration *instructions* the user runs are allowed and tagged).
+1. `rg -n "~/.claude|~/.gemini|~/.pi/agent|projectClaude}/LAWS|userMemory" adopt.md manifest.json files/ | rg -v "migration-ref"` returns **zero** — the only surviving vendor-path strings are migration-instruction lines bearing the `<!-- migration-ref -->` sentinel (§4).
 2. `<project>/.cairn/` layout (§2.1) is produced by a fresh `adopt`, verified by a fixture install.
 3. The `cairn` Claude Code plugin installs in Claude Code; `agy plugin import claude` ingests it; `@winnorton/cairn-pi` still installs in Pi — all three validated (local install at minimum).
 4. `adopt.md` performs zero writes to vendor paths; the import line is a Step the user executes (grep: the import line appears as user-action text, never in an agent write loop).
 5. Migration section covers v0.13.x → `.cairn/` and the stale-residue cleanup (Pi 404s, agy flat-format), user-driven.
 6. The sync drift-guard (`--check`) is green across all packages and wired to CI/`prepublishOnly`; deliberately corrupting one copy makes it red.
 7. The namespace-collision audit (WS12) reports zero unresolved collisions; `[LAW own-your-namespace]` is cited in the closing commit.
-8. Docs (README/AGENTS.md/HANDOFF) reflect `.cairn/` + package distribution + corrected env-roles (Antigravity primary coding, Claude specs/reviews); the false `.agents/` alignment lines are gone.
+8. Docs (README/AGENTS.md/HANDOFF) reflect `.cairn/` + package distribution + corrected env-roles (Antigravity primary coding, Claude specs/reviews); the false `.agents/` alignment lines are gone — verify `rg -n "v0.14-note|v0.14.0-aligned|\.agents/skills" manifest.json AGENTS.md` returns zero.
 9. `VERSION` bumped (target `0.14.0`); `HANDOFF.md` updated in the same commit per `[LAW handoff-stays-current]`.
 
 ## §6 RISKS
@@ -134,7 +136,7 @@ No homeless risks.
 ## §9 PARALLELIZATION GRAPH + STATUS TABLE
 
 ### §9.1 Workstream registry
-Full Goal/Scope/Depends-on/Parallel-safe/Files/Gate/Telemetry/Diagnostics/Rollback per stub file (see links in §9.4).
+Goal/Scope/Telemetry/Diagnostics/Rollback/Gate/Files per stub file as `##` sections; Depends-on and Parallel-safe-with are encoded in each stub's status-header line (see links in §9.4).
 
 ### §9.2 Dependency DAG (waves overlap, no barrier)
 ```
@@ -145,8 +147,8 @@ Wave 1 (build on contracts): 03 claude-plugin ─ 04 agy ─┐  05 pi-align   0
 Wave 2 (integrate/close):    08 adopt-rewrite ── 09 migration+integrity ── 10 docs
 ```
 - Wave 0: 01, 02, 12 (12 can start immediately — it's an audit).
-- Wave 1: 03 (dep 01,02) → 04 (dep 03); 05 (dep 01); 06 (dep 01); 07 (dep 01); 11 (dep 03,05).
-- Wave 2: 08 (dep 01,02,03,06); 09 (dep 01,06,08); 10 (dep most).
+- Wave 1: 03 (dep 01,02) → 04 (dep 03); 05 (dep 01); 06 (dep 01); 07 (dep 01); 11 (dep 03,05,07 — WS07 edits the source the guard checks).
+- Wave 2: 08 (dep 01,02,03,04,06 — WS04 owns the agy Step text); 09 (dep 01,05,06,08 — WS05 freezes the Pi model before residue cleanup); 10 (dep 01–09,12 — WS12 renames must reach the docs).
 
 ### §9.3 Parallel-execution protocol
 1. **One worktree per workstream** (`git worktree add`), so parallel agents never share an index.
@@ -167,10 +169,10 @@ Wave 2 (integrate/close):    08 adopt-rewrite ── 09 migration+integrity ─�
 | 05 | [`SPEC_CAIRN_OWNERSHIP_05_PI_ALIGNMENT.md`](SPEC_CAIRN_OWNERSHIP_05_PI_ALIGNMENT.md) | OPEN | — | 01 |
 | 06 | [`SPEC_CAIRN_OWNERSHIP_06_MANIFEST_RESHAPE.md`](SPEC_CAIRN_OWNERSHIP_06_MANIFEST_RESHAPE.md) | OPEN | — | 01 |
 | 07 | [`SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md`](SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md) | OPEN | — | 01 |
-| 08 | [`SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md`](SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md) | OPEN | — | 01, 02, 03, 06 |
-| 09 | [`SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md`](SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md) | OPEN | — | 01, 06, 08 |
-| 10 | [`SPEC_CAIRN_OWNERSHIP_10_DOCS.md`](SPEC_CAIRN_OWNERSHIP_10_DOCS.md) | OPEN | — | 01–09 |
-| 11 | [`SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD.md`](SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD.md) | OPEN | — | 03, 05 |
+| 08 | [`SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md`](SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md) | OPEN | — | 01, 02, 03, 04, 06 |
+| 09 | [`SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md`](SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md) | OPEN | — | 01, 05, 06, 08 |
+| 10 | [`SPEC_CAIRN_OWNERSHIP_10_DOCS.md`](SPEC_CAIRN_OWNERSHIP_10_DOCS.md) | OPEN | — | 01–09, 12 |
+| 11 | [`SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD.md`](SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD.md) | OPEN | — | 03, 05, 07 |
 | 12 | [`SPEC_CAIRN_OWNERSHIP_12_NAMESPACE_AUDIT.md`](SPEC_CAIRN_OWNERSHIP_12_NAMESPACE_AUDIT.md) | OPEN | — | (foundational) |
 
 Executors claim a row (`Status: in-progress, Owner: <model/agent>`) and mark `COMPLETE` on merge.

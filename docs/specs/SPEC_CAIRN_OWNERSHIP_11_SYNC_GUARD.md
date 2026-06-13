@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 03, 05 · **Parallel-safe-with:** 06, 07
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 03, 05, 07 · **Parallel-safe-with:** 06
 
 ## Goal
 Generalize cairn-pi's `sync-skills.mjs` into a shared guard so every distribution package stays byte-synced from the one source of truth, wired to CI/`prepublishOnly`.

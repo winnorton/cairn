@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_05_PI_ALIGNMENT
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 06, 07
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 04, 06, 07
 
 ## Goal
 Align the already-shipped `@winnorton/cairn-pi` npm package with the `.cairn/` state model so Pi reads cairn state from `<project>/.cairn/`, not a vendor memory path.
@@ -28,4 +28,4 @@ cairn-pi documents `.cairn/` state, `sync --check` green, lockstep version corre
 
 ---
 
-Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_CAIRN_OWNERSHIP_05_PI_ALIGNMENT.md`. Read master §2.4, and `SPEC_CAIRN_PI_PACKAGE` (archived) for the package's shape.
+Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_CAIRN_OWNERSHIP_05_PI_ALIGNMENT.md`. Read master §2.4, and [SPEC_CAIRN_PI_PACKAGE](archive/SPEC_CAIRN_PI_PACKAGE.md) (archived) for the package's shape.

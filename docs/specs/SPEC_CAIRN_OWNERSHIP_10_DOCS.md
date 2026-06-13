@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_10_DOCS
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01–09 · **Parallel-safe-with:** 09 (Wave 2)
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01–09, 12 · **Parallel-safe-with:** 09 (Wave 2)
 
 ## Goal
 Bring all human-facing docs into line with the `.cairn/` + package-distribution model and correct stale claims.
@@ -11,6 +11,7 @@ Bring all human-facing docs into line with the `.cairn/` + package-distribution 
 - `HANDOFF.md`: v0.14.0 state, related paths.
 - `docs/research/**`: update the four-layer-habitat descriptions that name vendor paths (`~/.claude/...`) to `.cairn/`.
 - Keep the supersede breadcrumb to the old umbrella spec.
+- Reflect any WS12 renames (skill names/dirs, manifest entries, package names) in the doc skill listings — the docs must show the post-audit names, not pre-rename ones.
 
 ## Telemetry hook
 N/A: markdown.

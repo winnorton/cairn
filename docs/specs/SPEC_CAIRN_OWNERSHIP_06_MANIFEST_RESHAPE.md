@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_06_MANIFEST_RESHAPE
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 05, 07
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 04, 05, 07
 
 ## Goal
 Reshape `manifest.json` so it describes `.cairn/` state dests and references packages for skills, retiring vendor-path variables.
@@ -22,7 +22,7 @@ N/A: markdown/JSON.
 `git revert`; manifest is read at adopt-time only.
 
 ## Gate
-`manifest.json` validates; no `userMemory`; state dests under `.cairn/`; skill entries reference packages; version bumped.
+`manifest.json` validates; no `userMemory`; state dests under `.cairn/`; skill entries reference packages; version bumped; the false `.agents/` alignment text is gone — `rg -n "v0.14-note|v0.14.0-aligned|\.agents/skills" manifest.json` returns zero (master §5 DoD#8).
 
 ## Files
 `manifest.json`.

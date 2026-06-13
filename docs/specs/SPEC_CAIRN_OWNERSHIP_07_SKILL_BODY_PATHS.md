@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 05, 06
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 04, 05, 06
 
 ## Goal
 Update every skill body that probes a vendor memory path so it probes `<project>/.cairn/memory/` instead.
@@ -28,4 +28,4 @@ Zero vendor-memory-path probes remain in `files/skills/`; affected skills refere
 
 ---
 
-Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md`. Read master §2.1; use programmatic counts per §9.3 rule 5 — do not hand-freeze the skill list.
+Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md`. Read master §2.1; use programmatic counts per §9.3 rule 5 — do not hand-freeze the skill list. Do NOT apply Phase 4 of the promoted [SPEC_AGENTS_UMBRELLA](_promoted/SPEC_AGENTS_UMBRELLA.md) — its cherry-apply of commit `345241a` targeted the old `agents/memory/` path and the prototype pre-image has diverged; use the programmatic `rg` enumeration in this stub instead.

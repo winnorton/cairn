@@ -1,4 +1,4 @@
-> **Superseded** by [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](../SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) on 2026-06-13 — re-architected under [LAW own-your-namespace]. Retained for its migration thinking + the 2026-06-13 revalidation findings.
+> **Superseded** by [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](../SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) on 2026-06-13 — re-architected under [LAW own-your-namespace]. Retained for its migration thinking; the 2026-06-13 revalidation findings are summarized at the master's §0 evidence table (not in this file — this body is the unmodified original draft, incl. its now-stale "13 skills" count and the cherry-apply Phase 4 that doc-churn made infeasible).
 
 # v0.14.0 — agents/ umbrella + no-agent-writes-to-CLAUDE.md
 

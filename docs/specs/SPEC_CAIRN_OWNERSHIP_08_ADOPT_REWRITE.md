@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01, 02, 03, 06 · **Parallel-safe-with:** — (Wave 2)
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01, 02, 03, 04, 06 · **Parallel-safe-with:** — (Wave 2)
 
 ## Goal
 Rewrite `adopt.md` so the install path performs **zero agent writes to vendor-owned config/skill dirs** — package-install + `.cairn/` state + a user-added import line.
@@ -29,4 +29,4 @@ Walk Step 1→end; grep that no step writes a vendor path; the install-integrity
 
 ---
 
-Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md`. Read master §4 (hard contract — the forbidden write targets), §2.2 (import line), §1 deliverable 4.
+Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md`. Read master §4 (hard contract — the forbidden write targets + the `<!-- migration-ref -->` sentinel), §2.2 (import line), §1 deliverable 4. **WS04 owns the final agy-branch Step text** — incorporate WS04's empirically-validated `import claude` path; do not author the agy Step independently. Also update Step 2's fast-path to read `{projectRoot}/.cairn/cairn-version` (coordinated with WS09).
