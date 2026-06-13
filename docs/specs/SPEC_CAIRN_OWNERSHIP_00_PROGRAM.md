@@ -5,7 +5,7 @@
 > **Supersedes:** [SPEC_AGENTS_UMBRELLA](_promoted/SPEC_AGENTS_UMBRELLA.md) (the parked v0.14 `agents/` draft — outdated premise + drifted anchors per the 2026-06-13 revalidation).
 > **Governing law:** `[LAW own-your-namespace]` (cairn root `LAWS.md`, added this session). **Memory:** `[MEM feedback/own-namespace-no-vendor-folder-deps]`.
 >
-> **Revision history:** Drafted 2026-06-13 as a program (not a single spec) — see §11. Pass 1 fresh-agent review (5 lenses, 0-author) surfaced 2 blockers + 11 should-fix/nit, all absorbed: N1 (WS09 "move"→copy-verify-delete, blocker), N2 (WS09 Pi-residue removal gated on replacement-installed, blocker), N3 (`<!-- migration-ref -->` sentinel for DoD#1 grep, §4+§5), N4 (WS04/08 adopt agy-branch dep edge), N5 (WS01/09 define/implement reword), N6 (dep fixes: 09+05, 10+12, 11+07), N7 (.agents-alignment grep in DoD#8), N8 (WS09 Cowork + import-line-as-migration-step + cairn-version fast-path + committed fixture), N9 (breadcrumb wording, WS05 link, parallel-safe symmetry).
+> **Revision history:** Drafted 2026-06-13 as a program (not a single spec) — see §11. Pass 1 fresh-agent review (5 lenses, 0-author) surfaced 2 blockers + 11 should-fix/nit, all absorbed: N1 (WS09 "move"→copy-verify-delete, blocker), N2 (WS09 Pi-residue removal gated on replacement-installed, blocker), N3 (`<!-- migration-ref -->` sentinel for DoD#1 grep, §4+§5), N4 (WS04/08 adopt agy-branch dep edge), N5 (WS01/09 define/implement reword), N6 (dep fixes 09+05/10+12/11+07 + parallel-safe symmetry), N7 (.agents-alignment grep in DoD#8), N8 (WS09 Cowork + import-line-as-migration-step + cairn-version fast-path + committed fixture), N9 (breadcrumb wording, WS05 link). **Pass 2** (migration-safety + cross-section, opus) returned **no-blocker**; absorbed N10 (WS09 agy-residue gate + dep 04), N11 (WS06↔11 parallel-safe symmetry), N12 (WS01 integrity definition includes the import-line check).
 
 ## §0 LEAD FINDING
 
@@ -148,7 +148,7 @@ Wave 2 (integrate/close):    08 adopt-rewrite ── 09 migration+integrity ─�
 ```
 - Wave 0: 01, 02, 12 (12 can start immediately — it's an audit).
 - Wave 1: 03 (dep 01,02) → 04 (dep 03); 05 (dep 01); 06 (dep 01); 07 (dep 01); 11 (dep 03,05,07 — WS07 edits the source the guard checks).
-- Wave 2: 08 (dep 01,02,03,04,06 — WS04 owns the agy Step text); 09 (dep 01,05,06,08 — WS05 freezes the Pi model before residue cleanup); 10 (dep 01–09,12 — WS12 renames must reach the docs).
+- Wave 2: 08 (dep 01,02,03,04,06 — WS04 owns the agy Step text); 09 (dep 01,04,05,06,08 — WS05 freezes the Pi model and WS04 the agy import before residue cleanup); 10 (dep 01–09,12 — WS12 renames must reach the docs).
 
 ### §9.3 Parallel-execution protocol
 1. **One worktree per workstream** (`git worktree add`), so parallel agents never share an index.
@@ -170,7 +170,7 @@ Wave 2 (integrate/close):    08 adopt-rewrite ── 09 migration+integrity ─�
 | 06 | [`SPEC_CAIRN_OWNERSHIP_06_MANIFEST_RESHAPE.md`](SPEC_CAIRN_OWNERSHIP_06_MANIFEST_RESHAPE.md) | OPEN | — | 01 |
 | 07 | [`SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md`](SPEC_CAIRN_OWNERSHIP_07_SKILL_BODY_PATHS.md) | OPEN | — | 01 |
 | 08 | [`SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md`](SPEC_CAIRN_OWNERSHIP_08_ADOPT_REWRITE.md) | OPEN | — | 01, 02, 03, 04, 06 |
-| 09 | [`SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md`](SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md) | OPEN | — | 01, 05, 06, 08 |
+| 09 | [`SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md`](SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY.md) | OPEN | — | 01, 04, 05, 06, 08 |
 | 10 | [`SPEC_CAIRN_OWNERSHIP_10_DOCS.md`](SPEC_CAIRN_OWNERSHIP_10_DOCS.md) | OPEN | — | 01–09, 12 |
 | 11 | [`SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD.md`](SPEC_CAIRN_OWNERSHIP_11_SYNC_GUARD.md) | OPEN | — | 03, 05, 07 |
 | 12 | [`SPEC_CAIRN_OWNERSHIP_12_NAMESPACE_AUDIT.md`](SPEC_CAIRN_OWNERSHIP_12_NAMESPACE_AUDIT.md) | OPEN | — | (foundational) |

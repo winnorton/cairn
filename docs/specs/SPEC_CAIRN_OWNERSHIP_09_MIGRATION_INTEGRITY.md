@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_09_MIGRATION_INTEGRITY
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01, 05, 06, 08 · **Parallel-safe-with:** 10 (Wave 2)
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01, 04, 05, 06, 08 · **Parallel-safe-with:** 10 (Wave 2)
 
 ## Goal
 Give v0.13.x adopters a user-driven, **non-destructive** migration to the `.cairn/` model plus a cleanup of stale vendor-folder skill residue, and a lightweight install-integrity check.
@@ -12,7 +12,7 @@ Give v0.13.x adopters a user-driven, **non-destructive** migration to the `.cair
   3. **Show** the user the verification result.
   4. **Optionally delete** originals as a *separate*, explicitly user-confirmed step. No destructive default; a half-finished migration leaves the v0.13.x state intact.
 - **Every vendor-path string written into `adopt.md`'s migration text carries the `<!-- migration-ref -->` sentinel** (master §4) so DoD#1's grep excludes it. WS09 is the sole owner of that sentinel's application.
-- **Residue cleanup is gated on the replacement being live (N2 blocker).** Remove the Pi `404: Not Found` bodies (`~/.pi/agent/skills/{program,round-review}`) and the agy flat-format + legacy `review/` ONLY after confirming the package-delivered replacement is installed and loadable (`@winnorton/cairn-pi` for Pi; the `cairn` Claude plugin for Claude). Hence the dep on WS05 (freezes the Pi model). Pre-flight each residue path: if absent, skip and report "not found" — never fail the migration.
+- **Residue cleanup is gated on the replacement being live (N2 blocker).** Remove the Pi `404: Not Found` bodies (`~/.pi/agent/skills/{program,round-review}`) and the agy flat-format + legacy `review/` ONLY after confirming the package-delivered replacement is installed and loadable, **gated per-harness**: `@winnorton/cairn-pi` for the Pi residue; the `cairn` Claude plugin for the Claude residue; the `cairn` plugin **imported + loadable in agy** via `agy plugin import claude` (WS04) before removing the `~/.gemini/config/skills/` residue. Hence the deps on WS05 (Pi model) and WS04 (agy import). Pre-flight each residue path: if absent, skip and report "not found" — never fail the migration.
 - **agy residue paths are distinct and both stated** (avoids the wrong-dir no-op): agy *skills* live under `~/.gemini/config/skills/` (binary-verified 2026-06-13, see `docs/notes/NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11.md`); agy/Antigravity-IDE *memory* under `~/.gemini/antigravity/`. The skills-residue cleanup targets `config/skills/`.
 - **Cowork adopters:** memory is file-tool-only and deletion is unsupported — use index tombstoning (remove from `MEMORY.md` index; mark orphaned-but-present), not file removal; laws migration uses the shell fallback per `adopt.md` Step 3. Mirror the existing `adopt.md` Cowork notes.
 - **Import line is a mandatory migration step (not just fresh-install).** Migration concludes with the WS02 user-action: show `@./.cairn/CLAUDE.md` (or the AGENTS.md analog) and require the user to add it. The integrity check **fails** (not warns) if the import line is absent — without it the migrated habitat is silently non-functional.

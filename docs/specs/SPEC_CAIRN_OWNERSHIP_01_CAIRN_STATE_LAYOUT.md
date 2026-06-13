@@ -15,7 +15,7 @@ Define and template the cairn-owned `<project>/.cairn/` state directory — the 
 N/A: markdown framework, no runtime telemetry.
 
 ## Diagnostics path
-Defines (does not implement) the install-integrity check consumed by WS09: "does `.cairn/` exist with the required files?"
+Defines (does not implement) the install-integrity check consumed by WS09: "does `.cairn/` exist with the required files, AND is the import line present in the context file?"
 
 ## Rollback story
 Pre-production for the template itself → `git revert`. For adopters the dir is additive (`create-if-absent`), so no destructive change.

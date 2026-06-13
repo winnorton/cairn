@@ -1,6 +1,6 @@
 # SPEC_CAIRN_OWNERSHIP_06_MANIFEST_RESHAPE
 
-**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 04, 05, 07
+**Status:** STUB — `/spec --from` me to elaborate · **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) · **Depends on:** 01 · **Parallel-safe-with:** 03, 04, 05, 07, 11
 
 ## Goal
 Reshape `manifest.json` so it describes `.cairn/` state dests and references packages for skills, retiring vendor-path variables.
