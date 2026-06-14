@@ -14,7 +14,7 @@
       "cowork": "{workspaceRoot}"
     },
     "cairnRoot": {
-      "description": "Cairn-owned state directory — the only directory cairn writes to inside an adopter project. Everything cairn installs lives here: CLAUDE.md context, LAWS.md, memory tree, cairn-version marker. Git-tracked inside the adopter's repo. No vendor path (~/.claude, ~/.pi, ~/.gemini, .agents/) is ever a cairn write target.",
+      "description": "Cairn-owned state directory — the only directory cairn writes to inside an adopter project. Everything cairn installs lives here: CLAUDE.md context, LAWS.md, memory tree, cairn-version marker. Git-tracked inside the adopter's repo. No agent-vendor config directory is ever a cairn write target.",
       "all-harnesses": "{projectRoot}/.cairn"
     }
   },
