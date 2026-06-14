@@ -618,45 +618,474 @@ review). Convert to `/peer-review` at your leisure; there's no audit gate agains
 legacy `/review` citations because the skill name isn't a tracked-citation form (slug
 citations like `[LAW pre-merge-review]` are unaffected).
 
-## v0.13.x → v0.14.0 migration note
+## v0.13.x → v0.14.0 (.cairn/) migration
 
-v0.14.0 moves cairn state from vendor directories into `<project>/.cairn/`.
-Skills now reach the harness via package manager rather than curl. The
-install model is simpler but the paths are different.
+v0.14.0 moves all cairn state from vendor-owned directories (`<project>/.claude/`,
+`~/.claude/memory/`, `~/.pi/agent/memory/`) into a cairn-owned directory <!-- migration-ref -->
+`<project>/.cairn/`. This is user-driven: you run each phase and confirm before the
+next. **Migration is copy-then-verify — originals are untouched until you explicitly
+delete them in Phase D.**
 
-**For re-adopters:** run `adopt cairn` in your project. The fast-path check
-(Step 3) will detect your v0.13.x marker at `<project>/.claude/cairn-version` <!-- migration-ref -->
-and trigger the re-adoption flow. The re-adoption
-flow will write `.cairn/` state files alongside your existing `.claude/` tree.
+### When to run
 
-**After re-adoption, migrate the vendor layout:**
+Run this migration when:
+- You are upgrading from any v0.13.x install (v0.13.0, v0.13.1) to v0.14.0+.
+- Step 2's fast-path finds `<project>/.claude/cairn-version` <!-- migration-ref --> (the old
+  marker path) rather than `<project>/.cairn/cairn-version` (the new path).
+- The agent reports that `.cairn/` is absent but `<project>/.claude/cairn-version` <!-- migration-ref -->
+  exists.
 
-1. **Move your LAWS.md.** Copy `<project>/.claude/LAWS.md` <!-- migration-ref -->
-   to `<project>/.cairn/LAWS.md` (if you've customized it); then delete the
-   old copy. If you haven't customized, the re-adoption already wrote the
-   template; skip.
+Skip this migration for fresh installs (no prior cairn state) — proceed with the normal
+adopt flow.
 
-2. **Move your memory.** Copy files from `~/.claude/memory/` <!-- migration-ref -->
-   (or `~/.claude/projects/<slug>/memory/`) <!-- migration-ref --> to
-   `<project>/.cairn/memory/`. Update `MEMORY.md`'s index entries to the new paths.
+### Prerequisites
 
-3. **Remove stale vendor copies.** After confirming the `.cairn/` tree is
-   correct, delete `<project>/.claude/cairn-version`, `<project>/.claude/LAWS.md`, <!-- migration-ref -->
-   and any memory files you moved. Cairn no longer reads from those paths.
+Before running any migration phase, confirm:
+1. The `cairn` Claude Code plugin is installed (or `@winnorton/cairn-pi` for Pi, or
+   `agy plugin import claude` for Antigravity). The replacement must be live before
+   you remove any residue (Phase C).
+2. You are running in the adopter project's directory (not cairn's own repo).
+3. You have a recent git commit or backup — migration is non-destructive by design,
+   but accidents happen.
 
-4. **Add the import line** (if not already added via Step 6). Append
-   `@./.cairn/CLAUDE.md` to your `CLAUDE.md` (Claude Code/Cowork) or
-   `AGENTS.md` (Pi/agy).
+### Phase A — Copy state to .cairn/
 
-5. **Skill cleanup (Pi only).** If you have adopt-era skill copies at
-   `~/.pi/agent/skills/` <!-- migration-ref --> that were installed by curl
-   (pre-v0.14.0), remove them after installing `@winnorton/cairn-pi` — package
-   copies take precedence but duplicates can shadow them.
+The agent performs these actions. You confirm the plan before each write.
 
-6. **Skill cleanup (agy only).** If you have stale `~/.gemini/config/skills/` <!-- migration-ref -->
-   copies (flat-format `.md` files or a legacy `review/`
-   dir), remove them. Verified clean-up: delete the flat `.md` files and the
-   `review/` subdir, leaving only the v0.13.1+ subdir-format skills (or remove
-   all and rely on the plugin after WS03/WS04 ship).
+**A1. Create the `.cairn/` directory tree.**
+
+```bash
+# POSIX
+mkdir -p <project>/.cairn/memory/feedback
+mkdir -p <project>/.cairn/memory/project
+mkdir -p <project>/.cairn/memory/reference
+mkdir -p <project>/.cairn/memory/user
+mkdir -p <project>/.cairn/context
+```
+
+```powershell
+# PowerShell
+New-Item -ItemType Directory -Force "<project>/.cairn/memory/feedback"
+New-Item -ItemType Directory -Force "<project>/.cairn/memory/project"
+New-Item -ItemType Directory -Force "<project>/.cairn/memory/reference"
+New-Item -ItemType Directory -Force "<project>/.cairn/memory/user"
+New-Item -ItemType Directory -Force "<project>/.cairn/context"
+```
+
+**A2. Copy LAWS.md.**
+
+Source: `<project>/.claude/LAWS.md` <!-- migration-ref -->
+Dest:   `<project>/.cairn/LAWS.md`
+
+```bash
+# POSIX
+cp "<project>/.claude/LAWS.md" "<project>/.cairn/LAWS.md"  # <!-- migration-ref -->
+```
+
+```powershell
+# PowerShell
+Copy-Item "<project>\.claude\LAWS.md" "<project>\.cairn\LAWS.md"  # <!-- migration-ref -->
+```
+
+Skip if source does not exist; report "LAWS.md not found at old path — skipping."
+
+**A3. Copy cairn-version marker.**
+
+Source: `<project>/.claude/cairn-version` <!-- migration-ref -->
+Dest:   `<project>/.cairn/cairn-version`
+
+```bash
+# POSIX
+cp "<project>/.claude/cairn-version" "<project>/.cairn/cairn-version"  # <!-- migration-ref -->
+```
+
+```powershell
+# PowerShell
+Copy-Item "<project>\.claude\cairn-version" "<project>\.cairn\cairn-version"  # <!-- migration-ref -->
+```
+
+**A4. Copy memory files.**
+
+For Claude Code, the memory root is either `~/.claude/memory/` <!-- migration-ref --> (user-global) or
+`~/.claude/projects/<project-slug>/memory/` <!-- migration-ref --> (project-scoped).
+Use the same root you detected in Step 1 of the original install.
+
+```bash
+# POSIX — adjust SRC_MEMORY to your detected memory root
+SRC_MEMORY="$HOME/.claude/memory"          # user-global <!-- migration-ref -->
+# SRC_MEMORY="$HOME/.claude/projects/<slug>/memory"  # project-scoped <!-- migration-ref -->
+cp -r "$SRC_MEMORY/." "<project>/.cairn/memory/"
+```
+
+```powershell
+# PowerShell
+$srcMemory = "$env:USERPROFILE\.claude\memory"  # user-global <!-- migration-ref -->
+# $srcMemory = "$env:USERPROFILE\.claude\projects\<slug>\memory"  # project-scoped <!-- migration-ref -->
+Copy-Item -Recurse "$srcMemory\*" "<project>\.cairn\memory\" -Force
+```
+
+For **Pi adopters**: source is `~/.pi/agent/memory/`. <!-- migration-ref -->
+```bash
+# POSIX — Pi
+cp -r "$HOME/.pi/agent/memory/." "<project>/.cairn/memory/"  # <!-- migration-ref -->
+```
+
+For **Antigravity adopters**: source is `~/.gemini/antigravity/memory/`. <!-- migration-ref -->
+```bash
+# POSIX — Antigravity
+cp -r "$HOME/.gemini/antigravity/memory/." "<project>/.cairn/memory/"  # <!-- migration-ref -->
+```
+
+For **Cowork adopters**: memory deletion is not supported via standard tools; use index
+tombstoning after copying (see Phase D for tombstoning instructions).
+
+**A5. Fetch the new `.cairn/CLAUDE.md` from source.**
+
+The old install placed a CLAUDE.md at `<project>/CLAUDE.md` (the project context
+template). The new `.cairn/CLAUDE.md` is a different file — the cairn-authored context
+sections the user imports with one line. Fetch it fresh:
+
+```bash
+# POSIX
+curl -sfL https://raw.githubusercontent.com/winnorton/cairn/main/files/.cairn/CLAUDE.md \
+  > "<project>/.cairn/CLAUDE.md"
+```
+
+```powershell
+# PowerShell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/winnorton/cairn/main/files/.cairn/CLAUDE.md" `
+  -OutFile "<project>\.cairn\CLAUDE.md"
+```
+
+Validate: the written file must start with `#` or `---`. If it starts with `404`, the
+fetch failed — delete and stop.
+
+### Phase B — Verify copies
+
+The agent runs these checks and reports results. Do not proceed to Phase C until all
+pass.
+
+**B1. Structural check — required files present.**
+
+```bash
+# POSIX
+for f in ".cairn/CLAUDE.md" ".cairn/LAWS.md" ".cairn/cairn-version" ".cairn/memory/MEMORY.md"; do
+  [ -f "<project>/$f" ] && echo "OK: $f" || echo "MISSING: $f"
+done
+```
+
+```powershell
+# PowerShell
+foreach ($f in @(".cairn\CLAUDE.md", ".cairn\LAWS.md", ".cairn\cairn-version", ".cairn\memory\MEMORY.md")) {
+  if (Test-Path "<project>\$f") { "OK: $f" } else { "MISSING: $f" }
+}
+```
+
+EXPECTED: all lines say "OK". Any "MISSING" line = Phase A step failed; re-run that step.
+
+**B2. Content check — no file is empty or an HTTP error body.**
+
+```powershell
+# PowerShell
+$files = Get-ChildItem -Recurse "<project>\.cairn" -File
+foreach ($f in $files) {
+  $first = Get-Content $f.FullName -TotalCount 1
+  if ($first -match "^404|^Not Found|^<!DOCTYPE|^<html") {
+    "CORRUPT: $($f.FullName) — first line: $first"
+  } elseif ($first -eq "") {
+    "EMPTY: $($f.FullName)"
+  } else {
+    "OK: $($f.FullName)"
+  }
+}
+```
+
+EXPECTED: all lines say "OK". Any "CORRUPT" or "EMPTY" = re-fetch or re-copy.
+
+**B3. MEMORY.md index integrity check.**
+
+```powershell
+# PowerShell — verify every path cited in MEMORY.md resolves
+$memIndex = Get-Content "<project>\.cairn\memory\MEMORY.md" -Raw
+$refs = [regex]::Matches($memIndex, '\(([^)]+\.md)\)') | ForEach-Object { $_.Groups[1].Value }
+foreach ($ref in $refs) {
+  $full = Join-Path "<project>\.cairn\memory" $ref
+  if (Test-Path $full) { "OK: $ref" } else { "BROKEN-REF: $ref" }
+}
+```
+
+EXPECTED: all lines say "OK". Any "BROKEN-REF" = a typed entry was not copied; re-run Phase A4.
+
+**B4. Import-line check (mandatory — not a warning).**
+
+The migration is complete only if the import line is present. Without it the habitat is
+silently non-functional after migration.
+
+```bash
+# POSIX — Claude Code: check CLAUDE.md at project root
+grep -n "@./.cairn/CLAUDE.md" "<project>/CLAUDE.md" && echo "IMPORT LINE FOUND" || echo "IMPORT LINE MISSING"
+```
+
+```powershell
+# PowerShell
+Select-String -Path "<project>\CLAUDE.md" -Pattern "@./\.cairn/CLAUDE\.md" | ForEach-Object { "IMPORT LINE FOUND" }
+if (-not (Select-String -Path "<project>\CLAUDE.md" -Pattern "@./\.cairn/CLAUDE\.md" -Quiet)) { "IMPORT LINE MISSING" }
+```
+
+For **Pi/Antigravity adopters**: check `AGENTS.md` for the equivalent import line pointing
+at `.cairn/CLAUDE.md`.
+
+If "IMPORT LINE MISSING": show the user this line and ask them to add it now. Do NOT
+skip or defer — the migration FAILS without the import line:
+
+> Add this line to your `<project>/CLAUDE.md` (Claude Code) or `AGENTS.md` (Pi/agy):
+>
+> `@./.cairn/CLAUDE.md`
+>
+> This is the one user-written line cairn requires. Once added, re-run the import-line
+> check above before continuing to Phase C.
+
+### Phase C — Clean up stale vendor-folder residue
+
+**Run only after Phase B passes in full.** Residue cleanup is gated on the replacement
+being live. Before removing any residue, confirm the appropriate package is installed
+and loadable:
+
+- **Claude residue** (under `~/.claude/skills/`): <!-- migration-ref --> confirm the
+  `cairn` Claude Code plugin shows in `/plugins` or equivalent.
+- **Pi residue** (under `~/.pi/agent/skills/`): <!-- migration-ref --> confirm
+  `@winnorton/cairn-pi` is installed (`pi list` shows it).
+- **Antigravity/agy residue** (under `~/.gemini/config/skills/`): <!-- migration-ref -->
+  confirm `agy plugin list` shows the `cairn` plugin imported via `agy plugin import claude`.
+
+If a harness's replacement is not yet confirmed loadable, skip that harness's residue
+section and annotate the skip in the migration report.
+
+**C1. Pi residue — adopt-era curl-installed skill copies.**
+
+Check and remove any adopt-era copies of skills now delivered by `@winnorton/cairn-pi`.
+These are skills installed under `~/.pi/agent/skills/` by curl (the old adopt flow). <!-- migration-ref -->
+The package-installed copies shadow correctly; the curl copies may be stale or corrupt.
+
+```bash
+# POSIX — check first, then remove
+ls "$HOME/.pi/agent/skills/"  # <!-- migration-ref -->
+```
+
+```powershell
+# PowerShell — check first
+Get-ChildItem "$env:USERPROFILE\.pi\agent\skills\" | Select-Object Name  # <!-- migration-ref -->
+```
+
+For each skill directory that duplicates a skill now in `@winnorton/cairn-pi` (the six
+package-bundled skills: `spec`, `program`, `round-review`, `fast-execute`, `peer-review`,
+`note`), confirm the package copy is present and loadable, then remove the curl copy:
+
+```bash
+# POSIX — for each of the six packaged skills
+for skill in spec program round-review fast-execute peer-review note; do
+  skill_path="$HOME/.pi/agent/skills/$skill"  # <!-- migration-ref -->
+  if [ -d "$skill_path" ]; then
+    echo "Removing adopt-era copy: $skill_path"
+    rm -rf "$skill_path"
+  fi
+done
+```
+
+```powershell
+# PowerShell
+foreach ($skill in @("spec", "program", "round-review", "fast-execute", "peer-review", "note")) {
+  $p = "$env:USERPROFILE\.pi\agent\skills\$skill"  # <!-- migration-ref -->
+  if (Test-Path $p) { Remove-Item -Recurse -Force $p; "Removed: $p" } else { "Not found (OK): $p" }
+}
+```
+
+NOTE: at time of writing (2026-06-13) the Pi skills directory does NOT contain `program/`
+or `round-review/` (they were never successfully curl-installed due to 404 bodies). Pre-flight
+PF-6 gives the current baseline. Adjust the above list to match what PF-6 found.
+
+**C2. Antigravity/agy residue — flat-format files and legacy `review/`.**
+
+agy skill residue at `~/.gemini/config/skills/`: <!-- migration-ref -->
+
+- **Flat-format `.md` files** (`advocate.md`, `bridge.md`, `plan.md`, `reflect.md`,
+  `reframe.md`, `resume.md`, `README.md`) — these are the pre-v0.12.1 format. They shadow
+  the subdir form and may be stale relative to current source.
+- **Legacy `review/` subdir** — cairn's old `/review` skill, renamed to `/peer-review` in
+  v0.13.1. The subdir form collides with the name; the flat form predates the collision fix.
+- **Skills not yet in the cairn plugin** — do NOT remove skills that have no replacement
+  in the package yet. Confirm by checking `agy plugin list` output before deleting.
+
+```bash
+# POSIX — check first
+ls "$HOME/.gemini/config/skills/"  # <!-- migration-ref -->
+```
+
+```powershell
+# PowerShell
+Get-ChildItem "$env:USERPROFILE\.gemini\config\skills\" | Select-Object Name  # <!-- migration-ref -->
+```
+
+Remove flat-format `.md` files (replace with package-delivered subdir form):
+```bash
+# POSIX
+for skill in advocate bridge plan reflect reframe resume README; do
+  flat="$HOME/.gemini/config/skills/$skill.md"  # <!-- migration-ref -->
+  [ -f "$flat" ] && rm "$flat" && echo "Removed flat: $flat"
+done
+```
+
+```powershell
+# PowerShell
+foreach ($skill in @("advocate", "bridge", "plan", "reflect", "reframe", "resume", "README")) {
+  $p = "$env:USERPROFILE\.gemini\config\skills\$skill.md"  # <!-- migration-ref -->
+  if (Test-Path $p) { Remove-Item $p; "Removed flat: $p" } else { "Not found (OK): $p" }
+}
+```
+
+Remove legacy `review/` subdir:
+```bash
+# POSIX
+rm -rf "$HOME/.gemini/config/skills/review"  # <!-- migration-ref -->
+```
+
+```powershell
+# PowerShell
+$reviewPath = "$env:USERPROFILE\.gemini\config\skills\review"  # <!-- migration-ref -->
+if (Test-Path $reviewPath) { Remove-Item -Recurse -Force $reviewPath; "Removed legacy review/" } else { "Not found (OK)" }
+```
+
+Remove skills now delivered by the cairn plugin (program, etc.) — check PF-6 for which
+were actually installed before removing:
+```bash
+# POSIX — only remove if the plugin replacement is confirmed loadable
+for skill in program; do
+  p="$HOME/.gemini/config/skills/$skill"  # <!-- migration-ref -->
+  [ -d "$p" ] && rm -rf "$p" && echo "Removed: $p"
+done
+```
+
+**C3. Claude Code residue — legacy `review/` skill.**
+
+If upgrading from v0.12.1–v0.13.0 (which installed `/review` before the rename):
+```bash
+# POSIX
+[ -d "$HOME/.claude/skills/review" ] && rm -rf "$HOME/.claude/skills/review"  # <!-- migration-ref -->
+```
+
+```powershell
+# PowerShell
+$r = "$env:USERPROFILE\.claude\skills\review"  # <!-- migration-ref -->
+if (Test-Path $r) { Remove-Item -Recurse -Force $r; "Removed legacy review/" } else { "Not found (OK)" }
+```
+
+Skills delivered by the `cairn` plugin are NOT under `~/.claude/skills/` <!-- migration-ref -->
+in v0.14.0 — they reach Claude via the plugin mechanism. Remove any adopt-era curl-installed
+copies that duplicate what the plugin now provides.
+
+**C4. Cowork adopters — index tombstoning (no file deletion).**
+
+Cowork's memory store does not support file deletion via standard tools. For each memory
+file that should be retired (e.g. flat-format entries from a pre-typed-memory install):
+
+1. Open `~/.claude/memory/MEMORY.md` (file-tool read). <!-- migration-ref -->
+2. Remove the entry line for the orphaned file from the index.
+3. Do NOT delete the file itself.
+4. Note in the migration report: "`<filename>` orphaned-but-present (deletion not supported in Cowork)."
+
+Agents load the index, not the directory listing — orphaned-and-unindexed is functionally
+equivalent to deleted.
+
+### Phase D — Retire old state (explicitly user-confirmed, separate step)
+
+This phase is OPTIONAL. Originals are safe to retain indefinitely. Run only after:
+- Phase B passed in full.
+- Phase C residue cleanup is complete.
+- You have verified the new `.cairn/` habitat is functional (run a `/tour` or equivalent check).
+
+Show the user the proposed deletions and require explicit `y` before each action:
+
+**D1. Retire old LAWS.md.**
+
+```
+Remove <project>/.claude/LAWS.md? (y/n)
+```
+On y:
+```bash
+# POSIX
+rm "<project>/.claude/LAWS.md"  # <!-- migration-ref -->
+```
+```powershell
+# PowerShell
+Remove-Item "<project>\.claude\LAWS.md"  # <!-- migration-ref -->
+```
+
+**D2. Retire old cairn-version marker.**
+
+```
+Remove <project>/.claude/cairn-version? (y/n)
+```
+On y:
+```bash
+# POSIX
+rm "<project>/.claude/cairn-version"  # <!-- migration-ref -->
+```
+```powershell
+# PowerShell
+Remove-Item "<project>\.claude\cairn-version"  # <!-- migration-ref -->
+```
+
+WHY RETIRE THIS: the Step 2 fast-path now reads `<project>/.cairn/cairn-version`. If the
+old marker at `<project>/.claude/cairn-version` <!-- migration-ref --> is left in place,
+WS08's adopt.md fast-path (which reads the NEW path) will correctly find the new marker
+and work as expected — the old marker is simply dead weight. But: if any non-updated
+adopt.md version still reads the old path, a stale marker would trigger a false "already
+installed" fast-path for an incomplete install. Retiring it closes that risk.
+
+**D3. Retire old memory location (per harness).**
+
+For Claude Code (user-global memory): prompt the user: <!-- migration-ref -->
+> Remove `~/.claude/memory/` cairn entries? (y/n) <!-- migration-ref -->
+
+Show the exact list of files that will be deleted before asking. On y, remove only the
+files that were copied to `.cairn/memory/` in Phase A — do not remove the directory if
+other non-cairn files exist there.
+
+For Pi: prompt the user: <!-- migration-ref -->
+> Remove `~/.pi/agent/memory/` cairn entries? (y/n) <!-- migration-ref -->
+
+For Antigravity: prompt the user: <!-- migration-ref -->
+> Remove `~/.gemini/antigravity/memory/` cairn entries? (y/n) <!-- migration-ref -->
+
+For Cowork: do not attempt deletion — use index tombstoning (Phase C4). <!-- migration-ref -->
+
+### Migration report template
+
+After completing all phases, the agent produces:
+
+```
+cairn v0.13.x → v0.14.0 migration complete.
+
+Phase A (copy):
+  Copied: <list of files copied to .cairn/>
+  Skipped (not found): <list>
+
+Phase B (verify):
+  All checks passed / FAILED: <details>
+
+Phase C (residue cleanup):
+  Removed Pi residue: <list or "none found">
+  Removed agy flat-format: <list or "none found">
+  Removed agy legacy review/: yes / not found
+  Removed Claude Code legacy review/: yes / not found
+  Replacement confirmed: <plugin/package name>
+
+Phase D (retire originals):
+  Retired: <list or "user declined / not run">
+
+Import line: PRESENT / MISSING (add @./.cairn/CLAUDE.md to CLAUDE.md or AGENTS.md)
+
+Next: say `tour` to walk through the migrated habitat.
+```
 
 This migration is user-driven; cairn does not automate vendor-dir cleanup.
