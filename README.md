@@ -57,12 +57,9 @@ For a minimal install (two files, works with any agent): `adopt https://github.c
 > **Don't adopt cairn into cairn.** Cairn's own repo has its own `LAWS.md`, `HANDOFF.md`,
 > and project-root structure, and ships the `files/` template tree. Running `adopt`
 > from within the cairn repo would create duplicate artifacts and recursive confusion.
-> If you're working on cairn itself and want one of its skills locally, copy directly:
->
-> ```bash
-> mkdir -p .claude/skills/<skill-name>
-> cp files/skills/<skill-name>/SKILL.md .claude/skills/<skill-name>/SKILL.md
-> ```
+> If you're working on cairn itself and want one of its skills locally, read the source
+> directly from `files/skills/<skill-name>/SKILL.md` — the skills install into your
+> harness via the `cairn` plugin, not by hand-copying files.
 >
 > Adopt cairn into *other* projects.
 
@@ -82,12 +79,12 @@ Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi
 
 ## What you get
 
-| File | Purpose |
+| Location | Purpose |
 |---|---|
-| `~/.claude/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
-| `<project>/CLAUDE.md` | Project context template — fill in per effort |
-| `<project>/.claude/LAWS.md` | Meta-laws + 6 seed laws — your non-negotiables |
-| `~/.claude/skills/` | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`) — see [skills taxonomy](#skills-taxonomy) below. Each ships as `<name>/SKILL.md` (canonical Claude Code format). |
+| `<project>/.cairn/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
+| `<project>/.cairn/CLAUDE.md` | Cairn-shaped context sections — imported into your project's `CLAUDE.md` or `AGENTS.md` via one user-written import line |
+| `<project>/.cairn/LAWS.md` | Meta-laws + seed laws — your non-negotiables |
+| Skills via package | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or `agy plugin import claude` (agy). See [skills taxonomy](#skills-taxonomy). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -122,7 +119,7 @@ everything between sessions" into "agent picks up where we left off."
 ## Extend
 
 - Add laws to `LAWS.md` as you hit "never again" or "always do this" moments.
-- Add skills by dropping a `.md` file into `~/.claude/skills/` with YAML frontmatter (see [`files/skills/README.md`](./files/skills/README.md)).
+- Add skills via the `cairn` Claude Code plugin update or by contributing to `files/skills/` in the cairn source repo (see [`files/skills/README.md`](./files/skills/README.md) for the frontmatter schema). Skills reach your harness through the package, not by hand-dropping files.
 - Add memory entries via the agent when it learns something worth persisting.
 - Periodically say **`audit`** to see which laws and memories are actually being cited, then **`prune`** to retire the cold ones.
 
