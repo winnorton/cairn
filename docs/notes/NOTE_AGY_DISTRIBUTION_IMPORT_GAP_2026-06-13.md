@@ -1,6 +1,12 @@
 # NOTE — agy skills-distribution gap: `agy plugin import claude` doesn't pick up the cairn plugin
 
-> Filed: 2026-06-13 · Status: open · Surfaced by the v0.14.0 post-push validation
+> **RESOLVED 2026-06-14** via `packages/cairn-agy/` (option 2 below): a native agy plugin
+> (root `plugin.json` + the shared sync-guard, 18 skills). `agy plugin validate` passes and
+> `agy plugin install` round-trips cleanly (`[ok] cairn, 18 skills processed`). adopt.md's
+> agy branch now uses `agy plugin install github:winnorton/cairn//packages/cairn-agy@main`.
+> The investigation below stands as the record of why `import claude` was a dead end.
+>
+> Filed: 2026-06-13 · Status: RESOLVED · Surfaced by the v0.14.0 post-push validation
 > (program `SPEC_CAIRN_OWNERSHIP`, WS04). Not a v0.14.0 blocker — agy still reads
 > `.cairn/` STATE via the AGENTS.md import line; only the SKILLS channel to agy is open.
 

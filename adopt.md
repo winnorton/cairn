@@ -223,23 +223,23 @@ cairn release; upgradable via Pi's package manager.
 
 **Antigravity CLI (agy):**
 
-agy ingests Claude Code plugins, so cairn reaches agy through the **same** plugin —
-there is no separate agy package. With the cairn plugin available to Claude Code
-(the marketplace step above), import it into agy:
+agy has its own native cairn plugin (`packages/cairn-agy/`). Install it directly from
+the repo — `agy plugin install` supports GitHub subpaths with branch resolution:
 
 ```
-agy plugin import claude
+agy plugin install github:winnorton/cairn//packages/cairn-agy@main
 ```
 
-This walks your Claude Code plugin config and brings the cairn plugin's skills into
-agy's `/skill:` namespace. Binary-verified on agy 1.0.7 that `agy plugin import
-claude` exists and ingests the Claude Code plugin format (see
-[NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11](docs/notes/NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11.md));
-the end-to-end import of *this* plugin is validated post-publish. If you run agy
-without Claude Code, install from the cairn marketplace directly once published
-(`agy plugin install` against `github:winnorton/cairn`). State lands in
+This stages all 18 cairn skills into agy's `/skill:` namespace (verified: `agy plugin
+validate` passes + a clean install round-trip on agy 1.0.7). State lands in
 `<project>/.cairn/`; add the `@./.cairn/CLAUDE.md` import line to your `AGENTS.md`
 (Step 6).
+
+> **Why a native agy plugin (not `agy plugin import claude`):** agy's `import claude`
+> scans the legacy Claude *extension* surface, not marketplace *plugins*, so it does
+> not pick up the cairn Claude plugin. The native `packages/cairn-agy/` (agy's root
+> `plugin.json` format) is the supported agy path. See
+> [NOTE_AGY_DISTRIBUTION_IMPORT_GAP](docs/notes/NOTE_AGY_DISTRIBUTION_IMPORT_GAP_2026-06-13.md).
 
 **Cowork:**
 

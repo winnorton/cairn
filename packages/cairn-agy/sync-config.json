@@ -1,0 +1,23 @@
+{
+  "skills": [
+    "advocate",
+    "audit",
+    "bridge",
+    "fast-execute",
+    "feedback",
+    "note",
+    "peer-review",
+    "plan",
+    "program",
+    "prompt-evolve",
+    "prune",
+    "reflect",
+    "reframe",
+    "resume",
+    "round-review",
+    "session-distill",
+    "spec",
+    "tour"
+  ],
+  "versionFile": "plugin.json"
+}
