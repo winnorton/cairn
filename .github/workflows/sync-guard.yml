@@ -1,0 +1,47 @@
+# .github/workflows/sync-guard.yml
+# Shell dialect: POSIX (GitHub Actions ubuntu-latest runner)
+#
+# Runs the cairn skill sync guard in --check mode across all distribution packages.
+# Fails if any package's committed skill copies drift from files/skills/<name>/SKILL.md,
+# if any description exceeds 1024 chars, if any frontmatter name mismatches, or if
+# the package version != VERSION (version-lockstep enforcement).
+#
+# Gate: required status check on PRs to main per the program's §8 operational policy.
+
+name: sync-guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "files/skills/**"
+      - "packages/*/skills/**"
+      - "packages/*/package.json"
+      - "packages/*/plugin.json"
+      - "packages/*/.claude-plugin/plugin.json"
+      - "packages/*/sync-config.json"
+      - "scripts/sync-skills.mjs"
+      - "VERSION"
+  pull_request:
+    paths:
+      - "files/skills/**"
+      - "packages/*/skills/**"
+      - "packages/*/package.json"
+      - "packages/*/plugin.json"
+      - "packages/*/.claude-plugin/plugin.json"
+      - "packages/*/sync-config.json"
+      - "scripts/sync-skills.mjs"
+      - "VERSION"
+
+jobs:
+  check:
+    name: Skill sync check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check cairn-pi skills in sync
+        run: node scripts/sync-skills.mjs --pkg packages/cairn-pi --check
+
+      - name: Check cairn-claude skills in sync
+        run: node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
