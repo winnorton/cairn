@@ -190,12 +190,13 @@ to confirm the package is installed before proceeding to Step 4b.
 
 **Claude Code:**
 
-The cairn plugin is hosted at `github:winnorton/cairn` with the plugin manifest at
-the repo root. Install via the marketplace model (verified format — WS03 PHASE-1-VERIFIED):
+The cairn plugin is hosted in the `winnorton/cairn` repo with the plugin manifest at
+the repo root. Install via the marketplace model (verified end-to-end against the
+published repo):
 
 ```
-# Step 1 — Add the cairn marketplace (one-time per machine):
-claude plugin marketplace add github:winnorton/cairn
+# Step 1 — Add the cairn marketplace (one-time per machine; owner/repo form, NOT github:):
+claude plugin marketplace add winnorton/cairn
 
 # Step 2 — Install the cairn plugin from that marketplace:
 claude plugin install cairn@cairn

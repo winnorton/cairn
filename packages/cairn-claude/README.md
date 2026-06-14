@@ -8,15 +8,15 @@ Claude Code plugin. Markdown skills only — no runtime code, no build step.
 ### From the cairn marketplace (recommended)
 
 ```
-claude plugin marketplace add github:winnorton/cairn
-claude plugin install cairn
+claude plugin marketplace add winnorton/cairn
+claude plugin install cairn@cairn
 ```
 
 After install, confirm with:
 
 ```
 claude plugin list
-# expect: cairn  0.13.1  ...
+# expect: cairn  0.14.0  ...
 ```
 
 ### From a local clone

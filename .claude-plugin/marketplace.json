@@ -11,7 +11,7 @@
       "description": "Cairn agent skills for Claude Code — authoring, review, maintenance, and collaboration. Markdown skills only; no runtime code.",
       "source": {
         "source": "git-subdir",
-        "url": "winnorton/cairn",
+        "url": "https://github.com/winnorton/cairn.git",
         "path": "packages/cairn-claude",
         "ref": "main"
       }
