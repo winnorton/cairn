@@ -222,13 +222,23 @@ cairn release; upgradable via Pi's package manager.
 
 **Antigravity CLI (agy):**
 
-[EXECUTOR NOTE — WS04 placeholder: Replace this with the exact install Step text
-produced by WS04 (SPEC_CAIRN_OWNERSHIP_04_AGY_DISTRIBUTION.md) once elaborated.
-WS04 owns the empirically-validated `agy plugin import claude` path. The agy
-assessment note (docs/notes/NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11.md)
-confirms `agy plugin import claude` exists and agy ingests Claude Code plugin
-format; WS04 adds the validated install sequence. Do not write a speculative
-agy install command here — leave as stub until WS04 delivers the Step text.]
+agy ingests Claude Code plugins, so cairn reaches agy through the **same** plugin —
+there is no separate agy package. With the cairn plugin available to Claude Code
+(the marketplace step above), import it into agy:
+
+```
+agy plugin import claude
+```
+
+This walks your Claude Code plugin config and brings the cairn plugin's skills into
+agy's `/skill:` namespace. Binary-verified on agy 1.0.7 that `agy plugin import
+claude` exists and ingests the Claude Code plugin format (see
+[NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11](docs/notes/NOTE_AGY_PLUGIN_CHANNEL_ASSESSMENT_2026-06-11.md));
+the end-to-end import of *this* plugin is validated post-publish. If you run agy
+without Claude Code, install from the cairn marketplace directly once published
+(`agy plugin install` against `github:winnorton/cairn`). State lands in
+`<project>/.cairn/`; add the `@./.cairn/CLAUDE.md` import line to your `AGENTS.md`
+(Step 6).
 
 **Cowork:**
 
