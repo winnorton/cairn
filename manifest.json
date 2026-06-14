@@ -42,7 +42,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
       "tier": "grow",
@@ -54,7 +54,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
       "tier": "grow",
@@ -66,7 +66,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
       "tier": "grow",
@@ -78,7 +78,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
@@ -90,7 +90,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
@@ -102,7 +102,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
@@ -114,7 +114,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
@@ -126,7 +126,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
@@ -170,7 +170,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -182,7 +182,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -194,7 +194,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -206,7 +206,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -218,7 +218,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
       "tier": "full",
@@ -230,7 +230,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
@@ -242,7 +242,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -254,7 +254,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -266,7 +266,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -278,7 +278,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",
@@ -290,7 +290,7 @@
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
         "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "structure",

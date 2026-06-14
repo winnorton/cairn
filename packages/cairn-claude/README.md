@@ -61,14 +61,12 @@ a harness invocation convention, not a body fork.
 
 ## agy (Antigravity CLI) users
 
-agy can consume this same plugin via:
+agy has its own native plugin — `packages/cairn-agy/` — because `agy plugin import claude`
+does not ingest marketplace plugins. Install via:
 
 ```
-agy plugin import claude
+agy plugin install github:winnorton/cairn//packages/cairn-agy@main
 ```
-
-See [WS04 spec](../../docs/specs/SPEC_CAIRN_OWNERSHIP_04_AGY_DISTRIBUTION.md) for
-the validated `agy plugin import claude` flow.
 
 ## Marketplace model
 
