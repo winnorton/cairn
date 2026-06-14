@@ -5,8 +5,8 @@ boundary. Read it first. It exists because session boundaries are where signal g
 unless explicitly preserved.
 
 > **Repo-root entry point (canonical, added 2026-06):** read [AGENTS.md](AGENTS.md) at
-> the repo root. It's the cairn-itself agent context — layout, 15 skills, key laws by
-> slug, design DNA, current state (v0.13.1 + v0.14.0 in flight). Claude Code auto-loads
+> the repo root. It's the cairn-itself agent context — layout, 18 skills, key laws by
+> slug, design DNA, current state (v0.13.1, v0.14.0 in-program). Claude Code auto-loads
 > [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
 > in this repo, AGENTS.md is the orientation you want before anything else.
 
@@ -80,14 +80,14 @@ this is shipped as a tagged version yet; v0.13.1 is still the latest tag.
   - `NOTE_V0.13.0_FOLLOWUPS_2026-04-27.md` — small follow-up items (tour skill format
     drift was real at filing time; folded in during this interim along with the
     artifact-category expansion to include `/program` + `/round-review`).
-- **v0.14.0 spec drafted** at `docs/specs/SPEC_AGENTS_UMBRELLA.md` (untracked at this
-  write). Promoted via `/spec --from` from `NOTE_AGENTS_UMBRELLA_2026-04-30.md`
-  (now at `docs/notes/_promoted/`). Major architectural shift: state moves out of
-  vendor namespaces (`~/.claude/memory/`, `<project>/.claude/`) into a cairn-controlled
-  `<project>/agents/` directory at the project root. Forced by 2026-05 Claude Code
-  sandbox restrictions on writes combining curl-fetched content + `.claude/*` paths.
-  Skill files stay at `~/.claude/skills/` (loader requirement). Read the spec before
-  touching `manifest.json`, `adopt.md`, or path conventions.
+- **v0.14.0 promoted to program** — the old `SPEC_AGENTS_UMBRELLA.md` umbrella draft
+  (premise: `agents/` directory, forced by a 2026-05 sandbox restriction) was
+  superseded and retired to `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`. Replaced
+  by program
+  [`SPEC_CAIRN_OWNERSHIP_00_PROGRAM`](docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
+  (12 workstreams). Governing law: `[LAW own-your-namespace]`. State moves to
+  `<project>/.cairn/`; skills distribute as cairn-named packages. Read the program
+  master before touching `manifest.json`, `adopt.md`, or path conventions.
 - **`/program` skill enhanced** (commit `8530390`, 2026-06-09) — added Status reporting
   templates section + Spec-link discipline standing instruction + §9 status-table link
   example. Driven by a session where executor status reports kept producing unlinked
@@ -276,17 +276,17 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 ## For the next agent
 
 - **Start with [AGENTS.md](AGENTS.md) at the repo root.** It's the canonical agent
-  context for working on cairn itself — layout, 15 skills, key laws by slug, design
+  context for working on cairn itself — layout, 18 skills, key laws by slug, design
   DNA, current state. Then load this file (HANDOFF.md) for cross-session continuity,
   and `LAWS.md` for the full law set. Skip the v0.x plan artifacts unless you're
   digging into a specific release's design rationale — `docs/research/` is usually
   the better starting point for the "why" archive.
 - **Check `gh issue list --repo winnorton/cairn --state open`** for the current
   untrimmed backlog.
-- **If the next topic is v0.14.0**, read `docs/specs/SPEC_AGENTS_UMBRELLA.md` (the
-  in-flight spec) and the promoted breadcrumb at
-  `docs/notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md`. The spec extends a parked
-  prototype at commit `345241a`.
+- **If the next topic is v0.14.0**, read the program master at
+  `docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` (12 workstreams, 0 deferrals)
+  and the program §9.4 status table for current execution state. The old umbrella
+  draft is retired at `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`.
 - **If the next topic is cwar-engine adoption**, read `plans/archive/v0.9-law-slugs.md`
   for the citation-stability context, then the a la carte recommendation in this file.
 - **Before any architectural change**, apply `[LAW load-meta-laws]` from cairn's own
@@ -296,6 +296,7 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 ---
 
 _Originally written 2026-04-24 at session's end by the builder agent. Last updated
-2026-06-09 for the interim work since v0.13.1 (notes filed, v0.14.0 spec drafted,
-`/program` enhancements, repo-root AGENTS.md + CLAUDE.md added, skill-catalog drift
-swept). Next refresh: at v0.14.0 tag time per [LAW handoff-stays-current]._
+2026-06-13 for the SPEC_CAIRN_OWNERSHIP program (WS10 docs update): `.cairn/` state
+model, corrected env-roles, removed false `.agents/` alignment text, redirected
+v0.14.0 pointer to program master. Next refresh: at v0.14.0 tag time per
+[LAW handoff-stays-current]._

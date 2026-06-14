@@ -1,11 +1,11 @@
 # Skills — cairn
 
-Skills are reusable capabilities an agent can invoke mid-session. As of v0.12.1, each skill
-is a **subdirectory** containing a `SKILL.md` file with YAML frontmatter at the top:
-
-```
-~/.claude/skills/<name>/SKILL.md
-```
+Skills are reusable capabilities an agent can invoke mid-session. Each skill is a
+**subdirectory** containing a `SKILL.md` file with YAML frontmatter at the top. In cairn's
+source they live at `files/skills/<name>/SKILL.md`; they reach your harness through the
+cairn **package** (the `cairn` Claude Code plugin, `@winnorton/cairn-pi` for Pi, or
+`agy plugin import claude` for Antigravity) — the vendor's own installer places them, so
+cairn never hand-writes into a vendor skills directory.
 
 The `description` field in frontmatter is what the agent uses to decide whether the skill
 matches the current task. The subdirectory shape allows shipping supporting files (templates,
@@ -141,7 +141,7 @@ active folder is live, `archive/` is shipped, no STATUS field).
   done in many iterative passes over partitions (corpus mining, codebase refactor sweeps,
   doc backfill, bug triage, audits, etc.). Primary mode is `--from <SPEC>`: promotes the
   evolving-prompt deliverable embedded in a `/spec` into a standalone artifact at
-  `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase
+  `<docs|.cairn>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase
   scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report →
   **Self-Improvement**) with Phase 6 absolute-path mandate, CHANGELOG format, fallback
   matrix, pending-re-run staging, and idempotence guarantee. Distinct from every other

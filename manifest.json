@@ -1,85 +1,36 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.13.1",
-  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code, Antigravity, and Pi (pi.dev). Domain-agnostic. Graduated adoption via tiers.",
+  "version": "0.14.0",
+  "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code (cairn plugin), Antigravity, and Pi (pi.dev/@winnorton/cairn-pi). State lives in <project>/.cairn/; skills distributed as cairn-named packages. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",
 
   "pathVariables": {
-    "userClaude": {
-      "description": "User-global agent config directory (env-agnostic name; root for agent-installed content)",
-      "claude-code": "~/.claude",
-      "pi": "~/.pi/agent",
-      "cowork": "probe: workspace-level .claude/ or equivalent user-scoped config; ask user if uncertain"
-    },
-    "userMemory": {
-      "description": "Persistent cross-session memory root. Claude Code has TWO conventions — detect which one this session uses before resolving. Wrong path = silent-failure install (files land where the agent never reads).",
-      "claude-code": {
-        "user-global": "~/.claude/memory",
-        "project-scoped": "~/.claude/projects/<project-slug>/memory",
-        "note": "<project-slug> is the project's absolute path with slashes/colons replaced by hyphens (e.g. C:\\Users\\winno\\projects\\foo -> C--Users-winno-projects-foo).",
-        "resolution": "See adopt.md Step 1: probe filesystem for existing memory, or check system-prompt directives, or ask user. Do not default blindly."
-      },
-      "pi": {
-        "user-global": "~/.pi/agent/memory",
-        "project-scoped": "~/.pi/agent/projects-memory/<projectname>/memory",
-        "note": "<projectname> is typically the project root directory basename. Pi's pi-hermes-memory package uses a separate SQLite-backed store; cairn typed-markdown memory lands here independently and does NOT compete with pi-hermes-memory. The directory may not exist until first install — create on demand.",
-        "resolution": "See adopt.md Step 1: probe for ~/.pi/agent/ marker. Default to user-global unless system-prompt or filesystem signal indicates project-scoped use."
-      },
-      "cowork": "{userClaude}/memory"
-    },
-    "userSkills": {
-      "description": "Skill directory. Claude Code and Pi have TWO conventions each (same pattern as userMemory) — detect which this session uses before resolving. Wrong path = silent-failure install (skills land where the agent never loads them). v0.12+ ships skills as subdirs containing SKILL.md — canonical for both Claude Code AND Pi, which use the identical format.",
-      "claude-code": {
-        "user-global": "~/.claude/skills",
-        "project-scoped": "<project>/.claude/skills",
-        "resolution": "See adopt.md Step 1: probe filesystem for existing skills, or check session conventions, or ask user. Do not default blindly."
-      },
-      "pi": {
-        "user-global": "~/.pi/agent/skills",
-        "project-scoped": "<project>/.pi/skills",
-        "alternative-project": "<project>/.agents/skills",
-        "format-note": "Identical to Claude Code: subdir + SKILL.md with YAML frontmatter (name <=64 chars lowercase+hyphens, description <=1024 chars, optional license/compatibility/metadata/allowed-tools). Pi invokes as /skill:<name>; Claude Code invokes as /<name>.",
-        "v0.14-note": "<project>/.agents/skills/ aligns with cairn's v0.14.0 <project>/agents/ umbrella — Pi loader auto-discovers both .pi/ and .agents/ paths.",
-        "resolution": "See adopt.md Step 1: probe for ~/.pi/agent/ marker. Default to user-global unless project work specifically benefits from project-scoped install."
-      },
-      "cowork": "{userClaude}/skills"
-    },
-    "projectClaude": {
-      "description": "Project-scoped agent config (applies to current work effort only)",
-      "claude-code": "{cwd}/.claude",
-      "pi": "{cwd}/.pi (primary) OR {cwd}/.agents (v0.14.0-aligned alternative; Pi loader recognizes both)",
-      "cowork": "{workspaceRoot}/.claude"
-    },
     "projectRoot": {
-      "description": "Root of the current work effort",
+      "description": "Root of the current work effort. The anchor for all cairn-state paths.",
       "claude-code": "{cwd}",
       "pi": "{cwd}",
       "cowork": "{workspaceRoot}"
+    },
+    "cairnRoot": {
+      "description": "Cairn-owned state directory — the only directory cairn writes to inside an adopter project. Everything cairn installs lives here: CLAUDE.md context, LAWS.md, memory tree, cairn-version marker. Git-tracked inside the adopter's repo. No agent-vendor config directory is ever a cairn write target.",
+      "all-harnesses": "{projectRoot}/.cairn"
     }
   },
 
   "files": [
     {
-      "src": "files/CLAUDE.md",
-      "dest": "{projectRoot}/CLAUDE.md",
-      "mode": "create-if-absent",
-      "role": "essential",
-      "tier": "seed",
-      "description": "Project context template — fill in per work effort. Read every session."
-    },
-    {
-      "src": "files/memory/MEMORY.md",
-      "dest": "{userMemory}/MEMORY.md",
+      "src": "files/.cairn/memory/MEMORY.md",
+      "dest": "{projectRoot}/.cairn/memory/MEMORY.md",
       "mode": "create-if-absent",
       "role": "essential",
       "tier": "seed",
       "description": "Top-level memory index — the lookup entry point for all memory"
     },
     {
-      "src": "files/LAWS.md",
-      "dest": "{projectClaude}/LAWS.md",
+      "src": "files/.cairn/LAWS.md",
+      "dest": "{projectRoot}/.cairn/LAWS.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "grow",
@@ -87,95 +38,127 @@
     },
     {
       "src": "files/skills/reflect/SKILL.md",
-      "dest": "{userSkills}/reflect/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "optional",
       "tier": "grow",
       "description": "Reflective check-in — standardizes something capable agents do anyway"
     },
     {
       "src": "files/skills/plan/SKILL.md",
-      "dest": "{userSkills}/plan/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "optional",
       "tier": "grow",
       "description": "Plan-before-execute — standardizes something capable agents do anyway"
     },
     {
       "src": "files/skills/note/SKILL.md",
-      "dest": "{userSkills}/note/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "optional",
       "tier": "grow",
       "description": "Pre-emptive intent capture — file a quick thought as a dated note in the project repo. Distinct from /reflect (post-hoc) and from cross-session memory (user-space). Includes the two-destinations disambiguation table."
     },
     {
       "src": "files/skills/peer-review/SKILL.md",
-      "dest": "{userSkills}/peer-review/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "grow",
       "description": "External-perspective review of a change set by a fresh agent who didn't author it — reads diff PLUS adjacent unchanged files to catch inconsistency-class bugs the work-author missed. Distinct from /reflect (post-hoc same-agent). Named /peer-review to disambiguate from Claude Code's built-in /review skill."
     },
     {
       "src": "files/skills/reframe/SKILL.md",
-      "dest": "{userSkills}/reframe/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "grow",
       "description": "Generate 2-4 alternative framings of the current problem — collaboration skill for rotating the solution space when convergent thinking is stuck"
     },
     {
       "src": "files/skills/bridge/SKILL.md",
-      "dest": "{userSkills}/bridge/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "grow",
       "description": "Structure cross-session context relay — collaboration skill for carrying output between agent sessions with minimal loss"
     },
     {
       "src": "files/skills/advocate/SKILL.md",
-      "dest": "{userSkills}/advocate/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "grow",
       "description": "Simulate end-user perspective before shipping — collaboration skill for rotating the observer position from builder to user"
     },
     {
       "src": "files/skills/resume/SKILL.md",
-      "dest": "{userSkills}/resume/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "grow",
       "description": "Detect and load context from a previous session — probes HANDOFF.md, memory at multiple slugs, transcript junctions, recent git activity. Defeats namespace fragmentation in session-to-session handoff."
     },
     {
-      "src": "files/memory/user/README.md",
-      "dest": "{userMemory}/user/README.md",
+      "src": "files/.cairn/memory/user/README.md",
+      "dest": "{projectRoot}/.cairn/memory/user/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
       "description": "User memory conventions — always-on background, no citation"
     },
     {
-      "src": "files/memory/feedback/README.md",
-      "dest": "{userMemory}/feedback/README.md",
+      "src": "files/.cairn/memory/feedback/README.md",
+      "dest": "{projectRoot}/.cairn/memory/feedback/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
       "description": "Feedback memory conventions — fires discretely, cite [MEM feedback/<name>]"
     },
     {
-      "src": "files/memory/project/README.md",
-      "dest": "{userMemory}/project/README.md",
+      "src": "files/.cairn/memory/project/README.md",
+      "dest": "{projectRoot}/.cairn/memory/project/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
       "description": "Project memory conventions — decision-shaping, cite [MEM project/<name>]"
     },
     {
-      "src": "files/memory/reference/README.md",
-      "dest": "{userMemory}/reference/README.md",
+      "src": "files/.cairn/memory/reference/README.md",
+      "dest": "{projectRoot}/.cairn/memory/reference/README.md",
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "structure",
@@ -183,88 +166,132 @@
     },
     {
       "src": "files/skills/README.md",
-      "dest": "{userSkills}/README.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "How skills work in cairn — authoring guide for adding more"
     },
     {
       "src": "files/skills/tour/SKILL.md",
-      "dest": "{userSkills}/tour/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Post-install onboarding walk-through — grow out of it once the habitat is familiar"
     },
     {
       "src": "files/skills/prune/SKILL.md",
-      "dest": "{userSkills}/prune/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Stale memory/law review — becomes useful as the habitat accumulates entries"
     },
     {
       "src": "files/skills/audit/SKILL.md",
-      "dest": "{userSkills}/audit/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Citation frequency report — becomes useful once session history accumulates"
     },
     {
       "src": "files/skills/feedback/SKILL.md",
-      "dest": "{userSkills}/feedback/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "optional",
       "tier": "full",
       "description": "File structured feedback to cairn's GitHub repo — cairn-ecosystem-specific (integrates with cairn's own issue tracker)"
     },
     {
       "src": "files/skills/spec/SKILL.md",
-      "dest": "{userSkills}/spec/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "grow",
       "description": "Artifact-creation skill: write a structured agent execution spec (docs/specs/) with phases, steps, checkpoints, executor handoff. For non-trivial code changes that need an executor handoff. Distinct from /plan (behavioral, conversational) and from /note (single-paragraph intent capture)."
     },
     {
       "src": "files/skills/program/SKILL.md",
-      "dest": "{userSkills}/program/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Program-of-specs authoring: produce one master coordination doc + N workstream child stubs in docs/specs/ for substantial work that exceeds a single spec's scope. Bakes in no-deferral discipline, cross-cutting axes coverage (telemetry/diagnostics/rollback per workstream), informal axes-sign-off + commit-then-/peer-review at the master gate, and program-internal N-label bookkeeping for review-iteration traceability. Two invocation modes: cold-start and promote-from-spec (when a single /spec outgrew one file). Stubs are elaborated by `/spec --from`."
     },
     {
       "src": "files/skills/round-review/SKILL.md",
-      "dest": "{userSkills}/round-review/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's §5 DoD criterion-by-criterion against the diff, surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
     },
     {
       "src": "files/skills/fast-execute/SKILL.md",
-      "dest": "{userSkills}/fast-execute/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Fast-execute verb — turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in docs/specs/, picks up dispatched specs (single specs OR /round-review-produced round masters — single specs are the more common shape), executes per the spec body (branches on structure — round masters use §4 first-action checklist, single specs use Pre-flight + Phases + Post-flight), marks completion via sentinel atomic-flip (.ready → .claimed → .done), and re-arms its timer. Default poll 300s; stop on explicit STOP.signal, 3 consecutive empty polls, malformed inbox, or unelaborated /program stub (.ready → .stub-rejected, planning agent must elaborate via /spec --from first). Path-rejection guards on archive/ and _promoted/. Do NOT use in harnesses without timer primitives (fall back to manual /goal execute <path>) or for true one-shot dispatches where the polling-tail wait exceeds manual-prompt cost."
     },
     {
       "src": "files/skills/prompt-evolve/SKILL.md",
-      "dest": "{userSkills}/prompt-evolve/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Prompt-evolve verb: author a self-improving, version-controlled prompt for tough tasks done in many iterative passes over partitions (corpus mining, codebase refactor sweeps, doc backfill, bug triage, audits — any task where work doesn't fit in one execution, partitions are obvious, each pass produces both output AND insight, and the insight would otherwise be lost between passes). Primary mode is `--from <SPEC>` — promotes an evolving-prompt deliverable embedded in a /spec into a standalone artifact at `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report → **Self-Improvement**) with five non-negotiable enforcement items: (1) Phase 6 absolute-path inline as the edit target, (2) CHANGELOG with v1 entry + v2+ format template, (3) empty TOOL-FAILURE FALLBACK MATRIX section ready to grow, (4) Pending Re-run staging in the FINAL REPORT, (5) idempotence statement. The /prompt-evolve artifact is the only skill output that evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass, and the CHANGELOG IS its institutional memory. Promotion semantics differ from /spec --from <note> and /program --from <spec>: the source spec STAYS IN PLACE (the spec covers more than the prompt; only one deliverable is extracted)."
     },
     {
       "src": "files/skills/session-distill/SKILL.md",
-      "dest": "{userSkills}/session-distill/SKILL.md",
-      "mode": "create-if-absent",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
+        "agy": "agy plugin import claude (imports the cairn Claude Code plugin)"
+      },
       "role": "scaffolding",
       "tier": "structure",
       "description": "Session-distill verb: read a past agent session JSONL transcript (Pi or Claude Code format, auto-detected) cold and produce a structured analysis of cairn-improvement findings — patterns recognized against a seeded catalog, skill candidates with 3-instance gate check, law candidates, memory candidates, environment-support gaps. This skill is the FORMALIZATION of cairn's foundational methodology — the transcript-analysis loop documented in docs/research/collaboration-skills.md and human-interaction-patterns.md, which produced /reframe, /bridge, /advocate, the collaboration-skills taxonomy, and most of cairn's existing skills. The methodology was running manually since v0.1; this skill makes it named and reproducible. Cousin to /peer-review (same observer-rotation mechanic; transcript instead of diff). Cousin to /reflect (which produces in-session distillate); /session-distill produces cross-session distillate for cairn-the-framework itself. Reports by default; never auto-applies changes. User-side `do it` gates any /note filing, skill edit, LAWS.md update, /feedback, etc. The skill body ships with a seeded catalog of patterns cairn has already named (cross-session relay → /bridge, reframing → /reframe, stub-spec-executed-anyway, status-without-spec-links, self-improving prompt, Pi-as-executor, etc.) so new findings are matched against history rather than re-invented. Promoted from docs/notes/_promoted/NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md after the 3-instance gate was met in a single session (2026-06-09: 6+ instances)."

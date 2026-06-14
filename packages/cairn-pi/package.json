@@ -1,6 +1,6 @@
 {
   "name": "@winnorton/cairn-pi",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Cairn's authoring-and-orchestration loop for the Pi coding agent: /skill:spec, /skill:program, /skill:round-review, /skill:fast-execute, /skill:peer-review, /skill:note. Markdown skills only — no runtime code.",
   "keywords": ["pi-package", "pi", "skills", "cairn", "spec", "program", "orchestration"],
   "license": "MIT",

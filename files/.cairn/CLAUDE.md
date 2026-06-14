@@ -1,3 +1,16 @@
+<!-- cairn-managed: do not edit directly -->
+<!--
+  This file is the cairn-owned context block for this project.
+  It is NOT auto-loaded by any harness — you must import it with a single line
+  in your project's CLAUDE.md (Claude Code) or AGENTS.md (Pi/agy):
+
+      @./.cairn/CLAUDE.md
+
+  The adopting agent shows you that line during install (adopt.md Step 6);
+  you add it. Cairn never writes to CLAUDE.md or AGENTS.md on your behalf.
+  See: https://github.com/winnorton/cairn — §2.2 (import-line contract).
+-->
+
 # [Project / Effort Name] — Agent Context
 
 <!--
@@ -36,7 +49,7 @@
 
 ## Hard rules
 
-See [LAWS.md](.claude/LAWS.md) for the non-negotiable rules for this effort.
+See [LAWS.md](.cairn/LAWS.md) for the non-negotiable rules for this effort.
 
 ## Notes vs cross-session memory
 
@@ -46,8 +59,8 @@ they answer different questions:
 - **`/note`** writes to `docs/notes/` in *this repo*. The note travels with the codebase,
   is visible to anyone who clones, and is right for thoughts bound to a specific
   file/system in this project. File-bound, repo-visible.
-- **Cross-session memory** writes to `~/.claude/memory/` in *user-space*. Not in version
-  control, not visible to cloners, agent-only. Right for facts that shape future agent
+- **Cross-session memory** writes to `<project>/.cairn/memory/` in *this repo*. Git-tracked,
+  project-local, agent-only by convention. Right for facts that shape future agent
   reasoning about this project regardless of what file they're touching.
 
 When in doubt, prefer `/note` — repo-visible recovers cheaply; user-space-buried doesn't.

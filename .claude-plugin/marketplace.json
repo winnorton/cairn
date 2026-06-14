@@ -1,0 +1,20 @@
+{
+  "name": "cairn",
+  "owner": {
+    "name": "Win Norton",
+    "email": "win.norton@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "cairn",
+      "version": "0.14.0",
+      "description": "Cairn agent skills for Claude Code — authoring, review, maintenance, and collaboration. Markdown skills only; no runtime code.",
+      "source": {
+        "source": "git-subdir",
+        "url": "winnorton/cairn",
+        "path": "packages/cairn-claude",
+        "ref": "main"
+      }
+    }
+  ]
+}

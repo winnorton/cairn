@@ -1,0 +1,12 @@
+{
+  "name": "cairn",
+  "version": "0.14.0",
+  "description": "Cairn agent skills for Claude Code — authoring, review, maintenance, and collaboration. Markdown skills only; no runtime code.",
+  "author": {
+    "name": "Win Norton",
+    "email": "win.norton@gmail.com",
+    "homepage": "https://github.com/winnorton/cairn"
+  },
+  "repository": "https://github.com/winnorton/cairn",
+  "license": "MIT"
+}
