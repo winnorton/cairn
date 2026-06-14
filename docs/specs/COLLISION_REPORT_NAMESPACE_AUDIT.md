@@ -4,6 +4,12 @@
 > **Executor:** Claude Sonnet 4.6 (WS12 executor)
 > **Law:** `[LAW own-your-namespace]`
 > **Program:** [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
+>
+> **Note (post-reshape, 2026-06-13):** the pre-flight rows below (PF-4/PF-5) captured the
+> **Wave-0 pre-WS06 manifest baseline**. WS06 subsequently reshaped `manifest.json` —
+> the current manifest has only `projectRoot` + `cairnRoot` pathVariables (no
+> `userMemory`/`userSkills`/`projectClaude`), no `{projectRoot}/CLAUDE.md` entry, and
+> zero vendor-path strings. Treat PF-4/PF-5 line-references as historical, not current.
 > **Status:** PARTIAL — zero confirmed collisions in current source tree; three items UNVERIFIED (handed to WS03/WS09)
 
 ---

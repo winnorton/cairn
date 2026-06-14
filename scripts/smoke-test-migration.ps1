@@ -17,7 +17,7 @@ try {
   # Copy fixture into temp as if it were a real install
   New-Item -ItemType Directory -Force "$tmp\.cairn" | Out-Null
   New-Item -ItemType Directory -Force "$tmp\.claude" | Out-Null
-  Copy-Item -Recurse "$fixturePath\.claude\*" "$tmp\.claude\"
+  Copy-Item -Recurse "$fixturePath\project-dotclaude\*" "$tmp\.claude\"   # fixture dir renamed off .claude/ (gitignored) so it commits
   $homeSimulated = New-Item -ItemType Directory -Force "$tmp\simulated-home-claude"
   Copy-Item -Recurse "$fixturePath\home-claude\*" "$homeSimulated\"
 

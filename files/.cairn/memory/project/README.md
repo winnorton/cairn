@@ -14,15 +14,20 @@ memory more often than other types.
 
 ## Where to save: flat vs project-subdir
 
-Layout depends on whether the memory store is shared across multiple projects.
+Under v0.14+, cairn memory is **project-local** at `<project>/.cairn/memory/` — one store
+per repo, no slugs; use the flat shape `project/<entry>.md`, citation `[MEM project/<name>]`.
 
-- **Slug-separated stores** (Claude Code per-slug `~/.claude/projects/<slug>/memory/`)
+The two cases below are **legacy (pre-v0.14)** guidance for the user-global stores cairn used
+before the `.cairn/` move — relevant only if you maintain a shared store outside the project.
+
+- **Slug-separated stores** (a per-project-slug store the harness separates by slug)
   — keep flat. The slug already separates projects; subdirs would duplicate that. Path
   shape: `project/<entry>.md`. Citation: `[MEM project/<name>]`.
 
-- **Cross-project user-global stores** (e.g. Antigravity's
-  `~/.gemini/antigravity/memory/`, or `~/.claude/memory/` when used as a global
-  catch-all) — use a `project/<project-name>/` subdirectory layer. Every workspace
+- **Cross-project user-global stores** *(legacy, pre-v0.14 — under v0.14+ cairn memory is
+  project-local at `<project>/.cairn/memory/`; this case applies only to a shared store you
+  maintain OUTSIDE the project — e.g. a harness's own global memory directory shared
+  across every project)* — use a `project/<project-name>/` subdirectory layer. Every workspace
   shares one tree, so without subdirs, entries from cwar-engine, cairn, and any
   side-project pile flat and become unsearchable past ~20 entries. Path shape:
   `project/<projectname>/<entry>.md`. Citation: `[MEM project/<projectname>/<name>]`.

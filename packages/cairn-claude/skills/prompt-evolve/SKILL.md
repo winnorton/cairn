@@ -138,7 +138,7 @@ This is a deliberate departure from cairn's other `--from` skills:
 What `/prompt-evolve --from` DOES do to the spec:
 - Appends a single-line breadcrumb (idempotent — adds only if absent):
 
-  > *"Evolving prompt extracted to `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md` on `<date>`. See that file for the v1 template and self-improving CHANGELOG."*
+  > *"Evolving prompt extracted to `<docs|.cairn>/prompt-evolve/<NAME>_PROMPT.md` on `<date>`. See that file for the v1 template and self-improving CHANGELOG."*
 
 The spec keeps its normal `git mv → archive/` ship signal when its other
 deliverables (schema, API, etc.) land. The prompt-evolve artifact has its
@@ -321,10 +321,10 @@ accepted — these are the load-bearing fixes the skill exists to enforce.
 Default conventions:
 
 - **Pre-v0.14:** `docs/prompt-evolve/<NAME>_PROMPT.md`
-- **Post-v0.14:** `<project>/agents/prompt-evolve/<NAME>_PROMPT.md`
+- **v0.14+:** `<project>/.cairn/prompt-evolve/<NAME>_PROMPT.md`
 
-Detect the cairn version (or v0.14 in-flight signal — the existence of
-`<project>/agents/` directory). Confirm path with user before writing.
+Detect the cairn version (the existence of a `<project>/.cairn/` directory
+signals v0.14+). Confirm path with user before writing.
 
 `<NAME>` is derived from the spec's name or the user's intent (e.g.
 `PURDUE_BASKETBALL_HISTORY_PROMPT.md`, `INVENTORY_BACKFILL_PROMPT.md`,
@@ -452,7 +452,7 @@ Investigate before committing the writes.
 Idempotently append to the spec (do not add if already present):
 
 ```markdown
-> **Evolving prompt extracted:** `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`
+> **Evolving prompt extracted:** `<docs|.cairn>/prompt-evolve/<NAME>_PROMPT.md`
 > (extracted on <date> via `/prompt-evolve --from <SPEC_FILE>`). The prompt
 > has its own evolving lifecycle — Phase 6 self-edits accumulate lessons per
 > pass. This spec keeps its normal `git mv → archive/` ship signal.
@@ -562,7 +562,7 @@ project-local.
 ## Standing instructions (defaults baked in — do not re-prompt)
 
 - **The artifact name and folder convention are non-negotiable.** Every file
-  this skill produces is `<NAME>_PROMPT.md` inside `<docs|project/agents>/prompt-evolve/`.
+  this skill produces is `<NAME>_PROMPT.md` inside `<docs|.cairn>/prompt-evolve/`.
   The convention IS the pattern flag — `grep "_PROMPT.md"` across cairn-adopting
   projects finds them.
 - **The `> **Type:** evolving prompt` header marker** goes at the top of every
