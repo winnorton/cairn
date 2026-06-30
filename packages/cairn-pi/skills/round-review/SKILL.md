@@ -1,6 +1,6 @@
 ---
 name: round-review
-description: Review one round of executor output against a program-of-specs and draft R+1 follow-up stubs PLUS an R+1 round master for the gaps. Invoke after an autonomous executor (Flash, `/goal`, a teammate) finishes a round of work on a `/program`-produced master. Trust-but-verify — the executor's status files (`task.md` checkboxes, "all done" claims) are NOT authoritative; the diff plus the program master's `§5 Definition of Done` are. Produces three artifacts — (1) a review report in conversation, (2) N R+1 stub specs per `/program`'s stub schema (`SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`), and (3) an R+1 round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) that's the dispatch target — execution order, round DoD, first-action checklist self-contained so dispatch is `/goal execute <round-master-path>` with no caveats. Loop exit — when this skill writes zero R+1 stubs, the program is done. Do NOT use if you authored the executor's implementation (anti-fresh-perspective). Do NOT use for single-spec work (just run `/peer-review`).
+description: Review one round of executor output against a program-of-specs and draft R+1 follow-up stubs PLUS an R+1 round master for the gaps. Invoke after an autonomous executor (Flash, `/goal`, a teammate) finishes a round of work on a `/program`-produced master. Trust-but-verify — the executor's status files (`task.md` checkboxes, "all done" claims) are NOT authoritative; the diff plus the program master's `§5 Definition of Done` are. Produces three artifacts — (1) a review report in conversation, (2) N R+1 stub specs per `/program`'s stub schema (`SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`), and (3) an R+1 round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) that's the dispatch target — execution order, round DoD, first-action checklist self-contained so dispatch is `/goal execute <round-master-path>` with no caveats. Loop exit — when this skill writes zero R+1 stubs, the program is done. Do NOT use if you authored the executor's implementation (anti-fresh-perspective) or for single-spec work (just run `/peer-review`).
 ---
 
 # Round Review
@@ -24,8 +24,8 @@ agent) finishes a multi-phase program and the human checks back in:
    under that directory but not the one named. Without programmatic DoD-walk, the
    omission hides under "tests pass."
 3. **Zero-order findings outside the DoD.** Uncommitted work, broken headline metrics,
-   leftover scratch files — things that block shipping but aren't enumerated in §5
-   because §5 assumed the executor would land the work properly. `/round-review`
+   leftover scratch files — things that block shipping but aren't enumerated in §5;
+   §5 assumed the executor would land the work properly. `/round-review`
    surfaces these.
 
 The skill encodes the "trust-but-verify" move into a procedure: read the rubric, probe
@@ -120,7 +120,7 @@ For each load-bearing path named in §5 / child specs, probe:
   documentation files)
 
 This is the **most time-intensive step** for large programs. Use parallel reads where
-the artifacts are independent. Consider delegating to a sub-agent if the file count
+the artifacts are independent. Delegate to a sub-agent when the file count
 exceeds your context budget — give the sub-agent the DoD + the file list + the question
 "for each, does it exist with the required content?"
 
@@ -153,7 +153,7 @@ Things outside §5 that still block shipping:
 - Master itself drifted (the executor implemented one thing; the master says another;
   one of them is wrong)
 
-These are findings the DoD didn't anticipate because the DoD assumed competent landing.
+These are findings the DoD didn't anticipate — it assumed competent landing.
 List them with severity. Zero-order findings often have higher severity than PARTIAL
 DoD criteria.
 
@@ -188,10 +188,10 @@ the spread).
 
 ### 8. Draft the R+1 round master — the single dispatch target
 
-**Critical for one-line dispatch.** The stubs alone are not enough — the executor
+**Required for one-line dispatch.** The stubs alone are not enough — the executor
 needs a single file to point `/goal` (or equivalent) at, with execution order and
 dependencies encoded IN THE FILE rather than in the dispatch prompt's prose. The user
-shouldn't have to type "(R2_01 first because X)" — that knowledge belongs in the file.
+shouldn't have to type "(R2_01 first — X depends on it)" — that knowledge belongs in the file.
 
 Write `docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md` containing:
 
@@ -347,7 +347,7 @@ Three artifacts:
    dispatch target. Self-contained: execution order, round DoD, first-action checklist
    all inside. The user dispatches with `/goal execute <round-master-path>` (or the
    executor environment's equivalent) — no caveats, no "do X first" prose in the
-   prompt, because the file says it.
+   prompt; the file says it.
 
 If N == 0: the program is done. Report says so; no stubs or round master are written;
 recommends archiving the program master (`git mv` to `docs/specs/archive/`) and updating

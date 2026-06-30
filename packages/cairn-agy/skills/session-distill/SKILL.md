@@ -1,6 +1,6 @@
 ---
 name: session-distill
-description: Read a past agent session (JSONL transcript) cold and produce a structured cairn-improvement analysis — patterns, skill candidates (3-instance gate), law candidates, memory candidates, environment gaps, and concrete changes. Formalization of cairn's foundational methodology (the transcript-analysis loop that produced /reframe, /bridge, /advocate). Triggers on "look at this session", "analyze this session", "what could have gone better", "what pattern do you see", "tell me what was failing". Reads JSONL (Pi or Claude Code, auto-detect), builds tool-call distribution, finds struggle indicators, maps user-prompt arc against agent behavior. Reports only — never auto-applies. Distinct from /reflect (same-agent retrospective), /resume (orients a new session from prior artifacts), and /peer-review (reads change sets not sessions). Do NOT invoke on the current session (use /reflect) or tiny sessions (<20 messages).
+description: Read a past agent session (JSONL transcript) cold and produce a structured cairn-improvement analysis — patterns, skill candidates (3-instance gate), law candidates, memory candidates, environment gaps, and concrete changes. Formalization of cairn's foundational methodology (the transcript-analysis loop that produced /reframe, /bridge, /advocate). Triggers on "look at this session", "analyze this session", "what could have gone better", "what pattern do you see", "tell me what was failing". Reads JSONL (Pi or Claude Code, auto-detect), builds tool-call distribution, finds struggle indicators, maps user-prompt arc against agent behavior. Reports only — leaves application to you. Distinct from /reflect (same-agent retrospective), /resume (orients a new session from prior artifacts), and /peer-review (reads change sets not sessions). Do NOT invoke on the current session (use /reflect) or tiny sessions (<20 messages).
 ---
 
 # Session-Distill
@@ -45,7 +45,7 @@ Direct citations from cairn's own documentation:
   skills designed from theory often solve problems that don't."*
 
 This skill is **not new behavior** — it's a recognition handle on the loop the
-maintainer has been running manually. The note that originally proposed it
+maintainer has been running manually. The originating note
 (`docs/notes/_promoted/NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md`, promoted from
 the active notes folder when this skill shipped) called the candidate
 `/cairn-introspect`. The namespace-safe rename came when the skill shipped —
@@ -215,7 +215,7 @@ Then map to cairn-side categories:
 
 ### 6. Produce structured report
 
-Use this format. Tighten as needed; the structure is non-negotiable so reports
+Use this format. Tighten the prose; the structure is non-negotiable so reports
 across sessions stay diffable.
 
 ```markdown
@@ -331,7 +331,7 @@ these, the skill matches and cites:
 | Status-report-without-spec-links (originally; **also confirmed at L1948 post-compaction** in same session) | Claude Code session `601821ab` (the cairn-build with `/program` use) | `/program`'s "Spec-link discipline" standing instruction + Status reporting templates section + **compaction-survival sub-rule** (added 2026-06-09 after first fresh-agent `/session-distill` invocation found the L1948 recurrence — see catalog note below) |
 | Self-improving prompt | fishing-agent `data-pop-prompt` + purduebb `MINING_PROMPT.md` (2 instances) | `/prompt-evolve` |
 | Execution-strategies as a catalog separate from scaffold | purduebb v2 surfacing run-until-dry + bootstrap-then-fill | `/prompt-evolve` execution-strategies catalog |
-| Pi-as-executor (zero-cairn-skills works because spec IS the contract) | Pi vast-terrain session `019eaed6` | Pi added as first-class environment |
+| Pi-as-executor (zero-cairn-skills works; the spec IS the contract) | Pi vast-terrain session `019eaed6` | Pi added as first-class environment |
 | Upstream-API-stream-drops at high token counts | Pi terminated-error session | Diagnostic finding; pre-compaction discipline candidate |
 | The cairn loop itself (this skill's existence) | 6+ instances in this session | `/session-distill` |
 

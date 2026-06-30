@@ -33,7 +33,7 @@ Citations are directional, not rigorous — agents may miscite or forget. Treat 
 "which items show up in practice," not "which items matter." The gap between the two is
 itself useful signal.
 
-**Important:** citations only count if they reach durable files (notes, commits, docs,
+Citations count only when they reach durable files (notes, commits, docs,
 research). Citations that exist only in conversational transcripts may or may not be
 scannable depending on the harness — for reliable audit, grep durable files first.
 Conversation-only citations under-represent actual usage, so low citation counts for
@@ -66,7 +66,7 @@ Do NOT invoke for:
    - Laws (legacy, number form): `\[LAW (\d+)\]` — pre-slug archives only; numeric citations no longer resolve to a specific law since headings dropped numbers. Surface count as "legacy citations needing manual conversion to slug."
    - Memories: `\[MEM (feedback|project|reference)/([a-z0-9_-]+)\]`
 
-   Report law counts by slug. Don't try to map numeric citations to slugs — that mapping
+   Report law counts by slug. Don't map numeric citations to slugs — that mapping
    no longer exists in the source of truth.
 
 4. **Produce the report.** Grouped by category, ranked by citation count:

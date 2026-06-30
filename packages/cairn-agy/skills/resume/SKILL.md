@@ -144,7 +144,7 @@ Resume — context restored from <comma-separated sources>
    multiple questions — pick the single piece of missing context that would change
    what the agent does next.
 
-5. **If nothing was found**, report cleanly: list every path probed, note that none
+5. **If nothing was found**, report cleanly: list every path probed, state that none
    produced signal, and ask the user to point at the prior context manually. This
    keeps the failure mode transparent rather than silent.
 

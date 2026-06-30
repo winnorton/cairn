@@ -1,10 +1,12 @@
 # .github/workflows/sync-guard.yml
 # Shell dialect: POSIX (GitHub Actions ubuntu-latest runner)
 #
-# Runs the cairn skill sync guard in --check mode across all distribution packages.
+# Runs the cairn skill guards across the source of truth and all distribution packages.
 # Fails if any package's committed skill copies drift from files/skills/<name>/SKILL.md,
-# if any description exceeds 1024 chars, if any frontmatter name mismatches, or if
-# the package version != VERSION (version-lockstep enforcement).
+# if any description exceeds 1024 chars, if any frontmatter name mismatches, if the
+# package version != VERSION (version-lockstep enforcement), or if any skill carries
+# machine-register bloat (importance/coaching/optionality/negation-stack > 0) per the
+# prompt-economy gate [LAW prompt-economy] [LAW gate-beats-instruction].
 #
 # Gate: required status check on PRs to main per the program's §8 operational policy.
 
@@ -21,6 +23,8 @@ on:
       - "packages/*/.claude-plugin/plugin.json"
       - "packages/*/sync-config.json"
       - "scripts/sync-skills.mjs"
+      - "scripts/check-skill-budgets.mjs"
+      - "scripts/check-prompt-register.mjs"
       - "VERSION"
   pull_request:
     paths:
@@ -31,6 +35,8 @@ on:
       - "packages/*/.claude-plugin/plugin.json"
       - "packages/*/sync-config.json"
       - "scripts/sync-skills.mjs"
+      - "scripts/check-skill-budgets.mjs"
+      - "scripts/check-prompt-register.mjs"
       - "VERSION"
 
 jobs:
@@ -39,6 +45,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check skill description budgets (full source set, Pi 1024-char cap)
+        run: node scripts/check-skill-budgets.mjs
+
+      - name: Check machine-register (prompt-economy gate, full source set)
+        run: node scripts/check-prompt-register.mjs
 
       - name: Check cairn-pi skills in sync
         run: node scripts/sync-skills.mjs --pkg packages/cairn-pi --check

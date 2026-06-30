@@ -5,7 +5,7 @@ description: File structured feedback about cairn itself — the framework, temp
   Use when you (the agent) notice a gap, bug, confusing instruction, or missing skill in
   cairn. Do NOT use for issues in the user's own project, general bug reports unrelated to
   cairn, or as a substitute for in-session clarification the user can answer immediately.
-  Tell the user after filing, never before. Never file without a clear, specific improvement.
+  Tell the user once it's filed, not before; file only with a clear, specific improvement.
 ---
 
 # Feedback

@@ -177,7 +177,7 @@ Tell the user:
 
 > *"This spec doesn't appear to ship an evolving prompt. `/prompt-evolve` is
 > for tough tasks done in iterative passes — if your spec is single-execution,
-> stay with `/spec`. If you want the evolving-prompt pattern, update the spec
+> stay with `/spec`. To use the evolving-prompt pattern, update the spec
 > to name it as a deliverable, then re-invoke `/prompt-evolve --from <spec>`."*
 
 ### 3. Apply the canonical 7-phase scaffold + 5 enforcement items
@@ -510,7 +510,7 @@ makes project-specific choices about *how* to execute the scaffold. Those choice
 are **execution strategies**: variant, optional, named patterns that accumulate
 in this catalog as new projects surface them.
 
-The distinction matters because conflating them ossifies the skill. The scaffold
+The distinction matters: conflating them ossifies the skill. The scaffold
 is small and stable; the strategy catalog is open-ended and grows.
 
 Two strategies named so far. Each new project running `/prompt-evolve` may
@@ -537,7 +537,7 @@ How does the prompt walk a partition space larger than ~10 partitions?
 | Variant | When to use | Surfaced by |
 |---|---|---|
 | **Naive sequential** | Partitions are few (≤10) OR the prompt is already mature (canonical IDs / narrative anchors / fallback matrix are well-populated from a prior corpus). Simplest walk: oldest → newest, one per run. | fishing-agent (after a few years) |
-| **Bootstrap-then-fill** | Partition space is large (decades, hundreds of modules, etc.) AND the prompt is starting from v1. Stage A: sparse strides (5-year, 20-year, every-10th-module) across the full range to mature the prompt's accumulating state before going deep. Stage B: sequential fill once strides are populated. Reduces per-partition cost on later partitions because the prompt is already smart. | purduebb |
+| **Bootstrap-then-fill** | Partition space is large (decades, hundreds of modules, etc.) AND the prompt is starting from v1. Stage A: sparse strides (5-year, 20-year, every-10th-module) across the full range to mature the prompt's accumulating state before going deep. Stage B: sequential fill once strides are populated. Later partitions cost less — the prompt is already smart. | purduebb |
 
 The generated prompt's scaffold has an optional `## COVERAGE STRATEGY` section.
 When present, it picks the walking variant; Phase 1's target-selection logic

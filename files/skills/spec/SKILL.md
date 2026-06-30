@@ -162,8 +162,8 @@ Create the file at `docs/specs/SPEC_<NAME>.md`:
     instructions.
 - **Post-flight section:** final verification + commit message template + the
   move-to-archive instruction.
-- **Executor Handoff section:** quick-start context for the executing agent (2-3 most
-  critical files to read first, the key constraint that's most likely to cause a mistake,
+- **Executor Handoff section:** quick-start context for the executing agent (the 2-3
+  files to read first, the key constraint that's most likely to cause a mistake,
   recovery step for common failure points).
 - **Review Checklist:** for the reviewer model.
 - **(If `--from`):** include `> Promoted from note: docs/notes/_promoted/NOTE_X_<date>.md`
@@ -173,11 +173,11 @@ Create the file at `docs/specs/SPEC_<NAME>.md`:
 
 - **Be imperative, not descriptive.** "Change line 42 from X to Y", not "we should consider
   updating the function."
-- **Show exact code.** Every STEP shows current code + replacement code. No "update as needed."
+- **Show exact code.** Every STEP shows current code + replacement code — no vague "update the function" stand-ins.
 - **One file per STEP.** Three files = three STEPs.
 - **Checkpoint after every phase.** Run the project's lint/test gate at minimum.
 - **Declare the shell dialect.** Authoring harness ≠ executing harness. Write
-  pre-flight/checkpoint commands shell-portably where possible; otherwise tag the
+  pre-flight/checkpoint commands shell-portably; otherwise tag the
   block with its dialect (`# PowerShell — translate if your shell is POSIX`) so a
   bash-tool executor translates instead of paste-failing. (Evidence: two hard
   PowerShell-in-bash errors in Pi-on-Windows executor sessions, 2026-06-11.)
@@ -221,7 +221,7 @@ tag for typos / formatting / dependency bumps.
 This isn't bundled with cairn — cairn ships markdown skills, not project-specific lint
 tooling. Build the gate at whatever surface your project's PRs already pass through (CI
 check, pre-commit hook, or a docs-audit script). The original failure mode this guards
-against: planning rules that are only rhetorical accumulate stale artifacts because
+against: planning rules that are only rhetorical accumulate stale artifacts —
 "required" doesn't equal "enforced."
 
 ## Output
@@ -241,7 +241,7 @@ flipped from `STUB` to `READY FOR EXECUTOR`. No move; the path is unchanged.
   output (conversational, not a file). `/plan` runs before; `/spec` runs after.
 - `/peer-review` — when the spec's work is shipped and you want a fresh agent to read
   the change set cold before merge. Catches inconsistency-class bugs the spec author
-  and executor missed because they were "too close."
+  and executor missed while "too close."
 - `/program` — the orchestration verb that produces `/spec` stubs to elaborate. When
   work is too big for one spec, `/program` decomposes it into a master + N stubs;
   `/spec --from docs/specs/SPEC_..._NN_TOPIC.md` fills each stub in place.

@@ -1,7 +1,7 @@
 ---
 name: note
 description: File a quick thought, debug finding, or feature sketch into the project repo as
-  a dated note. No template, no research phase. Use when the user says "note that", "remind
+  a dated note. No template, no research phase. Use when the user says "note this", "remind
   me to", "track this", "look at later", "file this", "circle back", or after an agent
   suggests follow-up work and the user wants to capture it (bare `/note` after the
   suggestion). Distinct from /reflect — this is pre-emptive intent capture (one paragraph,
@@ -21,11 +21,11 @@ Cheap to write, cheap to delete, cheap to promote later if it becomes real work.
 ## When to use
 
 **User-invoked:**
-- *"note that the spawner has a bug under high seed counts"*
+- *"note the spawner has a bug under high seed counts"*
 - *"remind me to look at the renderer flicker"*
 - *"track this — we should circle back to bounty routing"*
 - *"file this finding"*
-- Bare `/note` (or `note that`) after the agent has just suggested follow-up work — captures the suggestion.
+- Bare `/note` (or `note this`) after the agent has just suggested follow-up work — captures the suggestion.
 
 **Distinct from `/reflect`:** `/note` is pre-emptive (capture before action). `/reflect` is
 post-hoc (distill after action). Different lifecycles.
@@ -69,7 +69,7 @@ creates agent-context clutter without being pruned.
 
 ### 1. Resolve what you're filing
 
-If the user said `/note that` or bare `/note` after a conversation:
+If the user said `/note` or bare `note` after a conversation:
 
 - Look at your most recent assistant turn. Did you suggest exactly one follow-up? File that.
 - Multiple follow-ups in one turn? **Do not file all as one mixed-intent note.** Pick the
@@ -104,7 +104,7 @@ Format — loose. The body is **one paragraph** answering:
 - Why does it matter?
 - What would the next step look like if someone picked this up?
 
-Then optionally 1-3 bullets of supporting context (file paths, error messages, related work).
+Then add 1-3 bullets of supporting context (file paths, error messages, related work).
 Skip the bullets if not needed.
 
 **Do NOT** write phases, steps, checkpoints, pre-flight commands, or executor handoff

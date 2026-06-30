@@ -4,7 +4,7 @@ description: Surface stale memories and obsolete laws for user review. Use when 
   "prune", "review memory", "clean up laws", "what's stale", or periodically when the habitat
   has accumulated entries. Prunes per type with type-appropriate heuristics (user = event-driven,
   feedback = citation-driven, project = time-driven, reference = integrity-driven). Proposes
-  retire/update/keep per entry — never deletes without confirmation. Do NOT invoke for a fresh
+  retire/update/keep per entry, deleting only after confirmation. Do NOT invoke for a fresh
   habitat with few entries, or mid-task.
 ---
 

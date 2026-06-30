@@ -15,8 +15,8 @@ one parallel-executor target. `/program` produces the structure and the stubs;
 Substantial work has three recurring failure modes that a single `/spec` cannot defend
 against:
 
-1. **Silent gaps** — telemetry, diagnostics, rollback, docs/handoff get omitted because
-   they're "not the feature." The feature ships; the observability around it never does.
+1. **Silent gaps** — telemetry, diagnostics, rollback, docs/handoff get omitted as
+   "not the feature." The feature ships; the observability around it never does.
    Future debugging pays the bill.
 2. **Drift via deferral** — "out of scope, future work" rows accumulate. The work never
    comes back. The deferred item dies in the section heading.
@@ -224,7 +224,7 @@ includes:
 6. Programmatic counts ("`rg <pattern> -c`"), not frozen numbers, when the spec cites
    "N consumers."
 
-Project-tailor as needed; cite the project's existing memories / rules / laws inline
+Project-tailor the protocol; cite the project's existing memories / rules / laws inline
 (e.g. `[MEM feedback/<name>]`, `[RULE <slug>]`) so the protocol roots in lived
 experience, not theory.
 
@@ -294,8 +294,8 @@ file — it lives in the master, not in a sidecar.
   this master end-to-end, read §0's evidence source, claim a phase from §9, read that
   phase's child spec, execute, mark complete.
 - **§11 Architectural rationale for the program shape** — meta-section. Required.
-  Answers: *"Why is this a program rather than a single spec?"* This section exists
-  because the user explicitly asked the question. Acceptable answers cite: spec size
+  Answers: *"Why is this a program rather than a single spec?"* The user explicitly
+  asked this question, so the section is required. Acceptable answers cite: spec size
   (e.g. single-file v1 exceeded N k-words), peer-review surfacing cross-section
   consistency bugs, parallel teams ready to execute, precedent (another program in
   this project that took this shape).
@@ -574,8 +574,8 @@ session:
   Files, parallel-safe-with declared), invoke subagents directly rather than asking
   the user "should I spawn?" The user chose `/program` over `/spec` — that choice IS
   the standing consent for parallel execution. The signal this rule is leaking: the
-  user typing "spawn sonnet agents", "address all issues, spawn where appropriate",
-  or repeating "execute X" because the prior round didn't fan out. Each occurrence
+  user typing "spawn sonnet agents", "address all issues and spawn the agents",
+  or repeating "execute X" after the prior round didn't fan out. Each occurrence
   is an agent-side close failure, not a user request — you waited where the user
   had already authorized. Reason: cwar session `601821ab` produced 3+ instances of
   the user re-authorizing parallel execution mid-session (Jun 9 23:08, Jun 10 13:19,

@@ -3,7 +3,7 @@ name: peer-review
 description: External-perspective review of a change set before ship by a fresh agent who
   did not author the change. Reads the diff PLUS adjacent unchanged files that the diff
   expects to be consistent with, and flags inconsistency-class bugs the work-author missed
-  because they were "too close" to the change. Use when the user says "peer-review this
+  while "too close" to the change. Use when the user says "peer-review this
   PR", "review this PR", "fresh eyes on", "external review of", "did I miss anything",
   "check this branch before merge", or hands you a PR/branch they did not author. Distinct
   from /reflect — /peer-review is pre-ship cross-agent fresh-perspective;
@@ -16,7 +16,7 @@ description: External-perspective review of a change set before ship by a fresh 
 # Peer Review
 
 External-perspective review of a change set by a fresh agent who didn't author it. Catches the inconsistency-class bugs that
-work-authors miss because they're anchored on what they touched and have a calcified
+work-authors miss while anchored on what they touched and holding a calcified
 mental model of what the unchanged files expect.
 
 ## Why this skill exists
@@ -115,7 +115,7 @@ fresh agent does.
 - Recent commit history (`git log --oneline -10`) for immediate prior arc.
 - Any HANDOFF.md or active plan files that frame the change.
 
-Don't re-read what the diff already shows. Don't pad context.
+Read only what the diff omits; keep context tight.
 
 ### 5. Synthesize the review
 
@@ -159,8 +159,8 @@ A structured review (typically 200–600 words) with the format from Step 5.
 
 Quality bar:
 - Every problem has a file:line ref or is dropped.
-- Severity is honest. Don't inflate quality-of-life into blockers; don't downplay
-  shipping blockers as "nits."
+- Severity is honest — grade quality-of-life as quality-of-life and shipping
+  blockers as blockers.
 - The biggest-risk paragraph is the one thing the author would want to read first.
   Make it earn its place.
 

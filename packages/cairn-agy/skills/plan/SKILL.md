@@ -26,7 +26,7 @@ Do NOT invoke for:
 
 ## Steps
 
-1. **Restate the goal in one sentence.** If you can't, you don't understand it yet — ask.
+1. **Restate the goal in one sentence.** A failed restatement means the goal isn't understood yet — ask.
 
 2. **List the steps.** Keep them concrete and ordered. For each step, mark:
    - **[R]** if reversible (local edits, scratch files).
