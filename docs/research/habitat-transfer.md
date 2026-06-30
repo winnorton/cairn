@@ -29,7 +29,7 @@ Participant-observation from inside the habitat, supplemented by transcript read
 
 ### 3.1 Laws influence real decisions (cross-session)
 
-The first evidence came from the Game Engine Research session. The agent consolidated three research files into one document, citing `[LAW 4]` — "prefer editing existing artifacts to creating new ones." This was not a performative citation. The law influenced an architectural decision: consolidate rather than scatter. The agent had three separate files and chose to merge them, explicitly referencing the law as its reason.
+The first evidence came from the Game Engine Research session. The agent consolidated three research files into one document, citing `[LAW prefer-edit]` (formerly `[LAW 4]`) — "prefer editing existing artifacts to creating new ones." This was not a performative citation. The law influenced an architectural decision: consolidate rather than scatter. The agent had three separate files and chose to merge them, explicitly referencing the law as its reason.
 
 A rule written in a file, read by an agent that didn't write it, applied to a decision in a domain unrelated to the rule's origin.
 

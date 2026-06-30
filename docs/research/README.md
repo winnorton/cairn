@@ -21,7 +21,7 @@ but the snapshots got refreshed when more data landed.
 
 - **[habitat-transfer.md](habitat-transfer.md)** — Cross-session observation of
   cairn habitat working: a fresh agent in a different workspace and domain
-  applied `[LAW 4]` to a real architectural decision. *Phase 2 added evidence
+  applied `[LAW prefer-edit]` (formerly `[LAW 4]`) to a real architectural decision. *Phase 2 added evidence
   from cross-platform tests across Cowork, Antigravity (Gemini Pro 3.1, Opus),
   and Claude Code.*
 

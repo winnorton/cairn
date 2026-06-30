@@ -42,7 +42,7 @@ See: [The Two-File Habitat](research-mvh-portability.md)
 
 ## Finding 2: Habitat transfers across sessions, agents, and platforms
 
-The strongest early evidence came from a cross-session test: a fresh agent in a game engine research workspace cited `[LAW 4]` inline — a rule it didn't write, applied to a decision in a domain (game engines) unrelated to the rule's origin. Laws influenced real architectural decisions. Skill formats transferred without instruction.
+The strongest early evidence came from a cross-session test: a fresh agent in a game engine research workspace cited `[LAW prefer-edit]` (formerly `[LAW 4]`) inline — a rule it didn't write, applied to a decision in a domain (game engines) unrelated to the rule's origin. Laws influenced real architectural decisions. Skill formats transferred without instruction.
 
 The evidence became much stronger during cross-platform testing. Gemini Pro 3.1 adopted cairn into Google Antigravity and demonstrated: path variable adaptation (mapped `{userMemory}` → `~/.gemini/antigravity/memory/` without being told how), slug-format law citations (`[LAW plan]`, `[LAW cadence]`), skill compliance (tour, reflect, plan all followed spec), and a `/reflect` output that was specific, quantified, and empirically verified via tool logs.
 
