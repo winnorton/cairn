@@ -35,11 +35,11 @@ or miss the case entirely.>
 Each law has a **slug** — a kebab-case handle in the heading suffix. Citations always
 use the slug: `[LAW plan]`. Numbers are not used; the slug is the law's only identity.
 
-Five meta-rules govern the laws themselves:
+Seven meta-rules govern the laws themselves:
 
 1. **Observable, not vibes.** "Be careful" is not a law. "Never run `rm -rf` without confirmation" is.
 2. **Slug is identity, count is metadata.** Each law's identity is its slug (in the heading suffix); citations use that slug. Per-law numbering invites "Law N" references that drift when laws are reordered. Collection size, if shown, belongs in the section header (`## Seed laws (6)`) — not in per-law numbering.
-3. **Why + How to apply are mandatory.** Without them, the law doesn't survive contact with edge cases.
+3. **Why + How to apply are mandatory.** Without them, the law doesn't survive contact with edge cases. An incident story in the Why (date, what it cost) makes the law far more durable — welcome, not required.
 4. **Laws expire.** Review this list periodically. Retire laws that no longer apply.
 5. **Cite by slug, in durable output.** When an agent applies a law, it cites inline by slug:
    `[LAW plan]`. The citation must appear in **durable output** — files the agent writes or
@@ -47,6 +47,17 @@ Five meta-rules govern the laws themselves:
    Conversational citations that don't reach disk produce **zero** audit signal. Legacy
    `[LAW N]` citations from pre-slug archives may still exist; new citations always use
    slug form.
+6. **If a machine can check it, it's a gate, not a law.** Before writing a law, ask:
+   could a script, lint rule, test, or CI step catch the violation? If yes, build that
+   gate instead — a mechanically-checkable rule written as prose is just the gate's
+   shadow, and it drifts while the gate would hold. Laws are reserved for rules that
+   take judgment to apply. When a gate later becomes buildable for an existing law,
+   build it and retire the law, leaving a one-line pointer at the gate.
+7. **Memory first — laws are promoted, not born.** A lesson lands as a feedback-memory
+   entry by default. It graduates to a law when the pattern recurs, when `/audit` shows
+   its citations firing across sessions, or when a single violation would be
+   unacceptable (the genuine "never again" fast lane). This is what keeps LAWS.md short
+   enough to actually be read every session.
 
 ---
 

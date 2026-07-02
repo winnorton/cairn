@@ -45,13 +45,18 @@ Do NOT invoke for:
    - **What surprised**: anything you or the user didn't expect. Surprises are often the
      most memorable signal.
 
-3. **Decide what persists for THIS workspace**. For each of the three:
-   - Is it worth remembering across sessions? If yes → candidate for memory (feedback,
-     project, or reference type).
-   - Is it worth a law? If it's a "never again" or "always do this," it belongs in LAWS.md,
-     not memory.
-   - Is it a one-time observation? Then it stays in this session's transcript and doesn't
-     need to persist anywhere.
+3. **Decide what persists for THIS workspace**. Route each of the three:
+   - **A machine could check it** (a script, lint rule, test, or CI step could catch
+     the violation) → propose the GATE, not a law or memory. A mechanically-checkable
+     rule written as prose drifts; the gate holds.
+   - **It takes judgment to apply** → feedback-memory entry by default. Laws are
+     promoted, not born: the memory graduates to LAWS.md when the pattern recurs or
+     `/audit` shows its citations firing. Exception — a "never again" whose single
+     violation is unacceptable goes straight to a law candidate (Why + How to apply;
+     an incident story in the Why strengthens it).
+   - **Worth remembering but not rule-shaped** (project state, references) → project
+     or reference memory.
+   - **One-time observation** → stays in this session's transcript; persists nowhere.
 
 4. **Check for downstream consumers.** Read this workspace's `CLAUDE.md` for a section
    titled `## Downstream consumers`, `## Consumers`, or similar. If present, the workspace

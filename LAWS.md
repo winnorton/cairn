@@ -25,8 +25,9 @@ Every law in this file follows the same shape:
 **How to apply:** <when the rule kicks in>
 ```
 
-The five meta-rules from `files/.cairn/LAWS.md` apply here too: observable not vibes,
-slug-is-identity, Why + How to apply mandatory, laws expire, cite in durable output.
+The seven meta-rules from `files/.cairn/LAWS.md` apply here too: observable not vibes,
+slug-is-identity, Why + How to apply mandatory, laws expire, cite in durable output,
+machine-checkable means gate-not-law, memory-first promotion.
 
 ---
 

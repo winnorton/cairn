@@ -43,6 +43,9 @@ jobs:
       - name: Check skill names against vendor-builtin collisions
         run: node scripts/check-namespace.mjs
 
+      - name: Check law-entry shape (slug + Why + How to apply)
+        run: node scripts/check-laws-shape.mjs
+
       - name: Check cairn-pi skills in sync
         run: node scripts/sync-skills.mjs --pkg packages/cairn-pi --check
 
