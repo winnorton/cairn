@@ -99,7 +99,7 @@ Note on Antigravity CLI (agy): agy's real config root is `~/.gemini/config/` <!-
 (global plugins + skills) and `<project>/.agents/skills/` for workspace skills
 (binary-verified agy 1.0.7). The older `~/.gemini/antigravity/memory/` path is <!-- migration-ref -->
 stale — do not reference it as an install target. State lands in `<project>/.cairn/`
-(same as all harnesses); skills reach agy via `agy plugin import claude` (Step 4a).
+(same as all harnesses); skills reach agy via the native `cairn-agy` plugin (Step 4a).
 
 **Note on memory and skill paths.** Cairn no longer installs to `{userMemory}` <!-- migration-ref -->
 or `{userSkills}`. State lands in `{cairnRoot}` (`.cairn/`); skills reach the <!-- migration-ref -->
@@ -118,8 +118,13 @@ https://raw.githubusercontent.com/winnorton/cairn/main/manifest.json
 
 It contains:
 - `pathVariables` — environment-specific path mappings.
-- `files` — the list of state files to install, each with `src`, `dest`, `mode`, `role`, `tier`,
-  `description`.
+- `files` — entries in **two shapes**:
+  - **State files** carry `src`, `dest`, `mode`, `role`, `tier`, `description` —
+    these are what Step 5 installs into `.cairn/`.
+  - **Skill entries** carry `src` + `delivery` (and no `dest`/`mode`) — these are
+    delivered by the package installer in Step 4a. **Skip them entirely in
+    Step 5**; never compute a destination for a `delivery` entry or curl it
+    anywhere.
 - `version` — the release version of this manifest.
 - `roles` — definitions of the three role labels (`essential`, `scaffolding`, `optional`).
 - `tiers` — definitions of the four graduated adoption tiers (`seed`, `grow`, `structure`,
@@ -142,7 +147,7 @@ the user.
 | User said | Install tier | State files |
 |---|---|---|
 | `adopt <url>` | `full` | all state files |
-| `adopt <url> --tier seed` | `seed` | essential only |
+| `adopt <url> --tier seed` | `seed` | seed-tier files (`.cairn/CLAUDE.md` + memory index) |
 | `adopt <url> --tier grow` | `grow` | seed + scaffolding (grow) |
 | `adopt <url> --tier structure` | `structure` | grow + structure scaffolding |
 | `adopt <url> --tier full` | `full` | all (explicit form of default) |
@@ -171,7 +176,11 @@ harness via package install (Step 4a); state lands in `.cairn/` (Step 4b).
 **Fast-path check** — before walking the file list, look for a local version
 marker at `{cairnRoot}/cairn-version`:
 
-- **Not found** → fresh install. Proceed to Step 4a.
+- **Not found** → check the **legacy marker** at `<project>/.claude/cairn-version`
+  (where v0.13.x installs wrote it). If the legacy marker exists, this is a
+  v0.13.x habitat, NOT a fresh install — jump to the
+  "v0.13.x → v0.14.0 (.cairn/) migration" section below instead of proceeding.
+  If neither marker exists → fresh install. Proceed to Step 4a.
 - **Found and matches `manifest.version`** → report *"cairn vX.Y.Z already
   installed at `<cwd>/.cairn/` — nothing to do."* and stop.
 - **Found but version differs** → re-adoption. Proceed to Step 4a. The diff
@@ -205,7 +214,7 @@ claude plugin install cairn@cairn
 After install, confirm with:
 ```
 claude plugin list
-# expect: cairn  0.14.0  ...
+# expect: cairn  <manifest.version>  ...
 ```
 
 Skills are then invocable as `/name` (e.g. `/spec`, `/peer-review`, `/note`).
@@ -216,10 +225,17 @@ Skills are then invocable as `/name` (e.g. `/spec`, `/peer-review`, `/note`).
 pi install npm:@winnorton/cairn-pi
 ```
 
-This installs `spec`, `program`, `round-review`, `fast-execute`, `peer-review`,
-and `note` as a Pi package (invoked as `/skill:spec` etc.; add `-l` for a
-project-local install recorded in `.pi/settings.json`). Version-locked to the
-cairn release; upgradable via Pi's package manager.
+This installs exactly six skills — `spec`, `program`, `round-review`,
+`fast-execute`, `peer-review`, and `note` — as a Pi package (invoked as
+`/skill:spec` etc.; add `-l` for a project-local install recorded in
+`.pi/settings.json`). The other cairn skills are not in the Pi package; they are
+outside its authoring-loop curation.
+
+**Version check (npm publishes lag the repo):** after install, compare the
+version `pi list` reports against the `version` in the manifest you fetched in
+Step 2. If npm is behind, tell the user the skill package is at the older
+version and the state files are at the newer one — do not claim they are
+version-locked.
 
 **Antigravity CLI (agy):**
 
@@ -230,7 +246,7 @@ the repo — `agy plugin install` supports GitHub subpaths with branch resolutio
 agy plugin install github:winnorton/cairn//packages/cairn-agy@main
 ```
 
-This stages all 18 cairn skills into agy's `/skill:` namespace (verified: `agy plugin
+This stages all 19 cairn skills into agy's `/skill:` namespace (verified: `agy plugin
 validate` passes + a clean install round-trip on agy 1.0.7). State lands in
 `<project>/.cairn/`; add the `@./.cairn/CLAUDE.md` import line to your `AGENTS.md`
 (Step 6).
@@ -256,7 +272,7 @@ will land in `.cairn/`:
 **For a `full` install** (default), group by role:
 
 ```
-cairn v0.14.0 — state install preview (tier: full)
+cairn v<manifest.version> — state install preview (tier: full)
 
 State files (written to <cwd>/.cairn/):
 
@@ -265,16 +281,24 @@ ESSENTIAL — load-bearing from day one:
   .cairn/memory/MEMORY.md     — memory lookup entry point
 
 SCAFFOLDING — shape is important, content grows with you:
-  .cairn/LAWS.md              — laws template + 6 seed laws
+  .cairn/LAWS.md              — laws template + 7 seed laws
   .cairn/memory/user/README.md
   .cairn/memory/feedback/README.md
   .cairn/memory/project/README.md
   .cairn/memory/reference/README.md
 
+CAIRN-OWNED (mode: overwrite — refreshed from upstream on every re-adopt,
+never edit locally):
+  .cairn/context/lra/PROMPT_RESEARCHER_BOOTSTRAP.md
+  .cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md
+  .cairn/context/lra/AGENTS_SUBJECT.md
+  .cairn/context/lra/PROVENANCE.md
+
 Will also write (post-install):
   .cairn/cairn-version        — version marker for re-adoption fast-path
 
-Will skip any file that already exists (create-if-absent mode).
+Will skip any file that already exists (create-if-absent mode), except the
+  CAIRN-OWNED `overwrite`-mode files above, which are always (re)written.
 
 Proceed? (y/n)
 ```
@@ -326,7 +350,9 @@ instructions, requiring a manual cleanup pass. Don't repeat that.
    ```
    Heredoc-with-inline-content is a correctness failure — fetch the bytes.
 
-2. If the resolved dest already exists and `mode` is `create-if-absent`, skip.
+2. If the resolved dest already exists and `mode` is `create-if-absent`, skip. If `mode` is
+   `overwrite`, always (re)write it — these are cairn-owned files that track upstream, so a
+   re-adopt refreshes them.
 3. Ensure parent directories exist (`mkdir -p .cairn/memory` and subdirs).
 4. Write the fetched bytes to the destination.
 5. **Validate what landed.** Every cairn `.md` file starts with `---` (YAML
@@ -341,9 +367,11 @@ If a fetch or write fails, stop and report the partial state clearly — do not
 continue silently.
 
 **In environments where file tools can't write** (e.g., Cowork's `.claude/` protection):
-still HTTP-fetch — just pipe through the shell. The shell fallback is about *where you
-write*, not *what you write*. Never let the write-path constraint cause you to
-regenerate content from context.
+still HTTP-fetch — just pipe through the shell, writing via the bash mount path
+(`/sessions/<name>/mnt/...`; see "Environment notes for migration" below for the
+two Cowork storage layers). The shell fallback is about *where you write*, not
+*what you write*. Never let the write-path constraint cause you to regenerate
+content from context.
 
 ### Step 6 — Write version marker, show import line, then report
 
@@ -374,13 +402,26 @@ write it):
 >
 > Add this line, then say `done` so I can confirm the install is complete.
 
-Wait for the user to confirm they've added the line before filing the install
-report.
+Wait for the user to confirm they've added the line — then **verify it before
+reporting** (same check the migration flow makes mandatory in B4):
+
+```bash
+# POSIX
+grep -q "@./.cairn/CLAUDE.md" "<project>/CLAUDE.md" && echo "IMPORT LINE OK" || echo "IMPORT LINE MISSING"
+```
+```powershell
+# PowerShell
+if (Select-String -Path "<project>\CLAUDE.md" -Pattern "@\./\.cairn/CLAUDE\.md" -Quiet) { "IMPORT LINE OK" } else { "IMPORT LINE MISSING" }
+```
+
+(For Pi/agy, check `AGENTS.md` instead.) If MISSING, show the line again and do
+NOT file a success report — without the import line the habitat is silently
+non-functional.
 
 **Then report to the user:**
 
 ```
-cairn v0.14.0 installed.
+cairn v<manifest.version> installed.
 
 State (written to .cairn/):
   <list of files actually written, absolute paths>
@@ -388,12 +429,19 @@ State (written to .cairn/):
 Skipped (already existed):
   <list>
 
+Refreshed (cairn-owned, mode: overwrite):
+  <list, or "none">
+
 Skills: installed via package manager in Step 4a.
 
-Import line: added by user to <project>/CLAUDE.md (or AGENTS.md).
+Import line: verified present in <project>/CLAUDE.md (or AGENTS.md).
 
 Next: say `tour` to walk through what was installed.
 ```
+
+**Pi only:** the Pi package does not include the `tour` skill — replace the last
+line with *"Next: read `.cairn/CLAUDE.md` and `.cairn/LAWS.md` to see what was
+installed."*
 
 Keep the report under ~200 words. No prose padding.
 
@@ -409,8 +457,9 @@ Keep the report under ~200 words. No prose padding.
 - **If `.cairn/` doesn't exist**, create it — it is cairn's own namespace. No user
   confirmation needed to create a cairn-owned directory.
 - **On Cowork, if file-tool writes fail with "blocked/protected location"**, fall back to
-  the shell with the mount path (see Step 3). Don't interpret the block as "install
-  failed" — it's a tooling-layer restriction, not an install-time error.
+  the shell with the mount path (`/sessions/<name>/mnt/...` — see the Step 5
+  write-fallback note and "Environment notes for migration"). Don't interpret the block
+  as "install failed" — it's a tooling-layer restriction, not an install-time error.
 
 ## Version pinning
 
@@ -501,9 +550,13 @@ bump may trigger multiple cases.
    copies untouched unless the user explicitly asks to remove. Report *"note: <list>
    is no longer part of cairn — your local copy is preserved."*
 
-3. **Changed file bodies** — same `src` and `dest`, different content. Diff each
-   changed file and ask per-file: keep local, take new, or merge. Never auto-overwrite
-   a file the user may have customized.
+3. **Changed file bodies** — same `src` and `dest`, different content. For
+   `mode: overwrite` files (cairn-owned, track upstream — e.g. the lra prompt masters in
+   `.cairn/context/lra/`), **take new automatically**: no prompt, no backup — the user must
+   not customize them. For all other (`create-if-absent`) files, diff each and ask per-file:
+   keep local, take new, or merge. Never auto-overwrite a file the user may have customized.
+   **This diff-and-ask REPLACES Step 5's skip rule during re-adoption** — on an upgrade,
+   an existing file with a changed upstream body gets the per-file prompt, not a silent skip.
 
 4. **Doc-only bump** — none of cases 1–3 produced any action. The version bump changed
    only `adopt.md`, `README.md`, `plans/`, `VERSION`, or other repo metadata; nothing
@@ -530,11 +583,17 @@ State files installed to `.cairn/` by adopt:
 | `files/.cairn/memory/feedback/README.md` | `.cairn/memory/feedback/README.md` | scaffolding | structure |
 | `files/.cairn/memory/project/README.md` | `.cairn/memory/project/README.md` | scaffolding | structure |
 | `files/.cairn/memory/reference/README.md` | `.cairn/memory/reference/README.md` | scaffolding | structure |
+| `files/.cairn/context/lra/PROMPT_RESEARCHER_BOOTSTRAP.md` | `.cairn/context/lra/PROMPT_RESEARCHER_BOOTSTRAP.md` | scaffolding | full |
+| `files/.cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md` | `.cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md` | scaffolding | full |
+| `files/.cairn/context/lra/AGENTS_SUBJECT.md` | `.cairn/context/lra/AGENTS_SUBJECT.md` | scaffolding | full |
+| `files/.cairn/context/lra/PROVENANCE.md` | `.cairn/context/lra/PROVENANCE.md` | scaffolding | full |
 
 Skills are distributed via package manager — not in this table. See Step 4a.
 
-All entries use `mode: create-if-absent`. For the authoritative list, use the
-manifest at runtime — this table may drift.
+Most entries use `mode: create-if-absent`; the four lra prompt masters
+(`.cairn/context/lra/`, installed by adopt at tier `full` and consumed by the `/lra`
+skill) use `mode: overwrite` — cairn-owned, refreshed from upstream on every
+re-adopt. For the authoritative list, use the manifest at runtime — this table may drift.
 
 ## v0.11.x → v0.12.x format migration note
 
@@ -641,7 +700,7 @@ delete them in Phase D.**
 
 Run this migration when:
 - You are upgrading from any v0.13.x install (v0.13.0, v0.13.1) to v0.14.0+.
-- Step 2's fast-path finds `<project>/.claude/cairn-version` <!-- migration-ref --> (the old
+- Step 3's fast-path finds `<project>/.claude/cairn-version` <!-- migration-ref --> (the old
   marker path) rather than `<project>/.cairn/cairn-version` (the new path).
 - The agent reports that `.cairn/` is absent but `<project>/.claude/cairn-version` <!-- migration-ref -->
   exists.
@@ -653,8 +712,9 @@ adopt flow.
 
 Before running any migration phase, confirm:
 1. The `cairn` Claude Code plugin is installed (or `@winnorton/cairn-pi` for Pi, or
-   `agy plugin import claude` for Antigravity). The replacement must be live before
-   you remove any residue (Phase C).
+   the native `cairn-agy` plugin — `agy plugin install
+   github:winnorton/cairn//packages/cairn-agy@main` — for Antigravity). The
+   replacement must be live before you remove any residue (Phase C).
 2. You are running in the adopter project's directory (not cairn's own repo).
 3. You have a recent git commit or backup — migration is non-destructive by design,
    but accidents happen.
@@ -867,7 +927,8 @@ and loadable:
 - **Pi residue** (under `~/.pi/agent/skills/`): <!-- migration-ref --> confirm
   `@winnorton/cairn-pi` is installed (`pi list` shows it).
 - **Antigravity/agy residue** (under `~/.gemini/config/skills/`): <!-- migration-ref -->
-  confirm `agy plugin list` shows the `cairn` plugin imported via `agy plugin import claude`.
+  confirm `agy plugin list` shows the native `cairn-agy` plugin (installed via
+  `agy plugin install github:winnorton/cairn//packages/cairn-agy@main` in Step 4a).
 
 If a harness's replacement is not yet confirmed loadable, skip that harness's residue
 section and annotate the skip in the migration report.
@@ -893,27 +954,38 @@ package-bundled skills: `spec`, `program`, `round-review`, `fast-execute`, `peer
 `note`), confirm the package copy is present and loadable, then remove the curl copy:
 
 ```bash
-# POSIX — for each of the six packaged skills
-for skill in spec program round-review fast-execute peer-review note; do
-  skill_path="$HOME/.pi/agent/skills/$skill"  # <!-- migration-ref -->
-  if [ -d "$skill_path" ]; then
-    echo "Removing adopt-era copy: $skill_path"
-    rm -rf "$skill_path"
-  fi
-done
+# POSIX — for each of the six packaged skills.
+# GUARD: verify the package replacement is actually installed BEFORE deleting —
+# if it isn't, these curl-era copies are the user's only working skills.
+if pi list 2>/dev/null | grep -q "cairn-pi"; then
+  for skill in spec program round-review fast-execute peer-review note; do
+    skill_path="$HOME/.pi/agent/skills/$skill"  # <!-- migration-ref -->
+    if [ -d "$skill_path" ]; then
+      echo "Removing adopt-era copy: $skill_path"
+      rm -rf "$skill_path"
+    fi
+  done
+else
+  echo "@winnorton/cairn-pi not installed — SKIPPING removal (would delete the only copies)"
+fi
 ```
 
 ```powershell
-# PowerShell
-foreach ($skill in @("spec", "program", "round-review", "fast-execute", "peer-review", "note")) {
-  $p = "$env:USERPROFILE\.pi\agent\skills\$skill"  # <!-- migration-ref -->
-  if (Test-Path $p) { Remove-Item -Recurse -Force $p; "Removed: $p" } else { "Not found (OK): $p" }
+# PowerShell — same guard: package must be installed before removal
+if (pi list 2>$null | Select-String -Quiet "cairn-pi") {
+  foreach ($skill in @("spec", "program", "round-review", "fast-execute", "peer-review", "note")) {
+    $p = "$env:USERPROFILE\.pi\agent\skills\$skill"  # <!-- migration-ref -->
+    if (Test-Path $p) { Remove-Item -Recurse -Force $p; "Removed: $p" } else { "Not found (OK): $p" }
+  }
+} else {
+  "@winnorton/cairn-pi not installed — SKIPPING removal (would delete the only copies)"
 }
 ```
 
 NOTE: at time of writing (2026-06-13) the Pi skills directory does NOT contain `program/`
 or `round-review/` (they were never successfully curl-installed due to 404 bodies). Pre-flight
-PF-6 gives the current baseline. Adjust the above list to match what PF-6 found.
+the `ls` check above gives the current baseline. Adjust the removal list to match
+what is actually present — never remove a directory the listing didn't show.
 
 **C2. Antigravity/agy residue — flat-format files and legacy `review/`.**
 
@@ -966,7 +1038,8 @@ $reviewPath = "$env:USERPROFILE\.gemini\config\skills\review"  # <!-- migration-
 if (Test-Path $reviewPath) { Remove-Item -Recurse -Force $reviewPath; "Removed legacy review/" } else { "Not found (OK)" }
 ```
 
-Remove skills now delivered by the cairn plugin (program, etc.) — check PF-6 for which
+Remove skills now delivered by the cairn plugin (program, etc.) — check the `ls`
+listing above for which
 were actually installed before removing:
 ```bash
 # POSIX — only remove if the plugin replacement is confirmed loadable
@@ -1046,12 +1119,12 @@ rm "<project>/.claude/cairn-version"  # <!-- migration-ref -->
 Remove-Item "<project>\.claude\cairn-version"  # <!-- migration-ref -->
 ```
 
-WHY RETIRE THIS: the Step 2 fast-path now reads `<project>/.cairn/cairn-version`. If the
-old marker at `<project>/.claude/cairn-version` <!-- migration-ref --> is left in place,
-WS08's adopt.md fast-path (which reads the NEW path) will correctly find the new marker
-and work as expected — the old marker is simply dead weight. But: if any non-updated
-adopt.md version still reads the old path, a stale marker would trigger a false "already
-installed" fast-path for an incomplete install. Retiring it closes that risk.
+WHY RETIRE THIS: the Step 3 fast-path now reads `<project>/.cairn/cairn-version`
+first and treats the old marker at `<project>/.claude/cairn-version` <!-- migration-ref -->
+as a v0.13.x-migration signal. Once migration is complete, a lingering old marker
+would keep re-triggering the migration branch (or, under any older adopt.md
+version that still reads the old path, fake an "already installed" fast-path for
+an incomplete install). Retiring it closes both risks.
 
 **D3. Retire old memory location (per harness).**
 

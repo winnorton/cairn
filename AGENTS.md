@@ -15,8 +15,15 @@ for the index.
 
 ## Current state
 
-- **Latest tag:** v0.13.1 (renamed `/review` → `/peer-review` to disambiguate from
-  Claude Code's built-in `/review`).
+- **Latest tag:** v0.14.0 (2026-06-14) — the **cairn ownership migration**: state
+  moved out of vendor namespaces into a cairn-owned `<project>/.cairn/` directory;
+  skills distribute as cairn-named packages the vendor's own installer places
+  (the `cairn` Claude Code plugin, `@winnorton/cairn-pi` npm, the native
+  `packages/cairn-agy` agy plugin); zero agent writes to any vendor-owned path.
+  Program master archived at
+  [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md).
+  (v0.13.1 renamed `/review` → `/peer-review` to disambiguate from Claude Code's
+  built-in `/review`.)
 - **Primary environments (3):** Claude Code, Antigravity (Google), and Pi (pi.dev).
   Roles split asymmetrically: **Antigravity is the primary coding environment**
   (implementation, broad tool-use, real edit/run cycles). **Claude Code is
@@ -33,16 +40,13 @@ for the index.
   [docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md](docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md)).
   Cowork stays in `manifest.json` for backward compat but is no longer in the
   primary triplet.
-- **In flight as of v0.13.1:** v0.14.0 architectural shift (program
-  [`SPEC_CAIRN_OWNERSHIP_00_PROGRAM`](docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md))
-  — state moves out of vendor namespaces into a cairn-owned
-  `<project>/.cairn/` directory; skills distributed as cairn-named packages
-  (a `cairn` Claude Code plugin, `@winnorton/cairn-pi` npm, agy via
-  `agy plugin import claude`); zero agent writes to any vendor-owned path.
-  The superseded `agents/` umbrella draft is retired at
-  `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`.
-  Read the program master before touching `manifest.json`, `adopt.md`, or
-  path conventions.
+- **In flight since v0.14.0:** the `lra` skill pack (a `prompt-evolve`
+  specialization; see [docs/CROSS_REPO_LRA_CAIRN.md](docs/CROSS_REPO_LRA_CAIRN.md))
+  and the `check-skill-budgets` CI gate — staged in the working tree pending a
+  version bump. The superseded `agents/` umbrella draft is retired at
+  `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`. Before touching
+  `manifest.json`, `adopt.md`, or path conventions, read the archived v0.14.0
+  program master for the design rationale.
 - **Open design threads:** see `docs/notes/` — in-repo memory tier (addressed
   by v0.14.0 `.cairn/` move), `/cairn-introspect` skill candidate (gate at 3+
   instances), supervisor pattern (deferred), v0.13.0 follow-ups.
@@ -52,10 +56,11 @@ for the index.
 - `files/skills/<name>/SKILL.md` — the skill body + YAML frontmatter (the
   `description:` field is load-bearing — agents use it to decide whether to invoke)
 - `files/skills/README.md` — the skill catalog and category groupings
-- `files/LAWS.md`, `files/CLAUDE.md`, `files/memory/` — supporting context templates
-  shipped to adopters. Editing these changes what every future adopter gets.
-- `LAWS.md` (repo root) — cairn's *own* 9 laws governing how cairn itself is developed
-  (distinct from `files/LAWS.md`, which is the *template* shipped to adopters)
+- `files/.cairn/LAWS.md`, `files/.cairn/CLAUDE.md`, `files/.cairn/memory/` — supporting
+  context templates shipped to adopters (installed to `<project>/.cairn/`). Editing
+  these changes what every future adopter gets.
+- `LAWS.md` (repo root) — cairn's *own* 11 laws governing how cairn itself is developed
+  (distinct from `files/.cairn/LAWS.md`, which is the *template* shipped to adopters)
 - `adopt.md` — the install/onboarding script agents follow when running `adopt cairn`
 - `manifest.json` — machine-readable install manifest read by `adopt.md`; `files:`
   array is the canonical source-of-truth for what ships
@@ -111,7 +116,6 @@ Listed by category — full descriptions in
 - [`advocate`](files/skills/advocate/SKILL.md) — simulate end-user perspective before shipping
 
 ### Cross-perspective — rotate the observer
-- [`resume`](files/skills/resume/SKILL.md) — fresh session inheriting context from a prior one
 - [`peer-review`](files/skills/peer-review/SKILL.md) — fresh agent reading a change set cold
 - [`session-distill`](files/skills/session-distill/SKILL.md) — fresh agent reading a past session JSONL cold through cairn's improvement lens; formalizes the transcript-analysis methodology that produced cairn itself (`/reframe`, `/bridge`, `/advocate`, and the collaboration-skills taxonomy all came from this loop)
 
@@ -122,6 +126,7 @@ Listed by category — full descriptions in
 - [`round-review`](files/skills/round-review/SKILL.md) — review one round of executor output against a program, draft R+1 stubs + round master
 - [`fast-execute`](files/skills/fast-execute/SKILL.md) — polling-daemon executor: watches a sentinel-file inbox in `docs/specs/`, executes dispatched specs, marks completion via sentinel atomic-flip. The consumer-side verb of the artifact loop
 - [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — author a self-improving prompt for tough tasks done in many iterative passes over partitions (corpus mining, refactor sweeps, doc backfill, audits). The only artifact skill whose output evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass
+- [`lra`](files/skills/lra/SKILL.md) — a `prompt-evolve` specialization for researching a subject over many passes, run engine-free as project-local markdown an agent walks; mirrors the lra research→library→application pipeline 1:1 via lra commands. The two prompts are verbatim from the lra lab (the source of `[LAW prompt-economy]`); see [`docs/CROSS_REPO_LRA_CAIRN.md`](docs/CROSS_REPO_LRA_CAIRN.md)
 
 Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with frontmatter
 (schema in [`files/skills/README.md`](files/skills/README.md)) AND add a matching entry
@@ -166,7 +171,7 @@ JSON Schemas. The ingestion pipeline (`gather` / `manifest` / `corpus_status` MC
 on `content_hash`. `session_distill` now accepts `envelope_path` to consume corpus
 envelopes directly and write compounding findings. The compounding mechanism — prior
 pattern names from `findings/*.json` seeding the next distillation — is now operational.
-See the program master at `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md`.
+See the program master at `docs/specs/archive/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md`.
 
 ## Design DNA
 
@@ -192,10 +197,13 @@ Patterns this project leans on hard. Carry them through every new piece of work:
 - **Three-level degradation** — the `/feedback` pattern (endpoint → `gh` CLI →
   paste). Generalizes to any delivery path that might fail in restrictive
   environments. Always provide the last-resort manual path.
-- **Cairn ships markdown, not code** — keep it that way. Two exceptions, each
-  contained in its own subdirectory by design: the feedback endpoint
-  (`server/feedback-endpoint/`) and the cairn-pi package's dev-time sync script
-  (`packages/cairn-pi/scripts/`). The published pi package itself is markdown-only.
+- **Cairn ships markdown, not code** — the *shipped payload* (skills, templates,
+  packages' published content) stays markdown-only. Dev-time code is quarantined
+  in named locations: the feedback endpoint (`server/feedback-endpoint/`, the one
+  runtime-code exception), the shared sync/gate scripts (`scripts/` at repo root),
+  and thin per-package delegate shims (`packages/*/scripts/`). The published pi
+  package ships zero scripts (`package.json` `files:` whitelist); the git-installed
+  plugins carry the inert shims only.
 
 ## Don't adopt cairn into cairn
 

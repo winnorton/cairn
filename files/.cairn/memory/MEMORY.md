@@ -63,15 +63,15 @@ remembered**:
 - **Cross-cutting agent-meta-knowledge** (collaboration patterns, reframing,
   general principles that apply regardless of which project) → pick one slug
   (usually the project where the insight first emerged) and **declare a pointer
-  in `HANDOFF.md`'s `## Related memory paths` section** so other projects'
-  `/resume` invocations find them. Don't duplicate across slugs — two sources of
+  in `HANDOFF.md`'s `## Related memory paths` section** so agents orienting in
+  other projects find them. Don't duplicate across slugs — two sources of
   truth drift the moment one is edited.
 - **Per-worktree** (rare — work that's genuinely scoped to a single worktree) →
   use the worktree's slug. Most worktree work is project-scoped, not
   worktree-scoped; default to parent project's slug unless there's a reason.
 
-The `HANDOFF.md` `## Related memory paths` mechanism + `/resume` skill solve
-cross-slug discovery without forcing duplication. Use them; don't work around them.
+The `HANDOFF.md` `## Related memory paths` mechanism solves cross-slug discovery
+without forcing duplication. Use it; don't work around it.
 
 When uncertain: pick the project where the work artifact is being produced. Let
 `HANDOFF.md` handle the cross-references.

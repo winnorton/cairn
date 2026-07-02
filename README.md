@@ -50,7 +50,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.13.1`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.14.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -84,7 +84,7 @@ Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi
 | `<project>/.cairn/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/.cairn/CLAUDE.md` | Cairn-shaped context sections — imported into your project's `CLAUDE.md` or `AGENTS.md` via one user-written import line |
 | `<project>/.cairn/LAWS.md` | Meta-laws + seed laws — your non-negotiables |
-| Skills via package | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`resume`, `peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or `agy plugin import claude` (agy). See [skills taxonomy](#skills-taxonomy). |
+| Skills via package | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`, `lra`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -103,18 +103,18 @@ Agents forget everything between sessions. Cairn is the opposite of forgetting:
 
 You build this up over time. Cairn just gives you the scaffold so you don't start from nothing.
 
-### Cross-session continuity — the reflect ↔ resume loop
+### Cross-session continuity — the reflect → HANDOFF loop
 
 Memory, laws, and CLAUDE.md hold what carries forward. The *ritual* that keeps them
-alive is two paired skills:
+alive:
 
 - **`/reflect`** at session-end — proposes memory and law candidates, and writes a
   `HANDOFF.md` describing where the work stands.
-- **`/resume`** at session-start — probes for HANDOFF.md, memory at relevant slugs,
-  transcript junctions, and recent git activity, then synthesizes a compact orientation.
+- **At session-start** — the agent reads `HANDOFF.md` and the memory index, then
+  synthesizes a compact orientation.
 
-Reflect produces, HANDOFF carries, resume reads. This loop turns "agent forgets
-everything between sessions" into "agent picks up where we left off."
+Reflect produces, HANDOFF carries, the next session reads. This loop turns "agent
+forgets everything between sessions" into "agent picks up where we left off."
 
 ## Extend
 
@@ -212,7 +212,6 @@ Cairn's skills fall into four categories with different origins.
 
 **Cross-perspective skills — rotate the observer:**
 
-- `resume` — fresh session inheriting context from a prior one (sequential).
 - `peer-review` — fresh agent reading a change set cold (catches what the work-author
   missed because they were "too close"). Named `peer-review` to disambiguate from Claude
   Code's built-in `/review` skill.
@@ -251,13 +250,18 @@ Cairn's skills fall into four categories with different origins.
   Distinct from every other artifact skill: the output evolves over its
   lifetime — Phase 6 self-edits accumulate lessons each pass, and the
   prompt's CHANGELOG IS its institutional memory.
+- `lra` — a `prompt-evolve` specialization for researching a subject over many
+  passes, run engine-free as project-local markdown the agent walks. Scaffolds
+  a `research/` collection and drives two prompts (researcher + librarian)
+  synced verbatim from the lra lab into `.cairn/context/lra/`. Not in the Pi
+  package (outside its authoring-loop curation).
 
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the
 collaboration (see [`docs/research/collaboration-skills.md`](./docs/research/collaboration-skills.md)
 for the analysis). The cross-perspective skills emerged from observing where one
-agent's session leaves blind spots that only a fresh observer can catch — `resume`
-defeats namespace fragmentation between sessions; `peer-review` defeats the work-author's
+agent's session leaves blind spots that only a fresh observer can catch —
+`peer-review` defeats the work-author's
 mental-model anchoring on what they touched. The artifact skills were imported from
 a downstream project's `/plan`-rework arc — they produce durable in-repo files with
 explicit lifecycles (folder-as-status), distinct from the maintenance skills'
@@ -311,7 +315,7 @@ between habitats.
 **How deep to go (tier).** A second axis: how cairn-specific do you want your habitat to be?
 
 - **`seed`** — `CLAUDE.md` + `MEMORY.md`. Two files. **Works with any agent** (Claude, GPT, Gemini, local LLM) that can read markdown. Minimum viable habitat = maximally portable habitat.
-- **`grow`** — adds `LAWS.md` + maintenance skills (`reflect`/`plan`) + artifact skills (`note`/`spec`) + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective skills (`resume`/`peer-review`). Durable conventions any careful agent can follow.
+- **`grow`** — adds `LAWS.md` + maintenance skills (`reflect`/`plan`) + artifact skills (`note`/`spec`) + collaboration skills (`reframe`/`bridge`/`advocate`) + cross-perspective skills (`peer-review`). Durable conventions any careful agent can follow.
 - **`structure`** — adds typed memory + hygiene skills (`tour`/`prune`/`audit`). Assumes cairn-aware tooling.
 - **`full`** — adds the `feedback` skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized.
 
@@ -330,6 +334,18 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.14.0 — **Cairn ownership migration.** State moves out of vendor namespaces into a
+cairn-owned `<project>/.cairn/` directory; skills distribute as cairn-named packages
+the vendor's own installer places: the `cairn` Claude Code plugin
+(`claude plugin marketplace add winnorton/cairn` + `claude plugin install cairn@cairn`),
+`@winnorton/cairn-pi` (npm), and the native `packages/cairn-agy` agy plugin
+(`agy plugin install github:winnorton/cairn//packages/cairn-agy@main`). `adopt.md`
+does zero agent writes to vendor dirs — the only vendor-file touch is one
+user-written `@./.cairn/CLAUDE.md` import line. Adds the non-destructive
+v0.13.x → `.cairn/` migration flow, install-integrity checks, the shared
+`scripts/sync-skills.mjs` drift guard + CI, and codifies `[LAW own-your-namespace]`.
+Program master: `docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`.
 
 v0.13.1 — Renames `/review` to `/peer-review` to disambiguate from Claude Code's
 built-in `/review` skill. The bare `/review` invocation in any Claude Code session

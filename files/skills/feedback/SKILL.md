@@ -5,7 +5,9 @@ description: File structured feedback about cairn itself — the framework, temp
   Use when you (the agent) notice a gap, bug, confusing instruction, or missing skill in
   cairn. Do NOT use for issues in the user's own project, general bug reports unrelated to
   cairn, or as a substitute for in-session clarification the user can answer immediately.
-  Tell the user once it's filed, not before; file only with a clear, specific improvement.
+  Show the user the exact payload and get a brief ok BEFORE sending (filed issues are
+  public and session-derived content leaves the machine); file only with a clear,
+  specific improvement, then report the issue URL once.
 ---
 
 # Feedback
@@ -42,6 +44,20 @@ Before filing, confirm:
 2. Is the feedback actionable? (If it's just "this feels off," sharpen it or don't file.)
 3. Does it contain any PII, credentials, file paths from the user's machine, or proprietary
    code? (If yes, sanitize before filing. Cairn issues are public.)
+
+## Pre-send gate (mandatory)
+
+This skill sends session-derived content off the user's machine into a **public**
+GitHub issue. Before any delivery attempt:
+
+1. Show the user the exact title + body you intend to send (compact, no preamble).
+2. Say where it goes: *"This files a public issue on winnorton/cairn."*
+3. Wait for a brief ok ("ok", "file it", 👍). Any edit request → apply, re-show only
+   the changed part, then send.
+
+Do NOT send first and inform after — the content is public the moment it lands, and
+the user is the only one who can judge whether something session-specific shouldn't
+leave the machine. The endpoint's server-side sanitizer is a backstop, not consent.
 
 ## Delivery (three-level degradation)
 
@@ -108,16 +124,18 @@ tell the user: *"I'd like to file this to cairn — can you paste it at
 https://github.com/winnorton/cairn/issues/new?"* This is the only path that requires
 the active user's help.
 
-## Notify the user (always)
+## Report the result (always)
 
-After any of the three paths succeed, tell the user once, briefly:
+After the pre-send gate passed and a delivery path succeeded, close the loop once,
+briefly:
 
-- **Level 1/2 success:** *"I filed feedback to cairn about &lt;title&gt; — &lt;issue URL&gt;. Continuing."*
-- **Level 3 draft:** *"I drafted feedback about &lt;title&gt; — paste it at the link above when convenient, then we'll continue."*
+- **Level 1/2 success:** *"Filed — &lt;issue URL&gt;. Continuing."*
+- **Level 3 draft:** *"Draft above — paste it at the link when convenient, then we'll continue."*
 
 Do not discuss further unless the user asks.
 
-**Never file silently.** The user always hears about it. Once, briefly, with a link.
+**The user sees the payload before it leaves the machine (pre-send gate) and hears
+the result after.** Once each, briefly.
 
 ## Rate limit yourself
 

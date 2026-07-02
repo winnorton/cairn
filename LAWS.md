@@ -3,8 +3,8 @@
 Non-negotiable rules for developing cairn itself. Violating one will break the project
 or the workflow.
 
-This file is cairn's own LAWS, distinct from `files/LAWS.md` (which is the *template*
-shipped to adopters). It was added in v0.9.1 after the maintainer observed that cairn
+This file is cairn's own LAWS, distinct from `files/.cairn/LAWS.md` (which is the
+*template* shipped to adopters). It was added in v0.9.1 after the maintainer observed that cairn
 shipped a LAWS.md template for others without having one itself — the framework wasn't
 eating its own dog food.
 
@@ -25,8 +25,8 @@ Every law in this file follows the same shape:
 **How to apply:** <when the rule kicks in>
 ```
 
-The five meta-rules from `files/LAWS.md` apply here too: observable not vibes, slug-is-
-identity, Why + How to apply mandatory, laws expire, cite in durable output.
+The five meta-rules from `files/.cairn/LAWS.md` apply here too: observable not vibes,
+slug-is-identity, Why + How to apply mandatory, laws expire, cite in durable output.
 
 ---
 
@@ -205,7 +205,7 @@ or the most recent commit message before allowing merge.
 
 ### Credentials never live in the chat transcript *(slug: credentials-never-in-transcript)*
 
-**Why:** During cairn's foundational build session (`docs/origin/748aff00-...jsonl`
+**Why:** During cairn's foundational build session (`docs/study_sessions/cairn_origin_748aff00-...jsonl`
 L912), the agent — mid-deploy of the cairn-feedback Cloud Run service — *offered*
 "you paste it in chat and I handle it" as one of two acceptable paths for
 providing a GitHub PAT. The user took the offered path; the token went into

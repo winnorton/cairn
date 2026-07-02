@@ -5,10 +5,12 @@ description: Research the codebase and write a structured agent execution spec f
   multi-session refactor with phases, steps, checkpoints, executor handoff. Drops in
   `docs/specs/`. Two `--from` modes — `/spec --from docs/notes/NOTE_X.md` promotes a note to a
   spec (moves the note to `_promoted/`); `/spec --from docs/specs/SPEC_..._NN_TOPIC.md`
-  elaborates a `/program`-produced stub in place (fills phases/steps, no move). Do NOT use for
-  lightweight intent capture (use /note for that — single paragraph, no research). Distinct
-  from cairn's existing `/plan` skill, which is a behavioral pre-action alignment verb;
-  `/spec` is the artifact-creation verb that produces a file the executor follows.
+  elaborates a `/program`-produced stub in place (fills phases/steps, no move). Two
+  lifecycles — execution specs (dispatch artifact, archived on ship) and contract specs
+  (permanent source of truth: 3-pass verified status, spec updates before code). Do NOT use
+  for lightweight intent capture (use /note for that — single paragraph, no research).
+  Distinct from cairn's existing `/plan` skill, which is a behavioral pre-action alignment
+  verb; `/spec` is the artifact-creation verb that produces a file the executor follows.
 ---
 
 # Spec
@@ -44,6 +46,47 @@ Do NOT use for:
 
 `/plan` happens before the human says yes. `/spec` happens after — the spec IS the
 implementation artifact, not the alignment.
+
+## Two spec lifecycles — choose at authoring time
+
+A spec is one of two species, and the choice changes its whole lifecycle:
+
+| | **Execution spec** | **Contract spec** |
+|---|---|---|
+| What it is | A dispatch artifact — instructions an executor consumes once | The highest-level code — the permanent source of truth a fresh agent could rebuild the system from |
+| Status | Folder-as-status: active in `docs/specs/`, `git mv` to `archive/` on ship. No `Status:` field | Evidence-bearing `**Status:**` line walking the 3-pass progression (below). **Never archived on ship** — archiving would destroy the rebuild-from-specs property; `archive/` is for superseded specs only |
+| After ship | Done — the code is the truth now | Lives forever in sync: **update the spec BEFORE changing code**; no undocumented surface; drift is fixed on discovery, not "later" |
+| Verification | Executor checkpoints + post-flight | 3-pass gauntlet incl. adversarial verification (below) |
+
+**How to choose:** if the project's LAWS/AGENTS declare a spec-is-source-of-truth
+discipline (specs must stay synced with implementation), or the user says the spec is
+permanent, author a **contract spec**. Otherwise default to **execution spec** — the
+cheaper form. Name the choice in the spec header either way.
+
+**The contract-spec 3-pass status progression** (each pass's status line carries its
+evidence, not just a state word):
+
+1. `**Status:** DRAFT (Pass 1 — design)` — written BEFORE implementation, precise
+   enough for a fresh executor to build from.
+2. `**Status:** SHIPPED (Pass 2 — synced with <files> on <date>; <gate> N/N PASS)` —
+   flipped after implementation + the project's fast gate. Reconcile every drift
+   between spec and what actually landed before flipping.
+3. `**Status:** SHIPPED (Pass 3 — Pass 2 + adversarial verification; <findings fixed>)` —
+   flipped only after a fresh-perspective verification pass (a `/peer-review`, or a
+   parallel-verifier workflow: several skeptics on distinct concern axes — security,
+   spec-impl drift, error paths, defensive access — plus one completeness critic) and
+   every ship-blocking finding is closed. Evidence from lra: author + smoke + lint +
+   typecheck missed at least one ship-blocking bug in 7 of 7 workstreams; only this
+   pass caught them.
+4. `**Status:** RECONCILED (Pass 3 — <date> spec-reality audit: <what changed>)` —
+   periodic re-sync when an audit re-verifies the spec against current implementation.
+
+**Exemption path:** cosmetic, typo-fix-level changes may skip Pass 3 — name the skipped
+pass and why in the commit message. Anything bigger walks all three.
+
+**The litmus test for a contract spec:** a fresh agent in another session, given only
+the spec set, should produce code with the same shape and behavior. If they can't, the
+spec is incomplete — fix the spec.
 
 ## Expected usage
 
@@ -96,9 +139,12 @@ If a guarded path is supplied, abort with a one-line message naming the violatio
    the file is not a `/program` stub — abort and tell the user.
 2. The stub already contains: Goal, Scope, Files, Gate, Telemetry hook, Diagnostics
    path, Rollback story, Depends-on, Program-master link.
-3. Read the program master the stub references — focus on `§2 Contract Surfaces`,
-   `§3 Resolved Design Decisions`, `§5 Parallel Execution Protocol`. These are the
-   shared contracts every child cites.
+3. Read the program master the stub references — focus on the sections titled
+   **CONTRACT SURFACES**, **RESOLVED DESIGN DECISIONS**, and **Parallel-execution
+   protocol** (a subsection of the parallelization section). **Match sections by
+   TITLE, not by §-number** — real programs insert sections and the numbers shift
+   (lra's masters put contracts at §3, not §2). These are the shared contracts
+   every child cites.
 4. Do research per Step 3 below, scoped to the stub's `Files` and `Scope` sections.
 5. **Elaborate in place** — write the Phases / Steps / Pre-flight / Post-flight /
    Executor Handoff / Review Checklist sections into the **same file**. Replace the
@@ -144,8 +190,11 @@ Skip if the prompt + context already provide clear answers.
 
 Create the file at `docs/specs/SPEC_<NAME>.md`:
 
-- Header: today's date, your model name, "Requested by" the human user. **No `STATUS:` field**
-  — folder location is the status (active in `specs/`, shipped after `git mv` to `archive/`).
+- Header: today's date, your model name, "Requested by" the human user, and the
+  lifecycle choice. **Execution spec:** no `STATUS:` field — folder location is the
+  status (active in `specs/`, shipped after `git mv` to `archive/`). **Contract spec:**
+  an evidence-bearing `**Status:**` line starting at `DRAFT (Pass 1 — design)` per the
+  3-pass progression above.
 - **Human Intent section:** verbatim original request, extracted symptom/goal, scope,
   success criterion.
 - **Pre-flight section:** baseline commands the executor runs first, each with its
@@ -166,6 +215,10 @@ Create the file at `docs/specs/SPEC_<NAME>.md`:
   files to read first, the key constraint that's most likely to cause a mistake,
   recovery step for common failure points).
 - **Review Checklist:** for the reviewer model.
+- **OPEN QUESTIONS section (contract specs, and any spec that accumulates them):**
+  the sanctioned parking spot for deferred subtle findings and unresolved questions —
+  verifier findings triaged "subtle, non-blocking" land here instead of vanishing
+  into conversation. One line each, dated.
 - **(If `--from`):** include `> Promoted from note: docs/notes/_promoted/NOTE_X_<date>.md`
   in header.
 
@@ -195,9 +248,9 @@ Tell the user:
 - Any open questions.
 - "When ready to execute, hand the spec path to your executor agent."
 
-## On ship — move-on-ship convention
+## On ship
 
-When the spec's work is verified shipped:
+**Execution specs — move-on-ship convention.** When the spec's work is verified shipped:
 
 ```
 git mv docs/specs/SPEC_X.md docs/specs/archive/SPEC_X.md
@@ -206,6 +259,12 @@ git mv docs/specs/SPEC_X.md docs/specs/archive/SPEC_X.md
 The `git mv` IS the ship signal. **Do not** flip a `STATUS:` field — folder location is
 the status. The mv shows up in the closing PR diff, the `specs/` folder shrinks back to
 live work only, and `archive/` grows monotonically.
+
+**Contract specs — flip the status, never the folder.** Ship = the `**Status:**` line
+advances through the 3-pass progression with its evidence (files synced, date, gate
+results, verifier findings closed). The spec stays in `docs/specs/` permanently as the
+source of truth; on later changes, **edit the spec first with the rationale, THEN change
+the code** — never paper drift over with code comments.
 
 If a spec was promoted from a note, the breadcrumb in `notes/_promoted/` stays where it is.
 

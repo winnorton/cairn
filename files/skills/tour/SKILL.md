@@ -30,34 +30,36 @@ Do NOT invoke for:
    and help you take the first concrete action. Sound good?" Wait for yes/no.
 
 2. **The four layers, one line each:**
-   - `CLAUDE.md` — project context loaded every session. Empty template; needs one paragraph
+   - `.cairn/CLAUDE.md` — cairn's context sections, pulled into every session by the one
+     import line in your project's `CLAUDE.md`/`AGENTS.md`. Needs one paragraph
      describing what this work effort is.
-   - `LAWS.md` — your non-negotiables. Ships with 6 domain-agnostic seed laws + a template.
-     Add your own as you hit "never again" moments.
-   - `MEMORY.md` — persistent cross-session memory index. Grows over time as the agent
-     learns about you, your projects, and your preferences. Starts empty.
-   - `skills/` — reusable capabilities organized into four categories: maintenance
-     (`reflect`, `plan`, `prune`, `audit`, `tour`, `feedback`), collaboration (`reframe`,
-     `bridge`, `advocate`), cross-perspective (`resume`, `peer-review`,
-     `session-distill`), and artifact (`note`, `spec`, `program`, `round-review`,
-     `prompt-evolve`). See `files/skills/README.md` for the taxonomy. Add your own
-     by dropping a `<name>/SKILL.md` subdirectory here.
+   - `.cairn/LAWS.md` — your non-negotiables. Ships with 7 domain-agnostic seed laws + a
+     template. Add your own as you hit "never again" moments.
+   - `.cairn/memory/MEMORY.md` — persistent cross-session memory index. Grows over time
+     as the agent learns about you, your projects, and your preferences. Starts empty.
+   - **Skills** — installed via your harness's cairn package (not files in the project),
+     invoked as `/name`. Four categories: maintenance (`reflect`, `plan`, `prune`,
+     `audit`, `tour`, `feedback`), collaboration (`reframe`, `bridge`, `advocate`),
+     cross-perspective (`peer-review`, `session-distill`), and artifact
+     (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`,
+     `lra`). The skills README that ships with the package covers the taxonomy.
 
-3. **Pick the highest-leverage first action.** Usually: fill in `CLAUDE.md`'s "What this is"
-   section. One paragraph. The agent reads this every session, so spending 60 seconds here
-   compounds across every future conversation.
+3. **Pick the highest-leverage first action.** Usually: fill in `.cairn/CLAUDE.md`'s
+   "What this is" section. One paragraph. The agent reads this every session, so spending
+   60 seconds here compounds across every future conversation.
 
-4. **Offer to help right now.** "Want me to ask you a few questions and draft CLAUDE.md
-   based on your answers? Or would you rather write it yourself?" Either path is fine.
-   Don't push.
+4. **Offer to help right now.** "Want me to ask you a few questions and draft
+   `.cairn/CLAUDE.md` based on your answers? Or would you rather write it yourself?"
+   Either path is fine. Don't push.
 
-5. **Point to the next step.** After CLAUDE.md is drafted:
-   - "Skim LAWS.md. The 6 seed laws apply broadly — read them and decide which to keep,
-     edit, or delete. Add one domain-specific law of your own."
+5. **Point to the next step.** After `.cairn/CLAUDE.md` is drafted:
+   - "Skim `.cairn/LAWS.md`. The 7 seed laws apply broadly — read them and decide which
+     to keep, edit, or delete. Add one domain-specific law of your own."
    - "Memory will grow on its own as we work together. You don't need to populate it now."
    - "When this session ends, say `reflect` — I'll propose memory entries and write a
-     `HANDOFF.md`. Next session, say `resume` and the agent picks up where we stopped.
-     Reflect ↔ resume is cairn's session-loop ritual; it's how persistence stays alive."
+     `HANDOFF.md`. Next session, the agent reads `HANDOFF.md` and picks up where we
+     stopped. Reflect → HANDOFF → read-at-start is cairn's session-loop ritual; it's
+     how persistence stays alive."
 
 ## Output
 

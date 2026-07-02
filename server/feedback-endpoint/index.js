@@ -39,10 +39,31 @@ setInterval(() => {
   }
 }, 60_000).unref();
 
+// Cloud Run's front end APPENDS the real connecting IP as the last
+// X-Forwarded-For element; everything left of it is client-supplied and
+// spoofable. Keying the rate limit on the leftmost element would hand every
+// request a fresh bucket.
 function clientIp(req) {
   const forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string') return forwarded.split(',')[0].trim();
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    const parts = forwarded.split(',');
+    return parts[parts.length - 1].trim();
+  }
   return req.ip || 'unknown';
+}
+
+// Backstop for per-IP limit evasion (botnets, instance fan-out): a global
+// per-instance ceiling on issues filed per hour.
+const GLOBAL_LIMIT_WINDOW_MS = 60 * 60_000;
+const GLOBAL_LIMIT_MAX = 30;
+let globalBucket = [];
+
+function globalLimit() {
+  const now = Date.now();
+  globalBucket = globalBucket.filter((t) => now - t < GLOBAL_LIMIT_WINDOW_MS);
+  if (globalBucket.length >= GLOBAL_LIMIT_MAX) return false;
+  globalBucket.push(now);
+  return true;
 }
 
 const app = express();
@@ -66,6 +87,13 @@ app.post('/feedback', async (req, res) => {
     return res.status(429).json({
       error: 'rate_limited',
       retry_strategy: 'wait 60 seconds, then retry; or use paste fallback to file the issue manually',
+    });
+  }
+
+  if (!globalLimit()) {
+    return res.status(429).json({
+      error: 'rate_limited_global',
+      retry_strategy: 'endpoint is at capacity; use the gh CLI or paste fallback to file the issue manually',
     });
   }
 
@@ -103,6 +131,13 @@ app.post('/feedback', async (req, res) => {
     return res.status(400).json({
       error: 'body_too_long',
       retry_strategy: 'body must be 20000 characters or fewer',
+    });
+  }
+
+  if (context && String(context).length > 20_000) {
+    return res.status(400).json({
+      error: 'context_too_long',
+      retry_strategy: 'context must be 20000 characters or fewer',
     });
   }
 

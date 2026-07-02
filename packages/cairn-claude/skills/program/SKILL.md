@@ -59,7 +59,7 @@ be a program rather than a single spec.
 | Output | One markdown file: `docs/specs/SPEC_<NAME>.md` | One master + N child files: `SPEC_<NAME>_00_PROGRAM.md` + `SPEC_<NAME>_<NN>_<TOPIC>.md` |
 | Use when | Single executable plan, one executor | Multi-workstream, parallel executor teams, cross-cutting concerns |
 | Decomposition | Phases within one file | Workstreams as separate child files, coordinated by the master |
-| Deferral discipline | Implicit | Explicit `§3 Resolved Design Decisions (no deferrals)` + budget + WHEN-named stubs |
+| Deferral discipline | Implicit | Explicit: `§3` resolves everything; overflow only as scheduled deferrals |
 | Cross-cutting coverage | Implicit | Project-tailored axes pass at Gate A |
 | State tracking | None | §9 status table embedded in the master |
 
@@ -215,8 +215,15 @@ includes:
    editing a shared worktree corrupt the index.
 2. Contracts freeze before fan-out — Wave 0 publishes the cross-child contracts that
    Wave 1 builds against.
-3. Per-workstream loop: spec → code → cold peer-review → revise → re-review until the
-   reviewer (a fresh agent that did NOT author the code) signs off.
+3. Per-workstream loop: spec → code → **adversarial verification** → revise →
+   re-verify until clean. The verification is a cold `/peer-review` or a
+   parallel-verifier workflow (several skeptics on distinct concern axes — security,
+   spec-impl drift, error paths, defensive access — plus one completeness critic),
+   by agents that did NOT author the code. Findings triage three ways: ship-blocking →
+   fix before ship; spec-drift → reconcile the spec; subtle → park in the master's
+   OPEN QUESTIONS section. Empirical basis (lra): 7 of 7 application workstreams
+   had a ship-blocking bug only this pass caught. Cosmetic-only workstreams may
+   skip it — name the skip and why in the commit message.
 4. Integration serialized through main context. Worktrees merge one at a time, not in
    parallel.
 5. Coordination stays in main context. The master doc + the §9 status table are the
@@ -239,8 +246,9 @@ non-negotiable. Every open question gets a resolution row:
 
 The section closes with: *"Executors do NOT need to revisit any of these."*
 
-**Deferral budget (hard cap, default ≤ 5).** If a decision genuinely must wait, it
-appears as a deferral row WITH:
+**Scheduled deferral — the ONLY legal deferral form (hard cap, default ≤ 5).** This
+is the canonical definition; everywhere else in this skill "scheduled deferral" means
+exactly this. If a decision genuinely must wait, it appears as a deferral row WITH:
 
 - WHEN it gets done — name a round (R2, R3) or version (v0.X) or trigger ("after
   workstream NN lands"). "Eventually" is not a value.
@@ -248,8 +256,8 @@ appears as a deferral row WITH:
   fan-out. Deferral becomes scheduling, not vanishing.
 - Approval from the user — "is this OK to defer, or should it be in this round?"
 
-If the count of deferral rows would exceed the cap, escalate to the user before
-drafting them. Forcing prioritization beats accumulating debt.
+If the count would exceed the cap, escalate to the user before drafting.
+Forcing prioritization beats accumulating debt.
 
 ### 6. Hard contract / Risks / DoD / Architectural rationale
 
@@ -265,7 +273,10 @@ Round out the master with the remaining required sections:
   section only if no hard contract applies (rare).
 - **§5 Program-level Definition of Done** — numbered list. Each criterion is concrete
   and verifiable (a grep, a test name, a passing CI step). Include rows for: doc
-  updates, memory updates, MCP tool / agent surface (if applicable), CI gate. The DoD
+  updates, memory updates, MCP tool / agent surface (if applicable), CI gate, **and
+  a verification row: every substantive workstream passed adversarial verification
+  (cold peer-review or parallel-verifier workflow) with ship-blocking findings
+  closed — exemptions named per workstream.** The DoD
   is what makes the program reviewable as a whole, not just child-by-child.
 - **§6 Risks** — table with a **Child column** assigning each risk to the workstream
   that owns its mitigation. No homeless risks.
@@ -333,7 +344,7 @@ For each workstream entry in §9.1 (the workstream registry), write a stub child
 
 ---
 
-Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md`. The elaborating session reads the master at §2 (contract surfaces), §3 (resolved decisions), §9.3 (parallel-execution protocol), and the workstream's §9.1 entry for this phase before drafting.
+Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md`. The elaborating session reads the master's CONTRACT SURFACES, RESOLVED DESIGN DECISIONS, and Parallel-execution protocol sections plus this workstream's registry entry before drafting — **match sections by TITLE, not §-number** (programs insert sections; numbers shift).
 ```
 
 Stubs are hand-off-ready: an executor can claim the row in §9, read the master + stub,
@@ -379,7 +390,7 @@ Tell the user:
 - Master saved to `docs/specs/SPEC_<NAME>_00_PROGRAM.md`.
 - N stub files written: `SPEC_<NAME>_01_<TOPIC>.md` through `SPEC_<NAME>_<NN>_<TOPIC>.md`.
 - (If `--from`) Source spec moved to `docs/specs/_promoted/<original>.md`.
-- §3 deferral budget: K deferrals filed, each with named WHEN and stub.
+- §3: decisions resolved + scheduled-deferral count (each has its WHEN and stub).
 - §9 status table: K workstreams OPEN, ready for executor claims.
 - Next move: *"Claim workstreams from §9. For each one, either execute directly (if
   mechanical) or `/spec --from docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md` to elaborate
@@ -398,7 +409,7 @@ program. Three templates the skill explicitly endorses. All three obey the
 Use when one executor finishes one workstream:
 
 ```markdown
-## [<Phase>.<NN> <Topic>](docs/specs/_archive/SPEC_<NAME>_<NN>_<TOPIC>.md) SHIPPED ✅
+## [<Phase>.<NN> <Topic>](docs/specs/archive/SPEC_<NAME>_<NN>_<TOPIC>.md) SHIPPED ✅
 
 | Commit | What |
 |---|---|
@@ -429,10 +440,10 @@ Use when the user asks "where are we" or "list status." Group by **lifecycle pha
 ```markdown
 ## <Program name> state
 
-### Shipped (in `docs/specs/_archive/`)
+### Shipped (in `docs/specs/archive/`)
 | Spec | What | Commit |
 |---|---|---|
-| [<Phase>.<NN> <Topic>](docs/specs/_archive/SPEC_..._NN_TOPIC.md) | <one-line> | `<hash>` |
+| [<Phase>.<NN> <Topic>](docs/specs/archive/SPEC_..._NN_TOPIC.md) | <one-line> | `<hash>` |
 
 ### Partially shipped (specs still live)
 | Spec | Status |
@@ -478,8 +489,12 @@ file.
 
 ## Required sections in the program master (the spec)
 
-The master MUST contain these sections in this order. Section names are normative —
-agents and reviewers grep for them.
+The master MUST contain these sections in this order. **Section TITLES are the
+identity; §-numbers are display-order only.** Real programs insert project-specific
+sections (a conceptual model, a domain DDL) and every number after the insertion
+shifts — lra's shipped masters have contracts at §3 and DoD at §6. Any skill, stub,
+or review that references a master section does it by TITLE. Section names are
+normative — agents and reviewers grep for them.
 
 | § | Section | Purpose |
 |---|---|---|
@@ -495,6 +510,7 @@ agents and reviewers grep for them.
 | 9 | PARALLELIZATION GRAPH + STATUS TABLE | Container for all parallel-execution structure. Sub-sections — §9.1 Workstream registry (the workstream list, with Goal/Scope/Depends-on/Parallel-safe-with/Files/Gate/Telemetry-hook/Diagnostics-path/Rollback-story per entry); §9.2 Dependency DAG (ASCII or markdown graph + wave grouping); §9.3 Parallel-execution protocol (worktree isolation, contract freeze, per-workstream peer-review loop, serialized integration, programmatic counts); §9.4 Status table (the orchestration state file — claim / complete / blocked per row). |
 | 10 | FIRST-ACTION CHECKLIST | Concrete numbered steps for the first executor |
 | 11 | ARCHITECTURAL RATIONALE FOR THE PROGRAM SHAPE | Why this is a program, not a single spec |
+| 12 | OPEN QUESTIONS | Parking spot for non-blocking items only — verifier findings triaged "subtle" and questions that surfaced post-decision. One dated line each. Anything that blocks a workstream is a §3 resolution row or a scheduled deferral (Step 5), never an open question. |
 
 `§4` and `§8` are project-tailored — keep them when they apply, replace with another
 hard-contract section if a different concern is load-bearing, drop only if neither
@@ -552,9 +568,8 @@ what the master absorbed and from which pass.
 These are operating defaults for `/program`. The user does not need to re-type them per
 session:
 
-- **No deferrals** — Section `§3` is literally titled "Resolved Design Decisions (no
-  deferrals)." Every open question gets a resolution. Hard cap on deferrals (≤ 5
-  default) forces prioritization.
+- **No deferrals** — every open question gets a `§3` resolution row or a scheduled
+  deferral (Step 5). Silence is the only banned outcome.
 - **User-experience anchoring** — When the work has a user-facing surface, the primary
   headline metric of `§1` is user-experience anchored ("time to stable frame rate",
   "p95 user-perceived latency", "successful onboarding completion"), not
@@ -564,8 +579,7 @@ session:
   rollback/migration framing throughout. Pre-production unlocks clean-slate solutions;
   production forces compat thinking.
 - **Complete enumeration** — All phases drafted up front. No "we'll see what comes up
-  after Phase 1." If something is genuinely unknown, that's `§3.deferrals` with a
-  named round, not silence.
+  after Phase 1." A genuine unknown becomes a scheduled deferral, not silence.
 - **Parallel-team default** — Assume executor teams will work in parallel unless the
   user says otherwise. §9.3 protocol assumes worktree isolation; §9.4 status table
   assumes multiple owners.
@@ -616,7 +630,7 @@ session:
   shipped reports, "what unblocks what" listings, execute lists, conversation replies)
   is a markdown link to the spec file's current path. No bare `P1.04` or
   `SPEC_X_NN_TOPIC` references. Use relative paths from repo root: `docs/specs/...`
-  for live specs, the project's archive directory (e.g. `docs/specs/_archive/...` or
+  for live specs, the project's archive directory (e.g. `docs/specs/archive/...` or
   `docs/planning/archive/...`) for shipped specs after lifecycle move. Apply the same
   discipline to commit hashes when a remote URL is available. The user should never
   have to ask "where's that spec?" — the link IS the answer. This is load-bearing for
@@ -648,7 +662,7 @@ A confirmation under ~200 words listing:
 - Program master path
 - Stub file count and paths
 - (If `--from`) breadcrumb move confirmation
-- §3 deferral count + WHEN-distribution
+- §3 counts (resolved + scheduled deferrals, per Step 10's report line)
 - §9 OPEN-row count, next-action prompt
 
 ## Companion skills
@@ -659,9 +673,9 @@ A confirmation under ~200 words listing:
 - `/peer-review` — the review verb Gate B and the absorption loop (Step 9) call.
   `/program` doesn't invoke it directly; it recommends the user run it after the
   master + stubs are committed.
-- `/note` — when a peer-review surfaces deferred items that genuinely don't belong in
-  this program, file them as notes so they don't evaporate. Different from `§3.deferrals`
-  (which are *scheduled* deferrals owned by a future round); notes are intent capture
-  for unrelated work.
+- `/note` — when a peer-review surfaces items that genuinely don't belong in this
+  program, file them as notes so they don't evaporate. Distinct from scheduled
+  deferrals (owned by a future round of THIS program); notes are intent capture for
+  unrelated work.
 - `/plan` — pre-action behavioral alignment. Different verb, different output. `/plan`
   happens before user approval; `/program` happens after.

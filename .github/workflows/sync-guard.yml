@@ -8,6 +8,16 @@
 # machine-register bloat (importance/coaching/optionality/negation-stack > 0) per the
 # prompt-economy gate [LAW prompt-economy] [LAW gate-beats-instruction].
 #
+# Also enforces:
+#   - [LAW handoff-stays-current]: a change set that touches VERSION must touch
+#     HANDOFF.md and HANDOFF.md must mention the new version (release-guard job).
+#   - [LAW own-your-namespace]: no skill may take the name of a known vendor
+#     built-in command (scripts/check-namespace.mjs).
+#
+# No path filters: every push/PR runs every gate. The checks cost seconds, and
+# path-filtering was exactly how doc-only release PRs (HANDOFF/README/adopt.md)
+# shipped drift with green CI.
+#
 # Gate: required status check on PRs to main per the program's §8 operational policy.
 
 name: sync-guard
@@ -15,29 +25,7 @@ name: sync-guard
 on:
   push:
     branches: [main]
-    paths:
-      - "files/skills/**"
-      - "packages/*/skills/**"
-      - "packages/*/package.json"
-      - "packages/*/plugin.json"
-      - "packages/*/.claude-plugin/plugin.json"
-      - "packages/*/sync-config.json"
-      - "scripts/sync-skills.mjs"
-      - "scripts/check-skill-budgets.mjs"
-      - "scripts/check-prompt-register.mjs"
-      - "VERSION"
   pull_request:
-    paths:
-      - "files/skills/**"
-      - "packages/*/skills/**"
-      - "packages/*/package.json"
-      - "packages/*/plugin.json"
-      - "packages/*/.claude-plugin/plugin.json"
-      - "packages/*/sync-config.json"
-      - "scripts/sync-skills.mjs"
-      - "scripts/check-skill-budgets.mjs"
-      - "scripts/check-prompt-register.mjs"
-      - "VERSION"
 
 jobs:
   check:
@@ -52,8 +40,55 @@ jobs:
       - name: Check machine-register (prompt-economy gate, full source set)
         run: node scripts/check-prompt-register.mjs
 
+      - name: Check skill names against vendor-builtin collisions
+        run: node scripts/check-namespace.mjs
+
       - name: Check cairn-pi skills in sync
         run: node scripts/sync-skills.mjs --pkg packages/cairn-pi --check
 
       - name: Check cairn-claude skills in sync
         run: node scripts/sync-skills.mjs --pkg packages/cairn-claude --check
+
+      - name: Check cairn-agy skills in sync
+        run: node scripts/sync-skills.mjs --pkg packages/cairn-agy --check
+
+  release-guard:
+    name: Release guard (VERSION ⇒ HANDOFF.md, per [LAW handoff-stays-current])
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: VERSION change requires HANDOFF.md update in the same change set
+        run: |
+          set -eu
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            git fetch origin "${GITHUB_BASE_REF}" >/dev/null 2>&1 || true
+            RANGE="origin/${GITHUB_BASE_REF}...HEAD"
+          else
+            BEFORE="${GITHUB_EVENT_BEFORE:-}"
+            case "$BEFORE" in
+              ""|0000000000000000000000000000000000000000) RANGE="HEAD~1..HEAD" ;;
+              *) RANGE="${BEFORE}..${GITHUB_SHA}" ;;
+            esac
+          fi
+          CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || git diff --name-only HEAD~1..HEAD)
+          if printf '%s\n' "$CHANGED" | grep -qx "VERSION"; then
+            echo "VERSION changed — enforcing HANDOFF.md coupling per [LAW handoff-stays-current]"
+            printf '%s\n' "$CHANGED" | grep -qx "HANDOFF.md" || {
+              echo "FAIL: VERSION changed but HANDOFF.md did not."
+              echo "[LAW handoff-stays-current]: bundle the HANDOFF.md update into the same change set as VERSION."
+              exit 1
+            }
+            V=$(tr -d '[:space:]' < VERSION)
+            grep -q "$V" HANDOFF.md || {
+              echo "FAIL: HANDOFF.md does not mention version $V."
+              exit 1
+            }
+            echo "OK: VERSION=$V and HANDOFF.md move together."
+          else
+            echo "VERSION unchanged — no coupling required."
+          fi
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}

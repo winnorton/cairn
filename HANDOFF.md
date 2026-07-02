@@ -10,26 +10,27 @@ unless explicitly preserved.
 > [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
 > in this repo, AGENTS.md is the orientation you want before anything else.
 
-> **Recommended entry point for prior-session inheritance:** invoke `/resume` (cairn
-> v0.10.1+) at session start. The skill probes HANDOFF.md, memory at multiple project
-> slugs (worktree-aware AND any `## Related memory paths` declared below), transcript
-> junctions, and recent git activity, then synthesizes orientation. If `/resume` isn't
-> available in your habitat, read this file directly and follow the manual paths below.
+> **Entry point for prior-session inheritance:** read this file directly at session
+> start, then probe memory at the project slugs declared under `## Related memory
+> paths` below and recent git activity, and synthesize orientation from those.
+> (The `/resume` skill that automated this probe was removed 2026-07-01 — unused by
+> the maintainer, and its name collided with Claude Code's built-in `/resume`. The
+> manual paths below are canonical.)
 
 ## Related memory paths
 
 After the v0.10.2 slug-policy migration, cairn-native memory lives at **cairn's own
-slug** and the cwar slug retains cross-cutting + cwar-native entries. Both are reachable
-to a `/resume` in cairn's worktree:
+slug** and the cwar slug retains cross-cutting + cwar-native entries. Both are worth
+probing when orienting in cairn's worktree:
 
 - `~/.claude/projects/C--Users-winno-projects-cairn/memory/` — **cairn slug.**
-  Auto-loaded by `/resume` when running in cairn's worktree (it's the local slug).
-  Holds cairn-native memory: project state and feedback specific to cairn's own
-  development, plus references to cairn artifacts. `/resume` probes for current
-  contents — exact entry list shifts with each reflection cycle.
+  The local slug for sessions in cairn's worktree. Holds cairn-native memory:
+  project state and feedback specific to cairn's own development, plus references
+  to cairn artifacts. Probe for current contents — exact entry list shifts with
+  each reflection cycle.
 
 - `~/.claude/projects/C--Users-winno-projects-cwar-cwar-engine/memory/` — **cwar slug.**
-  `/resume` finds these via this pointer. Holds cross-cutting feedback
+  Reachable via this pointer. Holds cross-cutting feedback
   (collaboration style, agent-behavior rules) that applies across both projects,
   plus cwar-engine-specific project and reference entries. Relevant when cairn
   work intersects cwar (re-adoption, cross-project patterns).
@@ -46,12 +47,50 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.14.0 — **cairn ownership migration**, shipped 2026-06-14 (merged `62a0b68`, tag `v0.14.0`, pushed to `origin/main`). State moved out of vendor namespaces into a cairn-owned `<project>/.cairn/`; skills ship as cairn-named packages the vendor's own installer places — **all 3 harnesses validated end-to-end**: the `cairn` Claude Code plugin (`claude plugin marketplace add winnorton/cairn` + `claude plugin install cairn@cairn`), `@winnorton/cairn-pi` (npm), and `packages/cairn-agy` native agy plugin (`agy plugin install github:winnorton/cairn//packages/cairn-agy@main`). `adopt.md` does ZERO agent writes to vendor dirs; the only vendor-file touch is one user-written `@./.cairn/CLAUDE.md` import line. Non-destructive v0.13.x→.cairn migration + install-integrity check + committed fixture; shared `scripts/sync-skills.mjs` guard + CI. `[LAW own-your-namespace]` codified (11th dev law). Authored via `/program → /spec → code` with maximal fan-out + fresh-agent review at every gate (program review ×2, spec review ×2, a comprehensive pre-merge review that caught a real fixture-reproducibility blocker). Program master: [`docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md). Open follow-ups: a `.gitattributes` to stop a local-Windows CRLF false-flag on the sync-guard; optional `npm publish` of cairn-pi 0.14.0.
+- **Latest release:** v0.14.0 — **cairn ownership migration**, shipped 2026-06-14 (merged `62a0b68`, tag `v0.14.0`, pushed to `origin/main`). State moved out of vendor namespaces into a cairn-owned `<project>/.cairn/`; skills ship as cairn-named packages the vendor's own installer places — **all 3 harnesses validated end-to-end**: the `cairn` Claude Code plugin (`claude plugin marketplace add winnorton/cairn` + `claude plugin install cairn@cairn`), `@winnorton/cairn-pi` (npm), and `packages/cairn-agy` native agy plugin (`agy plugin install github:winnorton/cairn//packages/cairn-agy@main`). `adopt.md` does ZERO agent writes to vendor dirs; the only vendor-file touch is one user-written `@./.cairn/CLAUDE.md` import line. Non-destructive v0.13.x→.cairn migration + install-integrity check + committed fixture; shared `scripts/sync-skills.mjs` guard + CI. `[LAW own-your-namespace]` codified (11th dev law). Authored via `/program → /spec → code` with maximal fan-out + fresh-agent review at every gate (program review ×2, spec review ×2, a comprehensive pre-merge review that caught a real fixture-reproducibility blocker). Program master: [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) (archived post-ship per folder-as-status). Open follow-ups: a `.gitattributes` to stop a local-Windows CRLF false-flag on the sync-guard; optional `npm publish` of cairn-pi 0.14.0.
 - **Previous release:** v0.13.1 (Renames the `/review` skill to `/peer-review` to disambiguate from Claude Code's built-in `/review` skill. The bare `/review` was being silently shadowed for any cairn adopter on Claude Code — the cairn skill never fired. Updates: skill subdirectory rename (`files/skills/review/` → `files/skills/peer-review/`), frontmatter `name:` field, manifest src/dest paths, install preview, citations across LAWS.md / HANDOFF.md / README. New migration section in `adopt.md`: re-adopters from v0.12.1+ get prompted by the agent during re-adoption to remove the legacy `~/.claude/skills/review/SKILL.md` file. Posture going forward per `[MEM project/cairn-blend-strategy-pillars]`: vendor namespace collisions are real; cairn claims distinct namespace per skill.)
 - **Earlier:** v0.13.0 (Slug-only law identity — drops Law N numbering. Completes the v0.9.0 slug migration; numeric prefixes in law headings removed, slug becomes the only identity, collection size moves to section headers. Meta-rule 2 rewritten as "Slug is identity, count is metadata." Plus connects the reflect↔resume loop in user-facing docs — README's new "Cross-session continuity" section, tour Step 5 names both verbs, `files/skills/README.md` Skill pairings. Migration note in `adopt.md` for re-adopters with `[LAW N]` citations.)
 - **Earlier:** v0.12.3 (Doc patch — fixed v0.12.x consistency gaps that fresh `/peer-review` caught). v0.12.2 (install-report version strings). v0.12.1 (skill format migration to canonical subdir form + `/peer-review` skill + folder-as-state for `plans/`). v0.12.0 (`/note` + `/spec` artifact-creation skills). v0.11.3 (ephemeral-sandbox pre-flight in adopt.md).
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
+
+## Interim work since v0.14.0 (STAGED — not released; peer-review DONE, no blockers)
+
+Two changes staged in the working tree, kept here per `[LAW handoff-stays-current]`. **VERSION held at 0.14.0** (package lockstep green). A fresh-agent `/peer-review` (`[LAW pre-merge-review]`) ran and returned **no blockers**; 4 findings absorbed — 3 doc/preview-consistency fixes (adopt.md install-preview + install-loop now name `overwrite`-mode behavior; the cross-repo doc's stale "remaining wiring" section rewritten) + 1 pre-existing NIT (added the missing `cairn-agy` step to the sync-guard CI). Remaining gates before ship: a version bump (+ lockstep + README `## Status`) and publish.
+
+- **New skill: `lra`** — a `prompt-evolve` specialization (the lra researcher/librarian prompts ARE prompt-evolve instances; lra is its 3rd worked example after fishing-agent + purduebb, and the source of cwar's `[LAW prompt-economy]`). Runs the lra research→library→application pipeline engine-free as project-local markdown an agent walks, via lra commands (`subject create` / `collection create` / `research run` / `app serve`). Wired: `files/skills/lra/SKILL.md`; 3 verbatim prompt masters + `PROVENANCE.md` delivered to `.cairn/context/lra/` (reserved `context/` dir per `§2.1`) with a **new `mode: overwrite`** — a cairn-owned refresh mode (added to the manifest modes block + adopt.md re-adoption Case 3) so the masters track upstream on re-adopt instead of going stale under `create-if-absent`; Artifact-category entries in AGENTS.md (count 18→19) + `files/skills/README.md`; enrolled in cairn-claude + cairn-agy `sync-config` (**not** cairn-pi — outside its authoring-loop curation), synced, sync-guard green. The two prompts are **byte-verbatim from the lra lab** (`engine/templates/`, commit `7ea2050`) — the researcher is immutable there; this pack delivers/runs them, never edits them. Cross-repo link doc `docs/CROSS_REPO_LRA_CAIRN.md` in **both** repos; provenance + md5 + re-sync protocol in `PROVENANCE.md`.
+- **New gate: `scripts/check-skill-budgets.mjs`** (wired into `.github/workflows/sync-guard.yml`) — budgets **every** skill in `files/skills/` against Pi's 1024-char `description` cap, independent of package enrollment (the prior `sync-skills --check` only caps enrolled skills, so a not-yet-enrolled source skill escaped). Hard-fails over 1024, warns ≥900. Run the script for current numbers (five near-cap as of 2026-07-01: fast-execute, round-review, peer-review, prompt-evolve, session-distill — all pass). The Pi load errors that prompted this were **stale installs** (cairn source had already trimmed the over-cap descriptions); a re-sync clears them.
+- **Comprehensive cold review + fixes** (2026-07-01) — external-auditor review at
+  `docs/reviews/REVIEW_CAIRN_COMPREHENSIVE_2026-07-01.md` (2 BLOCKERs, 11 MAJORs).
+  All fixable findings fixed in this change set: the missing `files/.cairn/CLAUDE.md`
+  manifest entry (installs were writing an import line to a file that never landed),
+  feedback-endpoint rate-limit XFF spoof + sanitizer hardening + lockfile, the
+  `agy plugin import claude` purge (5 surfaces), Pi delivery contract honesty
+  (manifest promised 19 skills, package ships 6), version/count staleness sweep,
+  shipped-spec archival (25 specs → `docs/specs/archive/` per folder-as-status),
+  fast-execute desc/body reconciliation, tour rewrite for the `.cairn/` layout,
+  `/feedback` pre-send consent gate, v0.13.x migration-trigger fix in adopt.md,
+  and two new mechanical gates: a release-guard CI job (VERSION ⇒ HANDOFF coupling,
+  per `[LAW handoff-stays-current]`) + `scripts/check-namespace.mjs`
+  (per `[LAW own-your-namespace]`). CI path filters removed — every push runs every gate.
+- **`/spec` + `/program` upgraded from lra field practice** (2026-07-01) — lra
+  (`..\lra`, the heaviest real user) evolved conventions the skills now carry:
+  master sections matched by TITLE not §-number (lra's masters shift the numbering),
+  a second `/spec` lifecycle (contract specs — permanent source of truth, 3-pass
+  evidence-bearing status, spec-updates-before-code, never archived) alongside
+  execution specs, adversarial verification baked into the ship gate (lra evidence:
+  7/7 workstreams had a ship-blocking bug only that pass caught), `§ OPEN QUESTIONS`
+  as the canonical non-blocking parking spot, and `/round-review`'s three-way triage
+  (ship-blocking / spec-drift / subtle). `/program`'s deferral discipline consolidated
+  to one canonical definition ("scheduled deferral", Step 5) per `[LAW prompt-economy]`.
+- **Skill removed: `resume`** (2026-07-01) — the maintainer doesn't use it, and its
+  name collided with Claude Code's built-in `/resume` (comprehensive-review finding
+  MAJOR-9; the collision class that forced the v0.13.1 `/review` → `/peer-review`
+  rename). Skill count 19 → 18. Removed from `files/skills/`, manifest, both
+  sync-configs, both package copies, and all catalogs; HANDOFF's entry-point guidance
+  now points at reading this file directly. Re-adopters keep any local copy per
+  re-adoption Case 2 ("no longer part of cairn — your local copy is preserved").
+- **Resolved 2026-07-01:** `files/skills/machineprogram/` + `machinespec/` (committed at `1b4579c`, never enrolled in manifest/catalogs/packages) were a maintainer test, not a skill promotion — deletion confirmed by the maintainer and committed with rationale. No 3-instance evidence existed; the comprehensive review (docs/reviews/REVIEW_CAIRN_COMPREHENSIVE_2026-07-01.md, MAJOR-10) flagged the churn as the observation gate being bypassed.
 
 ## HIVE_CONTEXT_SESSIONS program — shipped 2026-06-13
 
@@ -63,7 +102,7 @@ the `normalizeAuto` / adapter / redaction pipeline, and extends `session_distill
 an `envelope_path` branch that writes compounding findings to the ledger. A pre-commit
 hook in `cairn-sessions/.githooks/pre-commit` blocks staging any secret-shaped content.
 CI: `npm run validate-corpus` + `node test/*.mjs` + `.github/workflows/ci.yml`.
-Program master: `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md`.
+Program master: `docs/specs/archive/SPEC_HIVE_CONTEXT_SESSIONS_00_PROGRAM.md` (archived post-ship).
 
 ## Interim work since v0.13.1 (post-release, pre-v0.14.0)
 
@@ -85,7 +124,7 @@ this was tagged at the time of writing — it has since shipped inside **v0.14.0
   (premise: `agents/` directory, forced by a 2026-05 sandbox restriction) was
   superseded and retired to `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`. Replaced
   by program
-  [`SPEC_CAIRN_OWNERSHIP_00_PROGRAM`](docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
+  [`SPEC_CAIRN_OWNERSHIP_00_PROGRAM`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
   (12 workstreams). Governing law: `[LAW own-your-namespace]`. State moves to
   `<project>/.cairn/`; skills distribute as cairn-named packages. Read the program
   master before touching `manifest.json`, `adopt.md`, or path conventions.
@@ -175,10 +214,10 @@ this was tagged at the time of writing — it has since shipped inside **v0.14.0
   agent read the whole transcript end-to-end, including a section the manual
   review had skipped.
 - **Foundational session committed to `docs/origin/` + distillate-pipe gate-watch
-  note** (commit `95da3b7`, 2026-06-09). The 9MB / 2287-line / ~9h cairn build
-  session (`748aff00-...jsonl`, 2026-04-24/25, the corpus the research papers
-  were written from) is now in `docs/origin/` for future `/session-distill`
-  runs. Redacted in-place via sed: 7 occurrences of a dead GitHub PAT replaced
+  note** (commit `95da3b7`, 2026-06-09; the transcript has since moved to
+  `docs/study_sessions/cairn_origin_748aff00-...jsonl`). The 9MB / 2287-line /
+  ~9h cairn build session (2026-04-24/25, the corpus the research papers
+  were written from) is committed for future `/session-distill` runs. Redacted in-place via sed: 7 occurrences of a dead GitHub PAT replaced
   with `<github_pat_REDACTED>`. JSONL integrity verified (all 2287 lines parse
   as valid JSON). Plus `docs/notes/NOTE_DISTILLATE_PIPE_CANDIDATE_2026-06-09.md`
   — 1/3 gate-watch on the L1700 "repurpose-shared-endpoint-as-message-bus"
@@ -258,10 +297,10 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
    session's JSONL transcript in `~/.claude/projects/`. Used as a research corpus
    for the human-interaction-patterns and collaboration-skills essays.
 2. The handoff mechanism was validated post-v0.10.1 per
-   `[MEM project/session_handoff_link_test]` and codified in the `/resume` skill,
-   which is the canonical way to load this file's context in a fresh session.
+   `[MEM project/session_handoff_link_test]` and was codified in the `/resume`
+   skill until that skill's removal on 2026-07-01. Reading this file directly is
+   now the canonical way to load its context in a fresh session.
 3. HANDOFF.md is the durable fallback if transcript ingestion isn't available.
-   `/resume` reads both.
 
 ## Things I (the builder agent) would do differently
 
@@ -285,7 +324,7 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 - **Check `gh issue list --repo winnorton/cairn --state open`** for the current
   untrimmed backlog.
 - **If the next topic is v0.14.0**, read the program master at
-  `docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` (12 workstreams, 0 deferrals)
+  `docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md` (12 workstreams, 0 deferrals)
   and the program §9.4 status table for current execution state. The old umbrella
   draft is retired at `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`.
 - **If the next topic is cwar-engine adoption**, read `plans/archive/v0.9-law-slugs.md`

@@ -10,8 +10,9 @@ lands on the topline and the AGENTS.md pointer.
 
 Key orientation pointers (all detailed in AGENTS.md):
 
-- **Latest tag is v0.13.1**; v0.14.0 architectural shift is in-program at
-  [`docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
+- **Latest tag is v0.14.0** — the `.cairn/` ownership migration, shipped 2026-06-14.
+  Program master archived at
+  [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
   — read it before touching `manifest.json`, `adopt.md`, or path conventions.
 - **Design rationale lives in [docs/research/](docs/research/)** — 9 papers explaining
   *why* each architectural choice exists. Consult before adding/changing structure.

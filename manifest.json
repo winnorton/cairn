@@ -11,6 +11,7 @@
       "description": "Root of the current work effort. The anchor for all cairn-state paths.",
       "claude-code": "{cwd}",
       "pi": "{cwd}",
+      "agy": "{cwd}",
       "cowork": "{workspaceRoot}"
     },
     "cairnRoot": {
@@ -20,6 +21,14 @@
   },
 
   "files": [
+    {
+      "src": "files/.cairn/CLAUDE.md",
+      "dest": "{projectRoot}/.cairn/CLAUDE.md",
+      "mode": "create-if-absent",
+      "role": "essential",
+      "tier": "seed",
+      "description": "Cairn context sections — the file the user's one import line (@./.cairn/CLAUDE.md) points at. The habitat is non-functional without it."
+    },
     {
       "src": "files/.cairn/memory/MEMORY.md",
       "dest": "{projectRoot}/.cairn/memory/MEMORY.md",
@@ -41,7 +50,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
@@ -53,7 +61,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
@@ -89,7 +96,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -101,7 +107,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -113,24 +118,11 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
       "tier": "grow",
       "description": "Simulate end-user perspective before shipping — collaboration skill for rotating the observer position from builder to user"
-    },
-    {
-      "src": "files/skills/resume/SKILL.md",
-      "delivery": {
-        "method": "package",
-        "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
-      },
-      "role": "scaffolding",
-      "tier": "grow",
-      "description": "Detect and load context from a previous session — probes HANDOFF.md, memory at multiple slugs, transcript junctions, recent git activity. Defeats namespace fragmentation in session-to-session handoff."
     },
     {
       "src": "files/.cairn/memory/user/README.md",
@@ -165,11 +157,42 @@
       "description": "Reference memory conventions — episodic lookups, cite [MEM reference/<name>]"
     },
     {
+      "src": "files/.cairn/context/lra/PROMPT_RESEARCHER_BOOTSTRAP.md",
+      "dest": "{projectRoot}/.cairn/context/lra/PROMPT_RESEARCHER_BOOTSTRAP.md",
+      "mode": "overwrite",
+      "role": "scaffolding",
+      "tier": "full",
+      "description": "lra researcher prompt — verbatim immutable master synced from the lra lab; the /lra skill copies it into a subject's research/PROMPT.md and fills placeholders. Never edit here (see PROVENANCE.md)."
+    },
+    {
+      "src": "files/.cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md",
+      "dest": "{projectRoot}/.cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md",
+      "mode": "overwrite",
+      "role": "scaffolding",
+      "tier": "full",
+      "description": "lra librarian prompt — verbatim master synced from the lra lab; the /lra skill copies it into a subject's library/PROMPT.md. Never edit here (see PROVENANCE.md)."
+    },
+    {
+      "src": "files/.cairn/context/lra/AGENTS_SUBJECT.md",
+      "dest": "{projectRoot}/.cairn/context/lra/AGENTS_SUBJECT.md",
+      "mode": "overwrite",
+      "role": "scaffolding",
+      "tier": "full",
+      "description": "lra per-subject operating rules (boundaries, source integrity, merge contract) — verbatim master synced from the lra lab; the /lra skill copies it into a subject's AGENTS.md."
+    },
+    {
+      "src": "files/.cairn/context/lra/PROVENANCE.md",
+      "dest": "{projectRoot}/.cairn/context/lra/PROVENANCE.md",
+      "mode": "overwrite",
+      "role": "scaffolding",
+      "tier": "full",
+      "description": "lra prompt provenance — source commit + md5 fingerprints + the lab→cairn re-sync protocol. Records that the masters are verbatim and must not be edited in cairn."
+    },
+    {
       "src": "files/skills/README.md",
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -181,7 +204,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -193,7 +215,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -205,7 +226,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -217,7 +237,6 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "optional",
@@ -234,7 +253,7 @@
       },
       "role": "scaffolding",
       "tier": "grow",
-      "description": "Artifact-creation skill: write a structured agent execution spec (docs/specs/) with phases, steps, checkpoints, executor handoff. For non-trivial code changes that need an executor handoff. Distinct from /plan (behavioral, conversational) and from /note (single-paragraph intent capture)."
+      "description": "Artifact-creation skill: write a structured agent execution spec (docs/specs/) with phases, steps, checkpoints, executor handoff. Two lifecycles: execution specs (dispatch artifact, archived on ship) and contract specs (permanent source of truth — 3-pass verified status, spec updates before code). For non-trivial code changes that need an executor handoff. Distinct from /plan (behavioral, conversational) and from /note (single-paragraph intent capture)."
     },
     {
       "src": "files/skills/program/SKILL.md",
@@ -258,7 +277,7 @@
       },
       "role": "scaffolding",
       "tier": "structure",
-      "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's §5 DoD criterion-by-criterion against the diff, surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
+      "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's Definition-of-Done section criterion-by-criterion against the diff (match sections by title, not §-number), surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
     },
     {
       "src": "files/skills/fast-execute/SKILL.md",
@@ -270,14 +289,13 @@
       },
       "role": "scaffolding",
       "tier": "structure",
-      "description": "Fast-execute verb — turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in docs/specs/, picks up dispatched specs (single specs OR /round-review-produced round masters — single specs are the more common shape), executes per the spec body (branches on structure — round masters use §4 first-action checklist, single specs use Pre-flight + Phases + Post-flight), marks completion via sentinel atomic-flip (.ready → .claimed → .done), and re-arms its timer. Default poll 300s; stop on explicit STOP.signal, 3 consecutive empty polls, malformed inbox, or unelaborated /program stub (.ready → .stub-rejected, planning agent must elaborate via /spec --from first). Path-rejection guards on archive/ and _promoted/. Do NOT use in harnesses without timer primitives (fall back to manual /goal execute <path>) or for true one-shot dispatches where the polling-tail wait exceeds manual-prompt cost."
+      "description": "Fast-execute verb — turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in docs/specs/, picks up dispatched specs (single specs OR /round-review-produced round masters — single specs are the more common shape), executes per the spec body (branches on structure — round masters use §4 first-action checklist, single specs use Pre-flight + Phases + Post-flight), marks completion via sentinel atomic-flip (.ready → .claimed → .done), and re-arms its timer. Default poll 300s; stops on explicit STOP.signal, 3 consecutive empty polls, malformed inbox, or a hard execution block; an unelaborated /program stub is NOT a stop — its sentinel flips .ready → .stub-rejected and polling continues (planning agent elaborates via /spec --from). Path-rejection guards on archive/ and _promoted/. Do NOT use in harnesses without timer primitives (fall back to manual /goal execute <path>) or for true one-shot dispatches where the polling-tail wait exceeds manual-prompt cost."
     },
     {
       "src": "files/skills/prompt-evolve/SKILL.md",
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -285,11 +303,21 @@
       "description": "Prompt-evolve verb: author a self-improving, version-controlled prompt for tough tasks done in many iterative passes over partitions (corpus mining, codebase refactor sweeps, doc backfill, bug triage, audits — any task where work doesn't fit in one execution, partitions are obvious, each pass produces both output AND insight, and the insight would otherwise be lost between passes). Primary mode is `--from <SPEC>` — promotes an evolving-prompt deliverable embedded in a /spec into a standalone artifact at `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report → **Self-Improvement**) with five non-negotiable enforcement items: (1) Phase 6 absolute-path inline as the edit target, (2) CHANGELOG with v1 entry + v2+ format template, (3) empty TOOL-FAILURE FALLBACK MATRIX section ready to grow, (4) Pending Re-run staging in the FINAL REPORT, (5) idempotence statement. The /prompt-evolve artifact is the only skill output that evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass, and the CHANGELOG IS its institutional memory. Promotion semantics differ from /spec --from <note> and /program --from <spec>: the source spec STAYS IN PLACE (the spec covers more than the prompt; only one deliverable is extracted)."
     },
     {
+      "src": "files/skills/lra/SKILL.md",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
+      },
+      "role": "optional",
+      "tier": "full",
+      "description": "lra verb: a prompt-evolve specialization for researching a subject over many passes, run engine-free as project-local markdown an agent walks. Mirrors the lra research→library→application pipeline 1:1 through lra commands (subject create, collection create, research run, app serve), scaffolding a project-local research/ collection and driving two prompts (researcher + librarian) in native-file fallback mode — no MCP, SQLite, or server. The prompts are synced byte-for-byte from the lra lab (the researcher is immutable, ratchet- and bench-pinned there) into .cairn/context/lra/; the skill delivers and runs them, never edits them. lra is prompt-evolve's third worked instance (after fishing-agent and purduebb) and the source of the prompt-economy principle. Not in cairn-pi (outside its authoring-loop curation). See docs/CROSS_REPO_LRA_CAIRN.md."
+    },
+    {
       "src": "files/skills/session-distill/SKILL.md",
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
@@ -307,7 +335,7 @@
   "tiers": {
     "description": "Graduated adoption scope. Default install is 'full' (everything). Users who want a minimal, agent-portable habitat can request a lower tier via `adopt ... --tier <name>`. Each tier is cumulative — grow includes seed, structure includes grow, full includes structure.",
     "seed": "Agent-neutral core: CLAUDE.md + memory/MEMORY.md. Cross-session continuity, works with any agent (Claude, GPT, Gemini, local LLM) that can read markdown. The two-file minimum viable habitat.",
-    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect/note maintenance skills, the collaboration skills (reframe, bridge, advocate), the cross-perspective skills (resume, peer-review). Still reasonably generic — content a non-Claude agent can use with a little orientation.",
+    "grow": "Adds durable conventions any careful agent can follow: LAWS.md schema, plan/reflect/note maintenance skills, the collaboration skills (reframe, bridge, advocate), the cross-perspective skills (peer-review). Still reasonably generic — content a non-Claude agent can use with a little orientation.",
     "structure": "Adds cairn's native hygiene loop: typed memory subdirectories, citation conventions, tour/prune/audit skills. Starts to assume cairn-aware tooling and conventions.",
     "full": "Adds cairn-ecosystem integrations like the feedback skill (files issues to cairn's own repo). Claude-Code/Cowork-optimized; default unless user requests a lower tier."
   },
@@ -315,7 +343,8 @@
   "modes": {
     "create-if-absent": "Write only if destination does not exist. Never overwrite.",
     "merge-append": "Append cairn section to existing file (idempotent by marker).",
-    "overwrite-with-backup": "Back up existing to {dest}.bak, then overwrite. Requires explicit user approval."
+    "overwrite-with-backup": "Back up existing to {dest}.bak, then overwrite. Requires explicit user approval.",
+    "overwrite": "Cairn-owned file that tracks upstream — replace on every (re-)adopt, no prompt and no backup. Use ONLY for files the user must not customize (e.g. the verbatim lab-synced lra prompt masters); never for user-editable scaffolding."
   },
 
   "endpoints": {

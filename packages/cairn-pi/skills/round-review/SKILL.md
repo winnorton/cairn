@@ -1,6 +1,6 @@
 ---
 name: round-review
-description: Review one round of executor output against a program-of-specs and draft R+1 follow-up stubs PLUS an R+1 round master for the gaps. Invoke after an autonomous executor (Flash, `/goal`, a teammate) finishes a round of work on a `/program`-produced master. Trust-but-verify — the executor's status files (`task.md` checkboxes, "all done" claims) are NOT authoritative; the diff plus the program master's `§5 Definition of Done` are. Produces three artifacts — (1) a review report in conversation, (2) N R+1 stub specs per `/program`'s stub schema (`SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`), and (3) an R+1 round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) that's the dispatch target — execution order, round DoD, first-action checklist self-contained so dispatch is `/goal execute <round-master-path>` with no caveats. Loop exit — when this skill writes zero R+1 stubs, the program is done. Do NOT use if you authored the executor's implementation (anti-fresh-perspective) or for single-spec work (just run `/peer-review`).
+description: Review one round of executor output against a program-of-specs and draft R+1 follow-up stubs PLUS an R+1 round master for the gaps. Invoke after an autonomous executor (Flash, `/goal`, a teammate) finishes a round of work on a `/program`-produced master. Trust-but-verify — the executor's status files (`task.md` checkboxes, "all done" claims) are NOT authoritative; the diff plus the program master's `Definition of Done` section are. Produces three artifacts — (1) a review report in conversation, (2) N R+1 stub specs per `/program`'s stub schema (`SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`), and (3) an R+1 round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) that's the dispatch target — execution order, round DoD, first-action checklist self-contained so dispatch is `/goal execute <round-master-path>` with no caveats. Loop exit — when this skill writes zero R+1 stubs, the program is done. Do NOT use if you authored the executor's implementation (anti-fresh-perspective) or for single-spec work (just run `/peer-review`).
 ---
 
 # Round Review
@@ -95,15 +95,21 @@ The "change set" is whatever ground truth the diff represents — committed or n
 `Glob` and `find` may filter untracked files depending on tooling. Use
 `git status --porcelain | grep '^??'` to enumerate untracked explicitly.
 
-### 3. Load the rubric — the program master's §5 DoD
+### 3. Load the rubric — the master's DEFINITION OF DONE
 
-The program master's §5 (Program-level Definition of Done) is the criterion list. Read
+**Match master sections by TITLE, not §-number.** Real programs insert sections and
+the numbers shift (lra's masters carry the DoD at §6, contracts at §3). Everywhere
+this skill says "§5" it means *the master's section titled DEFINITION OF DONE,
+wherever it's numbered* — same rule for the other shorthands below.
+
+The master's DEFINITION OF DONE section is the criterion list. Read
 it line-by-line. Each numbered criterion is one verification target.
 
-Also load:
-- §1 Program goal — what the headline metric / primary deliverable is
-- §2 Contract Surfaces — what shared APIs must exist
-- §9 Status table — which children should have shipped this round
+Also load (by title):
+- PROGRAM GOAL — what the headline metric / primary deliverable is
+- CONTRACT SURFACES — what shared APIs must exist
+- The status table (in the parallelization section) — which children should have
+  shipped this round
 - Child spec §Gate sections — per-workstream success criteria that roll up
 
 Do not improvise criteria. The master is the contract; the executor was bound to it;
@@ -156,6 +162,14 @@ Things outside §5 that still block shipping:
 These are findings the DoD didn't anticipate — it assumed competent landing.
 List them with severity. Zero-order findings often have higher severity than PARTIAL
 DoD criteria.
+
+**Triage every finding (DoD and zero-order) three ways:**
+
+| Triage | Action |
+|---|---|
+| **Ship-blocking** | Becomes an R+1 stub (or blocks the round) — fix before ship |
+| **Spec-drift** | The master or child spec is wrong, not the code — reconcile the spec now, with rationale |
+| **Subtle** | Real but non-blocking — park one dated line in the master's OPEN QUESTIONS section; do NOT let it evaporate into conversation |
 
 ### 7. Draft R+1 stub specs per `/program`'s stub schema
 
@@ -350,8 +364,8 @@ Three artifacts:
    prompt; the file says it.
 
 If N == 0: the program is done. Report says so; no stubs or round master are written;
-recommends archiving the program master (`git mv` to `docs/specs/archive/`) and updating
-memory entries per master §5.12.
+recommends archiving the program master (`git mv` to `docs/specs/archive/`) and completing
+any doc/memory-update rows the master's §5 Definition of Done carries.
 
 ## Companion skills
 

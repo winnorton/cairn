@@ -10,7 +10,8 @@ description: External-perspective review of a change set before ship by a fresh 
   /reflect is post-session same-agent distillate. Different gap classes; both can fire on
   the same change. Do NOT use for the agent's own in-flight work — fresh perspective
   requires you to NOT have been the author. If you wrote the change you're being asked
-  to review, decline and route the user to a different agent or session.
+  to review, decline and route the user to a different agent or session. For reviewing
+  an executor's round of work against a /program master, use /round-review instead.
 ---
 
 # Peer Review

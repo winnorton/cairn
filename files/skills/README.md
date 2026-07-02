@@ -4,7 +4,7 @@ Skills are reusable capabilities an agent can invoke mid-session. Each skill is 
 **subdirectory** containing a `SKILL.md` file with YAML frontmatter at the top. In cairn's
 source they live at `files/skills/<name>/SKILL.md`; they reach your harness through the
 cairn **package** (the `cairn` Claude Code plugin, `@winnorton/cairn-pi` for Pi, or
-`agy plugin import claude` for Antigravity) — the vendor's own installer places them, so
+the native `cairn-agy` plugin for Antigravity) — the vendor's own installer places them, so
 cairn never hand-writes into a vendor skills directory.
 
 The `description` field in frontmatter is what the agent uses to decide whether the skill
@@ -85,8 +85,6 @@ what the *human* actually does in the collaboration.
 These rotate WHO is looking at the work, not just how it's framed. Each surfaces a
 gap class that the work-author cannot see from inside their own session.
 
-- `resume/` — fresh session inheriting context from a prior one (defeats
-  namespace-fragmentation between sessions).
 - `peer-review/` — fresh agent reading a change set cold (catches inconsistency-class bugs
   the author missed because they're "too close"). Named `peer-review` to disambiguate from
   Claude Code's built-in `/review` skill.
@@ -147,6 +145,14 @@ active folder is live, `archive/` is shipped, no STATUS field).
   matrix, pending-re-run staging, and idempotence guarantee. Distinct from every other
   artifact skill: the artifact evolves over its lifetime — Phase 6 self-edits accumulate
   lessons each pass, and the prompt's CHANGELOG IS its institutional memory.
+- `lra/` — a `prompt-evolve` specialization for researching a subject over many passes, run
+  engine-free as project-local markdown an agent walks. Mirrors the lra
+  research→library→application pipeline 1:1 through lra commands (`subject create`,
+  `collection create`, `research run`, `app serve`); scaffolds a project-local `research/`
+  collection and drives two prompts (researcher + librarian) synced byte-for-byte from the
+  lra lab (the researcher is immutable there). lra is `prompt-evolve`'s third worked instance
+  (after fishing-agent and purduebb) and the source of `[LAW prompt-economy]`. See
+  [`docs/CROSS_REPO_LRA_CAIRN.md`](../../docs/CROSS_REPO_LRA_CAIRN.md).
 
 The artifact pattern came from observing a downstream project's plan-rework arc: a
 single-verb `/plan` was being used both for one-paragraph thoughts and for heavy executor
@@ -157,11 +163,12 @@ when one spec isn't enough.
 
 ### Skill pairings
 
-`/reflect` and `/resume` form a load-bearing pair — the cross-session loop. `/reflect`
-at session-end produces memory entries and a `HANDOFF.md`; `/resume` at session-start
-reads them. Together they're the ritual that keeps persistence alive between sessions.
-Without the pairing, memory and laws sit in files but never get refreshed. With it,
-"agent forgets between sessions" becomes "agent picks up where we left off."
+`/reflect` and the `HANDOFF.md` it produces form the cross-session loop. `/reflect`
+at session-end produces memory entries and a `HANDOFF.md`; the next session reads
+`HANDOFF.md` (plus the memory index) at start. Together they're the ritual that keeps
+persistence alive between sessions. Without the loop, memory and laws sit in files but
+never get refreshed. With it, "agent forgets between sessions" becomes "agent picks up
+where we left off."
 
 Design principle: **observe the collaboration first, then package what you see.**
 Skills designed from observation solve problems that exist; skills designed from

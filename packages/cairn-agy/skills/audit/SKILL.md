@@ -57,7 +57,7 @@ Do NOT invoke for:
    prior transcripts are accessible (Claude Code: `~/.claude/projects/<project>/` often
    contains session logs; Cowork: TBD — ask the user if uncertain).
 
-2. **Enumerate the habitat.** Load `LAWS.md` (slugs + titles from each law's heading) and
+2. **Enumerate the habitat.** Load `.cairn/LAWS.md` (slugs + titles from each law's heading) and
    the three citable memory subdirs (`feedback/`, `project/`, `reference/`). Skip `user/` —
    it's not part of the citation audit.
 

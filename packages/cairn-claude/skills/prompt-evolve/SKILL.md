@@ -1,6 +1,6 @@
 ---
 name: prompt-evolve
-description: Author a self-improving, version-controlled prompt for tough tasks done in many iterative passes over partitions. Use when work doesn't fit one execution, partitions are obvious (year, batch, module), each pass produces work AND insight, and insight would otherwise be lost. Triggers on "evolving prompt", "mining prompt", "self-improving prompt", "process in batches and learn as we go". Primary mode `--from <SPEC>` promotes an evolving-prompt deliverable from `/spec` into a standalone artifact at `<project>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a 7-phase scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report → Self-Improvement) with Phase 6 self-edit mandate, CHANGELOG format, idempotence guarantee, and absolute-path-inline rule. Do NOT use for single-execution work (`/spec`), single-paragraph capture (`/note`), parallel-workstream decomposition (`/program`), or round verification (`/round-review`).
+description: Author a self-improving, version-controlled prompt for tough tasks done in many iterative passes over partitions. Use when work doesn't fit one execution, partitions are obvious (year, batch, module), each pass produces work AND insight, and insight would otherwise be lost. Triggers on "evolving prompt", "mining prompt", "self-improving prompt", "process in batches and learn as we go". Primary mode `--from <SPEC>` promotes an evolving-prompt deliverable from `/spec` into a standalone artifact at `<project>/.cairn/prompt-evolve/<NAME>_PROMPT.md`. Enforces a 7-phase scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report → Self-Improvement) with Phase 6 self-edit mandate, CHANGELOG, idempotence, and absolute-path-inline rules. Do NOT use for single-execution work (`/spec`), single-paragraph capture (`/note`), parallel-workstream decomposition (`/program`), round verification (`/round-review`), or subject research over passes (`/lra`).
 ---
 
 # Prompt-Evolve
@@ -475,32 +475,34 @@ Tell the user, under ~250 words:
 
 ## Reference shape — worked examples
 
-Two real instances exist. Both follow the canonical scaffold above; both have
-running CHANGELOGs proving the self-improvement loop executes; both have surfaced
+Three real instances exist. All follow the canonical scaffold above; all have
+running CHANGELOGs proving the self-improvement loop executes; all have surfaced
 execution strategies (see next section) the scaffold itself doesn't mandate.
+(The first two live in private repos; the descriptions below carry what an
+authoring agent needs — their file paths resolve only on the maintainer's
+machine and are omitted here.)
 
-**Fishing agent (corpus mining, partition: year):**
+**Fishing agent (corpus mining: Gmail → SQLite, partition: year):** a
+~1058-line live-evolved prompt at CHANGELOG v3.6. What maturity looks like at
+many partitions: a CANONICAL IDs section grown to 50+ entries across merges,
+per-partition narrative anchors (one per year, 2005–2025), and a rich
+TOOL-FAILURE FALLBACK MATRIX (search-index path-splits, collision rules, API
+token caps) accumulated from real failures.
 
-- Template: `C:\Users\winno\projects\fish\fishing-agent\data-pop-prompt.template.txt`
-  (sanitized; no PII; v1 only)
-- Live evolved: `C:\Users\winno\projects\fish\fishing-agent\data-pop-prompt.txt`
-  (~1058 lines; CHANGELOG v1 → v3.6; CANONICAL CONTACT IDs populated with 50+
-  entries across many merges; YEAR-BY-YEAR NARRATIVE ANCHORS for 2005–2025; rich
-  fallback matrix documenting FTS5 path-split, PB collision rule, get_thread
-  token cap)
+**Purdue basketball (web → JSON, partition: season XOR topic):** a ~150-line
+prompt at CHANGELOG v1 → v2, where the v2 entry was written by the *executor*
+that ran the first demo pass — proof the Phase 6 self-edit loop fires under
+real execution. All 5 enforcement items present from authoring.
 
-**Purdue basketball (web → JSON, partition: season XOR topic):**
+**lra (subject research, partition: pass):** the researcher/librarian prompt
+pair shipped with the `/lra` skill (masters installed at
+`.cairn/context/lra/`) — the one instance whose files ARE resolvable in an
+adopter project.
 
-- Spec (archived after execution): `C:\Users\winno\projects\purduebb\docs\specs\archive\SPEC_PURDUE_BASKETBALL_HISTORY.md`
-- Live prompt: `C:\Users\winno\projects\purduebb\program\history\MINING_PROMPT.md`
-  (~150 lines; CHANGELOG **v1 → v2** with the v2 entry written by the executor
-  that ran the 1968-69 demo pass — proves the Phase 6 self-edit loop fires under
-  real execution; canonical IDs populated with the 1968-69 roster; all 5
-  enforcement items present from authoring)
-
-When in doubt about scaffold shape at multi-partition maturity, look at the
-fishing live-evolved file. When in doubt about Phase 6 self-edit discipline at
-v1 → v2 transition, look at the purduebb file.
+When in doubt about scaffold shape at multi-partition maturity, model on the
+fishing description above. When in doubt about Phase 6 self-edit discipline at
+the v1 → v2 transition, model on the purduebb description. For a readable
+concrete instance, open the installed lra masters.
 
 ## Execution strategies (accumulating catalog)
 
@@ -552,9 +554,8 @@ doesn't fit the named variants above:
    section as `<NAME> strategy: <one-paragraph description>` so the project's
    future agents understand what was chosen.
 2. If the strategy recurs in a second project, propose adding it to this catalog
-   via `/feedback` or a PR to cairn. 3-instance gate from
-   `NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md` applies: name it here when it's
-   surfaced in 3 projects.
+   via `/feedback` or a PR to cairn. Cairn's 3-instance observation gate applies:
+   name it here when it's surfaced in 3 projects.
 
 The catalog grows; the scaffold doesn't. Strategies that don't recur stay
 project-local.

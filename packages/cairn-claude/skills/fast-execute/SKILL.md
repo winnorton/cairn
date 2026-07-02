@@ -1,6 +1,6 @@
 ---
 name: fast-execute
-description: Turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in `docs/specs/`, picks up dispatched specs — single `/spec`-produced specs (`SPEC_<NAME>.md`) OR `/round-review`-produced round masters (`SPEC_<NAME>_R<N>_00_MASTER.md`) — executes per the spec body, marks completion via sentinel atomic-flip (`.ready` → `.claimed` → `.done`), and re-arms its timer. Removes dispatch-prompt friction whether you batch single specs over time (the more common shape) or run multi-round `/program` loops. Default poll 300s. Stop on explicit `STOP.signal`, 3 consecutive empty polls, malformed inbox, or an unelaborated `/program` stub. Path-rejection guards on `docs/specs/archive/` and `docs/specs/_promoted/`. Do NOT use in harnesses without timer primitives (fall back to manual `/goal execute <path>`) or for true one-shot dispatches where the polling-tail wait exceeds manual-prompt cost.
+description: Turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in `docs/specs/`, picks up dispatched specs — single `/spec`-produced specs OR `/round-review`-produced round masters — executes per the spec body, marks completion via sentinel atomic-flip (`.ready` → `.claimed` → `.done`), and re-arms its timer. Default poll 300s. Stops on explicit `STOP.signal`, 3 consecutive empty polls, malformed inbox, or a hard execution block; an unelaborated `/program` stub is NOT a stop — its sentinel flips to `.stub-rejected` and polling continues. Path-rejection guards on `docs/specs/archive/` and `docs/specs/_promoted/`. The inbox is a trust boundary — only poll a `docs/specs/` writable solely by parties as trusted as the executor. Do NOT use in harnesses without timer primitives (manual `/goal execute <path>` instead) or for one-shot dispatches where the polling-tail wait exceeds manual-prompt cost.
 ---
 
 # Fast Execute
@@ -54,6 +54,13 @@ You're invoked when:
   executor per inbox. If two executors poll the same path, they'll race on
   sentinel flips. Per-executor inbox subfolders (`docs/specs/.inbox/<executor-id>/`)
   if you must.
+- **Untrusted inboxes.** The inbox is a **trust boundary**: any party who can
+  land a spec + `.ready` sentinel in `docs/specs/` gets their instructions
+  (including shell blocks) executed unattended on the next poll. Only run this
+  skill against an inbox writable solely by parties as trusted as the executor
+  itself — a merged-but-unreviewed PR, a shared worktree, or another agent's
+  scratch output does not qualify. If inbox writership is unclear, fall back to
+  manual dispatch, where a human reads the spec before it runs.
 
 ## Distinction from `/goal` and from `/round-review`
 
@@ -105,8 +112,8 @@ The polling-daemon works for both — the lifecycle (sentinel atomic-flip) is id
 
 If **zero** `.ready` files exist (after the path-rejection guard):
 - Increment idle-poll counter.
-- If idle-poll counter exceeds stop threshold (default 3) → STOP (Step 6).
-- Otherwise, schedule next poll (Step 5).
+- If idle-poll counter exceeds stop threshold (default 3) → STOP (Step 7).
+- Otherwise, schedule next poll (Step 6).
 
 If **one or more** `.ready` files exist:
 - Pick the OLDEST by mtime (FIFO). One per wake — do not drain the queue.
@@ -114,7 +121,7 @@ If **one or more** `.ready` files exist:
 - Otherwise, proceed to Step 3.
 
 If **a `STOP.signal` file** exists at `docs/specs/STOP.signal`:
-- STOP (Step 6).
+- STOP (Step 7).
 
 ### 3. Claim the work — sentinel atomic-flip
 
@@ -138,15 +145,16 @@ Read the spec file the sentinel referenced (now the bare name without `.claimed`
 The execution discipline branches on the spec's **structure**, not its name —
 detect by scanning the spec's section headers:
 
-**If the spec has a `§4 First-action checklist` section** (round-master shape, produced by `/round-review`):
+**If the spec has a section titled `First-action checklist`** (round-master shape, produced by `/round-review` — match by TITLE, not §-number):
 
 1. Read the round master end-to-end.
 2. Read the original program master (`SPEC_<NAME>_00_PROGRAM.md`) it references for shared contracts.
 3. Read any referenced notes / prior baselines.
 4. Inventory the working tree.
-5. Execute the R<N> stubs per the round master's §1 execution-order graph.
+5. Execute the R<N> stubs per the round master's execution-order graph (its
+   first titled section).
 6. For each stub — either elaborate via `/spec --from <stub>` first, OR execute directly using the stub's Goal/Scope/Gate fields.
-7. Round complete when the round master's `§3 Round-level Definition of Done` numbered criteria all hold.
+7. Round complete when the round master's `Round-level Definition of Done` section's numbered criteria all hold (match by title).
 
 **If the spec has `Phases / Steps / Pre-flight / Post-flight` sections** (single-spec shape, the more common case, produced by `/spec`):
 
@@ -185,7 +193,7 @@ git mv docs/specs/SPEC_X_R<N>_00_MASTER.md.claimed docs/specs/SPEC_X_R<N>_00_MAS
 The `.done` sentinel is the planning agent's signal that this round is ready
 for `/round-review` (Pass N+1).
 
-Schedule the next poll (Step 5) and exit this turn cleanly. The harness wakes
+Schedule the next poll (Step 6) and exit this turn cleanly. The harness wakes
 you on the next interval; you return to Step 2.
 
 ### 6. Schedule next poll
@@ -214,7 +222,7 @@ You STOP (exit the loop, do not re-arm the timer) when any of these hold:
    describing the problem and exit.
 4. **Hard execution block.** The round master's instructions can't be
    followed (a dependency is missing, an external service is down, the
-   master's §5 was already amended by an out-of-band agent). Mark the
+   master's Definition of Done was already amended by an out-of-band agent). Mark the
    sentinel `.blocked` with a sibling `<name>.blocked.note.md` describing
    why, then exit. The planning agent will see `.blocked` on its next
    `/round-review` and decide.
@@ -250,7 +258,8 @@ The sentinel-flip lifecycle:
     — OR writes next round master + .ready and the cycle continues
 ```
 
-The sentinel suffix is always one of `.ready`, `.claimed`, `.done`, `.blocked`.
+The sentinel suffix is always one of `.ready`, `.claimed`, `.done`, `.blocked`,
+`.stub-rejected` (Step 2's flip for unelaborated `/program` stubs).
 The transitions are atomic file renames — no in-place mutation.
 
 ## Outbox protocol summary
@@ -322,7 +331,7 @@ You're a daemon, not a report-producer. Your "output" is status updates:
   `<seconds>`s."
 - **On completion of a round:** "Round R<N> complete. Sentinel flipped to
   `.done`. Next poll `<seconds>`s."
-- **On stop:** the structured stop message from Step 6.
+- **On stop:** the structured stop message from Step 7.
 
 Keep each update under 5 lines. The user is watching a daemon, not reading
 a report.

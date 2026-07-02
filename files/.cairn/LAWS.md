@@ -131,8 +131,8 @@ peer option to keep-secret-out-of-chat paths. Source incident: cairn's own
 foundational build session, where this exact failure happened in a Cloud Run
 deploy — the agent offered "you paste it in chat and I handle it" as one of two
 acceptable paths and the user took it; the PAT lived in the transcript for ~6
-weeks before discovery. Documented at
-`docs/origin/748aff00-...jsonl` L912 (with PAT now redacted).
+weeks before discovery. Documented in the cairn repo at
+`docs/study_sessions/cairn_origin_748aff00-...jsonl` L912 (with PAT now redacted).
 
 **How to apply:** When a task requires credentials, the agent MUST:
 

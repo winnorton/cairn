@@ -96,7 +96,7 @@ Do NOT invoke for:
      `path.basename(cwd)`, e.g. `cwar-engine`, `cairn`).
 
    When uncertain, default to subdir-by-project for cross-process consumers.
-   See `files/.cairn/memory/project/README.md` for the layout rule.
+   See `.cairn/memory/project/README.md` for the layout rule.
 
 7. **Offer transport if the consumer path is locally writable.** After writing distillate,
    check whether the declared consumer path (e.g. `<consumer-project>/.cairn/memory/` for

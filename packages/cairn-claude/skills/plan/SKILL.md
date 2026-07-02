@@ -72,15 +72,17 @@ Do NOT invoke for:
    path; the token lived in the transcript for ~6 weeks before discovery.
 
 7. **Scope-checkpoint trigger — re-invoke `/plan` when crossing tool-boundaries.**
-   Per `[LAW scope-explicit]`: when a session that started in one tool domain
-   crosses into another mid-execution (file edits → network calls; local code
-   → deploy commands; analysis → infrastructure changes), STOP and re-invoke
-   `/plan` before proceeding. The scope expanded; the original plan may not
-   cover the new domain's blast radius. Especially load-bearing when the new
-   domain is one where credentials are needed — `[LAW scope-ratchet]` (cwar
-   NEW_LAWS Law 4) and `[LAW credentials-never-in-transcript]` co-fire when
-   scope expansion brings the agent into infra territory. Re-invoking `/plan`
-   surfaces both dimensions at once.
+   Name scope expansion explicitly at the moment it happens: when a session that
+   started in one tool domain crosses into another mid-execution (file edits →
+   network calls; local code → deploy commands; analysis → infrastructure
+   changes), STOP and re-invoke `/plan` before proceeding. The scope expanded;
+   the original plan may not cover the new domain's blast radius. Scope tends to
+   ratchet — each expansion feels incremental and none get named unless a
+   checkpoint forces it. Especially load-bearing when the new domain needs
+   credentials: silent scope ratchet and
+   `[LAW credentials-never-in-transcript]` co-fire when expansion brings the
+   agent into infra territory. Re-invoking `/plan` surfaces both dimensions at
+   once. (If your habitat's `LAWS.md` has a scope law, cite it here by slug.)
 
    In the cairn foundational session, the `/feedback` skill scope expanded
    ~10× from "agents can file feedback" to "operate production cloud infra"
@@ -115,5 +117,4 @@ Per Step 7 above: cross a tool boundary, re-plan. Specific triggers:
 
 When any of these fires, the agent stops, names the boundary crossing, and
 re-invokes `/plan` for the new scope. This is the operational mechanism for
-honoring `[LAW scope-explicit]` and preventing `[LAW scope-ratchet]` from
-firing silently.
+naming scope expansion explicitly instead of letting it ratchet silently.

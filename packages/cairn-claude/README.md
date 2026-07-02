@@ -49,8 +49,8 @@ All 18 cairn skills, invocable as `/skill-name` in Claude Code:
 |---|---|
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
-| Cross-perspective | `/resume`, `/peer-review`, `/session-distill` |
-| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/fast-execute`, `/prompt-evolve` |
+| Cross-perspective | `/peer-review`, `/session-distill` |
+| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/fast-execute`, `/prompt-evolve`, `/lra` |
 
 ## Invocation note
 
