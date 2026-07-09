@@ -1,16 +1,10 @@
 ---
 name: spec
-description: Research the codebase and write a structured agent execution spec for a non-trivial
-  code change. Use when there's a real implementation to drive — typically a Flash handoff or
-  multi-session refactor with phases, steps, checkpoints, executor handoff. Drops in
-  `docs/specs/`. Two `--from` modes — `/spec --from docs/notes/NOTE_X.md` promotes a note to a
-  spec (moves the note to `_promoted/`); `/spec --from docs/specs/SPEC_..._NN_TOPIC.md`
-  elaborates a `/program`-produced stub in place (fills phases/steps, no move). Two
-  lifecycles — execution specs (dispatch artifact, archived on ship) and contract specs
-  (permanent source of truth: 3-pass verified status, spec updates before code). Do NOT use
-  for lightweight intent capture (use /note for that — single paragraph, no research).
-  Distinct from cairn's existing `/plan` skill, which is a behavioral pre-action alignment
-  verb; `/spec` is the artifact-creation verb that produces a file the executor follows.
+description: Create or update a structured execution spec in docs/specs/ for non-trivial code
+  changes, executor handoffs, multi-file refactors, contract specs, or promotion from a
+  note/program stub. Use /spec --from docs/notes/NOTE_X.md to promote a note, or /spec
+  --from docs/specs/SPEC_...md to elaborate a /program stub. Do not use for lightweight
+  notes, simple edits, pure Q&A, or conversational planning.
 ---
 
 # Spec
