@@ -78,7 +78,10 @@ spec phase identifier (e.g. `P1_05:`) for clean rollups at `/skill:round-review`
 `files/skills/<name>/SKILL.md` in the [cairn repo](https://github.com/winnorton/cairn)
 is canonical. `skills/` here is a committed byte-identical copy enforced by
 `scripts/sync-skills.mjs --check` (runs on `prepublishOnly`). Send PRs against the
-source files, not these copies. Versions are lockstep with cairn releases.
+source files, not these copies. When source prose changes, update and review the root
+`scripts/skill-body-word-baseline.json`; package-local sync checks cover copy identity
+and description caps, not the body-word ratchet. Any baseline increase requires explicit
+review justification. Versions are lockstep with cairn releases.
 
 ## License
 

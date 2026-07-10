@@ -123,6 +123,13 @@ forgets everything between sessions" into "agent picks up where we left off."
 - Add memory entries via the agent when it learns something worth persisting.
 - Periodically say **`audit`** to see which laws and memories are actually being cited, then **`prune`** to retire the cold ones.
 
+Contributing a skill-body change also updates a reviewed size contract. Run
+`node scripts/check-skill-budgets.mjs --update-body-baseline` from the repository root,
+inspect the baseline diff, then run the command again without the flag. A word-count
+increase requires explicit review justification; regenerating the baseline does not
+approve it. This guards prompt size; Cairn still requires cold review for semantic and
+adjacent-document consistency.
+
 ## Usage signal (citations)
 
 Citation conventions are type-aware. Laws fire discretely and cite by **slug**:

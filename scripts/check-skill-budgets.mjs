@@ -1,99 +1,167 @@
 // scripts/check-skill-budgets.mjs
 // Shell dialect: cross-platform (node invocation — POSIX and PowerShell compatible)
 //
-// Skill-description BUDGET gate over the FULL source set.
+// Skill prompt budget gate over the FULL source set:
+//   1. description length: Pi hard cap (1024 chars), near-cap warning at 900;
+//   2. instructional body words: exact per-skill ratchet baseline.
 //
-// Why this exists, separate from sync-skills.mjs:
-//   sync-skills.mjs caps descriptions at 1024 too, but only for skills *enrolled*
-//   in a package's sync-config.json. A skill that lives in files/skills/ but isn't
-//   yet enrolled in any package escapes the cap entirely — and then breaks at load
-//   on a budget-constrained harness. Pi enforces a hard 1024-char cap on a skill's
-//   `description` and SKIPS any skill that exceeds it (observed: prompt-evolve 1343,
-//   session-distill 1896 — both stale installs of since-trimmed sources).
+// Description caps prevent loader rejection. Body baselines prevent prompt growth from
+// hiding inside an ordinary skill edit. Any body-count change requires an explicit
+// baseline update in the same reviewed change set.
 //
-//   This gate closes that hole: it checks the source of truth (files/skills/*) directly,
-//   so every skill is budget-checked whether or not a package ships it yet.
+// Grounding:
+//   [LAW aperture-mismatch] / [LAW substrate-posture] — consumer limits beat prose.
+//   [LAW external-detectability] / [LAW mechanical-enforcement] — gate checkable rules.
+//   [LAW prompt-economy] — author in the consumer's register.
+//   [MEM reference/prompt-economy] — static register lint + complexity-ratchet precedent.
 //
-// Grounding (cwar NEW_LAWS, cited by slug):
-//   [LAW aperture-mismatch]  — a consumer's context budget is a hard limit; over it is
-//                              destructive, not merely wasteful.
-//   [LAW substrate-posture]  — the loader's cap is hard-layer; it wins over prose. Gate it.
-//   [LAW external-detectability] / [LAW mechanical-enforcement] — a rule worth keeping is a
-//                              rule a script enforces without the agent's self-report.
-//   [LAW prompt-economy]     — the description is consumed across a serialization boundary;
-//                              trim register-bloat, author for the consumer.
+// Usage:
+//   node scripts/check-skill-budgets.mjs
+//   node scripts/check-skill-budgets.mjs --update-body-baseline
 //
-// Usage:  node scripts/check-skill-budgets.mjs
-// Exit 1 if any description exceeds HARD_CAP. NEAR_CAP entries warn but don't fail.
+// The update flag records current counts. Its diff is the explicit review surface for an
+// intentional decrease or increase; CI never updates the baseline automatically.
 
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Pi's hard limit. Other harnesses may cap lower; lower HARD_CAP if/when one is known.
 const HARD_CAP = 1024;
-// Margin zone: pass, but flag — these are one careless edit away from breaking a consumer.
 const NEAR_CAP = 900;
+const UPDATE_BODY_BASELINE = process.argv.includes("--update-body-baseline");
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const skillsDir = join(repoRoot, "files", "skills");
+const bodyBaselinePath = join(repoRoot, "scripts", "skill-body-word-baseline.json");
 
-// Same frontmatter parse + YAML line-folding as sync-skills.mjs, so this gate and the
-// per-package gate agree on what "description length" means.
 function descLength(raw) {
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!m) return null; // no frontmatter — not a skill
+  if (!m) return null;
   const desc = (m[1].match(/(?:^|\n)description:[ \t]*([\s\S]*?)(?=\n[A-Za-z][\w-]*:|$)/) ?? [])[1]
     ?.replace(/\r?\n[ \t]+/g, " ")
     .trim();
-  return desc ? desc.length : 0;
+  return desc?.length ? desc.length : null;
 }
+
+// Count authored instructions, not templates or navigation. Tables and list items count;
+// frontmatter, headings, fenced examples, and HTML comments do not.
+function instructionalBodyWords(raw) {
+  const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+  const kept = [];
+  let inFence = false;
+  let inComment = false;
+
+  for (const line of body.split(/\r?\n/)) {
+    const text = line.trim();
+    if (text.startsWith("```") || text.startsWith("~~~")) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+    if (text.startsWith("<!--")) inComment = true;
+    if (inComment) {
+      if (text.includes("-->")) inComment = false;
+      continue;
+    }
+    if (/^#{1,6}\s/.test(line)) continue;
+    kept.push(line);
+  }
+
+  return (kept.join(" ").match(/\b[\w/-]+\b/g) ?? []).length;
+}
+
+const baseline = existsSync(bodyBaselinePath)
+  ? JSON.parse(readFileSync(bodyBaselinePath, "utf8"))
+  : {};
 
 const rows = [];
 for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
-  if (!entry.isDirectory()) continue; // README.md etc. are not skills
+  if (!entry.isDirectory()) continue;
   let raw;
   try {
     raw = readFileSync(join(skillsDir, entry.name, "SKILL.md"), "utf8");
   } catch {
-    rows.push({ name: entry.name, len: null, note: "MISSING SKILL.md" });
+    rows.push({ name: entry.name, desc: null, body: null });
     continue;
   }
-  rows.push({ name: entry.name, len: descLength(raw) });
+  rows.push({
+    name: entry.name,
+    desc: descLength(raw),
+    body: instructionalBodyWords(raw),
+  });
 }
 
-rows.sort((a, b) => (b.len ?? -1) - (a.len ?? -1));
+rows.sort((a, b) => (b.desc ?? -1) - (a.desc ?? -1));
 
 const fails = [];
 const nears = [];
-for (const r of rows) {
-  let flag = "";
-  if (r.len === null) {
-    flag = "✗ no description";
-    fails.push(r);
-  } else if (r.len > HARD_CAP) {
-    flag = `✗ OVER ${HARD_CAP}`;
-    fails.push(r);
-  } else if (r.len >= NEAR_CAP) {
-    flag = `… near cap (≤${HARD_CAP})`;
-    nears.push(r);
+for (const row of rows) {
+  const flags = [];
+  if (row.desc === null || row.body === null) {
+    flags.push("✗ missing SKILL.md/frontmatter");
+    fails.push(row);
+  } else if (row.desc > HARD_CAP) {
+    flags.push(`✗ description OVER ${HARD_CAP}`);
+    fails.push(row);
+  } else if (row.desc >= NEAR_CAP) {
+    flags.push(`… description near cap (≤${HARD_CAP})`);
+    nears.push(row);
   }
-  console.log(`${String(r.len ?? "—").padStart(5)}  ${r.name.padEnd(20)} ${flag}`);
+
+  if (!UPDATE_BODY_BASELINE && row.body !== null) {
+    if (!(row.name in baseline)) {
+      flags.push("✗ no body baseline");
+      fails.push(row);
+    } else if (row.body !== baseline[row.name]) {
+      const delta = row.body - baseline[row.name];
+      flags.push(`✗ body ${delta > 0 ? "+" : ""}${delta} vs baseline`);
+      fails.push(row);
+    }
+  }
+
+  console.log(
+    `${String(row.desc ?? "—").padStart(5)} desc  ` +
+      `${String(row.body ?? "—").padStart(5)} body  ` +
+      `${row.name.padEnd(20)} ${flags.join(" · ")}`,
+  );
+}
+
+if (!UPDATE_BODY_BASELINE) {
+  const names = new Set(rows.map((row) => row.name));
+  for (const stale of Object.keys(baseline).filter((name) => !names.has(name))) {
+    console.error(`    ✗ stale body baseline: ${stale}`);
+    fails.push({ name: stale });
+  }
+}
+
+if (UPDATE_BODY_BASELINE) {
+  if (fails.length) {
+    console.error("\nFAILED — fix source skill errors before updating the body baseline.");
+    process.exit(1);
+  }
+  const next = Object.fromEntries(
+    [...rows]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((row) => [row.name, row.body]),
+  );
+  writeFileSync(bodyBaselinePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
+  console.log(`\nupdated ${bodyBaselinePath} (${rows.length} skills)`);
+  process.exit(0);
 }
 
 console.log(
-  `\n${rows.length} skills · HARD_CAP ${HARD_CAP} (Pi) · NEAR_CAP ${NEAR_CAP}` +
-    ` · ${nears.length} near, ${fails.length} over`,
+  `\n${rows.length} skills · description HARD_CAP ${HARD_CAP} · NEAR_CAP ${NEAR_CAP}` +
+    ` · body baseline exact · ${nears.length} near · ${fails.length} failing`,
 );
 if (nears.length && !fails.length) {
   console.log(
-    `near-cap skills pass but have thin margin — trim files/skills/<name>/SKILL.md descriptions: ` +
-      nears.map((r) => r.name).join(", "),
+    `near-cap descriptions: ${nears.map((row) => row.name).join(", ")}`,
   );
 }
 if (fails.length) {
   console.error(
-    `\nFAILED — trim the source description(s): ` + fails.map((r) => r.name).join(", "),
+    `\nFAILED — fix description errors, or deliberately record body-count changes with ` +
+      `\`node scripts/check-skill-budgets.mjs --update-body-baseline\`.`,
   );
   process.exit(1);
 }

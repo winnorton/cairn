@@ -3,10 +3,10 @@
 #
 # Runs the cairn skill guards across the source of truth and all distribution packages.
 # Fails if any package's committed skill copies drift from files/skills/<name>/SKILL.md,
-# if any description exceeds 1024 chars, if any frontmatter name mismatches, if the
-# package version != VERSION (version-lockstep enforcement), or if any skill carries
-# machine-register bloat (importance/coaching/optionality/negation-stack > 0) per the
-# prompt-economy gate [LAW prompt-economy] [LAW gate-beats-instruction].
+# if any description exceeds 1024 chars, if an instructional-body word count drifts
+# from its reviewed baseline, if any frontmatter name mismatches, if package version !=
+# VERSION, or if a skill carries machine-register bloat. [LAW prompt-economy]
+# [LAW gate-beats-instruction] [MEM reference/prompt-economy]
 #
 # Also enforces:
 #   - [LAW handoff-stays-current]: a change set that touches VERSION must touch
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check skill description budgets (full source set, Pi 1024-char cap)
+      - name: Check skill description caps and body-word ratchets
         run: node scripts/check-skill-budgets.mjs
 
       - name: Check machine-register (prompt-economy gate, full source set)

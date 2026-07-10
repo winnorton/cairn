@@ -1,0 +1,20 @@
+{
+  "advocate": 433,
+  "audit": 505,
+  "bridge": 688,
+  "fast-execute": 2208,
+  "feedback": 803,
+  "lra": 907,
+  "note": 278,
+  "peer-review": 328,
+  "plan": 270,
+  "program": 1125,
+  "prompt-evolve": 2772,
+  "prune": 614,
+  "reflect": 425,
+  "reframe": 445,
+  "round-review": 1976,
+  "session-distill": 2585,
+  "spec": 665,
+  "tour": 467
+}

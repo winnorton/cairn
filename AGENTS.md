@@ -42,8 +42,11 @@ for the index.
   primary triplet.
 - **In flight since v0.14.0:** the `lra` skill pack (a `prompt-evolve`
   specialization; see [docs/CROSS_REPO_LRA_CAIRN.md](docs/CROSS_REPO_LRA_CAIRN.md))
-  and the `check-skill-budgets` CI gate — staged in the working tree pending a
-  version bump. The superseded `agents/` umbrella draft is retired at
+  and the expanded `check-skill-budgets` CI gate — staged pending a version bump.
+  The gate enforces Pi's 1024-character description cap plus exact per-skill
+  instructional-body word baselines in `scripts/skill-body-word-baseline.json`;
+  intentional count changes require `--update-body-baseline` in the reviewed diff.
+  The superseded `agents/` umbrella draft is retired at
   `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`. Before touching
   `manifest.json`, `adopt.md`, or path conventions, read the archived v0.14.0
   program master for the design rationale.
@@ -64,6 +67,8 @@ for the index.
 - `adopt.md` — the install/onboarding script agents follow when running `adopt cairn`
 - `manifest.json` — machine-readable install manifest read by `adopt.md`; `files:`
   array is the canonical source-of-truth for what ships
+- `scripts/skill-body-word-baseline.json` — reviewed instructional-word counts for
+  every source skill; CI rejects unacknowledged count drift
 - `VERSION` — semver, bumped per release
 - `HANDOFF.md` — bridge across session boundaries (must be updated in the same commit
   as `VERSION` per `[LAW handoff-stays-current]`)
@@ -131,7 +136,11 @@ Listed by category — full descriptions in
 Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with frontmatter
 (schema in [`files/skills/README.md`](files/skills/README.md)) AND add a matching entry
 in the category list both there and in this file. Until both lists agree, the skill is
-half-shipped.
+half-shipped. Enroll it in the relevant package sync-configs, run
+`node scripts/check-skill-budgets.mjs --update-body-baseline` from the repo root, review
+the baseline diff, then run the default budget and package sync checks. Instructional
+counts include prose, lists, and tables; they exclude frontmatter, headings, fenced
+examples, and HTML comments. Any increase needs explicit justification in review.
 
 ## Hard rules
 

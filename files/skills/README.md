@@ -51,6 +51,15 @@ description: One-sentence description used by the agent to decide relevance. Be 
   wrong time. Include negative signals ("do NOT use for X") as well as positive.
 - **Keep the skill body tight.** Agents load skill bodies only when invoking. Terse
   instructions beat paragraphs — the agent fills in the gaps.
+- **Treat prompt size as a reviewed contract.** `node scripts/check-skill-budgets.mjs`
+  enforces the 1024-character description cap and exact instructional-body word counts.
+  Counts include prose, lists, and tables; frontmatter, headings, fenced examples, and
+  HTML comments are excluded. After an intentional body edit, run the command from the
+  repo root with `--update-body-baseline` and review the
+  `scripts/skill-body-word-baseline.json` diff before the default check. A count increase
+  requires explicit justification in review; baseline regeneration is not approval.
+- **Size is necessary, not sufficient.** The budget and register gates certify prompt
+  shape; a cold `/peer-review` of the skill plus adjacent docs certifies behavior.
 - **One skill, one purpose.** Splitting "reflect" and "plan" into separate skills lets
   the agent invoke just the one relevant to the moment.
 
