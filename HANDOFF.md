@@ -59,7 +59,8 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 Two changes staged in the working tree, kept here per `[LAW handoff-stays-current]`. **VERSION held at 0.14.0** (package lockstep green). A fresh-agent `/peer-review` (`[LAW pre-merge-review]`) ran and returned **no blockers**; 4 findings absorbed — 3 doc/preview-consistency fixes (adopt.md install-preview + install-loop now name `overwrite`-mode behavior; the cross-repo doc's stale "remaining wiring" section rewritten) + 1 pre-existing NIT (added the missing `cairn-agy` step to the sync-guard CI). Remaining gates before ship: a version bump (+ lockstep + README `## Status`) and publish.
 
 - **New skill: `lra`** — a `prompt-evolve` specialization (the lra researcher/librarian prompts ARE prompt-evolve instances; lra is its 3rd worked example after fishing-agent + purduebb, and the source of cwar's `[LAW prompt-economy]`). Runs the lra research→library→application pipeline engine-free as project-local markdown an agent walks, via lra commands (`subject create` / `collection create` / `research run` / `app serve`). Wired: `files/skills/lra/SKILL.md`; 3 verbatim prompt masters + `PROVENANCE.md` delivered to `.cairn/context/lra/` (reserved `context/` dir per `§2.1`) with a **new `mode: overwrite`** — a cairn-owned refresh mode (added to the manifest modes block + adopt.md re-adoption Case 3) so the masters track upstream on re-adopt instead of going stale under `create-if-absent`; Artifact-category entries in AGENTS.md (count 18→19) + `files/skills/README.md`; enrolled in cairn-claude + cairn-agy `sync-config` (**not** cairn-pi — outside its authoring-loop curation), synced, sync-guard green. The two prompts are **byte-verbatim from the lra lab** (`engine/templates/`, commit `7ea2050`) — the researcher is immutable there; this pack delivers/runs them, never edits them. Cross-repo link doc `docs/CROSS_REPO_LRA_CAIRN.md` in **both** repos; provenance + md5 + re-sync protocol in `PROVENANCE.md`.
-- **Gate: `scripts/check-skill-budgets.mjs`** (wired into `.github/workflows/sync-guard.yml`) — checks every source skill regardless of package enrollment. Descriptions hard-fail over Pi's 1024-char cap and warn ≥900; exact instructional-body word counts live in `scripts/skill-body-word-baseline.json`, so any count change requires an explicit `--update-body-baseline` diff and any increase needs review justification. Added after the 2026-07-09 five-skill compression validated the two-gate model: static size/register gates plus cold semantic review. Current near-cap descriptions: fast-execute, round-review, prompt-evolve. [MEM reference/prompt-economy]
+- **`prompt-evolve` kernel rewrite** (2026-07-09) — compressed the skill from 2,772 to 676 instructional words and replaced its rigid, miscounted "7-phase" identity with invariant behavior: inventory-before-write, coverage selection, stop/re-run semantics, verified mutation, mandatory absolute-path self-edit, CHANGELOG, and blocked-work capture. LRA's emergent partitions, live cells, role-specific phases, and fan-out now fit without exceptions; stable mechanical rules explicitly graduate to validators or tools. [MEM reference/prompt-economy]
+- **Gate: `scripts/check-skill-budgets.mjs`** (wired into `.github/workflows/sync-guard.yml`) — checks every source skill regardless of package enrollment. Descriptions hard-fail over Pi's 1024-char cap and warn ≥900; exact instructional-body word counts live in `scripts/skill-body-word-baseline.json`, so any count change requires an explicit `--update-body-baseline` diff and any increase needs review justification. Added after the 2026-07-09 skill compression validated the two-gate model: static size/register gates plus cold semantic review. Current near-cap descriptions: fast-execute and round-review. [MEM reference/prompt-economy]
 - **Comprehensive cold review + fixes** (2026-07-01) — external-auditor review at
   `docs/reviews/REVIEW_CAIRN_COMPREHENSIVE_2026-07-01.md` (2 BLOCKERs, 11 MAJORs).
   All fixable findings fixed in this change set: the missing `files/.cairn/CLAUDE.md`
@@ -151,24 +152,11 @@ this was tagged at the time of writing — it has since shipped inside **v0.14.0
   evidence: Pi session `019eaed6` executed `SPEC_VAST_TERRAIN_P1_05_WORKER_STAGE_RUNNER`
   cleanly (83 tool calls, zero errors, write > edit ratio) with zero cairn skills
   installed — the spec format itself is the executor contract.
-- **`/prompt-evolve` skill added** (2026-06-09). New artifact-category skill —
-  total skills goes 15 → 16. Authors a self-improving, version-controlled prompt
-  for tough tasks done in many iterative passes over partitions (corpus mining,
-  codebase refactor sweeps, doc backfill, bug triage, audits — any task where
-  work doesn't fit one execution, partitions are obvious, each pass produces
-  output AND insight, and the insight would otherwise be lost between passes).
-  Primary mode is `--from <SPEC>` — promotes the evolving-prompt deliverable
-  embedded in a `/spec` into a standalone artifact at
-  `<docs|project/agents>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a 7-phase
-  scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report →
-  **Self-Improvement**) with 5 non-negotiable items: Phase 6 absolute-path
-  inline, CHANGELOG format, fallback matrix scaffold, Pending Re-run staging,
-  idempotence statement. Promotion semantics differ from `/spec --from <note>`
-  and `/program --from <spec>`: the source spec STAYS IN PLACE (covers more
-  than the prompt). Pattern surfaced from two real instances: fishing-agent's
-  `data-pop-prompt` (Gmail → SQLite, by year, 7 CHANGELOG versions v1→v3.6)
-  and purduebb's `MINING_PROMPT.md` (web → JSON, by season XOR topic).
-  Generalizes to 8 task classes documented in the skill body.
+- **`/prompt-evolve` skill added** (2026-06-09; initial form superseded by the
+  2026-07-09 kernel rewrite above). The artifact category grew from 15 to 16
+  skills after fishing-agent and purduebb independently surfaced a durable prompt
+  that executors improve after each pass. Its `--from` promotion has always kept
+  the source spec in place because the prompt is only one spec deliverable.
 - **`/session-distill` skill added** (2026-06-09). New cross-perspective-category
   skill — total skills goes 16 → 17. **Formalizes cairn's foundational
   methodology** — the transcript-analysis loop documented in

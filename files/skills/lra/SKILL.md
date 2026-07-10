@@ -17,9 +17,9 @@ The **engine-free mirror** of lra. Same commands, same three-layer pipeline
 markdown an agent produces and walks**, with no MCP server, no SQLite, and no web app. The
 agent *is* the runtime and *is* the viewer.
 
-**Lineage.** The two prompts are `prompt-evolve` instances — the 7-phase scaffold (Pre-flight
-→ Inventory → Extract → Write → Verify → Report → **Phase 6 Self-Improvement**) + CHANGELOG +
-idempotence — specialized for subject research. lra is the third worked example after
+**Lineage.** Both prompts are `prompt-evolve` instances: each inventories, works, verifies,
+records coverage and re-run semantics, then self-edits with a CHANGELOG. Their
+phases specialize that kernel. lra is the third worked example after
 fishing-agent and purduebb, and the researcher prompt is where the **prompt-economy**
 principle was discovered (cut the upstream cause, never bolt on its opposite). Honor it when
 editing anything in this pack — and keep descriptions under every consumer's budget (Pi caps

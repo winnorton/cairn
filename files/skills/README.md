@@ -145,16 +145,12 @@ Permanent contract specs stay live and carry evidence-bearing status.
   atomic-flip (`.ready` → `.claimed` → `.done`). The one artifact skill that
   consumes planning files rather than producing them — it closes the dispatch
   seam of the orchestration loop.
-- `prompt-evolve/` — author a self-improving, version-controlled prompt for tough tasks
-  done in many iterative passes over partitions (corpus mining, codebase refactor sweeps,
-  doc backfill, bug triage, audits, etc.). Primary mode is `--from <SPEC>`: promotes the
-  evolving-prompt deliverable embedded in a `/spec` into a standalone artifact at
-  `<docs|.cairn>/prompt-evolve/<NAME>_PROMPT.md`. Enforces a canonical 7-phase
-  scaffold (Pre-flight → Inventory → Extract → Write → Verify → Report →
-  **Self-Improvement**) with Phase 6 absolute-path mandate, CHANGELOG format, fallback
-  matrix, pending-re-run staging, and idempotence guarantee. Distinct from every other
-  artifact skill: the artifact evolves over its lifetime — Phase 6 self-edits accumulate
-  lessons each pass, and the prompt's CHANGELOG IS its institutional memory.
+- `prompt-evolve/` — extract a version-controlled operational prompt from a `/spec` for
+  multi-pass work where each pass produces output and reusable insight. Coverage units may
+  be known or discovered. The kernel requires inventory-before-write, explicit coverage,
+  stop, and re-run semantics, validation, an absolute self-edit target, a versioned
+  CHANGELOG, and blocked-work capture; phase numbering and project strategies remain
+  adaptable. Stable mechanical rules graduate into schemas, validators, or tools.
 - `lra/` — a `prompt-evolve` specialization for researching a subject over many passes, run
   engine-free as project-local markdown an agent walks. Mirrors the lra
   research→library→application pipeline 1:1 through lra commands (`subject create`,

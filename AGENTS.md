@@ -130,7 +130,7 @@ Listed by category — full descriptions in
 - [`program`](files/skills/program/SKILL.md) — program-of-specs (master + N workstream stubs)
 - [`round-review`](files/skills/round-review/SKILL.md) — review one round of executor output against a program, draft R+1 stubs + round master
 - [`fast-execute`](files/skills/fast-execute/SKILL.md) — polling-daemon executor: watches a sentinel-file inbox in `docs/specs/`, executes dispatched specs, marks completion via sentinel atomic-flip. The consumer-side verb of the artifact loop
-- [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — author a self-improving prompt for tough tasks done in many iterative passes over partitions (corpus mining, refactor sweeps, doc backfill, audits). The only artifact skill whose output evolves over its lifetime — Phase 6 self-edits accumulate lessons each pass
+- [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — extract a version-controlled operational prompt from a spec for multi-pass work; coverage units may be known or discovered, and every pass validates work then improves the prompt
 - [`lra`](files/skills/lra/SKILL.md) — a `prompt-evolve` specialization for researching a subject over many passes, run engine-free as project-local markdown an agent walks; mirrors the lra research→library→application pipeline 1:1 via lra commands. The two prompts are verbatim from the lra lab (the source of `[LAW prompt-economy]`); see [`docs/CROSS_REPO_LRA_CAIRN.md`](docs/CROSS_REPO_LRA_CAIRN.md)
 
 Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with frontmatter

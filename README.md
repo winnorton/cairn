@@ -249,14 +249,11 @@ Cairn's skills fall into four categories with different origins.
   masters), and flips sentinels (`.ready` → `.claimed` → `.done`). The
   consumer-side verb of the artifact loop — pairs with `round-review` to
   close the dispatch seam.
-- `prompt-evolve` — author a self-improving, version-controlled prompt for
-  tough tasks done in many iterative passes over partitions (corpus mining,
-  codebase refactor sweeps, doc backfill, bug triage, audits). Primary mode
-  is `--from <SPEC>` — promotes the evolving-prompt deliverable embedded in
-  a `/spec` into a standalone artifact at `prompt-evolve/<NAME>_PROMPT.md`.
-  Distinct from every other artifact skill: the output evolves over its
-  lifetime — Phase 6 self-edits accumulate lessons each pass, and the
-  prompt's CHANGELOG IS its institutional memory.
+- `prompt-evolve` — extract a version-controlled operational prompt from a
+  `/spec` for multi-pass work where execution produces both output and reusable
+  insight. Coverage units may be known or discovered; each prompt defines its
+  stop and re-run semantics, validates writes, and self-edits at the end of a
+  pass. Stable mechanical rules graduate into schemas, validators, or tools.
 - `lra` — a `prompt-evolve` specialization for researching a subject over many
   passes, run engine-free as project-local markdown the agent walks. Scaffolds
   a `research/` collection and drives two prompts (researcher + librarian)
