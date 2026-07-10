@@ -6,8 +6,9 @@ description: Author a self-improving, version-controlled prompt for tough tasks 
 # Prompt-Evolve
 
 Author a self-improving prompt for tough tasks done in many iterative passes. The
-artifact this produces is unlike `/spec` (author-once, execute-once, archive),
-`/program` (master + parallel children), or `/note` (single paragraph). It's a
+artifact this produces is unlike an execution `/spec` (author-once, execute-once,
+archive), a contract `/spec` (permanent system truth), `/program` (master + parallel
+children), or `/note` (single paragraph). It's a
 **single durable file that the executor reads AND edits** at the end of every
 pass — accumulating lessons, canonical IDs, narrative anchors, and bug
 workarounds so the next pass is cheaper than the previous one.
@@ -85,9 +86,9 @@ that includes phrases like "evolving prompt", "self-improving prompt",
 
 ## When NOT to use
 
-- **Single-execution work.** Use `/spec` — its lifecycle is author → execute →
-  `git mv` to archive. Prompt-evolve artifacts never naturally archive; they
-  keep evolving.
+- **Single-execution work.** Use an execution `/spec` — author → execute → archive.
+  Permanent contract specs stay live as system truth; prompt-evolve artifacts stay
+  live to change their own procedure after each partition.
 - **Single-paragraph intent capture.** Use `/note` — too small for this
   pattern.
 - **Parallel-workstream decomposition.** Use `/program` — that's
@@ -105,7 +106,7 @@ that includes phrases like "evolving prompt", "self-improving prompt",
 |---|---|---|---|---|
 | Output | One spec file | Master + N stub files | R+1 round master + stubs | **One evolving prompt file** |
 | Execution count | Once | Once per workstream | Once per round | **Many, over partitions** |
-| Artifact lifecycle | active → archive | active → ship → archive | active → next round | **active → keeps evolving** |
+| Artifact lifecycle | execution: active → archive; contract: stays live | active → ship → archive | active → next round | **active → keeps evolving** |
 | Who edits after author | The executor follows | Per-workstream executors | The reviewer drafts R+1 | **Every executor pass edits the file** |
 | The artifact IS the | Executor handoff | Coordination contract | Round dispatch target | **The institutional memory** |
 
@@ -132,7 +133,7 @@ This is a deliberate departure from cairn's other `--from` skills:
 | Skill | Moves source? | Why or why not |
 |---|---|---|
 | `/spec --from <note>` | Yes — to `notes/_promoted/` | The spec REPLACES the note's intent capture |
-| `/program --from <spec>` | Yes — to `specs/_promoted/` | The program REPLACES the single-spec scope |
+| `/program --from <execution-spec>` | Yes — to `specs/_promoted/` | The program REPLACES the single-spec scope; contract specs are rejected |
 | **`/prompt-evolve --from <spec>`** | **No** | The spec covers MORE than the prompt (schema, validator, API, surface, etc.). The evolving prompt is ONE deliverable of the spec — the spec keeps its own lifecycle |
 
 What `/prompt-evolve --from` DOES do to the spec:
@@ -140,9 +141,9 @@ What `/prompt-evolve --from` DOES do to the spec:
 
   > *"Evolving prompt extracted to `<docs|.cairn>/prompt-evolve/<NAME>_PROMPT.md` on `<date>`. See that file for the v1 template and self-improving CHANGELOG."*
 
-The spec keeps its normal `git mv → archive/` ship signal when its other
-deliverables (schema, API, etc.) land. The prompt-evolve artifact has its
-own evolving lifecycle starting from v1.
+The source keeps its declared lifecycle when its other deliverables land: move an
+execution spec to `archive/`; advance a contract spec's evidence-bearing status in
+place. The prompt-evolve artifact starts its own evolving lifecycle at v1.
 
 ## Steps
 
@@ -455,7 +456,7 @@ Idempotently append to the spec (do not add if already present):
 > **Evolving prompt extracted:** `<docs|.cairn>/prompt-evolve/<NAME>_PROMPT.md`
 > (extracted on <date> via `/prompt-evolve --from <SPEC_FILE>`). The prompt
 > has its own evolving lifecycle — Phase 6 self-edits accumulate lessons per
-> pass. This spec keeps its normal `git mv → archive/` ship signal.
+> pass. This spec keeps its declared execution or contract lifecycle.
 ```
 
 Insert at the end of the spec's frontmatter / before the first `##` section.

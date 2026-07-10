@@ -1,300 +1,125 @@
 ---
 name: spec
-description: Create or update a structured execution spec in docs/specs/ for non-trivial code
-  changes, executor handoffs, multi-file refactors, contract specs, or promotion from a
-  note/program stub. Use /spec --from docs/notes/NOTE_X.md to promote a note, or /spec
-  --from docs/specs/SPEC_...md to elaborate a /program stub. Do not use for lightweight
-  notes, simple edits, pure Q&A, or conversational planning.
+description: Create or revise an executable spec in docs/specs/ for multi-step changes
+  and executor handoffs. Use /spec --from <note> to promote intent or /spec --from
+  <program-stub> to elaborate it in place. Do not use for simple edits, lightweight
+  notes, pure Q&A, or conversational planning.
 ---
 
 # Spec
 
-Structured agent execution plan as an in-tree artifact. Phases, steps, checkpoints,
-executor handoff. Use when the work is heavy enough to warrant the ceremony — typically
-a Flash handoff, multi-file refactor, or any work where an executor needs explicit
-current-code → replacement-code instructions.
+Produce one research-backed implementation contract for one executor. `/program` is
+the multi-workstream form; `/note` is lightweight capture; `/plan` is conversational
+alignment.
 
-## When to use
+## Modes
 
-- Multi-file refactor where exact code changes need to be specified up front.
-- Flash (or other cheap mechanical executor) handoff that needs a precise spec to follow.
-- Architecture-sensitive change where someone else (future-you, another model, a teammate)
-  will execute.
-- A `/note` has matured into real work and needs structure.
+| Input | Action |
+|---|---|
+| Task description | Write `docs/specs/SPEC_<NAME>.md`. |
+| `--from docs/notes/NOTE_*.md` | Promote the note to a new spec. |
+| `--from docs/specs/SPEC_*.md` with `Status: STUB` | Elaborate the program stub in place. |
+| Existing elaborated spec or no arguments with a current draft | Review and revise. |
 
-Do NOT use for:
-- Single-paragraph intent capture — that's `/note`.
-- Pre-action behavioral alignment ("here's what I'm about to do, OK?") — that's cairn's
-  existing `/plan` skill.
-- Single-file edits where the right move is obvious — just do them.
-- Pure information requests — answer directly.
+Reject shipped specs under `docs/specs/archive/` and any source under
+`docs/specs/_promoted/` or `docs/notes/_promoted/`.
 
-## Distinction from cairn's `/plan`
+## Workflow
 
-| | `/plan` (cairn) | `/spec` (this skill) |
-|---|---|---|
-| Output | Conversational summary, no file | A markdown file in `docs/specs/` |
-| Purpose | Pre-action alignment, get user approval | Structured handoff for an executor |
-| Cadence | Before any non-trivial action | Before multi-step / multi-file implementation |
-| Lifecycle | Ephemeral (in conversation) | File on disk, archived when shipped |
+### 1. Route the source
 
-`/plan` happens before the human says yes. `/spec` happens after — the spec IS the
-implementation artifact, not the alignment.
+Read a `--from` source in full and route by content, not path alone.
 
-## Two spec lifecycles — choose at authoring time
+**Note:** derive the spec name from its topic. After the spec is written, move the note
+to `docs/notes/_promoted/` and prepend a dated link to the new spec.
 
-A spec is one of two species, and the choice changes its whole lifecycle:
+**Program stub:** require a case-insensitive `Status: STUB` header and a program-master
+link. Read the stub and the master sections titled `CONTRACT SURFACES`, `RESOLVED DESIGN
+DECISIONS (no deferrals)`, and `Parallel-execution protocol`; titles, not section
+numbers, are identities. Preserve the stub's Goal, Scope, dependencies, Files, Gate,
+Telemetry hook, Diagnostics path, and Rollback story. Elaborate the same file, replace
+its placeholder, and change `STUB` to `READY FOR EXECUTOR`. Keep its path; write no
+breadcrumb.
 
-| | **Execution spec** | **Contract spec** |
-|---|---|---|
-| What it is | A dispatch artifact — instructions an executor consumes once | The highest-level code — the permanent source of truth a fresh agent could rebuild the system from |
-| Status | Folder-as-status: active in `docs/specs/`, `git mv` to `archive/` on ship. No `Status:` field | Evidence-bearing `**Status:**` line walking the 3-pass progression (below). **Never archived on ship** — archiving would destroy the rebuild-from-specs property; `archive/` is for superseded specs only |
-| After ship | Done — the code is the truth now | Lives forever in sync: **update the spec BEFORE changing code**; no undocumented surface; drift is fixed on discovery, not "later" |
-| Verification | Executor checkpoints + post-flight | 3-pass gauntlet incl. adversarial verification (below) |
+Treat any other active spec as revision input and warn that it is already elaborated.
 
-**How to choose:** if the project's LAWS/AGENTS declare a spec-is-source-of-truth
-discipline (specs must stay synced with implementation), or the user says the spec is
-permanent, author a **contract spec**. Otherwise default to **execution spec** — the
-cheaper form. Name the choice in the spec header either way.
+### 2. Establish intent and evidence
 
-**The contract-spec 3-pass status progression** (each pass's status line carries its
-evidence, not just a state word):
+Proceed when current context supplies at least two of:
 
-1. `**Status:** DRAFT (Pass 1 — design)` — written BEFORE implementation, precise
-   enough for a fresh executor to build from.
-2. `**Status:** SHIPPED (Pass 2 — synced with <files> on <date>; <gate> N/N PASS)` —
-   flipped after implementation + the project's fast gate. Reconcile every drift
-   between spec and what actually landed before flipping.
-3. `**Status:** SHIPPED (Pass 3 — Pass 2 + adversarial verification; <findings fixed>)` —
-   flipped only after a fresh-perspective verification pass (a `/peer-review`, or a
-   parallel-verifier workflow: several skeptics on distinct concern axes — security,
-   spec-impl drift, error paths, defensive access — plus one completeness critic) and
-   every ship-blocking finding is closed. Evidence from lra: author + smoke + lint +
-   typecheck missed at least one ship-blocking bug in 7 of 7 workstreams; only this
-   pass caught them.
-4. `**Status:** RECONCILED (Pass 3 — <date> spec-reality audit: <what changed>)` —
-   periodic re-sync when an audit re-verifies the spec against current implementation.
+1. symptom or goal;
+2. file or system reference;
+3. success criterion.
 
-**Exemption path:** cosmetic, typo-fix-level changes may skip Pass 3 — name the skipped
-pass and why in the commit message. Anything bigger walks all three.
+Otherwise ask for the missing goal, location, and observable success condition before
+research.
 
-**The litmus test for a contract spec:** a fresh agent in another session, given only
-the spec set, should produce code with the same shape and behavior. If they can't, the
-spec is incomplete — fix the spec.
+Read applicable project rules, every expected change target, related active and archived
+specs, and current tests or gates. Record source-of-truth drift. Make no implementation
+changes.
 
-## Expected usage
+### 3. Choose the lifecycle
 
-- `/spec [SPEC_NAME | AUTO] [description] [@annotations...]` — Create from a fresh task description.
-- `/spec --from docs/notes/NOTE_X.md` — **Promote a note to a spec.** Read the note for
-  intent, do research, write the spec, leave a breadcrumb in `notes/_promoted/`.
-- `/spec --from docs/specs/SPEC_X_NN_TOPIC.md` — **Elaborate a `/program` stub in place.**
-  Read the stub (Goal / Scope / Gate / Telemetry / Diagnostics / Rollback already filled
-  by `/program`) + the program master it cites, then write the Phases / Steps /
-  Pre-flight / Post-flight / Executor Handoff sections into the same file. No move,
-  no breadcrumb — the stub already lives where it should.
-- `/spec` (no arguments) — Review & revise the current conversation's draft if one exists.
+Default to an **execution spec**. Use a **contract spec** only when project rules or the
+user designate the spec as permanent source of truth.
 
-## Steps
+| Lifecycle | State contract |
+|---|---|
+| Execution | No status field. Active in `docs/specs/`; move to `docs/specs/archive/` after verified ship. |
+| Contract Pass 1 | `**Status:** DRAFT (Pass 1 — design)` before implementation. |
+| Contract Pass 2 | `SHIPPED` with synced files, date, and fast-gate evidence. |
+| Contract Pass 3 | `SHIPPED` with fresh adversarial-verification evidence and ship-blocking findings closed. |
+| Contract audit | `RECONCILED` with date and drift repaired. |
 
-### 1. Parse input
+Update a contract spec before its implementation. A fresh agent given only the contract
+spec set must be able to reproduce the system's shape and behavior. Name any cosmetic
+Pass 3 exemption in the commit message.
 
-**If `--from <path>`:** open the source file, then discriminate by **content** (header
-line) — not by path alone, since path-only matching misfires on archived or promoted
-files.
+### 4. Write the artifact
 
-**Guard — reject these paths up front (regardless of contents):**
-- `docs/specs/archive/...` — shipped specs, never re-elaborate.
-- `docs/specs/_promoted/...` — note-promotion breadcrumbs, never treat as a stub.
-- `docs/notes/_promoted/...` — already-promoted notes; tell the user the note has
-  already been promoted and point at the resulting spec.
+Include:
 
-If a guarded path is supplied, abort with a one-line message naming the violation.
+1. **Header** — date, model, requester, lifecycle, and promoted-source link when present.
+2. **Human Intent** — verbatim request, extracted goal, scope, and success criterion.
+3. **Pre-flight** — baseline commands with expected results. Make this a halting gate:
+   stop and surface any path, VCS, tool, or baseline mismatch before Phase 1.
+4. **Numbered phases and steps** — each step changes one file and shows CURRENT code,
+   REPLACEMENT code, and WHY the change is required. For a new file, write
+   `CURRENT: file absent`.
+5. **Checkpoint after every phase** — verification command, expected result, and
+   recovery action.
+6. **Post-flight** — final gates, commit-message template, and the lifecycle transition.
+7. **Executor Handoff** — first 2–3 files to read, the highest-risk constraint, and
+   recovery for likely failures.
+8. **Review Checklist** — observable checks for a reviewer.
+9. **OPEN QUESTIONS** — dated non-blocking findings for contract specs and any spec
+   that accumulates them.
 
-**Discriminate by source shape:**
+Write imperatively and use exact code rather than descriptive placeholders. Keep one
+file per step. Declare each command block's shell dialect or make it portable. Estimate
+files, systems, and tests, not elapsed time. Embed any applicable repository hard rule
+at the step where an executor could violate it.
 
-| Header / location | Mode | Behavior |
-|---|---|---|
-| `docs/notes/NOTE_*.md` (and not in `_promoted/`) | Promote note → spec | Write a new spec; move the note to `_promoted/`; add a breadcrumb. |
-| `docs/specs/SPEC_*.md` with first-line `Status:` (or `**Status:**`) matching `STUB` (case-insensitive) | Elaborate `/program` stub | Fill phases/steps **in place**; flip `Status:` to `READY FOR EXECUTOR`; no move. |
-| `docs/specs/SPEC_*.md` without a `Status: STUB` header | Already-elaborated spec | Treat as `/spec` review-and-revise (Step below), not as `--from`. Warn the user. |
+### 5. Finish the lifecycle action
 
-**Source is a note (promote-to-spec):**
-1. Read the note at `<path>` in full.
-2. Treat the note's body as the task description.
-3. Use AUTO naming to generate `SPEC_<topic>.md` from the note's topic.
-4. After writing the spec, move the note: `git mv docs/notes/NOTE_X_<date>.md docs/notes/_promoted/NOTE_X_<date>.md`.
-5. Add a header line to the moved note: `> Promoted to docs/specs/SPEC_<topic>.md on <date>`.
-
-**Source is a `/program` stub (elaborate-in-place):**
-1. Read the stub at `<path>` in full. Confirm the `Status:` header reads `STUB`
-   (allow either `Status: STUB` or `**Status:** STUB` — `/program` writes the bold
-   form, but match either for robustness). Confirm the stub references a program
-   master via a `Program:` or `[SPEC_..._00_PROGRAM](...)` link. If neither holds,
-   the file is not a `/program` stub — abort and tell the user.
-2. The stub already contains: Goal, Scope, Files, Gate, Telemetry hook, Diagnostics
-   path, Rollback story, Depends-on, Program-master link.
-3. Read the program master the stub references — focus on the sections titled
-   **CONTRACT SURFACES**, **RESOLVED DESIGN DECISIONS**, and **Parallel-execution
-   protocol** (a subsection of the parallelization section). **Match sections by
-   TITLE, not by §-number** — real programs insert sections and the numbers shift
-   (lra's masters put contracts at §3, not §2). These are the shared contracts
-   every child cites.
-4. Do research per Step 3 below, scoped to the stub's `Files` and `Scope` sections.
-5. **Elaborate in place** — write the Phases / Steps / Pre-flight / Post-flight /
-   Executor Handoff / Review Checklist sections into the **same file**. Replace the
-   stub's "TO BE ELABORATED" placeholder. Preserve the stub's existing fields
-   (Goal/Scope/Gate/etc.) — they're contract surface, not draft prose.
-6. Change the file's `Status:` header from `STUB` to `READY FOR EXECUTOR` (preserve
-   the bold form if the stub used it).
-7. Do **NOT** `git mv`, rename, or move the file. Do NOT write a breadcrumb. The stub
-   already lives at the correct path.
-
-**If no arguments:** review-and-revise the current conversation's draft (if any) into a
-structured spec.
-
-**If task description provided:** extract spec name + description, do AUTO naming if requested.
-
-### 2. Intent scaffold (clarify before research)
-
-Before spending tokens on research, check that the prompt is well-specified. A
-well-specified prompt has at least 2 of:
-1. A specific symptom or goal
-2. A file/system reference
-3. A success criterion
-
-If under-specified, ask the 3-question scaffold:
-
-> *"Before I research:*
-> *1. What's the symptom or goal? (one sentence)*
-> *2. Do you know which system/file, or should I find it?*
-> *3. How will we know it's fixed? (test, behavior, hash, visual)"*
-
-Skip if the prompt + context already provide clear answers.
-
-### 3. Research
-
-1. Identify all files that will need to change. Read each one.
-2. Check `docs/specs/` for related active specs.
-3. Check `docs/specs/archive/` for previously completed related work.
-4. Note any drift between any source-of-truth document and the current code.
-
-**Do NOT make code changes during research.**
-
-### 4. Write the spec
-
-Create the file at `docs/specs/SPEC_<NAME>.md`:
-
-- Header: today's date, your model name, "Requested by" the human user, and the
-  lifecycle choice. **Execution spec:** no `STATUS:` field — folder location is the
-  status (active in `specs/`, shipped after `git mv` to `archive/`). **Contract spec:**
-  an evidence-bearing `**Status:**` line starting at `DRAFT (Pass 1 — design)` per the
-  3-pass progression above.
-- **Human Intent section:** verbatim original request, extracted symptom/goal, scope,
-  success criterion.
-- **Pre-flight section:** baseline commands the executor runs first, each with its
-  expected result. Write it as a **halting gate**, not a warm-up — instruct the
-  executor explicitly: if any expectation fails (wrong path, missing VCS state,
-  absent tooling, baseline mismatch), STOP and surface the mismatch before Phase 1
-  rather than absorbing the surprise. (Evidence: Pi session `019eb7b5` skipped a
-  failing-expectation pre-flight and executed a git-commit protocol in a directory
-  with no `.git`.)
-- **Numbered Phases:** each contains numbered STEPs that target exactly one file each.
-  - Each STEP: show the CURRENT code, then the REPLACEMENT code, then explain WHY each
-    change matters.
-  - **CHECKPOINT** after each phase with verification commands + "if X fails: [recovery]"
-    instructions.
-- **Post-flight section:** final verification + commit message template + the
-  move-to-archive instruction.
-- **Executor Handoff section:** quick-start context for the executing agent (the 2-3
-  files to read first, the key constraint that's most likely to cause a mistake,
-  recovery step for common failure points).
-- **Review Checklist:** for the reviewer model.
-- **OPEN QUESTIONS section (contract specs, and any spec that accumulates them):**
-  the sanctioned parking spot for deferred subtle findings and unresolved questions —
-  verifier findings triaged "subtle, non-blocking" land here instead of vanishing
-  into conversation. One line each, dated.
-- **(If `--from`):** include `> Promoted from note: docs/notes/_promoted/NOTE_X_<date>.md`
-  in header.
-
-### 5. Spec quality rules
-
-- **Be imperative, not descriptive.** "Change line 42 from X to Y", not "we should consider
-  updating the function."
-- **Show exact code.** Every STEP shows current code + replacement code — no vague "update the function" stand-ins.
-- **One file per STEP.** Three files = three STEPs.
-- **Checkpoint after every phase.** Run the project's lint/test gate at minimum.
-- **Declare the shell dialect.** Authoring harness ≠ executing harness. Write
-  pre-flight/checkpoint commands shell-portably; otherwise tag the
-  block with its dialect (`# PowerShell — translate if your shell is POSIX`) so a
-  bash-tool executor translates instead of paste-failing. (Evidence: two hard
-  PowerShell-in-bash errors in Pi-on-Windows executor sessions, 2026-06-11.)
-- **Estimate scope, not time.** Files/systems/tests touched, NOT wall-clock days. Agent
-  time anchors are unreliable.
-- **Respect repo-level Hard Rules.** If the task could tempt the executor toward a known
-  anti-pattern, call it out in the STEP with the correct alternative.
-
-### 6. Present and exit
-
-Tell the user:
-- Spec saved to `docs/specs/SPEC_<NAME>.md`
-- (If `--from`) Note moved to `notes/_promoted/<original-name>` as a breadcrumb.
-- Brief summary of the phases.
-- Any open questions.
-- "When ready to execute, hand the spec path to your executor agent."
-
-## On ship
-
-**Execution specs — move-on-ship convention.** When the spec's work is verified shipped:
-
-```
-git mv docs/specs/SPEC_X.md docs/specs/archive/SPEC_X.md
-```
-
-The `git mv` IS the ship signal. **Do not** flip a `STATUS:` field — folder location is
-the status. The mv shows up in the closing PR diff, the `specs/` folder shrinks back to
-live work only, and `archive/` grows monotonically.
-
-**Contract specs — flip the status, never the folder.** Ship = the `**Status:**` line
-advances through the 3-pass progression with its evidence (files synced, date, gate
-results, verifier findings closed). The spec stays in `docs/specs/` permanently as the
-source of truth; on later changes, **edit the spec first with the rationale, THEN change
-the code** — never paper drift over with code comments.
-
-If a spec was promoted from a note, the breadcrumb in `notes/_promoted/` stays where it is.
-
-## Mandatory-planning gate (recommended for projects with non-trivial change discipline)
-
-If your project has a Hard Rule requiring a spec for non-trivial changes, **don't ship
-the rule rhetorically** — agents will skip it. Make it mechanical: a lint-time check that
-fails when substantive `src/` commits don't reference a planning file. Three escape paths
-keep it ergonomic: (a) the same commit modifies a `docs/specs/` or `docs/notes/` file,
-(b) the commit message mentions a `SPEC_` / `NOTE_` filename, (c) a `[no-plan]` bypass
-tag for typos / formatting / dependency bumps.
-
-This isn't bundled with cairn — cairn ships markdown skills, not project-specific lint
-tooling. Build the gate at whatever surface your project's PRs already pass through (CI
-check, pre-commit hook, or a docs-audit script). The original failure mode this guards
-against: planning rules that are only rhetorical accumulate stale artifacts —
-"required" doesn't equal "enforced."
+- Note promotion: write the spec, then move and annotate the source note.
+- Stub elaboration: preserve the path and fields; flip only its status and content.
+- Execution-spec ship: after verification, move the spec to `docs/specs/archive/`;
+  folder location is status.
+- Contract-spec ship: advance the evidence-bearing status in place; never archive a
+  current contract spec.
 
 ## Output
 
-For new specs: a confirmation under ~150 words listing path, phase count, open questions.
+Confirm in at most 150 words:
 
-For `--from` note-promotions: same, plus the `_promoted/` breadcrumb confirmation.
-
-For `--from` stub-elaborations: same, plus confirmation that the file's `Status:` header
-flipped from `STUB` to `READY FOR EXECUTOR`. No move; the path is unchanged.
+- linked spec path and phase count;
+- lifecycle;
+- open questions;
+- note breadcrumb or stub status transition, when applicable;
+- exact executor handoff command.
 
 ## Companion skills
 
-- `/note` — the lightweight verb. `/spec --from <note>` is the promotion path; the note's
-  intent paragraph stays preserved as a breadcrumb in `notes/_promoted/`.
-- `/plan` — cairn's behavioral pre-action alignment skill. Different verb, different
-  output (conversational, not a file). `/plan` runs before; `/spec` runs after.
-- `/peer-review` — when the spec's work is shipped and you want a fresh agent to read
-  the change set cold before merge. Catches inconsistency-class bugs the spec author
-  and executor missed while "too close."
-- `/program` — the orchestration verb that produces `/spec` stubs to elaborate. When
-  work is too big for one spec, `/program` decomposes it into a master + N stubs;
-  `/spec --from docs/specs/SPEC_..._NN_TOPIC.md` fills each stub in place.
+`/note` supplies promotable intent. `/program` supplies stubs. `/peer-review` verifies
+the implemented change set. `/plan` supplies pre-authoring alignment.

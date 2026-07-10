@@ -106,8 +106,9 @@ pre-ship cross-agent. Both can fire on the same change set.
 Help the agent capture intent and structure execution as durable in-repo files (not
 just conversation state). Distinct from maintenance skills like `/plan` or `/reflect`
 which are behavioral/conversational — these produce files that ship with the codebase,
-get seen by anyone who clones the repo, and have explicit lifecycles (folder-as-status:
-active folder is live, `archive/` is shipped, no STATUS field).
+get seen by anyone who clones the repo, and have explicit lifecycles. Execution specs
+use folder-as-status: active is live and `archive/` is shipped, with no status field.
+Permanent contract specs stay live and carry evidence-bearing status.
 
 - `note/` — file a quick thought, debug finding, or feature sketch as a single-paragraph
   in-tree capture (`docs/notes/`). Cheap to write, cheap to delete, can be promoted to
