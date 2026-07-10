@@ -63,7 +63,8 @@ they answer different questions:
   project-local, agent-only by convention. Right for facts that shape future agent
   reasoning about this project regardless of what file they're touching.
 
-When in doubt, prefer `/note` — repo-visible recovers cheaply; user-space-buried doesn't.
+When in doubt, prefer `/note` — ephemeral intent is cheaper to prune than durable,
+agent-indexed memory.
 
 ## Related context
 

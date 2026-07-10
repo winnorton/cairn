@@ -1,171 +1,79 @@
 ---
 name: note
-description: File a quick thought, debug finding, or feature sketch into the project repo as
-  a dated note. No template, no research phase. Use when the user says "note this", "remind
-  me to", "track this", "look at later", "file this", "circle back", or after an agent
-  suggests follow-up work and the user wants to capture it (bare `/note` after the
-  suggestion). Distinct from /reflect — this is pre-emptive intent capture (one paragraph,
-  in-repo, ephemeral); /reflect is post-hoc session distillate (memory writes, often
-  user-space). Distinct from cross-session agent memory — this lives in `docs/notes/` in the project
-  repo (ephemeral, human-visible at `ls`); memory lives in `.cairn/memory/` (agent-indexed,
-  persists across sessions, same repo but different purpose). Do NOT use for executor
-  handoffs or multi-step refactor plans —
-  those need a heavier shape that this skill deliberately doesn't carry.
+description: File one quick thought, debug finding, or feature sketch as a dated note in
+  docs/notes/. Use for "note this", "remind me", "track this", "circle back", or a bare
+  /note after one suggested follow-up. No research or execution plan. Use /reflect for
+  post-hoc lessons, memory for durable agent context, and /spec for executor handoffs.
 ---
 
 # Note
 
-Lightweight intent capture. File a thought into the project repo so it doesn't evaporate.
-Cheap to write, cheap to delete, cheap to promote later if it becomes real work.
+Capture one concrete intention cheaply so it can be found, deleted, or promoted later.
 
-## When to use
+## Routing
 
-**User-invoked:**
-- *"note the spawner has a bug under high seed counts"*
-- *"remind me to look at the renderer flicker"*
-- *"track this — we should circle back to bounty routing"*
-- *"file this finding"*
-- Bare `/note` (or `note this`) after the agent has just suggested follow-up work — captures the suggestion.
-
-**Distinct from `/reflect`:** `/note` is pre-emptive (capture before action). `/reflect` is
-post-hoc (distill after action). Different lifecycles.
-
-**Distinct from cross-session memory:** `/note` files to `docs/notes/` in the project repo
-(ephemeral, human-readable, git-tracked intent capture). Cross-session **agent memory** lives
-in `.cairn/memory/` in the same repo — also git-tracked, but agent-indexed across sessions
-rather than ephemeral. See "Filing destination" below for routing.
-
-Do NOT use for:
-- Executor handoffs, multi-phase refactors, or anything that needs phases/steps/checkpoints.
-  That shape doesn't fit a one-paragraph note — use `/spec` instead, or promote this note
-  to a spec via `/spec --from <this-note>` once it matures.
-- Generic project-shaping facts (architectural conventions, never-do-X rules). Those belong
-  in cross-session memory or LAWS.md, not in a single note.
-
-## Filing destination — `/note` vs cross-session agent memory
-
-`/note` files to `docs/notes/` in the **project repo** (ephemeral intent capture — version
-controlled, visible to anyone who clones, cheap to delete once acted on). Cross-session
-**agent memory** lives in `.cairn/memory/` — also in the project repo, but agent-indexed for
-durable cross-session reasoning rather than ephemeral capture.
-
-Use this table to route:
-
-| Question the thought answers | File where |
+| Content | Destination |
 |---|---|
-| "What concrete thing should the next agent touching `<file>` know or do?" | `/note` (project repo) |
-| "Is this a debug finding I want to circle back to?" | `/note` |
-| "What would a fresh session need to see when running `ls docs/notes/`?" | `/note` (yes, by design) |
-| "What facts about this project shape future agent reasoning broadly?" | Cross-session memory |
-| "Is this an architectural pattern other agents need internalized?" | Cross-session memory |
-| "Should this fact persist across sessions and be visible to the agent automatically?" | Cross-session memory (`.cairn/memory/`) |
+| Concrete follow-up or debug finding bound to project work | `/note` in `docs/notes/`. |
+| Fact or judgment that broadly shapes future agent reasoning | `.cairn/memory/` or a law. |
+| Multi-step executor handoff | `/spec`. |
+| Lesson from completed work | `/reflect`. |
 
-Both can fire for the same observation, answering different questions. **When in doubt,
-prefer `/note`.** Ephemeral-and-deletable beats durable-and-indexed — a note in `docs/notes/`
-can be promoted to a `.cairn/memory/` entry later; a memory entry added prematurely
-creates agent-context clutter without being pruned.
+The same observation may justify both a note and memory when the purposes differ. When
+uncertain, prefer the ephemeral note.
 
-## Steps
+## Workflow
 
-### 1. Resolve what you're filing
+### 1. Resolve one thought
 
-If the user said `/note` or bare `note` after a conversation:
+Preserve the user's meaning; do not embellish. For a bare `/note`, capture the single
+follow-up in the latest assistant turn. When several were suggested, choose the most
+concrete file- or system-bound item, disclose the skipped items, and offer to file them
+separately. With no clear candidate, ask one short question listing up to two candidates.
 
-- Look at your most recent assistant turn. Did you suggest exactly one follow-up? File that.
-- Multiple follow-ups in one turn? **Do not file all as one mixed-intent note.** Pick the
-  most concrete suggestion (specific file/system reference). Tell the user the others
-  weren't filed and ask if any should also be captured.
-- Ambiguous (`/note` with no context)? Ask one short question: *"What should I capture —
-  [list 1-2 candidates from recent context]?"*
+### 2. Choose the path
 
-If the user provided explicit content (`/note RENDERER_FLICKER We should look at...`),
-skip resolution; file what they said.
+Use a notes path declared by project rules; otherwise use `docs/notes/`. When absent,
+create the directory and a one-paragraph `README.md` stating the filename and lifecycle
+conventions.
 
-### 2. Resolve the filing path
+Name the file `NOTE_<TOPIC>_<YYYY-MM-DD>.md`, where `<TOPIC>` is 1–3 semantic
+`UPPERCASE_UNDERSCORE` words. Add `_2`, `_3`, and so on for same-day collisions.
 
-Default: `docs/notes/` in the project repo. If that directory doesn't exist, create it
-plus a `docs/notes/README.md` explaining the convention (one paragraph; see Output below).
+### 3. Write the note
 
-If the project's CLAUDE.md or LAWS.md declares a different notes path, use that.
-
-### 3. Generate filename
-
-`NOTE_<TOPIC>_<YYYY-MM-DD>.md`
-
-- `<TOPIC>` is 1-3 UPPERCASE_UNDERSCORE_KEYWORDS — semantic, not generic. `RENDERER_SHADOW_FLICKER`, not `BUG_FIX`.
-- Date in filename so age is visible at `ls` time. No frontmatter date juggling.
-- If a note with the same topic already exists for the same day, append `_2`, `_3`, etc.
-
-### 4. Write the note
-
-Format — loose. The body is **one paragraph** answering:
-
-- What did I notice / suggest / want to remember?
-- Why does it matter?
-- What would the next step look like if someone picked this up?
-
-Then add 1-3 bullets of supporting context (file paths, error messages, related work).
-Skip the bullets if not needed.
-
-**Do NOT** write phases, steps, checkpoints, pre-flight commands, or executor handoff
-sections. Those belong in a `/spec`. If your note is growing those, promote it via
-`/spec --from <this-note>` instead.
-
-Template:
+Write no research or plan. Use:
 
 ```markdown
-# [Topic] — Note
+# <Topic> — Note
 
-> **Filed:** YYYY-MM-DD · **By:** [agent or human] · **Status:** open
+> **Filed:** YYYY-MM-DD · **By:** <agent or human>
 
-[One paragraph capturing the thought.]
+<One paragraph: what was noticed, why it matters, and the likely next step.>
 
-[Optional 1-3 bullets of supporting context.]
-
----
-
-*Note — pre-emptive intent capture. If this becomes real work, promote to whatever your
-habitat uses for heavier planning artifacts.*
+<Optional 1–3 bullets: paths, errors, or related work.>
 ```
 
-### 5. Confirm and exit
+If the content needs phases, checkpoints, pre-flight, or executor handoff, stop and
+offer `/spec` instead.
 
-Tell the user:
-- Note saved to `<path>/NOTE_<TOPIC>_<DATE>.md`
-- One-line summary of what's in it
-- (If sibling suggestions were skipped) "I filed [the chosen one]. Others I didn't file:
-  [list]. Want any of those captured too?"
+### 4. Confirm
 
-That's it. No research phase, no auto-resolution of annotations. Notes are intent capture.
-
-## Promotion path
-
-When a note becomes real work: `/spec --from docs/notes/NOTE_<topic>_<date>.md`. The
-`/spec` workflow reads the note for intent, does research, writes a structured spec in
-`docs/specs/`, and moves the note to `docs/notes/_promoted/` as a breadcrumb. The
-original intent paragraph stays preserved; the spec adds structure.
-
-A breadcrumb supports multiple promotions — a single note can spawn several specs over
-time as different aspects become real work.
+Report the linked path and a one-line summary. List any skipped sibling suggestions and
+ask which should receive separate notes.
 
 ## Lifecycle
 
-Notes have three terminal states. Move-on-state, don't flip a status field:
+Folder location is state; use no status field.
 
-- **Promoted** — work was upgraded to a `/spec`. Move to `docs/notes/_promoted/`
-  as a breadcrumb.
-- **Done** — work was completed without ever needing a spec. Move to
-  `docs/notes/_done/`.
-- **Deleted** — superseded, no longer relevant, or never going to happen.
+| State | Action |
+|---|---|
+| Promoted | `/spec --from <note>` moves it once to `docs/notes/_promoted/` as a breadcrumb. |
+| Done without a spec | Move it to `docs/notes/_done/`. |
+| Obsolete | Delete with user authorization. |
 
-A periodic sweep (manual or scripted) of `docs/notes/` for files older than ~30 days still
-in the live folder is a healthy habit. Notes are ephemeral by design.
+Periodically surface live notes older than about 30 days for human review.
 
 ## Output
 
-A short confirmation:
-- Path written
-- One-line summary
-- Any sibling suggestions that were not captured (with prompt)
-
-No prose padding.
+Return only the linked path, one-line summary, and skipped-suggestion prompt when needed.

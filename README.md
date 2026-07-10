@@ -181,8 +181,8 @@ serve each:
   start. `/advocate` rotates the observer position pre-ship.
 - **Pre-emptive intent capture** (filing thoughts that may or may not become real work):
   via `/note`. One paragraph, in-repo, dated. Distinct from `/reflect` (post-hoc) and
-  from cross-session memory (user-space). Cheap to write, cheap to delete, cheap to
-  promote when work materializes.
+  from durable, agent-indexed cross-session memory. Cheap to write, cheap to delete,
+  cheap to promote when work materializes.
 - **External-perspective review** (catching inconsistency-class bugs the work-author
   missed): via `/peer-review`. Reads the diff PLUS adjacent unchanged files that the diff
   expects to be consistent with. Distinct from `/reflect` (which is same-agent post-hoc).

@@ -77,7 +77,7 @@
       },
       "role": "optional",
       "tier": "grow",
-      "description": "Pre-emptive intent capture — file a quick thought as a dated note in the project repo. Distinct from /reflect (post-hoc) and from cross-session memory (user-space). Includes the two-destinations disambiguation table."
+      "description": "Pre-emptive intent capture — file a quick thought as a dated note in the project repo. Distinct from /reflect (post-hoc) and from durable, agent-indexed cross-session memory. Includes the two-destinations disambiguation table."
     },
     {
       "src": "files/skills/peer-review/SKILL.md",

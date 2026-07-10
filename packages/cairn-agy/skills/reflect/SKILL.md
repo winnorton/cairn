@@ -1,136 +1,87 @@
 ---
 name: reflect
-description: Pause and take stock during or after a stretch of work. Use when the user says
-  "reflect", "take stock", "what did we learn", "hell yes" (in response to a reflect offer),
-  or after completing a non-trivial task before moving to the next one. Agents should also
-  PROACTIVELY propose /reflect at natural checkpoints — end of a deep-dive, completed
-  substantive chunk, hitting a milestone, before switching context. Surfaces lessons,
-  updates memory, flags drift. If the workspace declares downstream consumers, also
-  produces distillate for their habitats. Do NOT use for simple one-step tasks or
-  mid-execution — reserve for genuine inflection points.
+description: Distill lessons at a natural checkpoint after substantive work. Use when
+  the user asks to reflect or accepts a reflection offer; proactively offer after a
+  milestone, deep-dive, or before switching context. Routes findings to gates, memory,
+  laws, and declared downstream consumers. Do not use for trivial work or mid-execution.
 ---
 
 # Reflect
 
-Pause the forward motion. Take stock. Decide what carries forward into future sessions —
-both this workspace's own habitat and any downstream consumer habitats.
+Turn completed work into approved persistence for this workspace and any declared
+downstream consumers.
 
-## When to use
+## Trigger
 
-**User-invoked (explicit):**
-- User explicitly asks to reflect, review, take stock, or "what did we learn."
-- User says something affirmative to a reflect offer ("yes", "hell yes", "let's").
+Run when the user asks to reflect, take stock, name lessons, or accepts an offer.
+At a natural checkpoint, offer once: `Natural reflection point — want me to run
+/reflect?` Wait for consent. Finish active work first; skip trivial tasks.
 
-**Agent-proactive (propose, don't auto-fire):**
-- A multi-step task just completed and a natural inflection point exists before the next.
-- You've produced significant output (a research doc, a design, a deep-dive).
-- You notice you've been drifting from the original goal or repeating mistakes.
-- Session has been running a long time without a checkpoint.
+## Workflow
 
-When proactively proposing, keep it tight: *"Natural reflection point — want me to run
-/reflect?"* The user can decline. Default to offering, not waiting in silence.
+### 1. Distill the work
 
-Do NOT invoke for:
-- Single-step tasks or trivial questions.
-- Mid-execution of a well-scoped task — finish first, reflect after.
+State the work and outcome in one sentence, then name:
 
-## Steps
+- **Worked** — a specific approach worth repeating.
+- **Didn't** — friction or failure and its known root cause.
+- **Surprised** — unexpected evidence or behavior.
 
-1. **Summarize in one sentence**: what was the work, and what's the outcome so far?
+### 2. Route local persistence
 
-2. **Surface three things**:
-   - **What worked**: an approach or decision worth repeating. Be specific — "the X approach
-     to Y" beats "good communication."
-   - **What didn't**: a mistake, detour, or friction point. Include the root cause if known.
-   - **What surprised**: anything you or the user didn't expect. Surprises are often the
-     most memorable signal.
+| Finding | Destination |
+|---|---|
+| A machine can detect it | Propose the test, lint, script, or CI gate; write no prose rule. |
+| Judgment is required | Propose feedback memory. Promote to a law only after recurrence/citation evidence, or for a single intolerable violation. Laws include Why and How to apply. |
+| Project state or external knowledge | Propose project or reference memory. |
+| One-time observation | Keep only in the transcript. |
 
-3. **Decide what persists for THIS workspace**. Route each of the three:
-   - **A machine could check it** (a script, lint rule, test, or CI step could catch
-     the violation) → propose the GATE, not a law or memory. A mechanically-checkable
-     rule written as prose drifts; the gate holds.
-   - **It takes judgment to apply** → feedback-memory entry by default. Laws are
-     promoted, not born: the memory graduates to LAWS.md when the pattern recurs or
-     `/audit` shows its citations firing. Exception — a "never again" whose single
-     violation is unacceptable goes straight to a law candidate (Why + How to apply;
-     an incident story in the Why strengthens it).
-   - **Worth remembering but not rule-shaped** (project state, references) → project
-     or reference memory.
-   - **One-time observation** → stays in this session's transcript; persists nowhere.
+Also identify existing memories or laws that the evidence should revise or retire.
 
-4. **Check for downstream consumers.** Read this workspace's `CLAUDE.md` for a section
-   titled `## Downstream consumers`, `## Consumers`, or similar. If present, the workspace
-   is declared as upstream research/work that feeds another habitat. For each declared
-   consumer, additionally propose:
+### 3. Shape downstream distillate
 
-   - **Reference memories** shaped for their habitat (where to find this research later)
-   - **Project memories** shaped for their habitat (what decisions should this research
-     inform, what's the current state they should know)
-   - **Law candidates** shaped for their habitat (never-do-X / always-do-Y rules
-     that emerged from this research, with *Why* and *How to apply*)
-   - **Plan candidates** for bigger architectural decisions the research surfaced
+Read the workspace context for `Downstream consumers`, `Consumers`, or an equivalent
+section. For each declared consumer, propose relevant reference memory, project memory,
+law, and plan candidates in that consumer's vocabulary. Omit types with no useful
+content.
 
-   Each downstream artifact is shaped *for the consumer's vocabulary and habitat*, not
-   this workspace's. Example: if this workspace researched Unreal's rendering and
-   `cwar-engine` is declared as downstream, the reference memory reads as it would in
-   cwar-engine's habitat — "per Unreal's GBuffer approach [cite URL], cwar renderer
-   should prefer X" — not "I learned something about GBuffers today."
+### 4. Ask before writing
 
-5. **Propose all updates before writing**. Show the user:
-   - Memory entries you'd add to THIS workspace (name, type, body sketch).
-   - Laws you'd add to THIS workspace (rule + Why + How to apply).
-   - Existing entries you'd revise or retire in THIS workspace.
-   - **Distillate for each downstream consumer** (memory / laws / plans, shaped for them).
-   Wait for approval before writing. The user can approve or decline per-section.
+Present:
 
-6. **Write approved local updates directly**. For downstream distillate, write it to a
-   designated `distillate/` folder in this workspace (create if absent) so the user can
-   transport it — via copy, symlink, or git submodule — into the consumer habitat.
+- each local memory's name, type, and body sketch;
+- each local law's rule, Why, and How to apply;
+- revisions or retirements;
+- each consumer's proposed distillate.
+- at a session boundary, a `HANDOFF.md` update covering current state, completed and
+  open work, verified evidence, next action, and related memory paths.
 
-   File naming convention depends on the consumer's memory store layout:
-   - **Cairn-adopting consumer** (per-project `.cairn/memory/` tree — the default for any
-     project that has run `adopt`):
-     `distillate/<consumer-name>/<type>/<slug>.md`
-     → transport to `<consumer-project>/.cairn/memory/<type>/<slug>.md`
-   - **Cross-project user-global consumer** (e.g. Antigravity's
-     `~/.gemini/antigravity/memory/`, where multiple workspaces share one tree — applies
-     to non-cairn consumers or legacy v0.13.x installs):
-     `distillate/<consumer-name>/<type>/<this-project>/<slug>.md` — the
-     `<this-project>` subdir prevents pile-up when many workspaces feed one
-     consumer. Use the producing workspace's directory basename (typically
-     `path.basename(cwd)`, e.g. `cwar-engine`, `cairn`).
+Wait for section-by-section approval. Write only approved items.
 
-   When uncertain, default to subdir-by-project for cross-process consumers.
-   See `.cairn/memory/project/README.md` for the layout rule.
+### 5. Write and offer transport
 
-7. **Offer transport if the consumer path is locally writable.** After writing distillate,
-   check whether the declared consumer path (e.g. `<consumer-project>/.cairn/memory/` for
-   cairn-adopting consumers, or `~/.gemini/antigravity/memory/` for Antigravity) is a
-   real directory the current process can write to. If yes, ask:
+Write approved local memory to `.cairn/memory/<type>/<slug>.md` and laws to
+`.cairn/LAWS.md`, unless project context declares a compatible alternate. Write
+downstream artifacts under `distillate/<consumer>/`:
 
-   > *"Distillate written to `distillate/<consumer>/`. Also copy to `<consumer-path>/`
-   > now? (y/n)"*
+| Consumer memory layout | Distillate path |
+|---|---|
+| Cairn project | `<type>/<slug>.md` → `<consumer>/.cairn/memory/<type>/<slug>.md` |
+| Shared cross-project store | `<type>/<producer-project>/<slug>.md` → the consumer's shared memory tree, such as non-Cairn Antigravity `~/.gemini/antigravity/memory/` |
 
-   On **y** — copy distillate files into the consumer's typed-memory subdirs (preserving
-   `<type>/<slug>.md` structure). Consumer's habitat is now updated; user skipped the
-   manual cp step.
+Use the producer directory basename for `<producer-project>`. Keep downstream law and
+plan candidates in the distillate for consumer-side approval; do not place them in typed
+memory directories.
 
-   On **n** (or path is not locally writable — different machine, sandboxed harness, etc.) —
-   leave distillate in place and tell the user the canonical cross-boundary transport
-   pattern: *"Distillate is in `distillate/<consumer>/`. Transport via git (commit + push,
-   consumer pulls) for cross-machine setups, or via cp for same-machine when the consumer
-   path becomes writable."*
+When the consumer path is locally writable, ask whether to copy approved memory
+distillates now. On approval, preserve Cairn `<type>/<slug>.md` or shared-store
+`<type>/<producer-project>/<slug>.md` structure. Otherwise leave the distillate in place
+and name the transport: copy for same-machine work or commit/push and pull for
+cross-machine work.
 
-   This eliminates the manual cp friction for the 80% same-machine case while leaving
-   the cross-boundary case to the user's existing tools (git, scp, etc.).
+At a session boundary, write the approved `HANDOFF.md` update before the session ends.
 
 ## Output
 
-A short reflection (under ~300 words) with:
-- One-sentence summary
-- Three surfaced items (worked / didn't / surprised)
-- Proposed persistence actions for this workspace
-- Proposed distillate for each downstream consumer (if declared)
-- End with a clear question: "Write these updates?"
-
-No prose padding. The reflection is the value.
+Stay under 300 words: summary, Worked/Didn't/Surprised, local persistence and HANDOFF
+proposals, consumer distillate, and `Write these updates?`
