@@ -40,16 +40,23 @@ for the index.
   [docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md](docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md)).
   Cowork stays in `manifest.json` for backward compat but is no longer in the
   primary triplet.
-- **In flight since v0.14.0:** the `lra` skill pack (a `prompt-evolve`
-  specialization; see [docs/CROSS_REPO_LRA_CAIRN.md](docs/CROSS_REPO_LRA_CAIRN.md))
-  and the expanded `check-skill-budgets` CI gate — staged pending a version bump.
-  The gate enforces Pi's 1024-character description cap plus exact per-skill
-  instructional-body word baselines in `scripts/skill-body-word-baseline.json`;
-  intentional count changes require `--update-body-baseline` in the reviewed diff.
-  The superseded `agents/` umbrella draft is retired at
-  `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`. Before touching
-  `manifest.json`, `adopt.md`, or path conventions, read the archived v0.14.0
-  program master for the design rationale.
+- **Committed to `main` since the v0.14.0 tag (unreleased — `VERSION` still
+  `0.14.0`, working tree clean):** four interim changes await the next version
+  bump. (1) The `lra` skill pack — a `prompt-evolve` specialization; see
+  [docs/CROSS_REPO_LRA_CAIRN.md](docs/CROSS_REPO_LRA_CAIRN.md). (2) The
+  skill-size gate suite in `scripts/` (`check-skill-budgets.mjs`,
+  `check-prompt-register.mjs`) wired into CI — `check-skill-budgets` enforces
+  Pi's 1024-character description cap plus exact per-skill instructional-body
+  word baselines in `scripts/skill-body-word-baseline.json`; intentional count
+  changes require `--update-body-baseline` in the reviewed diff. (3)
+  Law-creation discipline — `scripts/check-laws-shape.mjs` plus the two newest
+  meta-rules (machine-checkable means gate-not-law, memory-first promotion). (4)
+  A **skill-compression campaign (2026-07-08/09)** that rewrote `prompt-evolve`
+  to its 676-word kernel and ratcheted `spec`, `program`, `reflect`, `note`,
+  `peer-review`, and `plan` down against the baseline. The superseded `agents/`
+  umbrella draft is retired at `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`.
+  Before touching `manifest.json`, `adopt.md`, or path conventions, read the
+  archived v0.14.0 program master for the design rationale.
 - **Open design threads:** see `docs/notes/` — in-repo memory tier (addressed
   by v0.14.0 `.cairn/` move), `/cairn-introspect` skill candidate (gate at 3+
   instances), supervisor pattern (deferred), v0.13.0 follow-ups.

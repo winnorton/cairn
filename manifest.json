@@ -43,7 +43,7 @@
       "mode": "create-if-absent",
       "role": "scaffolding",
       "tier": "grow",
-      "description": "Meta-laws (the schema) + 6 seed laws. The shape is load-bearing; the seeds are scaffolding — replace with your own laws over time."
+      "description": "Meta-laws (the schema) + 7 seed laws. The shape is load-bearing; the seeds are scaffolding — replace with your own laws over time."
     },
     {
       "src": "files/skills/reflect/SKILL.md",
