@@ -53,6 +53,10 @@ Seven meta-rules govern the laws themselves:
    shadow, and it drifts while the gate would hold. Laws are reserved for rules that
    take judgment to apply. When a gate later becomes buildable for an existing law,
    build it and retire the law, leaving a one-line pointer at the gate.
+   Worked example: to enforce "plan before a non-trivial change," gate the commit — fail
+   a substantive `src/` commit that references no `docs/specs/` or `docs/notes/` file,
+   with a `[no-plan]` tag escaping typos, formatting, and dependency bumps. The prose
+   version accumulates stale, unenforced artifacts; the gate holds.
 7. **Memory first — laws are promoted, not born.** A lesson lands as a feedback-memory
    entry by default. It graduates to a law when the pattern recurs, when `/audit` shows
    its citations firing across sessions, or when a single violation would be

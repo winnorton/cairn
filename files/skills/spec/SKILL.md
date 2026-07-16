@@ -68,7 +68,7 @@ user designate the spec as permanent source of truth.
 | Execution | No status field. Active in `docs/specs/`; move to `docs/specs/archive/` after verified ship. |
 | Contract Pass 1 | `**Status:** DRAFT (Pass 1 — design)` before implementation. |
 | Contract Pass 2 | `SHIPPED` with synced files, date, and fast-gate evidence. |
-| Contract Pass 3 | `SHIPPED` with fresh adversarial-verification evidence and ship-blocking findings closed. |
+| Contract Pass 3 | `SHIPPED` after a fresh-perspective pass — a `/peer-review`, or parallel skeptics on distinct axes (security, spec-impl drift, error paths, defensive access) plus one completeness critic — with every ship-blocking finding closed. |
 | Contract audit | `RECONCILED` with date and drift repaired. |
 
 Update a contract spec before its implementation. A fresh agent given only the contract

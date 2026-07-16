@@ -14,8 +14,9 @@ Rotate to a cold reviewer and test the change against the files its author did n
 ## Eligibility
 
 - Review only a coherent commit, branch, or PR; wait while scope is unstable.
-- The reviewer did not participate in authoring. An author routes the work to a fresh
-  agent or session instead of self-reviewing.
+- The reviewer did not participate in authoring. If you wrote the change, decline and
+  route it to a fresh agent or session; self-review re-creates the blind spot peer-review
+  exists to catch.
 - Use `/round-review` for executor output governed by a program master.
 - Use `/reflect` for lessons from the current agent's completed work.
 

@@ -1,9 +1,10 @@
 ---
 name: note
 description: File one quick thought, debug finding, or feature sketch as a dated note in
-  docs/notes/. Use for "note this", "remind me", "track this", "circle back", or a bare
-  /note after one suggested follow-up. No research or execution plan. Use /reflect for
-  post-hoc lessons, memory for durable agent context, and /spec for executor handoffs.
+  docs/notes/. Use for "note this", "remind me", "track this", "look at later", "file
+  this", "circle back", or a bare /note after one suggested follow-up. No research or
+  execution plan. Use /reflect for post-hoc lessons, memory for durable agent context,
+  and /spec for executor handoffs.
 ---
 
 # Note

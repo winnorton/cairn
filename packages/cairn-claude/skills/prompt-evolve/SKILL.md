@@ -51,7 +51,9 @@ The generated prompt must:
    explicitly merge-safe.
 5. Name its stop and re-run semantics. Bounded units normally become near-no-ops after
    completion; live units remain additive and track their last sweep. Budget, saturation,
-   run-until-dry, or another spec-supported strategy may govern stopping.
+   run-until-dry, or another spec-supported strategy may govern stopping. Treat an
+   unexpectedly large bounded re-run write volume as a signal — the prior run was
+   incomplete or the source changed — and investigate before committing the writes.
 6. Inventory before every write and verify afterward. State the write order, validator, dedup
    key, and representative source-to-target spot checks.
 7. End execution with mandatory self-improvement. Embed this prompt's resolved absolute path

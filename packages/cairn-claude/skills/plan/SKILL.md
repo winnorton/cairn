@@ -2,8 +2,9 @@
 name: plan
 description: Align with the user before non-trivial or hard-to-reverse work. Use for
   tasks with 3+ meaningful steps, shared or external state, irreversible actions,
-  ambiguous interpretations, or requests to "plan first." Skip obvious single edits,
-  information requests, and approaches already approved in this conversation.
+  ambiguous interpretations, or requests to "plan first" or "how would you approach
+  this." Skip obvious single edits, information requests, and approaches already approved
+  in this conversation.
 ---
 
 # Plan
