@@ -17,6 +17,7 @@
     "round-review",
     "session-distill",
     "spec",
+    "swarm",
     "tour"
   ],
   "versionFile": "plugin.json"

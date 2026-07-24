@@ -109,7 +109,7 @@ for the index.
 Edits to `files/**` change what adopters get on their next `adopt cairn` run.
 Edits outside `files/**` change cairn-the-repo only.
 
-## Skills defined by this project (18)
+## Skills defined by this project (19)
 
 Listed by category — full descriptions in
 [`files/skills/README.md`](files/skills/README.md):
@@ -139,6 +139,7 @@ Listed by category — full descriptions in
 - [`fast-execute`](files/skills/fast-execute/SKILL.md) — polling-daemon executor: watches a sentinel-file inbox in `docs/specs/`, executes dispatched specs, marks completion via sentinel atomic-flip. The consumer-side verb of the artifact loop
 - [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — extract a version-controlled operational prompt from a spec for multi-pass work; coverage units may be known or discovered, and every pass validates work then improves the prompt
 - [`lra`](files/skills/lra/SKILL.md) — a `prompt-evolve` specialization for researching a subject over many passes, run engine-free as project-local markdown an agent walks; mirrors the lra research→library→application pipeline 1:1 via lra commands. The two prompts are verbatim from the lra lab (the source of `[LAW prompt-economy]`); see [`docs/CROSS_REPO_LRA_CAIRN.md`](docs/CROSS_REPO_LRA_CAIRN.md)
+- [`swarm`](files/skills/swarm/SKILL.md) — living coordination surface for repeating multi-workstream work over partitions; fan-out parallel stubs per wave, review results, self-improve the master, fan out the next wave
 
 Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with frontmatter
 (schema in [`files/skills/README.md`](files/skills/README.md)) AND add a matching entry

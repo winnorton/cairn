@@ -323,6 +323,17 @@
       "role": "scaffolding",
       "tier": "structure",
       "description": "Session-distill verb: read a past agent session JSONL transcript (Pi or Claude Code format, auto-detected) cold and produce a structured analysis of cairn-improvement findings — patterns recognized against a seeded catalog, skill candidates with 3-instance gate check, law candidates, memory candidates, environment-support gaps. This skill is the FORMALIZATION of cairn's foundational methodology — the transcript-analysis loop documented in docs/research/collaboration-skills.md and human-interaction-patterns.md, which produced /reframe, /bridge, /advocate, the collaboration-skills taxonomy, and most of cairn's existing skills. The methodology was running manually since v0.1; this skill makes it named and reproducible. Cousin to /peer-review (same observer-rotation mechanic; transcript instead of diff). Cousin to /reflect (which produces in-session distillate); /session-distill produces cross-session distillate for cairn-the-framework itself. Reports by default; never auto-applies changes. User-side `do it` gates any /note filing, skill edit, LAWS.md update, /feedback, etc. The skill body ships with a seeded catalog of patterns cairn has already named (cross-session relay → /bridge, reframing → /reframe, stub-spec-executed-anyway, status-without-spec-links, self-improving prompt, Pi-as-executor, etc.) so new findings are matched against history rather than re-invented. Promoted from docs/notes/_promoted/NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md after the 3-instance gate was met in a single session (2026-06-09: 6+ instances)."
+    },
+    {
+      "src": "files/skills/swarm/SKILL.md",
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
+      },
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Swarm verb: a living coordination surface for multi-workstream work that repeats over partitions and never finishes. Fan-out parallel stubs per wave, review results, self-improve the master, fan out the next wave. Use when work spans parallel workstreams AND iterates over partitions."
     }
   ],
 

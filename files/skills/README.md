@@ -159,6 +159,10 @@ Permanent contract specs stay live and carry evidence-bearing status.
   lra lab (the researcher is immutable there). lra is `prompt-evolve`'s third worked instance
   (after fishing-agent and purduebb) and the source of `[LAW prompt-economy]`. See
   [`docs/CROSS_REPO_LRA_CAIRN.md`](../../docs/CROSS_REPO_LRA_CAIRN.md).
+- `swarm/` — a living coordination surface for multi-workstream work that repeats over
+  partitions and never finishes. Fan-out parallel stubs per wave, review results, self-improve
+  the master, fan out the next wave. Use when work spans parallel workstreams AND iterates
+  over partitions.
 
 The artifact pattern came from observing a downstream project's plan-rework arc: a
 single-verb `/plan` was being used both for one-paragraph thoughts and for heavy executor
