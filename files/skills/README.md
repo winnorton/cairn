@@ -145,10 +145,15 @@ Permanent contract specs stay live and carry evidence-bearing status.
   atomic-flip (`.ready` → `.claimed` → `.done`). The one artifact skill that
   consumes planning files rather than producing them — it closes the dispatch
   seam of the orchestration loop.
-- `prompt-evolve/` — extract a version-controlled operational prompt from a `/spec` for
-  multi-pass work where each pass produces output and reusable insight. Coverage units may
-  be known or discovered. The kernel requires inventory-before-write, explicit coverage,
-  stop, and re-run semantics, validation, an absolute self-edit target, a versioned
+- `prompt-evolve/` — author a version-controlled operational prompt for multi-pass work where
+  each pass produces output and reusable insight. Two entry modes: `/prompt-evolve <NAME>`
+  cold-starts from a five-input brief (source, target, data model, tools, coverage unit);
+  `/prompt-evolve --from <SPEC>` extracts a deliverable a `/spec` already names, leaving the
+  spec in place. Coverage units may be known or discovered. The kernel requires
+  inventory-before-write, a coverage table (named locally — scoreboard, coverage ladder,
+  partition anchors), `ACTIVE`/`HELD` lifecycle state plus a read-only inheritance boundary
+  when a loop is spawned from a narrowed predecessor, explicit stop and re-run semantics
+  including narrowing aperture, validation, an absolute self-edit target, a versioned
   CHANGELOG, and blocked-work capture; phase numbering and project strategies remain
   adaptable. Stable mechanical rules graduate into schemas, validators, or tools.
 - `lra/` — a `prompt-evolve` specialization for researching a subject over many passes, run
