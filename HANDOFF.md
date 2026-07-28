@@ -5,8 +5,8 @@ boundary. Read it first. It exists because session boundaries are where signal g
 unless explicitly preserved.
 
 > **Repo-root entry point (canonical, added 2026-06):** read [AGENTS.md](AGENTS.md) at
-> the repo root. It's the cairn-itself agent context — layout, 18 skills, key laws by
-> slug, design DNA, current state (v0.14.0 shipped). Claude Code auto-loads
+> the repo root. It's the cairn-itself agent context — layout, 19 skills, key laws by
+> slug, design DNA, current state (v0.15.0 shipped). Claude Code auto-loads
 > [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
 > in this repo, AGENTS.md is the orientation you want before anything else.
 
@@ -47,17 +47,30 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.14.0 — **cairn ownership migration**, shipped 2026-06-14 (merged `62a0b68`, tag `v0.14.0`, pushed to `origin/main`). State moved out of vendor namespaces into a cairn-owned `<project>/.cairn/`; skills ship as cairn-named packages the vendor's own installer places — **all 3 harnesses validated end-to-end**: the `cairn` Claude Code plugin (`claude plugin marketplace add winnorton/cairn` + `claude plugin install cairn@cairn`), `@winnorton/cairn-pi` (npm), and `packages/cairn-agy` native agy plugin (`agy plugin install github:winnorton/cairn//packages/cairn-agy@main`). `adopt.md` does ZERO agent writes to vendor dirs; the only vendor-file touch is one user-written `@./.cairn/CLAUDE.md` import line. Non-destructive v0.13.x→.cairn migration + install-integrity check + committed fixture; shared `scripts/sync-skills.mjs` guard + CI. `[LAW own-your-namespace]` codified (11th dev law). Authored via `/program → /spec → code` with maximal fan-out + fresh-agent review at every gate (program review ×2, spec review ×2, a comprehensive pre-merge review that caught a real fixture-reproducibility blocker). Program master: [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) (archived post-ship per folder-as-status). Open follow-ups: a `.gitattributes` to stop a local-Windows CRLF false-flag on the sync-guard; optional `npm publish` of cairn-pi 0.14.0.
+- **Latest release:** v0.15.0 — **the interim slice, released**, shipped 2026-07-28
+  (tag `v0.15.0`). Cuts a release over the 18 commits that had accumulated on `main`
+  since v0.14.0 while `VERSION` stayed pinned at `0.14.0`: the skill-compression
+  campaign, the `lra` skill pack, law-creation discipline, `swarm`, and the
+  `prompt-evolve` cold-start/coverage-table/lifecycle-state change (`55026c9`).
+  Cut because the pinned `VERSION` left every installed plugin stranded on the
+  v0.14.0 skill set — the plugin manager had no version signal to update on, so an
+  adopter's cache silently ran months-old skills. 19 skills; all six version files in
+  lockstep. Detail on each change is in the section below, kept for provenance.
+- **Prior release:** v0.14.0 — **cairn ownership migration**, shipped 2026-06-14 (merged `62a0b68`, tag `v0.14.0`, pushed to `origin/main`). State moved out of vendor namespaces into a cairn-owned `<project>/.cairn/`; skills ship as cairn-named packages the vendor's own installer places — **all 3 harnesses validated end-to-end**: the `cairn` Claude Code plugin (`claude plugin marketplace add winnorton/cairn` + `claude plugin install cairn@cairn`), `@winnorton/cairn-pi` (npm), and `packages/cairn-agy` native agy plugin (`agy plugin install github:winnorton/cairn//packages/cairn-agy@main`). `adopt.md` does ZERO agent writes to vendor dirs; the only vendor-file touch is one user-written `@./.cairn/CLAUDE.md` import line. Non-destructive v0.13.x→.cairn migration + install-integrity check + committed fixture; shared `scripts/sync-skills.mjs` guard + CI. `[LAW own-your-namespace]` codified (11th dev law). Authored via `/program → /spec → code` with maximal fan-out + fresh-agent review at every gate (program review ×2, spec review ×2, a comprehensive pre-merge review that caught a real fixture-reproducibility blocker). Program master: [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) (archived post-ship per folder-as-status). Open follow-ups: a `.gitattributes` to stop a local-Windows CRLF false-flag on the sync-guard; optional `npm publish` of cairn-pi 0.14.0.
 - **Previous release:** v0.13.1 (Renames the `/review` skill to `/peer-review` to disambiguate from Claude Code's built-in `/review` skill. The bare `/review` was being silently shadowed for any cairn adopter on Claude Code — the cairn skill never fired. Updates: skill subdirectory rename (`files/skills/review/` → `files/skills/peer-review/`), frontmatter `name:` field, manifest src/dest paths, install preview, citations across LAWS.md / HANDOFF.md / README. New migration section in `adopt.md`: re-adopters from v0.12.1+ get prompted by the agent during re-adoption to remove the legacy `~/.claude/skills/review/SKILL.md` file. Posture going forward per `[MEM project/cairn-blend-strategy-pillars]`: vendor namespace collisions are real; cairn claims distinct namespace per skill.)
 - **Earlier:** v0.13.0 (Slug-only law identity — drops Law N numbering. Completes the v0.9.0 slug migration; numeric prefixes in law headings removed, slug becomes the only identity, collection size moves to section headers. Meta-rule 2 rewritten as "Slug is identity, count is metadata." Plus connects the reflect↔resume loop in user-facing docs — README's new "Cross-session continuity" section, tour Step 5 names both verbs, `files/skills/README.md` Skill pairings. Migration note in `adopt.md` for re-adopters with `[LAW N]` citations.)
 - **Earlier:** v0.12.3 (Doc patch — fixed v0.12.x consistency gaps that fresh `/peer-review` caught). v0.12.2 (install-report version strings). v0.12.1 (skill format migration to canonical subdir form + `/peer-review` skill + folder-as-state for `plans/`). v0.12.0 (`/note` + `/spec` artifact-creation skills). v0.11.3 (ephemeral-sandbox pre-flight in adopt.md).
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
 
-## Interim work since v0.14.0 (committed to `main`, unreleased; peer-review DONE, no blockers)
+## Work shipped in v0.15.0 (was the interim slice; peer-review DONE, no blockers)
+
+These changes accumulated on `main` between v0.14.0 and v0.15.0 and shipped in the 2026-07-28 release; the paragraph below is preserved from when they were unreleased.
 
 These changes are committed to `main` but not yet in a tagged release — **VERSION held at 0.14.0** (package lockstep green), working tree clean. Kept here per `[LAW handoff-stays-current]`. A fresh-agent `/peer-review` (`[LAW pre-merge-review]`) ran on the earlier slice and returned **no blockers**; 4 findings absorbed — 3 doc/preview-consistency fixes (adopt.md install-preview + install-loop now name `overwrite`-mode behavior; the cross-repo doc's stale "remaining wiring" section rewritten) + 1 pre-existing NIT (added the missing `cairn-agy` step to the sync-guard CI). Remaining gates before ship: a version bump (+ lockstep + README `## Status`) and publish.
 
+- **`prompt-evolve` cold-start + coverage table + lifecycle state** (2026-07-28, `55026c9`) — closed the "cold-start mode deferred" gap `REVIEW_CAIRN_COMPREHENSIVE_2026-07-01` flagged: `/prompt-evolve <NAME>` now authors from a five-input brief (source, target, data model, tools, coverage unit) instead of routing to `/spec`, which had been forcing throwaway specs authored purely to unlock the skill. Grounded in a survey of all 15 evolving prompts across cwar-engine + lra: **14 of 15 had independently grown a per-unit status table** under five different names (SCOREBOARD, PARTITION ANCHORS, PARTITION SPACE, CALIBRATION TABLE, COVERAGE LADDER), so the kernel mandates the structure and leaves the name project-local — mandatory, since lra's bootstraps are byte-synced immutable here and use COVERAGE LADDER. Seeding is conditional per lra (seed when the space enumerates, empty where the axis emerges). Also adds `ACTIVE`/`HELD` lifecycle state + a read-only inheritance boundary for loops spawned from a narrowed predecessor (generalizing the one `SPC_PRINCIPAX_FRONTIER_ACADEMY` hand-rolled), and **narrowing aperture** as a named stop mode — the dominant real-world exit, where a loop is held at micro-focus and a fresh loop spawns elsewhere. Fixed the placement text that called `docs/prompt-evolve/` legacy and its contents "frozen" (false — it is the primary active habitat). Body 702→1116 words, baseline updated deliberately.
+- **New skill: `swarm`** (2026-07-26, `aeb4eb2`) — a living coordination surface for multi-workstream work that repeats over partitions and never archives: fan-out parallel stubs per wave, review, self-improve the master, fan out the next wave. Count 18→19. Boundary vs `prompt-evolve` is now stated on both sides (it was one-sided until `55026c9`): one file iterating over units is prompt-evolve; many stubs per wave that never archive is swarm.
 - **New skill: `lra`** — a `prompt-evolve` specialization (the lra researcher/librarian prompts ARE prompt-evolve instances; lra is its 3rd worked example after fishing-agent + purduebb, and the source of cwar's `[LAW prompt-economy]`). Runs the lra research→library→application pipeline engine-free as project-local markdown an agent walks, via lra commands (`subject create` / `collection create` / `research run` / `app serve`). Wired: `files/skills/lra/SKILL.md`; 3 verbatim prompt masters + `PROVENANCE.md` delivered to `.cairn/context/lra/` (reserved `context/` dir per `§2.1`) with a **new `mode: overwrite`** — a cairn-owned refresh mode (added to the manifest modes block + adopt.md re-adoption Case 3) so the masters track upstream on re-adopt instead of going stale under `create-if-absent`; Artifact-category entries in AGENTS.md (count 18→19) + `files/skills/README.md`; enrolled in cairn-claude + cairn-agy `sync-config` (**not** cairn-pi — outside its authoring-loop curation), synced, sync-guard green. The two prompts are **byte-verbatim from the lra lab** (`engine/templates/`, commit `7ea2050`) — the researcher is immutable there; this pack delivers/runs them, never edits them. Cross-repo link doc `docs/CROSS_REPO_LRA_CAIRN.md` in **both** repos; provenance + md5 + re-sync protocol in `PROVENANCE.md`.
 - **`prompt-evolve` kernel rewrite** (2026-07-09) — compressed the skill from 2,772 to 676 instructional words and replaced its rigid, miscounted "7-phase" identity with invariant behavior: inventory-before-write, coverage selection, stop/re-run semantics, verified mutation, mandatory absolute-path self-edit, CHANGELOG, and blocked-work capture. LRA's emergent partitions, live cells, role-specific phases, and fan-out now fit without exceptions; stable mechanical rules explicitly graduate to validators or tools. [MEM reference/prompt-economy]
 - **Gate: `scripts/check-skill-budgets.mjs`** (wired into `.github/workflows/sync-guard.yml`) — checks every source skill regardless of package enrollment. Descriptions hard-fail over Pi's 1024-char cap and warn ≥900; exact instructional-body word counts live in `scripts/skill-body-word-baseline.json`, so any count change requires an explicit `--update-body-baseline` diff and any increase needs review justification. Added after the 2026-07-09 skill compression validated the two-gate model: static size/register gates plus cold semantic review. Current near-cap descriptions: fast-execute and round-review. [MEM reference/prompt-economy]
@@ -305,7 +318,7 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 ## For the next agent
 
 - **Start with [AGENTS.md](AGENTS.md) at the repo root.** It's the canonical agent
-  context for working on cairn itself — layout, 18 skills, key laws by slug, design
+  context for working on cairn itself — layout, 19 skills, key laws by slug, design
   DNA, current state. Then load this file (HANDOFF.md) for cross-session continuity,
   and `LAWS.md` for the full law set. Skip the v0.x plan artifacts unless you're
   digging into a specific release's design rationale — `docs/research/` is usually
@@ -325,10 +338,13 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 ---
 
 _Originally written 2026-04-24 at session's end by the builder agent. Last updated
-2026-07-11 (documentation sweep): logged the 2026-07-08/09 skill-compression campaign,
-corrected the interim-work framing (committed to `main`, not staged in a working tree),
-and refreshed this footer. v0.14.0 remains the latest tag; interim work through
-2026-07-09 sits on `main`, unreleased. Prior refresh 2026-06-13 for the
+2026-07-28 (**v0.15.0 release**): cut a tag over the 18-commit interim slice that had
+been sitting on `main` unreleased since v0.14.0, because the pinned `VERSION` left
+installed plugins stranded on the v0.14.0 skill set with no signal to update on.
+Logged the `swarm` skill and the `prompt-evolve` cold-start/coverage-table/lifecycle
+change, and reframed the interim section as shipped. Prior refresh 2026-07-11
+(documentation sweep): logged the 2026-07-08/09 skill-compression campaign and
+corrected the interim-work framing. Prior refresh 2026-06-13 for the
 SPEC_CAIRN_OWNERSHIP program (WS10 docs update): `.cairn/` state model, corrected
 env-roles, removed false `.agents/` alignment text, redirected v0.14.0 pointer to
 program master. Next refresh: at the next version tag per [LAW handoff-stays-current]._

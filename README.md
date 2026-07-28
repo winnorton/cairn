@@ -50,7 +50,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.14.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.15.0`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -338,6 +338,14 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.15.0 — **The interim slice, released.** Cuts a tag over the work that accumulated on
+`main` since v0.14.0 while `VERSION` stayed pinned, which had left installed plugins with
+no signal to update on: the skill-compression campaign, the `lra` skill pack, law-creation
+discipline (`check-laws-shape.mjs` plus the gate-not-law and memory-first meta-rules), the
+skill-size gate suite (`check-skill-budgets.mjs`, `check-prompt-register.mjs`), the new
+`swarm` skill, and `prompt-evolve`'s cold-start mode, project-named coverage table, and
+`ACTIVE`/`HELD` lifecycle state. 19 skills.
 
 v0.14.0 — **Cairn ownership migration.** State moves out of vendor namespaces into a
 cairn-owned `<project>/.cairn/` directory; skills distribute as cairn-named packages

@@ -15,7 +15,13 @@ for the index.
 
 ## Current state
 
-- **Latest tag:** v0.14.0 (2026-06-14) — the **cairn ownership migration**: state
+- **Latest tag:** v0.15.0 (2026-07-28) — **the interim slice, released.** Cuts a tag
+  over the 18 commits that had accumulated on `main` since v0.14.0 while `VERSION`
+  stayed pinned: the skill-compression campaign, the `lra` pack, law-creation
+  discipline, `swarm`, and `prompt-evolve`'s cold-start/coverage-table/lifecycle-state
+  change. Cut because a pinned `VERSION` gives the plugin manager no signal to update
+  on, so installed caches silently ran the v0.14.0 skill set for weeks.
+- **Prior tag:** v0.14.0 (2026-06-14) — the **cairn ownership migration**: state
   moved out of vendor namespaces into a cairn-owned `<project>/.cairn/` directory;
   skills distribute as cairn-named packages the vendor's own installer places
   (the `cairn` Claude Code plugin, `@winnorton/cairn-pi` npm, the native
@@ -40,9 +46,8 @@ for the index.
   [docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md](docs/specs/archive/SPEC_CAIRN_PI_PACKAGE.md)).
   Cowork stays in `manifest.json` for backward compat but is no longer in the
   primary triplet.
-- **Committed to `main` since the v0.14.0 tag (unreleased — `VERSION` still
-  `0.14.0`, working tree clean):** four interim changes await the next version
-  bump. (1) The `lra` skill pack — a `prompt-evolve` specialization; see
+- **Shipped in v0.15.0 (formerly the unreleased interim slice):** six changes, listed
+  here for provenance. (1) The `lra` skill pack — a `prompt-evolve` specialization; see
   [docs/CROSS_REPO_LRA_CAIRN.md](docs/CROSS_REPO_LRA_CAIRN.md). (2) The
   skill-size gate suite in `scripts/` (`check-skill-budgets.mjs`,
   `check-prompt-register.mjs`) wired into CI — `check-skill-budgets` enforces
@@ -53,7 +58,12 @@ for the index.
   meta-rules (machine-checkable means gate-not-law, memory-first promotion). (4)
   A **skill-compression campaign (2026-07-08/09)** that rewrote `prompt-evolve`
   to its 676-word kernel and ratcheted `spec`, `program`, `reflect`, `note`,
-  `peer-review`, and `plan` down against the baseline. The superseded `agents/`
+  `peer-review`, and `plan` down against the baseline. (5) The `swarm` skill —
+  living coordination for repeating multi-workstream work (count 18→19). (6)
+  `prompt-evolve` cold-start mode, a project-named coverage table, and
+  `ACTIVE`/`HELD` lifecycle state — grounded in a survey of 15 evolving prompts
+  across cwar-engine + lra, 14 of which had independently grown a per-unit status
+  table under five different names. The superseded `agents/`
   umbrella draft is retired at `docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md`.
   Before touching `manifest.json`, `adopt.md`, or path conventions, read the
   archived v0.14.0 program master for the design rationale.

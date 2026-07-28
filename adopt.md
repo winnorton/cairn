@@ -376,7 +376,7 @@ content from context.
 ### Step 6 — Write version marker, show import line, then report
 
 **First, write the version marker** to `{cairnRoot}/cairn-version` — a single
-line containing the installed version string (e.g. `0.14.0`), no frontmatter.
+line containing the installed version string (e.g. `0.15.0`), no frontmatter.
 This enables the Step 3 fast-path on future re-adoptions.
 
 **Second, show the user the import line** (user-action Step — cairn does NOT
@@ -466,7 +466,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.14.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.15.0/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
