@@ -37,30 +37,6 @@ If you haven't run `adopt cairn` yet, do that first to create the `.cairn/` tree
 
 ## What you get
 
-| Skill | Invoke in Pi | Role in the loop |
-|---|---|---|
-| `spec` | `/skill:spec` | Research + write a structured execution spec in `docs/specs/` (phases, steps, checkpoints, executor handoff). `--from` elaborates `/program` stubs and promotes notes. |
-| `program` | `/skill:program` | Program-of-specs: one master coordination doc + N workstream stubs for work that exceeds one spec. |
-| `round-review` | `/skill:round-review` | Trust-but-verify one executor round against the program master's Definition of Done; drafts R+1 stubs + a self-contained round master. |
-| `fast-execute` | `/skill:fast-execute` | Polling-daemon executor: watches a sentinel-file inbox in `docs/specs/`, executes dispatched specs, atomic-flips `.ready` → `.claimed` → `.done`. |
-| `peer-review` | `/skill:peer-review` | Fresh-agent external review of a change set before merge — reads the diff plus adjacent unchanged files. |
-| `note` | `/skill:note` | One-paragraph dated intent capture in `docs/notes/`; the promotion source for `/skill:spec --from`. |
-
-## The loop
-
-```
-/skill:note ─► /skill:spec ─► /skill:program (master + stubs)
-                                    │  /skill:spec --from <stub>  (elaborate each)
-                                    ▼
-                executor round (/skill:fast-execute, or read the spec manually)
-                                    ▼
-                /skill:round-review ─► R+1 stubs + round master ─► next dispatch
-                                    ▼
-                zero new stubs = done ─► git mv spec to docs/specs/archive/
-```
-
-## Invocation note
-
 The skill bodies say `/spec`, `/program`, `/peer-review` — the Claude Code invocation
 form. In Pi the same skills answer to `/skill:spec`, `/skill:program`,
 `/skill:peer-review`. The bodies are shared source across harnesses; read `/x` as

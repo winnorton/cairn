@@ -38,7 +38,7 @@ All 18 cairn skills, invocable as `/skill-name` in Antigravity:
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
 | Cross-perspective | `/peer-review`, `/session-distill` |
-| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/fast-execute`, `/prompt-evolve`, `/lra` |
+| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra` |
 
 ## Where state lands
 

@@ -2,7 +2,6 @@
   "advocate": 433,
   "audit": 505,
   "bridge": 688,
-  "fast-execute": 2208,
   "feedback": 803,
   "lra": 907,
   "note": 278,
@@ -17,5 +16,5 @@
   "session-distill": 2585,
   "spec": 685,
   "swarm": 972,
-  "tour": 467
+  "tour": 466
 }

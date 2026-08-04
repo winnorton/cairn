@@ -1,4 +1,4 @@
 {
-  "skills": ["fast-execute", "note", "peer-review", "program", "round-review", "spec"],
+  "skills": ["note", "peer-review", "program", "round-review", "spec", "swarm"],
   "versionFile": "package.json"
 }
