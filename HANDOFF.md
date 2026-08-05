@@ -63,6 +63,22 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
 
+## Unreleased since v0.16.0
+
+- **autoresearch-finalize: two-part harvest step** (2026-08-05) — new procedure step 6
+  "Harvest the map": (a) archive `.auto/prompt.md` verbatim into the project's
+  planning/doc tree on trunk (experiment branches are ephemeral and get wiped), with a
+  metadata header (objective, run ledger, shipped commits, closed directions); (b)
+  distill portable findings (closed directions with ceiling numbers, portable perf
+  facts, measurement-protocol lessons) into durable agent memory, citing run numbers
+  from `.auto/log.jsonl`. Origin: the first real autoresearch campaign (cwar-engine
+  runAll optimization) showed the prompt's map — a proven ~18s ceiling on an entire
+  direction — outlived both the merged code and the branches; cwar archived it as
+  `docs/planning/autoresearch/AUTORESEARCH_RUNALL_WALL_CLOCK.md` and the pattern
+  generalized. Description updated to name the step; body word-baseline re-recorded
+  (autoresearch-finalize 307→~490). Synced to cairn-claude + cairn-agy; all gates green
+  at lockstep 0.16.0.
+
 ## Released as v0.16.0 (2026-08-05)
 
 Released 2026-08-05: VERSION bump + lockstep across all six version files, cold
