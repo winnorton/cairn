@@ -73,7 +73,7 @@ pi install npm:@winnorton/cairn-pi
 ```
 
 Six skills land as `/skill:spec`, `/skill:program`, `/skill:round-review`,
-`/skill:fast-execute`, `/skill:peer-review`, and `/skill:note`. The adopt flow
+`/skill:swarm`, `/skill:peer-review`, and `/skill:note`. The adopt flow
 above still covers the full catalog; the package is the one-command path for
 Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi/).
 
@@ -84,7 +84,7 @@ Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi
 | `<project>/.cairn/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/.cairn/CLAUDE.md` | Cairn-shaped context sections — imported into your project's `CLAUDE.md` or `AGENTS.md` via one user-written import line |
 | `<project>/.cairn/LAWS.md` | Meta-laws + seed laws — your non-negotiables |
-| Skills via package | Four categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`), and **artifact** (`note`, `spec`, `program`, `round-review`, `fast-execute`, `prompt-evolve`, `lra`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
+| Skills via package | Five categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`), **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra`, `swarm`), and **execution** (`autoresearch`, `autoresearch-finalize`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -200,7 +200,7 @@ the habitat itself. See the taxonomy below.
 
 ## Skills taxonomy
 
-Cairn's skills fall into four categories with different origins.
+Cairn's skills fall into five categories with different origins.
 
 **Maintenance skills — service the habitat:**
 
@@ -244,11 +244,6 @@ Cairn's skills fall into four categories with different origins.
   against a `/program` master. Walks the master's §5 DoD criterion-by-criterion
   against the diff; drafts R+1 stub specs and a self-contained R+1 round master
   for the gaps. Loop exits when this skill writes zero R+1 stubs.
-- `fast-execute` — polling-daemon executor for dispatched specs: watches a
-  sentinel-file inbox in `docs/specs/`, executes (single specs or round
-  masters), and flips sentinels (`.ready` → `.claimed` → `.done`). The
-  consumer-side verb of the artifact loop — pairs with `round-review` to
-  close the dispatch seam.
 - `prompt-evolve` — extract a version-controlled operational prompt from a
   `/spec` for multi-pass work where execution produces both output and reusable
   insight. Coverage units may be known or discovered; each prompt defines its
@@ -259,6 +254,31 @@ Cairn's skills fall into four categories with different origins.
   a `research/` collection and drives two prompts (researcher + librarian)
   synced verbatim from the lra lab into `.cairn/context/lra/`. Not in the Pi
   package (outside its authoring-loop curation).
+- `swarm` — a living coordination surface for multi-workstream work that repeats
+  over partitions and never finishes: fan out parallel stubs per wave, review the
+  results, self-improve the master, fan out the next wave.
+
+**Execution skills — run a measured loop against the codebase:**
+
+The other four categories produce text. These two mutate the tree, measure the
+result, and keep or revert on the number — so they are the only cairn skills that
+ship runtime code beside their `SKILL.md`. Both are adapted from
+[pi-autoresearch](https://github.com/davebcn87/pi-autoresearch) (MIT, © davebcn87).
+
+- `autoresearch` — an autonomous optimization loop against any measurable target
+  (test wall-clock, tick time, bundle size, Lighthouse, memory, training loss).
+  One iteration is: pick an idea, edit, measure, keep or revert, log the insight.
+  Session state lives in `.auto/` at your project root and survives compaction,
+  restarts, and reverts, so the loop resumes from disk instead of from
+  conversation history. A MAD-based confidence multiple separates a real win from
+  benchmark noise; `export` writes a self-contained HTML dashboard.
+- `autoresearch-finalize` — split an autoresearch session's kept commits into
+  file-disjoint, independently mergeable review branches, one per logical
+  improvement group, validated for disjointness and full diff coverage before any
+  branch is cut.
+
+Neither ships in the Pi package — Pi has the upstream `pi-autoresearch` extension
+natively, with first-class tools and a dashboard widget.
 
 The maintenance skills were identified by gap analysis — what the agent noticed it
 needed. The collaboration skills came from studying what the *human* does in the

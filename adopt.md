@@ -124,7 +124,9 @@ It contains:
   - **Skill entries** carry `src` + `delivery` (and no `dest`/`mode`) — these are
     delivered by the package installer in Step 4a. **Skip them entirely in
     Step 5**; never compute a destination for a `delivery` entry or curl it
-    anywhere.
+    anywhere. An optional `bundles` array lists supporting files (scripts,
+    READMEs) the package ships beside that skill's `SKILL.md` — the package
+    installer places those too, so Step 5 skips them as well.
 - `version` — the release version of this manifest.
 - `roles` — definitions of the three role labels (`essential`, `scaffolding`, `optional`).
 - `tiers` — definitions of the four graduated adoption tiers (`seed`, `grow`, `structure`,
@@ -225,11 +227,13 @@ Skills are then invocable as `/name` (e.g. `/spec`, `/peer-review`, `/note`).
 pi install npm:@winnorton/cairn-pi
 ```
 
-This installs exactly six skills — `spec`, `program`, `round-review`,
-`fast-execute`, `peer-review`, and `note` — as a Pi package (invoked as
+This installs exactly six skills — `spec`, `program`, `round-review`, `swarm`,
+`peer-review`, and `note` — as a Pi package (invoked as
 `/skill:spec` etc.; add `-l` for a project-local install recorded in
 `.pi/settings.json`). The other cairn skills are not in the Pi package; they are
-outside its authoring-loop curation.
+outside its authoring-loop curation. The `autoresearch` pack is excluded for a
+second reason: Pi has the upstream `pi-autoresearch` extension natively, with
+first-class tools and a dashboard widget.
 
 **Version check (npm publishes lag the repo):** after install, compare the
 version `pi list` reports against the `version` in the manifest you fetched in

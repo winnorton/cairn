@@ -2,7 +2,8 @@
 // Shell dialect: cross-platform (node invocation — POSIX and PowerShell compatible)
 //
 // Shared sync/check guard for all cairn distribution packages.
-// Source of truth: <repo>/files/skills/<name>/SKILL.md.
+// Source of truth: <repo>/files/skills/<name>/ — SKILL.md plus any bundled assets
+// (README.md, scripts/, templates/) that live alongside it.
 // Committed copies under <pkg>/skills/ are build artifacts — byte-identical or --check fails.
 //
 // Usage:
@@ -19,8 +20,9 @@
 //   - frontmatter `name:` equals dir name and matches ^[a-z0-9][a-z0-9-]{0,63}$
 //   - frontmatter `description:` <= 1024 chars (after YAML line-folding)
 //   - version in <pkg>/<versionFile> === <repo>/VERSION
-//   - no orphaned copies (dirs in <pkg>/skills/ not in the skills list)
-//   - byte-identity between source and copy (--check mode)
+//   - no orphaned copies (dirs in <pkg>/skills/ not in the skills list, and files in a
+//     synced skill's copy that no longer exist in the source)
+//   - byte-identity between source and copy, for every file in the skill dir (--check mode)
 
 import { copyFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -90,10 +92,23 @@ if (pkgVersionData.version !== repoVersion) {
   );
 }
 
+// Relative paths of every file under a skill directory, depth-first, sorted.
+// A skill is SKILL.md plus whatever assets ship beside it (README.md, scripts/, …).
+function skillFiles(dir, prefix = "") {
+  let out = [];
+  for (const e of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+    const rel = prefix ? `${prefix}/${e.name}` : e.name;
+    if (e.isDirectory()) out = out.concat(skillFiles(join(dir, e.name), rel));
+    else out.push(rel);
+  }
+  return out;
+}
+
 // Sync or check each skill
 for (const skill of SKILLS) {
-  const srcPath = join(repoRoot, "files", "skills", skill, "SKILL.md");
-  const destPath = join(pkgRoot, "skills", skill, "SKILL.md");
+  const srcDir = join(repoRoot, "files", "skills", skill);
+  const destDir = join(pkgRoot, "skills", skill);
+  const srcPath = join(srcDir, "SKILL.md");
 
   let src;
   try {
@@ -118,21 +133,39 @@ for (const skill of SKILLS) {
     );
   }
 
+  const assets = skillFiles(srcDir);
+
   if (check) {
-    let dest = null;
-    try {
-      dest = readFileSync(destPath, "utf8");
-    } catch {
-      /* fall through to the missing-copy error */
+    for (const rel of assets) {
+      let dest = null;
+      try {
+        dest = readFileSync(join(destDir, rel));
+      } catch {
+        /* fall through to the missing-copy error */
+      }
+      if (dest === null)
+        errors.push(`${skill}/${rel}: missing copy — run \`node scripts/sync-skills.mjs --pkg ${pkgArg}\``);
+      else if (!dest.equals(readFileSync(join(srcDir, rel))))
+        errors.push(`${skill}/${rel}: copy drifted from source — run \`node scripts/sync-skills.mjs --pkg ${pkgArg}\``);
     }
-    if (dest === null)
-      errors.push(`${skill}: missing copy — run \`node scripts/sync-skills.mjs --pkg ${pkgArg}\``);
-    else if (dest !== src)
-      errors.push(`${skill}: copy drifted from source — run \`node scripts/sync-skills.mjs --pkg ${pkgArg}\``);
+    // Files present in the copy but gone from the source are stale artifacts.
+    let copied = [];
+    try {
+      copied = skillFiles(destDir);
+    } catch {
+      /* the missing-copy errors above already cover an absent dir */
+    }
+    for (const rel of copied) {
+      if (!assets.includes(rel))
+        errors.push(`${skill}/${rel}: stale copy with no source — delete it or restore the source file`);
+    }
   } else {
-    mkdirSync(dirname(destPath), { recursive: true });
-    copyFileSync(srcPath, destPath);
-    console.log(`synced ${skill}`);
+    for (const rel of assets) {
+      const to = join(destDir, rel);
+      mkdirSync(dirname(to), { recursive: true });
+      copyFileSync(join(srcDir, rel), to);
+    }
+    console.log(`synced ${skill} (${assets.length} file${assets.length === 1 ? "" : "s"})`);
   }
 }
 

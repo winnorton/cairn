@@ -1,7 +1,7 @@
 {
   "name": "cairn",
   "version": "0.15.0",
-  "description": "Cairn agent skills for Claude Code — authoring, review, maintenance, and collaboration. Markdown skills only; no runtime code.",
+  "description": "Cairn agent skills for Claude Code — authoring, review, maintenance, collaboration, and the autoresearch optimization loop. Markdown skills, plus a zero-dependency Node harness bundled with the autoresearch pack.",
   "author": {
     "name": "Win Norton",
     "email": "win.norton@gmail.com",

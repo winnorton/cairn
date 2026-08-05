@@ -38,10 +38,11 @@ Do NOT invoke for:
    - `.cairn/memory/MEMORY.md` — persistent cross-session memory index. Grows over time
      as the agent learns about you, your projects, and your preferences. Starts empty.
    - **Skills** — installed via your harness's cairn package (not files in the project),
-     invoked as `/name`. Four categories: maintenance (`reflect`, `plan`, `prune`,
+     invoked as `/name`. Five categories: maintenance (`reflect`, `plan`, `prune`,
      `audit`, `tour`, `feedback`), collaboration (`reframe`, `bridge`, `advocate`),
-     cross-perspective (`peer-review`, `session-distill`), and artifact
-     (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra`). The skills README that ships with the package covers the taxonomy.
+     cross-perspective (`peer-review`, `session-distill`), artifact
+     (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra`, `swarm`), and
+     execution (`autoresearch`, `autoresearch-finalize`). The skills README that ships with the package covers the taxonomy.
 
 3. **Pick the highest-leverage first action.** Usually: fill in `.cairn/CLAUDE.md`'s
    "What this is" section. One paragraph. The agent reads this every session, so spending

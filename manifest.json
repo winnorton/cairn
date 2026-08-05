@@ -280,18 +280,6 @@
       "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's Definition-of-Done section criterion-by-criterion against the diff (match sections by title, not §-number), surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) that's self-contained — execution order, round DoD, first-action checklist all inside the file so dispatch is a single one-liner (`/goal execute <round-master-path>`) with no caveats. Closes the orchestration loop: /program → /spec --from (elaborate) → executor → /round-review (produces round master + stubs) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
     },
     {
-      "src": "files/skills/fast-execute/SKILL.md",
-      "delivery": {
-        "method": "package",
-        "claude-code": "cairn (Claude Code plugin)",
-        "pi": "@winnorton/cairn-pi (npm)",
-        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
-      },
-      "role": "scaffolding",
-      "tier": "structure",
-      "description": "Fast-execute verb — turn an autonomous executor agent (Google Antigravity Flash, Pi, or any harness with timer + file-read primitives) into a polling daemon that watches a sentinel-file inbox in docs/specs/, picks up dispatched specs (single specs OR /round-review-produced round masters — single specs are the more common shape), executes per the spec body (branches on structure — round masters use §4 first-action checklist, single specs use Pre-flight + Phases + Post-flight), marks completion via sentinel atomic-flip (.ready → .claimed → .done), and re-arms its timer. Default poll 300s; stops on explicit STOP.signal, 3 consecutive empty polls, malformed inbox, or a hard execution block; an unelaborated /program stub is NOT a stop — its sentinel flips .ready → .stub-rejected and polling continues (planning agent elaborates via /spec --from). Path-rejection guards on archive/ and _promoted/. Do NOT use in harnesses without timer primitives (fall back to manual /goal execute <path>) or for true one-shot dispatches where the polling-tail wait exceeds manual-prompt cost."
-    },
-    {
       "src": "files/skills/prompt-evolve/SKILL.md",
       "delivery": {
         "method": "package",
@@ -334,6 +322,34 @@
       "role": "scaffolding",
       "tier": "structure",
       "description": "Swarm verb: a living coordination surface for multi-workstream work that repeats over partitions and never finishes. Fan-out parallel stubs per wave, review results, self-improve the master, fan out the next wave. Use when work spans parallel workstreams AND iterates over partitions."
+    },
+    {
+      "src": "files/skills/autoresearch/SKILL.md",
+      "bundles": [
+        "files/skills/autoresearch/README.md",
+        "files/skills/autoresearch/scripts/experiment.mjs",
+        "files/skills/autoresearch/scripts/stop-hook.mjs"
+      ],
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
+      },
+      "role": "optional",
+      "tier": "full",
+      "description": "Autoresearch verb: run an autonomous optimization loop against any measurable target — test wall-clock, tick time, bundle size, Lighthouse score, memory footprint, training loss. One iteration is pick an idea, edit, measure, keep or revert, log the insight; keeps commit with an Autoresearch-Result trailer and non-keeps revert the working tree. Session state lives in .auto/ at the PROJECT root (prompt.md, measure.sh, log.jsonl, plus optional checks.sh/ideas.md/config.json/hooks) and survives compaction, restarts, and reverts. MAD-based confidence scoring guards against calling noise a win. Subcommands: status, export (self-contained HTML dashboard), off, clear. Ships a zero-dependency Node harness (scripts/experiment.mjs) plus an opt-in Claude Code Stop hook (scripts/stop-hook.mjs) for never-stop mode — the FIRST cairn skill to bundle runtime code, a named exception to the markdown-only payload default (see AGENTS.md Design DNA). Script paths resolve from the skill's announced base directory, since the install location differs per harness. Not in cairn-pi: Pi users install the upstream pi-autoresearch extension natively. Adapted from pi-autoresearch (MIT, © davebcn87, https://github.com/davebcn87/pi-autoresearch)."
+    },
+    {
+      "src": "files/skills/autoresearch-finalize/SKILL.md",
+      "bundles": ["files/skills/autoresearch-finalize/scripts/finalize.mjs"],
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
+      },
+      "role": "optional",
+      "tier": "full",
+      "description": "Autoresearch-finalize verb: close out an /autoresearch session by splitting its kept commits into file-disjoint, independently mergeable review branches — one per logical improvement group. Reads the Autoresearch-Result commit trailers and .auto/prompt.md, groups the changed files, and the bundled splitter (scripts/finalize.mjs) validates hash existence, a clean tree, file-disjointness, and full coverage of the base..HEAD diff before cutting any branch. Branches are named autoresearch/<goal>/<NN>-<slug>, all rooted at the merge-base, with .auto/ excluded. Do NOT use on a branch without Autoresearch-Result trailers, on a dirty working tree, or as a general-purpose commit splitter. Not in cairn-pi: Pi users install the upstream pi-autoresearch extension natively. Adapted from pi-autoresearch (MIT, © davebcn87, https://github.com/davebcn87/pi-autoresearch)."
     }
   ],
 

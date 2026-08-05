@@ -31,14 +31,21 @@ agy plugin install /path/to/cairn/packages/cairn-agy
 
 ## What you get
 
-All 18 cairn skills, invocable as `/skill-name` in Antigravity:
+All 20 cairn skills, invocable as `/skill-name` in Antigravity:
 
 | Category | Skills |
 |---|---|
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
 | Cross-perspective | `/peer-review`, `/session-distill` |
-| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra` |
+| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra`, `/swarm` |
+| Execution | `/autoresearch`, `/autoresearch-finalize` |
+
+Markdown skills, with one exception: the `autoresearch` pack bundles a zero-dependency
+Node harness under `skills/autoresearch{,-finalize}/scripts/`. Those scripts run only
+when the skill is invoked, and they need `node`, `git`, and `bash` on PATH. Every command
+in those two skills resolves its script path from the base directory the harness announces
+at invocation; session state lands in `.auto/` at the project root.
 
 ## Where state lands
 

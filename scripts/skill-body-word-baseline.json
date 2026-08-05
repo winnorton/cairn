@@ -1,6 +1,8 @@
 {
   "advocate": 433,
   "audit": 505,
+  "autoresearch": 899,
+  "autoresearch-finalize": 307,
   "bridge": 688,
   "feedback": 803,
   "lra": 907,
@@ -16,5 +18,5 @@
   "session-distill": 2585,
   "spec": 685,
   "swarm": 972,
-  "tour": 466
+  "tour": 470
 }

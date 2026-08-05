@@ -1,7 +1,8 @@
 # cairn (Claude Code plugin)
 
 [cairn](https://github.com/winnorton/cairn)'s full skill catalog packaged as a
-Claude Code plugin. Markdown skills only — no runtime code, no build step.
+Claude Code plugin. Markdown skills, plus the `autoresearch` pack's bundled Node
+harness — no build step either way.
 
 ## Install
 
@@ -43,14 +44,22 @@ claude --plugin-dir /path/to/cairn/packages/cairn-claude
 
 ## What you get
 
-All 18 cairn skills, invocable as `/skill-name` in Claude Code:
+All 20 cairn skills, invocable as `/skill-name` in Claude Code:
 
 | Category | Skills |
 |---|---|
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
 | Cross-perspective | `/peer-review`, `/session-distill` |
-| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra` |
+| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra`, `/swarm` |
+| Execution | `/autoresearch`, `/autoresearch-finalize` |
+
+Markdown skills, with one exception: the `autoresearch` pack bundles a zero-dependency
+Node harness under `skills/autoresearch{,-finalize}/scripts/`. Those scripts run only
+when the skill is invoked, and they need `node`, `git`, and `bash` on PATH (Git Bash on
+Windows). Every command in those two skills resolves its script path from the base
+directory Claude Code announces at invocation; session state lands in `.auto/` at the
+project root.
 
 ## Invocation note
 
