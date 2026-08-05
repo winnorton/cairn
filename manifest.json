@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "cairn",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Portable agent environment bootstrap — memory, laws, skills, context templates. Works in Claude Code (cairn plugin), Antigravity, and Pi (pi.dev/@winnorton/cairn-pi). State lives in <project>/.cairn/; skills distributed as cairn-named packages. Domain-agnostic. Graduated adoption via tiers.",
   "repo": "https://github.com/winnorton/cairn",
   "rawBase": "https://raw.githubusercontent.com/winnorton/cairn/main",

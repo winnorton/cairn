@@ -63,11 +63,11 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
 
-## Unreleased since v0.15.0 (on `main`/branch, VERSION still 0.15.0)
+## Released as v0.16.0 (2026-08-05)
 
-Captured here to keep `[LAW handoff-stays-current]` honest between releases. These are
-committed but untagged; a release still needs a VERSION bump + lockstep across all six
-version files + a `/peer-review` per `[LAW pre-merge-review]`.
+Released 2026-08-05: VERSION bump + lockstep across all six version files, cold
+`/peer-review` completed per `[LAW pre-merge-review]` (fix-first verdict, both blockers
++ all findings fixed in `bc2057d` before merge `5bf10d1`).
 
 - **Skill removed: `fast-execute`** (2026-08, `027b7b8`) — removed from `files/skills/`,
   all three package copies, both sync-configs, and `files/skills/README.md`. That commit
