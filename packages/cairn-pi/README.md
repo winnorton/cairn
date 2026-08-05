@@ -42,6 +42,18 @@ form. In Pi the same skills answer to `/skill:spec`, `/skill:program`,
 `/skill:peer-review`. The bodies are shared source across harnesses; read `/x` as
 `/skill:x`. Trigger-phrase matching works identically in both.
 
+## Autoresearch: use the upstream Pi extension
+
+Cairn ships an `autoresearch` skill pack (an autonomous measure-keep-revert optimization
+loop) to Claude Code and Antigravity. It is deliberately **absent from this package**: it
+is a markdown-plus-Node-harness adaptation of
+[pi-autoresearch](https://github.com/davebcn87/pi-autoresearch) (MIT, © davebcn87), which
+is already native on Pi with first-class extension tools and a dashboard widget. Pi users
+install the original from its own repo, following the install steps in its README.
+
+Shipping the cairn adaptation here would duplicate that extension with a strictly weaker
+Bash-driven harness, and would break this package's zero-runtime-code contract.
+
 ## Pair with rpiv-todo
 
 Cairn deliberately ships **no** todo/orchestration overlay. For multi-phase spec

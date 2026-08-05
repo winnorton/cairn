@@ -65,7 +65,7 @@ description: One-sentence description used by the agent to decide relevance. Be 
 
 ## Built-in skills (from cairn)
 
-Cairn's skills fall into four categories. Each addresses a different gap-class.
+Cairn's skills fall into five categories. Each addresses a different gap-class.
 
 ### Maintenance skills — service the habitat itself
 
@@ -160,6 +160,32 @@ Permanent contract specs stay live and carry evidence-bearing status.
   partitions and never finishes. Fan-out parallel stubs per wave, review results, self-improve
   the master, fan out the next wave. Use when work spans parallel workstreams AND iterates
   over partitions.
+
+### Execution skills — run a measured loop against the codebase
+
+The other four categories produce text. These two mutate the tree, measure the result,
+and keep or revert on the number — so they are the only cairn skills that ship runtime
+code beside their `SKILL.md`. Both are adapted from
+[pi-autoresearch](https://github.com/davebcn87/pi-autoresearch) (MIT, © davebcn87).
+
+- `autoresearch/` — autonomous optimization loop against any measurable target (test
+  wall-clock, tick time, bundle size, Lighthouse, memory, training loss). One iteration
+  is: pick an idea, edit, measure, keep or revert, log the insight. Keeps commit with an
+  `Autoresearch-Result` trailer; everything else reverts the working tree. Session state
+  lives in `.auto/` at the project root and survives compaction, restarts, and reverts,
+  so the loop resumes from disk rather than from conversation history. A MAD-based
+  confidence multiple separates a real win from benchmark noise. Bundles
+  `scripts/experiment.mjs` (zero-dependency harness: init / run / log / status / export /
+  mode / clear) and `scripts/stop-hook.mjs` (opt-in Claude Code Stop hook for never-stop
+  mode). Script paths resolve from the base directory the harness announces at
+  invocation, since the install location differs per harness.
+- `autoresearch-finalize/` — split an autoresearch session's kept commits into
+  file-disjoint, independently mergeable review branches, one per logical improvement
+  group. `scripts/finalize.mjs` validates hash existence, a clean tree, disjointness, and
+  full coverage of the branch diff before creating anything.
+
+Neither ships in `@winnorton/cairn-pi` — Pi has the upstream `pi-autoresearch` extension
+natively, with first-class tools and a dashboard widget.
 
 The artifact pattern came from observing a downstream project's plan-rework arc: a
 single-verb `/plan` was being used both for one-paragraph thoughts and for heavy executor

@@ -28,7 +28,9 @@ lra's CLI 1:1 so adopting it teaches the real command line.
 
 ## The boundary that matters
 
-cairn's plugin is **"markdown skills only; no runtime code."** This pack respects that:
+cairn's plugin ships markdown skills, with runtime code quarantined to named locations —
+the `autoresearch` pack's bundled Node harness is the one shipped exception (§ Design DNA,
+`AGENTS.md`). This pack stays inside the markdown-only default:
 
 - the **skill** (`files/skills/lra/`) is the only thing that rides the plugin;
 - the three **prompt templates** ride the adopt/manifest flow as `.cairn/` habitat files
