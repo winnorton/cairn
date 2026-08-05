@@ -1,7 +1,8 @@
 # cairn (agy plugin)
 
 [cairn](https://github.com/winnorton/cairn)'s full skill catalog packaged as an
-Antigravity CLI (agy) native plugin. Markdown skills only — no runtime code, no build step.
+Antigravity CLI (agy) native plugin. Markdown skills, plus the `autoresearch` pack's
+bundled Node harness — no build step either way.
 
 ## Install
 

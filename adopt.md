@@ -954,7 +954,7 @@ Get-ChildItem "$env:USERPROFILE\.pi\agent\skills\" | Select-Object Name  # <!-- 
 ```
 
 For each skill directory that duplicates a skill now in `@winnorton/cairn-pi` (the six
-package-bundled skills: `spec`, `program`, `round-review`, `fast-execute`, `peer-review`,
+package-bundled skills: `spec`, `program`, `round-review`, `swarm`, `peer-review`,
 `note`), confirm the package copy is present and loadable, then remove the curl copy:
 
 ```bash
@@ -962,7 +962,7 @@ package-bundled skills: `spec`, `program`, `round-review`, `fast-execute`, `peer
 # GUARD: verify the package replacement is actually installed BEFORE deleting —
 # if it isn't, these curl-era copies are the user's only working skills.
 if pi list 2>/dev/null | grep -q "cairn-pi"; then
-  for skill in spec program round-review fast-execute peer-review note; do
+  for skill in spec program round-review swarm peer-review note; do
     skill_path="$HOME/.pi/agent/skills/$skill"  # <!-- migration-ref -->
     if [ -d "$skill_path" ]; then
       echo "Removing adopt-era copy: $skill_path"
@@ -977,7 +977,7 @@ fi
 ```powershell
 # PowerShell — same guard: package must be installed before removal
 if (pi list 2>$null | Select-String -Quiet "cairn-pi") {
-  foreach ($skill in @("spec", "program", "round-review", "fast-execute", "peer-review", "note")) {
+  foreach ($skill in @("spec", "program", "round-review", "swarm", "peer-review", "note")) {
     $p = "$env:USERPROFILE\.pi\agent\skills\$skill"  # <!-- migration-ref -->
     if (Test-Path $p) { Remove-Item -Recurse -Force $p; "Removed: $p" } else { "Not found (OK): $p" }
   }

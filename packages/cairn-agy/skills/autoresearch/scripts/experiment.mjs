@@ -140,9 +140,30 @@ function cmdInit(args) {
   const { name, metric, unit, direction } = args;
   if (!name || !metric || !direction) fail('init requires --name, --metric, --direction');
   if (direction !== 'lower' && direction !== 'higher') fail('--direction must be lower|higher');
+
+  // Data-loss guard: log's revert path runs `git checkout HEAD -- .` (+ `git clean`
+  // when the tree started clean). A dirty tree at init means user work would be
+  // committed into keep commits by `git add -A` or destroyed by reverts.
+  const status = git(['status', '--porcelain']).out.split('\n').filter(Boolean)
+    .filter((l) => { const p = l.slice(3); return p !== '.auto' && !p.startsWith('.auto/'); });
+  const trackedDirty = status.filter((l) => !l.startsWith('??'));
+  const untracked = status.filter((l) => l.startsWith('??'));
+  if (trackedDirty.length) {
+    fail(`working tree has ${trackedDirty.length} uncommitted change(s) to tracked files. ` +
+      'The experiment loop commits (git add -A) on keep and reverts (git checkout HEAD -- .) on discard — ' +
+      'your changes would be swept into experiment commits or destroyed. Commit or stash first, ' +
+      'or run the session in a dedicated worktree. (No override for this — it is unconditionally unsafe.)');
+  }
+  const cleanAtInit = untracked.length === 0;
+  if (!cleanAtInit && !args['allow-dirty']) {
+    fail(`working tree has ${untracked.length} untracked file(s). On discard/crash the loop deletes ` +
+      'untracked files (git clean) to remove experiment debris — your files would be deleted with it. ' +
+      'Commit them, run in a dedicated worktree, or pass --allow-dirty to proceed WITHOUT untracked-file ' +
+      'cleanup (your files survive; experiment leftovers must then be cleaned manually).');
+  }
   fs.mkdirSync(AUTO, { recursive: true });
   appendLog({ type: 'config', name, metricName: metric, metricUnit: unit || '', bestDirection: direction, timestamp: Date.now() });
-  fs.writeFileSync(STATE, JSON.stringify({ active: true, activatedAt: Date.now() }, null, 2));
+  fs.writeFileSync(STATE, JSON.stringify({ active: true, activatedAt: Date.now(), cleanAtInit }, null, 2));
   const seg = currentSegment(readLog());
   console.log(`Initialized autoresearch session "${name}" (segment ${seg}).`);
   console.log(`Primary metric: ${metric}${unit ? ` [${unit}]` : ''}, direction: ${direction} is better.`);
@@ -233,7 +254,10 @@ function cmdLog(args) {
     git(['add', '-A']);
     const trailer = JSON.stringify({ metric, metrics: secondary, status, segment: seg });
     const msg = `${description}\n\nAutoresearch-Run: ${entries.filter((e) => e.type !== 'config').length + 1}\nAutoresearch-Result: ${trailer}`;
-    const c = git(['commit', '-m', msg, '--no-verify']);
+    // --no-verify by default: hooks re-run per keep would tax the loop; opt back in
+    // with {"gitVerify": true} in .auto/config.json.
+    const verifyFlag = readConfigFile().gitVerify ? [] : ['--no-verify'];
+    const c = git(['commit', '-m', msg, ...verifyFlag]);
     if (c.code !== 0 && !/nothing to commit/.test(c.out + c.err)) {
       fail(`git commit failed: ${c.err || c.out}`);
     }
@@ -241,7 +265,11 @@ function cmdLog(args) {
   } else {
     // Revert working tree, preserving .auto/ (log, prompt, ideas survive reverts).
     git(['checkout', 'HEAD', '--', '.', ':(exclude).auto']);
-    git(['clean', '-fd', '-e', '.auto']);
+    // Untracked cleanup only when init proved the tree clean — otherwise git clean
+    // would delete files the user had before the session (init --allow-dirty path).
+    let cleanAtInit = true;
+    try { cleanAtInit = JSON.parse(fs.readFileSync(STATE, 'utf8')).cleanAtInit !== false; } catch { /* legacy session */ }
+    if (cleanAtInit) git(['clean', '-fd', '-e', '.auto']);
     commit = git(['rev-parse', '--short=7', 'HEAD']).out;
   }
 

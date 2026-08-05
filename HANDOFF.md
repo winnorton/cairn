@@ -71,8 +71,12 @@ version files + a `/peer-review` per `[LAW pre-merge-review]`.
 
 - **Skill removed: `fast-execute`** (2026-08, `027b7b8`) — removed from `files/skills/`,
   all three package copies, both sync-configs, and `files/skills/README.md`. That commit
-  left `manifest.json`, `AGENTS.md`, and `README.md` still advertising it; the sweep is
-  completed in the `skills/autoresearch` change set below. Count 19 → 18.
+  left `manifest.json`, `AGENTS.md`, `README.md`, **and `adopt.md`** still advertising or
+  naming it (a `/peer-review` on the `skills/autoresearch` branch caught `adopt.md`'s
+  Pi-migration section still listing `fast-execute` in its six-skill prose and both
+  removal loops — the earlier sweep's own residue-inventory was itself incomplete). The
+  full sweep, `adopt.md` included, is completed in the `skills/autoresearch` change set
+  below. Count 19 → 18.
 - **New skill pack: `autoresearch` + `autoresearch-finalize`** (branch
   `skills/autoresearch`) — count 18 → 20. An autonomous measure-keep-revert optimization
   loop plus a finalizer that splits its kept commits into file-disjoint, independently
@@ -99,6 +103,53 @@ version files + a `/peer-review` per `[LAW pre-merge-review]`.
   (`packages/cairn-pi/README.md` says so and points at upstream). `manifest.json` skill
   entries gained an optional `bundles` array for supporting files; `adopt.md` Step-5
   skip-rule updated to cover it.
+- **Cold `/peer-review` fix round on `skills/autoresearch`** — 2 BLOCKERs + several
+  should-fixes, all confirmed and fixed:
+  1. **BLOCKER (data-loss guard).** `files/skills/autoresearch/scripts/experiment.mjs`
+     synced byte-identical from the source-of-truth harness at cwar-engine (the sibling
+     project where the same skill also ships): `init` now hard-fails on uncommitted
+     tracked changes and on untracked files unless `--allow-dirty`, records
+     `cleanAtInit` in `state.json`, and the revert path skips `git clean -fd` when the
+     tree started dirty. `.auto/config.json`'s `{"gitVerify": true}` now opts keep-commits
+     back into hooks (default stays `--no-verify`). `SKILL.md`'s Phase 1 states the
+     invariant, the `--allow-dirty` tradeoff, and the `.auto/`-commits-by-design behavior
+     in cairn's machine register.
+  2. **BLOCKER (broken path).** `files/skills/autoresearch-finalize/SKILL.md` defined
+     `<autoresearch-base>` as the full path TO `experiment.mjs`, then used it as a
+     directory (`<autoresearch-base>/scripts/experiment.mjs` resolved to
+     `.../experiment.mjs/scripts/experiment.mjs`). Redefined as the sibling skill's base
+     directory so the usage line resolves correctly.
+  3. `adopt.md`'s Pi-migration six-skill prose + both removal loops still named
+     `fast-execute` — replaced with `swarm` (see the corrected `027b7b8` bullet above).
+  4. `packages/cairn-agy/README.md`'s "Markdown skills only — no runtime code, no build
+     step" line, `manifest.json`'s `swarm` entry missing a `pi` delivery key (present in
+     `packages/cairn-pi/sync-config.json` since `aeb4eb2` — pi skill count now matches at
+     6), `packages/cairn-pi/package.json`'s description enumerating 5 skills instead of
+     6, and `docs/CROSS_REPO_LRA_CAIRN.md`'s stale "markdown skills only" quote — all
+     fixed to match the autoresearch-era reality (§ Design DNA's named runtime-code
+     exception).
+  5. Windows path robustness: both `SKILL.md` files now instruct quoting the announced
+     `<skill-base>` substitution (Git Bash mangles an unquoted backslashed absolute
+     path) and flag the Never-stop `settings.json` snippet's need for escaped
+     backslashes on Windows. `autoresearch/SKILL.md` also covers harnesses that don't
+     announce a base directory (fall back to the harness's documented install root).
+  6. Register-rewrite softenings restored: `--asi` is now stated as required in
+     practice (every run, keep or discard), and `.auto/checks.sh` + `.auto/config.json`
+     are now explicitly marked optional (the prior text read `config.json` as an
+     unconditional setup step) — both phrased within `check-prompt-register.mjs`'s
+     constraints (no "because", "make sure", "optionally", …).
+  7. **New mechanical gate: `scripts/check-delivery-parity.mjs`**, wired into
+     `sync-guard.yml`. The manifest↔sync-config drift class repeated three times in one
+     review pass (findings 3/4/… above) — `[LAW gate-beats-instruction]`: an instruction
+     to keep them in sync doesn't hold under a fresh author, so a mechanical check now
+     fails when a skill in any `packages/*/sync-config.json` lacks the matching delivery
+     key in `manifest.json`, or vice versa. Verified red against the pre-fix `swarm`
+     state, green after restoring it.
+  8. `scripts/sync-skills.mjs` gained an optional `--prune` flag: sync mode plus deletion
+     of stale per-skill files and orphaned `skills/<name>/` copies that `--check` would
+     otherwise only report.
+  `scripts/skill-body-word-baseline.json` re-baselined for the `autoresearch` (+239) and
+  `autoresearch-finalize` (+19) body-word growth from the register additions.
 
 ## Work shipped in v0.15.0 (was the interim slice; peer-review DONE, no blockers)
 

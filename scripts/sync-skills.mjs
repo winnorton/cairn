@@ -7,8 +7,9 @@
 // Committed copies under <pkg>/skills/ are build artifacts — byte-identical or --check fails.
 //
 // Usage:
-//   node scripts/sync-skills.mjs --pkg <rel-path-to-package>          # sync mode
-//   node scripts/sync-skills.mjs --pkg <rel-path-to-package> --check  # check mode
+//   node scripts/sync-skills.mjs --pkg <rel-path-to-package>           # sync mode
+//   node scripts/sync-skills.mjs --pkg <rel-path-to-package> --check   # check mode
+//   node scripts/sync-skills.mjs --pkg <rel-path-to-package> --prune   # sync + delete stale copies
 //
 // The package directory must contain sync-config.json:
 //   { "skills": ["name1", "name2", ...], "versionFile": "package.json" }
@@ -24,7 +25,7 @@
 //     synced skill's copy that no longer exist in the source)
 //   - byte-identity between source and copy, for every file in the skill dir (--check mode)
 
-import { copyFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -35,9 +36,14 @@ const args = process.argv.slice(2);
 const pkgArgIdx = args.indexOf("--pkg");
 const pkgArg = pkgArgIdx !== -1 ? args[pkgArgIdx + 1] : null;
 const check = args.includes("--check");
+const prune = args.includes("--prune");
 
 if (!pkgArg) {
-  console.error("Usage: node scripts/sync-skills.mjs --pkg <path-to-package> [--check]");
+  console.error("Usage: node scripts/sync-skills.mjs --pkg <path-to-package> [--check|--prune]");
+  process.exit(1);
+}
+if (check && prune) {
+  console.error("--check and --prune are mutually exclusive — --check only reports, --prune deletes.");
   process.exit(1);
 }
 
@@ -165,7 +171,25 @@ for (const skill of SKILLS) {
       mkdirSync(dirname(to), { recursive: true });
       copyFileSync(join(srcDir, rel), to);
     }
-    console.log(`synced ${skill} (${assets.length} file${assets.length === 1 ? "" : "s"})`);
+    let pruned = 0;
+    if (prune) {
+      let copied = [];
+      try {
+        copied = skillFiles(destDir);
+      } catch {
+        /* nothing copied yet */
+      }
+      for (const rel of copied) {
+        if (!assets.includes(rel)) {
+          rmSync(join(destDir, rel), { force: true });
+          pruned++;
+        }
+      }
+    }
+    console.log(
+      `synced ${skill} (${assets.length} file${assets.length === 1 ? "" : "s"})` +
+        (pruned ? `, pruned ${pruned} stale file${pruned === 1 ? "" : "s"}` : ""),
+    );
   }
 }
 
@@ -180,9 +204,15 @@ try {
 }
 for (const dir of shipped) {
   if (!SKILLS.includes(dir)) {
-    errors.push(
-      `orphaned copy skills/${dir}/ in ${pkgArg} — delete it or add to sync-config.json`,
-    );
+    if (prune) {
+      rmSync(join(pkgRoot, "skills", dir), { recursive: true, force: true });
+      console.log(`pruned orphaned copy skills/${dir}/ (${pkgArg})`);
+    } else {
+      errors.push(
+        `orphaned copy skills/${dir}/ in ${pkgArg} — delete it, or re-run with --prune, ` +
+          `or add it to sync-config.json`,
+      );
+    }
   }
 }
 

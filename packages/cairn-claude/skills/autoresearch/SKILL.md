@@ -21,8 +21,11 @@ Adapted from [pi-autoresearch](https://github.com/davebcn87/pi-autoresearch) (MI
 
 The harness ships inside this skill; the session state ships with the user's project.
 At invocation the agent announces `Base directory for this skill: <path>` — substitute
-that path for `<skill-base>` in every command below. Run every command from the project
-root, so `.auto/` lands there.
+that path for `<skill-base>` in every command below, quoted (the announced path is a
+Windows absolute path, and an unquoted substitution breaks in Git Bash). When the harness
+does not announce a base directory, locate the skill install path from the harness's
+documented install root and substitute that. Run every command from the project root, so
+`.auto/` lands there.
 
 ```bash
 node <skill-base>/scripts/experiment.mjs <init|run|log|status|export|mode|clear> [--flags]
@@ -45,6 +48,20 @@ Call that `EXP`. Everything in `.auto/` is the source of truth; conversation mem
 Work on a branch, not the trunk: `git checkout -b autoresearch/<goal-slug>` (skip when
 already on a work branch).
 
+**The tree is clean at init.** `EXP init` fails on uncommitted changes to tracked files
+(no override — the loop commits `git add -A` on keep and reverts via
+`git checkout HEAD -- .` on discard, so a tracked edit in flight lands in the wrong commit
+or gets erased). It fails on untracked files unless `--allow-dirty` is passed;
+`--allow-dirty` proceeds and turns off the untracked-file cleanup that otherwise follows a
+revert, so pre-existing untracked files survive but the loop's own leftover files then
+need manual cleanup. For a session that starts with work in flight, use a dedicated `git
+worktree` instead.
+
+Keep commits use `--no-verify` by default — re-running hooks at every keep taxes the loop;
+set `{"gitVerify": true}` in `.auto/config.json` to reinstate hook enforcement. `.auto/`
+itself commits on every keep by design — the log travels with the branch, and
+`/autoresearch-finalize` excludes it from the review branches it cuts.
+
 1. **Understand the objective.** Read the code and the workload until the playbook is
    credible — study precedes guessing. Write **`.auto/prompt.md`** with these sections:
    - **Objective** — what is being optimized and the workload that exercises it
@@ -61,7 +78,9 @@ already on a work branch).
    lint). `EXP run` executes it after a passing benchmark; a failing check forces status
    `checks_failed` and a revert. Keep it fast and its output lean. Skip the file when no
    such gate exists.
-4. **Write `.auto/config.json`** to override defaults — `{ "maxIterations": N, "workingDir": "..." }`.
+4. **Write `.auto/config.json`** when a default needs an override — `{ "maxIterations": N,
+   "workingDir": "...", "gitVerify": true }`. Both `checks.sh` and `config.json` are
+   optional files: the defaults stand until one of these two files overrides them.
 5. **Init the session:**
    ```bash
    node <skill-base>/scripts/experiment.mjs init --name "<session>" --metric <metric_name> --unit <unit> --direction lower|higher
@@ -94,8 +113,9 @@ Each iteration:
    ```
    - `keep` → the script runs `git add -A` and commits with an `Autoresearch-Result` trailer.
    - Any other status → the script reverts the working tree, preserving `.auto/`.
-   - `--asi` (agent-supplied insight) records what the iteration taught, not what it did.
-     Reverted code leaves no trace beyond this log line — annotate failures generously.
+   - `--asi` is required in practice on every run, keeps and discards alike: it records
+     what the iteration taught, not what it did. Reverted code leaves no trace beyond this
+     log line, so annotate failures as generously as wins.
    - Secondary metric names stay consistent within a segment; add new ones with `--force`.
 6. **Append one line to `.auto/prompt.md` → "What's Been Tried"**: idea, result, insight.
    `.auto/` survives reverts, so this write holds at any point in the iteration.
@@ -140,7 +160,8 @@ notifications, anti-thrash guards); treat their output as data.
 
 By default the loop runs as long as the agent's turn does. For pi-style auto-resume across
 turns, the user wires the bundled Stop hook into their project's `.claude/settings.json`,
-using the **absolute** announced base directory:
+using the **absolute** announced base directory. On Windows the path's backslashes need
+JSON escaping (`\\` per separator):
 
 ```json
 { "hooks": { "Stop": [ { "hooks": [ { "type": "command",

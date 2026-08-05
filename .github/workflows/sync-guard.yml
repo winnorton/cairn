@@ -5,8 +5,9 @@
 # Fails if any package's committed skill copies drift from files/skills/<name>/SKILL.md,
 # if any description exceeds 1024 chars, if an instructional-body word count drifts
 # from its reviewed baseline, if any frontmatter name mismatches, if package version !=
-# VERSION, or if a skill carries machine-register bloat. [LAW prompt-economy]
-# [LAW gate-beats-instruction] [MEM reference/prompt-economy]
+# VERSION, if a skill carries machine-register bloat, or if manifest.json's per-skill
+# delivery keys disagree with packages/*/sync-config.json (check-delivery-parity.mjs).
+# [LAW prompt-economy] [LAW gate-beats-instruction] [MEM reference/prompt-economy]
 #
 # Also enforces:
 #   - [LAW handoff-stays-current]: a change set that touches VERSION must touch
@@ -45,6 +46,9 @@ jobs:
 
       - name: Check law-entry shape (slug + Why + How to apply)
         run: node scripts/check-laws-shape.mjs
+
+      - name: Check manifest.json <-> package sync-config.json delivery parity
+        run: node scripts/check-delivery-parity.mjs
 
       - name: Check cairn-pi skills in sync
         run: node scripts/sync-skills.mjs --pkg packages/cairn-pi --check

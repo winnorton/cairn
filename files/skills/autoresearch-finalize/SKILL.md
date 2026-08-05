@@ -20,10 +20,12 @@ Adapted from [pi-autoresearch](https://github.com/davebcn87/pi-autoresearch) (MI
 ## Paths
 
 The splitter ships inside this skill. At invocation the agent announces `Base directory
-for this skill: <path>` — substitute that path for `<skill-base>` below. The sibling
-`autoresearch` skill's harness sits at `<skill-base>/../autoresearch/scripts/experiment.mjs`
-when both are installed from the same cairn package; call that path `<autoresearch-base>`.
-Run every command from the project root.
+for this skill: <path>` — substitute that path for `<skill-base>` below, quoted (the
+announced path is a Windows absolute path, and an unquoted substitution breaks in Git
+Bash). The sibling `autoresearch` skill installs at `<skill-base>/../autoresearch` when
+both ship from the same cairn package; call that directory `<autoresearch-base>` —
+`<autoresearch-base>/scripts/experiment.mjs` is its harness. Run every command from the
+project root.
 
 ## Procedure
 

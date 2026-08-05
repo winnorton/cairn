@@ -317,6 +317,7 @@
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
+        "pi": "@winnorton/cairn-pi (npm)",
         "agy": "cairn-agy (agy plugin install github:winnorton/cairn//packages/cairn-agy@main)"
       },
       "role": "scaffolding",
