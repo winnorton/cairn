@@ -1,30 +1,32 @@
 ---
 name: swarm
 description: A living coordination surface for multi-workstream work that repeats
-  over partitions and never finishes. Fan-out parallel stubs per wave, review results,
-  self-improve the master, fan out the next wave. Use when work spans parallel
-  workstreams AND iterates over partitions (modules, services, batches, quarters),
-  the coordination contract should improve with each wave, and the effort has no
-  natural archive point. Triggers on "swarm", "evolving program", "repeating
-  fan-out", "living program". Do NOT use for single-execution parallel work (use
-  /program), single-file iterative passes (use /prompt-evolve), one-shot plans
-  (use /spec), or intent capture (use /note).
+  over partitions with an open-ended lifecycle. Fan-out parallel stubs per wave,
+  review results, self-improve the master, fan out the next wave. Use when work
+  spans parallel workstreams AND iterates over partitions (modules, services,
+  batches, quarters) and the coordination contract should improve with each wave.
+  The master is ACTIVE, HELD, or RETIRED; the agent proposes a state change with
+  evidence and only the user approves it. Triggers on "swarm", "evolving program",
+  "repeating fan-out", "living program". Do NOT use for single-execution parallel
+  work with a fixed contract (use /program), single-file iterative passes (use
+  /prompt-evolve), one-shot plans (use /spec), or intent capture (use /note).
 ---
 
 # Swarm
 
 A living coordination surface — one evolving master plus waves of parallel
-stubs — for work that fans out, learns, and fans out again. The master never
-archives. It accumulates lessons, patterns, and contract refinements across
-every wave of execution.
+stubs — for work that fans out, learns, and fans out again. The master has
+no built-in end: it accumulates lessons, patterns, and contract refinements
+across every wave, and only the user decides when it is held or retired.
 
 ## Why this exists
 
-`/program` coordinates parallel workstreams but archives when done — it's a
-one-shot coordination artifact. `/prompt-evolve` evolves across partitions but
-is single-threaded — no fan-out. The gap: **multi-workstream work that repeats
-over partitions, where the coordination contract itself should improve with
-each wave.**
+`/program` coordinates parallel workstreams under a fixed contract and
+archives itself when its Definition of Done is met — the agent can detect
+that end. `/prompt-evolve` evolves across partitions but is single-threaded —
+no fan-out. The gap: **multi-workstream work that repeats over partitions,
+where the coordination contract itself should improve with each wave** and
+where "done" is a human judgment, not a detectable signal.
 
 The swarm fills the fourth quadrant:
 
@@ -55,8 +57,9 @@ Examples:
 
 ## When NOT to use
 
-- **One-shot parallel work** → `/program`. If you'll archive when done, it's
-  a program.
+- **One-shot parallel work** → `/program`. If the contract is fixed up front
+  and completion is detectable from a Definition of Done, it's a program.
+  Whether the effort will *eventually* end is not the test — most swarms do.
 - **Single-file iterative passes** → `/prompt-evolve`. If there's no fan-out,
   it's a prompt.
 - **Single-execution plan** → `/spec`.
@@ -70,10 +73,11 @@ Create at `docs/swarm/SWARM_<NAME>.md`.
 ```markdown
 # SWARM: <NAME>
 
-> **Type:** swarm (living coordination surface — never archives).
-> Edit this master after every wave per the self-improvement loop.
+> **Type:** swarm (living coordination surface — held or retired only with
+> user approval). Edit this master after every wave per the self-improvement loop.
 
 Version: v1
+State: ACTIVE | HELD (<date>, <why>) | RETIRED (<date>, <why>)
 Partition: <what waves iterate over — module, service, batch, quarter>
 
 ---
@@ -126,12 +130,13 @@ v2+ entry template (copy, fill, append above this comment):
 ## 6. EXPANSION PROTOCOL
 
 > **This section is mandatory.** It tells the executor how to keep the
-> swarm alive without waiting for human re-prompting.
+> swarm moving without waiting for human re-prompting — and when to stop
+> and ask instead of inventing work.
 
 When the executor completes a wave and runs the self-improvement step
 (§5), it MUST check the WAVE REGISTRY for remaining PLANNED rows.
-**If fewer than 3 PLANNED waves remain**, the executor generates the
-next horizon of waves before proceeding:
+**If fewer than 3 PLANNED waves remain**, the executor audits for the
+next horizon. **If the audit finds real gaps**, it plans them:
 
 1. **Audit the product.** Compare current state against the target
    (reference product, spec, or goal). Identify the largest gaps.
@@ -146,6 +151,18 @@ next horizon of waves before proceeding:
    current goal description.
 6. **Append to §5 CHANGELOG** with a note like
    `Expansion: W<N>–W<M> planned (<summary>).`
+
+**If the audit finds nothing worth a wave**, do NOT pad the registry.
+Padding is the failure mode this branch exists to prevent. Instead:
+
+1. Leave §3 with zero PLANNED rows.
+2. Append to §5 CHANGELOG: `Expansion: none — <evidence>.` Evidence is
+   concrete: partition space exhausted, N consecutive waves with zero
+   contract delta, target state reached, or the feature horizon empty.
+3. **Propose a state change to the user** — HELD if the swarm may resume
+   when scope reappears, RETIRED if the partition space is done. State the
+   evidence and the proposed state in the wave report's Next action.
+4. Stop. Do not flip the State header yourself. The user's answer sets it.
 
 ### Feature horizon (optional, recommended)
 
@@ -164,7 +181,7 @@ That's the whole master. Six sections. Everything earns its place:
 | WAVE REGISTRY | Orchestration state. The status table. |
 | PATTERNS | Accumulated intelligence. The evolving part. |
 | CHANGELOG | Versioned institutional memory. |
-| EXPANSION PROTOCOL | How the swarm self-perpetuates. The autonomy engine. |
+| EXPANSION PROTOCOL | How the swarm self-perpetuates — and when it asks instead. The autonomy engine. |
 
 ## Wave stubs — the spec IS the code
 
@@ -246,14 +263,16 @@ gate. Mark the wave DONE or flag incomplete stubs for a follow-up.
 - §5: Append a CHANGELOG entry using the template comment. Include the
   structured **counts** line — every entry gets one. Bump version.
 - §6: **Check the expansion trigger.** If fewer than 3 PLANNED waves remain
-  in §3, run the expansion protocol — audit, prioritize, write PLANNED
-  rows, generate stubs for the next ACTIVE wave, update §1 when scope changes.
+  in §3, run the expansion protocol — audit, then either plan (prioritize,
+  write PLANNED rows, generate stubs for the next ACTIVE wave, update §1
+  when scope changes) or, if the audit finds nothing, propose HELD/RETIRED
+  to the user with evidence.
 - Version header: bump.
 
 The evolved master is what Step 2 reads for the next wave. The expansion
-protocol ensures the swarm never stalls waiting for a human to re-prompt.
-This is the feedback loop that makes each wave cheaper than the last AND
-keeps the swarm alive indefinitely.
+protocol ensures the swarm never stalls waiting for a human to re-prompt
+while there is real work — and never manufactures work when there isn't.
+This is the feedback loop that makes each wave cheaper than the last.
 
 ## Parallel execution
 
@@ -266,12 +285,26 @@ keeps the swarm alive indefinitely.
 - **Integration is serialized.** Worktrees merge one at a time after the
   wave is reviewed.
 
-## Lifecycle — never done
+## Lifecycle — held or retired only with user approval
 
-A swarm master has no archive signal. It stays at `docs/swarm/SWARM_<NAME>.md`
-for the life of the project (or until the user explicitly retires it).
+A swarm master has no completion signal the agent can detect. It carries a
+`State` header with three values, mirroring `/prompt-evolve`:
 
-Completed wave stubs CAN be cleaned up — move to
+- **ACTIVE** — waves run; the loop and expansion protocol apply.
+- **HELD (<date>, <why>)** — paused, not dead. `/swarm` (no args) skips it;
+  `/swarm --status` lists it. Resume by setting ACTIVE and appending a
+  CHANGELOG entry. Use when scope has run dry for now but may reappear.
+- **RETIRED (<date>, <why>)** — the partition space is done. Move the master
+  to `docs/swarm/archive/SWARM_<NAME>.md` with its completed stubs, append a
+  final CHANGELOG entry. The §3 WAVE REGISTRY stays intact as the record.
+
+**The agent proposes; the user decides.** The agent may recommend HELD or
+RETIRED — from the expansion protocol's empty-audit branch, from `/reflect`,
+or on request — and must cite evidence when it does. It never flips the
+State header, moves the master, or archives on its own; neither does an
+autonomous executor such as `/fast-execute`.
+
+Completed wave stubs CAN be cleaned up at any state — move to
 `docs/swarm/archive/SWARM_<NAME>_W<N>_*` if the directory gets noisy. The
 master's §3 WAVE REGISTRY preserves the record.
 
@@ -279,11 +312,16 @@ master's §3 WAVE REGISTRY preserves the record.
 
 - `/swarm <NAME> [description]` — cold-start. Create the master + first
   wave stubs.
-- `/swarm` (no args) — resume. Read the active swarm master(s) in
+- `/swarm` (no args) — resume. Read the ACTIVE swarm master(s) in
   `docs/swarm/`, identify the current wave, generate next stubs or
-  self-improve from completed stubs.
-- `/swarm --status` — report. Show the wave registry and current state
-  across all active swarms.
+  self-improve from completed stubs. HELD masters are skipped.
+- `/swarm --status` — report. Show the wave registry and State across all
+  masters in `docs/swarm/`, including HELD ones and any pending
+  HELD/RETIRED proposals awaiting a user decision.
+- `/swarm --hold <NAME> <why>` / `/swarm --resume <NAME>` /
+  `/swarm --retire <NAME> <why>` — the user's state changes. Each sets the
+  State header, appends a CHANGELOG entry, and (for retire) moves the
+  master to `docs/swarm/archive/`. Only run these on the user's say-so.
 
 ## Output — structured report with change metrics
 
@@ -319,6 +357,9 @@ with mandatory metrics:
 ### Next action
 Execute W{N+1} stubs in parallel. When all gates pass, self-improve
 and generate W{N+2}.
+— or, when the expansion audit came up empty —
+No waves planned: {evidence}. Propose {HELD | RETIRED}. Awaiting your
+decision; the swarm stays ACTIVE until you set it.
 ```
 
 The counts line echoes the CHANGELOG entry — same format, same numbers.
@@ -331,8 +372,9 @@ This makes every wave's impact scannable without reading prose.
 - **`/prompt-evolve`** — for single-file iterative passes. A swarm stub
   could invoke a prompt-evolve artifact if one workstream is itself
   partition-iterative.
-- **`/program`** — for one-shot parallel coordination. If the work will
-  archive when done, use program, not swarm.
+- **`/program`** — for one-shot parallel coordination under a fixed
+  contract. If the agent can detect completion from a Definition of Done,
+  use program, not swarm.
 - **`/round-review`** — can review a wave's output against the master's
   contract, similar to reviewing a program round.
 - **`/peer-review`** — for fresh-eyes review of a wave's change set before

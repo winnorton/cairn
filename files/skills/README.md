@@ -157,9 +157,9 @@ Permanent contract specs stay live and carry evidence-bearing status.
   (after fishing-agent and purduebb) and the source of `[LAW prompt-economy]`. See
   [`docs/CROSS_REPO_LRA_CAIRN.md`](../../docs/CROSS_REPO_LRA_CAIRN.md).
 - `swarm/` — a living coordination surface for multi-workstream work that repeats over
-  partitions and never finishes. Fan-out parallel stubs per wave, review results, self-improve
-  the master, fan out the next wave. Use when work spans parallel workstreams AND iterates
-  over partitions.
+  partitions with an open-ended lifecycle. Fan-out parallel stubs per wave, review results,
+  self-improve the master, fan out the next wave. The master is held or retired only with
+  user approval. Use when work spans parallel workstreams AND iterates over partitions.
 
 ### Execution skills — run a measured loop against the codebase
 

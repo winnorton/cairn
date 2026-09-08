@@ -173,7 +173,7 @@ and the next unit to run. Explain its re-run expectation; do not always promise 
 - `/program`: coordinate parallel workstreams that archive on completion; prompt-evolve may
   still permit merge-safe fan-out inside one evolving procedure.
 - `/swarm`: run open-ended wave fan-out where the coordination master itself evolves. One
-  file iterating over units is prompt-evolve; many stubs per wave that never archive is swarm.
+  file iterating over units is prompt-evolve; many stubs per wave whose master evolves is swarm.
 - `/round-review`: verify program rounds and create follow-up artifacts.
 - `/lra`: run the researcher/librarian specialization for subject research.
 - `/reflect`: capture session-level process lessons; prompt self-improvement captures the

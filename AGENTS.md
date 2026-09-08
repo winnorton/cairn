@@ -152,7 +152,7 @@ Listed by category — full descriptions in
 - [`round-review`](files/skills/round-review/SKILL.md) — review one round of executor output against a program, draft R+1 stubs + round master
 - [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — author a version-controlled operational prompt for multi-pass work, cold-started from a five-input brief or extracted from a spec; coverage units may be known or discovered and a project-named coverage table tracks them, the prompt carries `ACTIVE`/`HELD` lifecycle state so a paused loop stays resumable, and every pass validates work then improves the prompt
 - [`lra`](files/skills/lra/SKILL.md) — a `prompt-evolve` specialization for researching a subject over many passes, run engine-free as project-local markdown an agent walks; mirrors the lra research→library→application pipeline 1:1 via lra commands. The two prompts are verbatim from the lra lab (the source of `[LAW prompt-economy]`); see [`docs/CROSS_REPO_LRA_CAIRN.md`](docs/CROSS_REPO_LRA_CAIRN.md)
-- [`swarm`](files/skills/swarm/SKILL.md) — living coordination surface for repeating multi-workstream work over partitions; fan-out parallel stubs per wave, review results, self-improve the master, fan out the next wave
+- [`swarm`](files/skills/swarm/SKILL.md) — living coordination surface for repeating multi-workstream work over partitions; fan-out parallel stubs per wave, review results, self-improve the master, fan out the next wave; held or retired only with user approval
 
 ### Execution — run a measured loop against the codebase
 The only category whose skills mutate and measure the tree rather than produce text. Both

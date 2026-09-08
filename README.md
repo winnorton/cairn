@@ -255,8 +255,9 @@ Cairn's skills fall into five categories with different origins.
   synced verbatim from the lra lab into `.cairn/context/lra/`. Not in the Pi
   package (outside its authoring-loop curation).
 - `swarm` — a living coordination surface for multi-workstream work that repeats
-  over partitions and never finishes: fan out parallel stubs per wave, review the
-  results, self-improve the master, fan out the next wave.
+  over partitions with an open-ended lifecycle: fan out parallel stubs per wave,
+  review the results, self-improve the master, fan out the next wave. Held or
+  retired only with user approval.
 
 **Execution skills — run a measured loop against the codebase:**
 
