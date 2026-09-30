@@ -359,13 +359,22 @@ instructions, requiring a manual cleanup pass. Don't repeat that.
    re-adopt refreshes them.
 3. Ensure parent directories exist (`mkdir -p .cairn/memory` and subdirs).
 4. Write the fetched bytes to the destination.
-5. **Validate what landed.** Every cairn `.md` file starts with `---` (YAML
-   frontmatter) or `#` (markdown heading). If a written file starts with
-   anything else — e.g. a 14-byte `404: Not Found` body — delete it, report
-   which fetch failed, and stop. Validated 2026-06-11: a pre-validation Pi install
+5. **Validate what landed.** Confirm the HTTP fetch succeeded and the written
+   file is nonempty and contains the expected source document. Reject recognizable
+   error responses such as `404: Not Found`, `Not Found`, or an HTML error page
+   (`<!DOCTYPE html>` / `<html>`). Do not require a `---` or `#` opening:
+   Markdown may begin with HTML comments, as the shipped `.cairn/CLAUDE.md` does.
+   An unfamiliar opening alone is not evidence of a failed fetch — inspect the
+   content against the requested raw source before declaring it corrupt. If the
+   newly written file is invalid, delete it, report which fetch failed, and stop.
+   Validated 2026-06-11: a pre-validation Pi install
    carried `404: Not Found` bodies as `program/SKILL.md` and
    `round-review/SKILL.md`, silently shadowing real skills until a
    `/session-distill` run found them.
+
+   <!-- Adopter feedback relayed by the maintainer, 2026-09-30: the former
+   ---/# allowlist false-rejected the genuine comment-prefixed CLAUDE.md.
+   Align with the existing error-body checks per [LAW borrow-adjacent]. -->
 
 If a fetch or write fails, stop and report the partial state clearly — do not
 continue silently.
@@ -832,8 +841,10 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/winnorton/cairn/main/f
   -OutFile "<project>\.cairn\CLAUDE.md"
 ```
 
-Validate: the written file must start with `#` or `---`. If it starts with `404`, the
-fetch failed — delete and stop.
+Validate using Step 5's content checks: require a successful fetch and a nonempty
+source document, and reject error responses. This template begins with HTML comments
+(`<!-- ... -->`); that is valid Markdown, not an HTML error page. Delete an invalid
+newly fetched file and stop; do not reject it merely for lacking a `#` or `---` opening.
 
 ### Phase B — Verify copies
 
