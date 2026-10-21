@@ -24,9 +24,9 @@ description: "Engine-free fallback for the lra research pipeline — use ONLY wh
 >    when the project deliberately needs engine-free, git-tracked research that stays inside
 >    the repo without external dependencies.
 >
-> The full engine lives at `C:\Users\winno\projects\lra` (or wherever the user has it
-> installed) and provides the `lra` CLI, MCP server, Express web app, and all fetcher
-> capabilities this lite version lacks.
+> The full engine ([github.com/winnorton/lra](https://github.com/winnorton/lra), installed
+> wherever the user keeps it) provides the `lra` CLI, MCP server, Express web app, and all
+> fetcher capabilities this lite version lacks.
 
 ---
 
