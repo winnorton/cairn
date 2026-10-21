@@ -78,7 +78,27 @@ function frontmatter(raw, file) {
   const desc = (m[1].match(/(?:^|\n)description:[ \t]*([\s\S]*?)(?=\n[A-Za-z][\w-]*:|$)/) ?? [])[1]
     ?.replace(/\r?\n[ \t]+/g, " ")
     .trim();
+  strictYamlScalars(m[1], file);
   return { name, desc };
+}
+
+// Strict YAML parsers (Antigravity) reject plain (unquoted) scalars that
+// Claude Code's lenient parser accepts. Flag the two common breakers: a
+// `: ` or ` #` inside the value, and a reserved/indicator first character.
+// Quoted and block (`|`, `>`) scalars are skipped — they are already safe.
+function strictYamlScalars(fm, file) {
+  for (const [, key, rawValue] of fm.matchAll(/(?:^|\n)([A-Za-z][\w-]*):[ \t]*([\s\S]*?)(?=\n[A-Za-z][\w-]*:|$)/g)) {
+    const value = rawValue.replace(/\r?\n[ \t]+/g, " ").trim();
+    if (!value || /^["'|>]/.test(value)) continue;
+    if (/^[`@\[\]{}*&!%,?#-]/.test(value) && !/^-\S/.test(value))
+      errors.push(`${file}: frontmatter \`${key}\` starts with YAML indicator "${value[0]}" — quote it or use a block scalar (\`>-\`)`);
+    const bad = value.match(/: | #|:$/);
+    if (bad)
+      errors.push(
+        `${file}: frontmatter \`${key}\` has "${bad[0].trim()}" in a plain scalar (near "…${value.slice(Math.max(0, bad.index - 30), bad.index + 10)}…") — ` +
+          `strict YAML parsers reject it; reword, quote, or use a block scalar (\`>-\`)`,
+      );
+  }
 }
 
 // Version lockstep — read from the versionFile declared in sync-config.json

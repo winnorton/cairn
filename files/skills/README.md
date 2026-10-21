@@ -148,8 +148,8 @@ Permanent contract specs stay live and carry evidence-bearing status.
   including narrowing aperture, validation, an absolute self-edit target, a versioned
   CHANGELOG, and blocked-work capture; phase numbering and project strategies remain
   adaptable. Stable mechanical rules graduate into schemas, validators, or tools.
-- `lra/` — a `prompt-evolve` specialization for researching a subject over many passes, run
-  engine-free as project-local markdown an agent walks. Mirrors the lra
+- `lra-lite/` — engine-free fallback for the lra research pipeline; agents should prefer the
+  full lra engine when available. Mirrors the lra
   research→library→application pipeline 1:1 through lra commands (`subject create`,
   `collection create`, `research run`, `app serve`); scaffolds a project-local `research/`
   collection and drives two prompts (researcher + librarian) synced byte-for-byte from the

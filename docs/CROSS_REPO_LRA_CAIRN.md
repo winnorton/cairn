@@ -20,7 +20,7 @@ lra's CLI 1:1 so adopting it teaches the real command line.
 
 | file | role |
 |---|---|
-| `files/skills/lra/SKILL.md` | the command skill — teaches/runs `lra subject create`, `lra research run`, `lra app serve`; scaffolds a project-local `research/` collection; drives the prompts. **cairn-authored, mutable.** |
+| `files/skills/lra-lite/SKILL.md` | the command skill — teaches/runs `lra subject create`, `lra research run`, `lra app serve`; scaffolds a project-local `research/` collection; drives the prompts. **cairn-authored, mutable.** |
 | `files/.cairn/context/lra/PROMPT_RESEARCHER_BOOTSTRAP.md` | researcher prompt — **verbatim from lra, immutable** |
 | `files/.cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md` | librarian prompt — **verbatim from lra** |
 | `files/.cairn/context/lra/AGENTS_SUBJECT.md` | per-subject operating rules — **verbatim from lra** |
@@ -32,7 +32,7 @@ cairn's plugin ships markdown skills, with runtime code quarantined to named loc
 the `autoresearch` pack's bundled Node harness is the one shipped exception (§ Design DNA,
 `AGENTS.md`). This pack stays inside the markdown-only default:
 
-- the **skill** (`files/skills/lra/`) is the only thing that rides the plugin;
+- the **skill** (`files/skills/lra-lite/`) is the only thing that rides the plugin;
 - the three **prompt templates** ride the adopt/manifest flow as `.cairn/` habitat files
   (like cairn's context templates), not the plugin;
 - there is **no runtime** — the host agent is the engine and the viewer.
@@ -59,7 +59,7 @@ the copy, never the master.
 ## Shipping status (cairn release machinery)
 
 **Wired.** The skill + 4 masters are registered in `manifest.json` (masters use `mode: overwrite`
-so they track upstream on re-adopt); `lra` is enrolled in the `cairn-claude` + `cairn-agy`
+so they track upstream on re-adopt); `lra-lite` is enrolled in the `cairn-claude` + `cairn-agy`
 `sync-config.json` and synced into both packages (not `cairn-pi` — outside its authoring-loop
 curation). Passes cairn's gates: `check-skill-budgets`, `sync-skills --check` (all packages),
 and the §5 DoD greps. A fresh-agent `/peer-review` has run.

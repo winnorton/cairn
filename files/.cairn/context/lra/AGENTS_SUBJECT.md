@@ -9,14 +9,15 @@ phases); this file holds **how you operate**. If the two ever disagree, this fil
 
 - You are in a **self-contained research workspace**. Everything you need is here; there is nothing
   useful above this directory.
-- **Touch only your layer's stores.** The researcher writes `research/`; the librarian reads
-  `research/` and writes `library/`. Never write the other layer's stores. The flow is **one-way**:
-  the researcher discovers, the librarian structures downstream.
+- **Touch only your layer's stores.** ⚠️ ***THE RESEARCHER NEVER OPENS `library/` — NO READS, NO
+  WRITES.*** The librarian reads `research/` stores and writes `library/`. The flow is **one-way**:
+  the researcher discovers, the librarian structures downstream — reading the librarian's cells
+  turns discovery into partition-filling.
 - DO NOT use a local path outside this workspace as a *source of facts*.
 - **Never run engine commands** (build / validate / test / lint) and **never shell out to `pi`,
   `agy`, or `lra`.** Those belong to the engine that produced this workspace. For parallelism,
   **spawn your own sub-agents** (§E).
-- Subject knowledge lives ONLY in the two `PROMPT.md` files, the stores, and `subject.json` — nowhere else.
+- Subject knowledge comes from `subject.json`, your layer's `PROMPT.md`, and the structured inputs that prompt names.
 
 ## B. Source & id integrity
 
@@ -44,11 +45,15 @@ The subject's structure is **yours to discover from the data you acquire** — i
 
 ## E. Fan-out (your own sub-agents, per partition cell)
 
-When you have parallelism, **spawn your own sub-agents** — the researcher one per axis cell, the
-librarian one per entity type — each told *"focus on `<cell>` and execute `<your-layer>/PROMPT.md`"*.
-They converge through the shared canonical ids (§C). **Sub-agents propose; the lead ratifies** — a
-sub-agent reports new canonical ids / rules in its final message; the lead writes them in. Do not
-shell out to other CLI agents — spawn within your own runtime.
+**If your platform supports concurrent sub-agents, fan out — mandatory, and you are ONLY the
+coordinator.** Spawn one **all at once** per open cell (the researcher per axis cell, the librarian
+per entity type) via `invoke_subagent`, each told *"focus on `<cell>` and execute
+`<your-layer>/PROMPT.md`"*, then **block and wait** for every report — never search or structure a
+cell yourself. Spawn *within* your runtime; never shell out to other CLI agents. They converge
+through the shared canonical ids (§C). **Sub-agents propose; the lead ratifies** — each reports new
+canonical ids / rows / rules in its final message; the lead collects, ratifies, and writes them in,
+and never marks a cell `complete` for a sub-agent that didn't return. The `PROMPT.md` task phases
+fire the spawn.
 
 ## F. Loop discipline
 
@@ -76,15 +81,15 @@ If an `lra-research` MCP server is connected, use its tools for store reads AND 
   files. **Use `get_prompt_state` to check version, ladder status, and changelog** instead of
   re-reading the full PROMPT.md. Pass `layer: "library"` for the librarian prompt. **Use `get_entity_detail` to get a joined view of one entity.** **Use `fetch_structured` to parse infoboxes, tables, keyvalues, or embedded page-state JSON from a URL.**
 - **Writes:** `append_findings`, `append_sources`, `update_topology`, `update_prompt_section`,
-  `register_canonical_ids`, `update_schema`, `append_rows`, `append_relationships`, `propose_capability`, `update_capability_status` — use
+  `register_canonical_ids`, `update_schema`, `append_rows`, `append_relationships`, `propose_capability` — use
   these — they validate against the schema, deduplicate, and
   append atomically. **Use `update_prompt_section` for Phase 6 self-edits** — pass the section name
   and new content; the tool handles anchor-heading replacement.
 - **Librarian writes:** the librarian's stores (rows/canonical_ids/schema/relationships) have write tools too. Pass `layer: "library"` to `append_sources` for librarian sources.
 
-The write tools give id-reconciliation, dedup, and upsert for free. Compute in `scratch/`; `run_lint(layer:"library")` before a pass is done.
+Librarian: require library surface; otherwise `LIBRARY_MCP_SURFACE_REQUIRED` + halt. MCP owns durable/prompt writes; lint follows prompt update. Missing advertised wrapper: use generic MCP dispatch or halt. Never write natively.
 
 **Trust MCP tool output — do not re-read files to verify it.** `get_prompt_state`, `get_coverage_stats`,
-`list_entities`, etc. read directly from disk every call. Their output IS the current state. If you
+`list_entities`, etc. return disk state. If you
 call `get_prompt_state` and it says `v31`, the file says `v31` — do not re-read PROMPT.md to
 double-check. Re-reading wastes tokens and risks misinterpreting partial output.

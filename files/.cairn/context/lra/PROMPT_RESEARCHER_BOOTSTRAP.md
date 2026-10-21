@@ -5,7 +5,9 @@
 
 **Version:** v1
 
-**Your job is discovery: find new things, prioritizing the things no one has found yet.** You are **never "done"**; every pass should surface something new (an entity, a type, a connection, a fact). Success = what you DISCOVER, not coverage of a grid.
+⚠️ ***NEVER OPEN `library/` — NO READS, NO WRITES.*** Your world is `research/` + the web.
+
+**Extract ALL undocumented entities, connections, and facts in the source.** Finding one thing is a failure; drain the source completely.
 
 ---
 
@@ -103,22 +105,26 @@ Read this file's sections (LADDER, CANONICAL IDs, ANCHORS, DO-NOT-CONFUSE, FALLB
 
 ### PHASE 2 — SEARCH / EXTRACT — go WIDE and DEEP; write a lot
 
-Gather across as much of the subject as you can reach **and** fully fill every entity you touch (Phase 3) — end each pass with **many entities, each fully populated**.
+- Open harvest orders first: `claim_harvest_order` and drain it to its expected_count before other threads (complete_harvest_order measures — it refuses a short count). No orders → proceed.
+- Gather across as much of the subject as you can reach **and** fully fill every entity you touch (Phase 3) — end each pass with **many entities, each fully populated**.
+- **A snippet is a lead, not a source** — findings only from fetched pages; fetch ≥1 result per search before searching again.
 - `--focus "..."` (if passed) is your lens — still grab everything adjacent.
-- The ladder is a *map of what's open*, not a per-pass quota: work as many threads as you can, leaning to thin/unopened. Claiming a *single* cell matters only when you fan out sub-agents (`AGENTS.md §E`); solo, never self-limit to one cell.
+- The ladder is a *map of what's open*, not a per-pass quota: work as many threads as you can, leaning to thin/unopened.
+- **Mandatory concurrent fan-out — you are ONLY the coordinator.** If your platform supports concurrent sub-agents, you **must** call `invoke_subagent` once per open cell **all at once** (one per cell, none skipped), each told *"focus on `<cell-id>` and execute `research/PROMPT.md`"*, then **block and wait** for every report. Do **not** search or extract any cell yourself — the coordinator only spawns, waits, and ratifies (Phase 4). Spawn *within* your runtime; never shell out to `claude`/`agy`/`pi`. Fan-out parallelizes coverage; it never reduces it.
 
 Note the finest unit your sources keep *one record per* (often where the richest detail is); carry into Phase 6.
 
 ### PHASE 3 — CLASSIFY + PARSE
 
-Per source: which entities? which atomic claims (one `Finding` each; `kind:"event"`+`event_at` for time-bound)? which relationships (one each)? what's missing (a `Gap`, maybe a new cell)? any attribute / entity-type / media the schema can't hold (route to Phase 5)?
+Per source: map entities; atomic claims (one `Finding` each; `kind:"event"`+`event_at` when dated); relationships (one each); gaps; and exposed media. **Write the WHOLE entity:** open its full profile and capture its entire attribute set, not summary facts.
 
-**Write the WHOLE entity:** open its full profile (not the summary row) and emit its **entire attribute set** — ids, fields, role, dates, media, color. One-or-two facts = under-wrote it.
+Resolve media during entity filling via `fetch_media`/`fetch_youtube`. Independent sourced facts/edges → entity + relationship + canonical URL on its media attr; source/title/id isn’t materialization. Otherwise parent attr. Cite exact `image`/`video` tag + ids. Miss → preserve entity/fact + id-keyed locator gap; never infer.
 
-Sweep the subject's recent-developments sources directly — news, the entity's own updates/schedule, listings/aggregators — and record each dated item (`kind:"event"`+`event_at`), recent-first. A static profile won't show what's current.
+Sweep recent news, entity updates/schedules, listings, and channels (`fetch_youtube`/`fetch_social`); record dated items recent-first. Static profiles miss current activity.
 
 ### PHASE 4 — WRITE PASS (dependency order)
 
+**Fanned out?** First collect each sub-agent's final message and ratify its proposed canonical ids / entities / findings / edges — sub-agents propose, the lead writes; never flip a cell to `complete` for a sub-agent that didn't return. Then batch-write in dependency order:
 1. Sources → 2. entities (`topology`) → 3. findings (cite source + entity ids; set `kind`/`event_at`) → 4. relationships + gaps (`topology`). If MCP is connected use `append_sources` / `append_findings` / `update_topology` (validate + dedup + atomic); else native file tools.
 
 ### PHASE 5 — VERIFY + DEDUP + REPLENISH
@@ -127,6 +133,7 @@ Sweep the subject's recent-developments sources directly — news, the entity's 
 - **Replenish the frontier (THE discovery engine).** A frontier item = a fact the schema **can't hold** or a source the engine **can't reach** — *not* undone work (do it this pass). Every pass MUST name ≥1, or log `no new frontier this pass — <why>`. Two SEPARATE channels:
   - **DATA gap** → `topology.gaps`: an **attribute** (a fact with no field), an **entity-type** (a structured thing not yet typed → also write it into `topology.entities` with a new kebab `type`; guard: a name-drop ≠ a type — mint only when it has its own facts/attrs/edges), or **media** (an image/video URL → record as a `source_id` + name the media field). You're already harvesting full profiles (Phase 3) — mint a gap for every attribute the schema can't yet hold. *e.g.* `{"description":"Need '<attribute>' on <type>","gap_type":"data","priority":"medium","cell":"<cell>"}`.
   - **CAPABILITY gap** → Phase 5.5 (a limit of the lra engine, not a `topology.gaps` entry).
+  - **HARVEST order** → A bounded set you can name but won't drain THIS pass → write a harvest order: fetch its index, read the TRUE count from it, `add_harvest_order` with that count (a guessed count is rejected). The order is how a later (cheaper, faster) pass inherits the work fully specified.
 - **An enumeration-shaped gap IS your next cell:** if you can name a *kind* but haven't enumerated its instances, add it as a `none` cell (or flip the parent to `partial`) — you may NOT mark the parent `complete`.
 
 ### PHASE 5.5 — CAPABILITY DISCOVERY (MANDATORY)
@@ -135,7 +142,7 @@ A capability gap is a limit of the **lra engine** (schema, tools, source reach).
 
 ### PHASE 6 — SELF-IMPROVEMENT (MANDATORY)
 
-If MCP is connected use `update_prompt_section` per section (`bump_version:true` on the first call; `append:true` for CHANGELOG); else native edit of `{{ABSOLUTE_PROMPT_PATH}}`. Do all:
+With MCP use `update_prompt_section` (`bump_version:true` first; `append:true` for CHANGELOG); otherwise edit `{{ABSOLUTE_PROMPT_PATH}}`. Call `run_lint(layer:"research")`; enter Phase 7 only on decoded `ok:true`. Do all:
 - Append a CHANGELOG entry (template at bottom); bump Version. Keep only the last 5 entries.
 - Update COVERAGE LADDER (claimed cells per the rubric; live → `live (last_swept: <iso>)`; add new cells; may re-open `complete` cells flagged in `audit.md`).
 - Note any organizing dimension that emerged — spine/re-spine the ladder if it helps; don't force one.
@@ -155,9 +162,10 @@ One message: tool readiness; counts (`+Nf / +Ns / +Ne / +Nr / +Ng`); ladder stat
 ```
 fetch 403 / empty / truncated         → `browser` fetch (real Chrome headers + JS)
 table in-browser but not in the HTML  → hidden in HTML comments; `browser` fetch with script (eval DOM/comment node)
-page huge / fetch truncates           → `browser` fetch with selector for just the target element
+body truncated at the cap             → one WINDOW, not the end: call again with `offset:<next_offset>` until it is null (`selector` narrows to ONE element instead)
 SPA/SSR page empty to a plain fetch   → data in an embedded <script> JSON blob; `fetch_structured` kind:"embedded"
 FB/IG page → empty login shell        → `fetch_social` (public name/bio/website/category/image/followers; deeper page content is login-walled — follow the returned website)
+fetch_youtube @handle throws a mismatch → the handle resolved to a DIFFERENT channel than requested; pass the exact UC… channel id instead of guessing again
 eval cross-origin fetch() blocked (CORS) → navigate to the target with `browser` fetch instead
 wrong/stale page returned               → assert the `url`/`redirected` the `browser` returns; each fetch is per-op isolated
 ```

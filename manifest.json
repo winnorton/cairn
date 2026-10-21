@@ -162,7 +162,7 @@
       "mode": "overwrite",
       "role": "scaffolding",
       "tier": "full",
-      "description": "lra researcher prompt — verbatim immutable master synced from the lra lab; the /lra skill copies it into a subject's research/PROMPT.md and fills placeholders. Never edit here (see PROVENANCE.md)."
+      "description": "lra researcher prompt — verbatim immutable master synced from the lra lab; the /lra-lite skill copies it into a subject's research/PROMPT.md and fills placeholders. Never edit here (see PROVENANCE.md)."
     },
     {
       "src": "files/.cairn/context/lra/PROMPT_LIBRARY_BOOTSTRAP.md",
@@ -170,7 +170,7 @@
       "mode": "overwrite",
       "role": "scaffolding",
       "tier": "full",
-      "description": "lra librarian prompt — verbatim master synced from the lra lab; the /lra skill copies it into a subject's library/PROMPT.md. Never edit here (see PROVENANCE.md)."
+      "description": "lra librarian prompt — verbatim master synced from the lra lab; the /lra-lite skill copies it into a subject's library/PROMPT.md. Never edit here (see PROVENANCE.md)."
     },
     {
       "src": "files/.cairn/context/lra/AGENTS_SUBJECT.md",
@@ -178,7 +178,7 @@
       "mode": "overwrite",
       "role": "scaffolding",
       "tier": "full",
-      "description": "lra per-subject operating rules (boundaries, source integrity, merge contract) — verbatim master synced from the lra lab; the /lra skill copies it into a subject's AGENTS.md."
+      "description": "lra per-subject operating rules (boundaries, source integrity, merge contract) — verbatim master synced from the lra lab; the /lra-lite skill copies it into a subject's AGENTS.md."
     },
     {
       "src": "files/.cairn/context/lra/PROVENANCE.md",
@@ -187,6 +187,14 @@
       "role": "scaffolding",
       "tier": "full",
       "description": "lra prompt provenance — source commit + md5 fingerprints + the lab→cairn re-sync protocol. Records that the masters are verbatim and must not be edited in cairn."
+    },
+    {
+      "src": "files/.cairn/context/lra/LIBRARY_DICTIONARY.md",
+      "dest": "{projectRoot}/.cairn/context/lra/LIBRARY_DICTIONARY.md",
+      "mode": "overwrite",
+      "role": "scaffolding",
+      "tier": "full",
+      "description": "lra librarian pattern dictionary — domain-agnostic recognition patterns (axis, event, entity-type, set) the librarian uses to identify the shape of a subject's data. Verbatim from the lra lab; the /lra-lite skill copies it into a subject's library/DICTIONARY.md. Librarian-only — the researcher never reads it."
     },
     {
       "src": "files/skills/README.md",
@@ -291,7 +299,7 @@
       "description": "Prompt-evolve verb: extract a version-controlled operational prompt from a /spec for multi-pass work where each pass produces output and reusable insight. Coverage units may be known up front or discovered during early passes. The kernel requires inventory-before-write, explicit coverage/stop/re-run semantics, dependency-aware mutation, validation, an absolute self-edit target, a versioned CHANGELOG, and blocked-work capture; phase numbering and execution strategies remain adaptable. Stable mechanical rules graduate into schemas, validators, or tools. The artifact gets its own evolving lifecycle at `<project>/.cairn/prompt-evolve/<NAME>_PROMPT.md`; the source spec stays in place and receives an idempotent breadcrumb."
     },
     {
-      "src": "files/skills/lra/SKILL.md",
+      "src": "files/skills/lra-lite/SKILL.md",
       "delivery": {
         "method": "package",
         "claude-code": "cairn (Claude Code plugin)",
@@ -299,7 +307,7 @@
       },
       "role": "optional",
       "tier": "full",
-      "description": "lra verb: a prompt-evolve specialization for researching a subject over many passes, run engine-free as project-local markdown an agent walks. Mirrors the lra research→library→application pipeline 1:1 through lra commands (subject create, collection create, research run, app serve), scaffolding a project-local research/ collection and driving two prompts (researcher + librarian) in native-file fallback mode — no MCP, SQLite, or server. The prompts are synced byte-for-byte from the lra lab (the researcher is immutable, ratchet- and bench-pinned there) into .cairn/context/lra/; the skill delivers and runs them, never edits them. lra is prompt-evolve's third worked instance (after fishing-agent and purduebb) and the source of the prompt-economy principle. Not in cairn-pi (outside its authoring-loop curation). See docs/CROSS_REPO_LRA_CAIRN.md."
+      "description": "lra-lite verb: engine-free fallback for the lra research pipeline — agents should prefer the full lra engine (check for lra_* MCP tools) and ask the user before falling back to this skill. Runs the same three-layer pipeline (research → library → application) as project-local markdown an agent walks, mirroring the lra CLI 1:1 through lra commands (subject create, collection create, research run, app serve). No MCP, SQLite, or server. The prompts are synced byte-for-byte from the lra lab into .cairn/context/lra/; the skill delivers and runs them, never edits them. Not in cairn-pi (outside its authoring-loop curation). See docs/CROSS_REPO_LRA_CAIRN.md."
     },
     {
       "src": "files/skills/session-distill/SKILL.md",

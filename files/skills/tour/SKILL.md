@@ -41,7 +41,7 @@ Do NOT invoke for:
      invoked as `/name`. Five categories: maintenance (`reflect`, `plan`, `prune`,
      `audit`, `tour`, `feedback`), collaboration (`reframe`, `bridge`, `advocate`),
      cross-perspective (`peer-review`, `session-distill`), artifact
-     (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra`, `swarm`), and
+     (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra-lite`, `swarm`), and
      execution (`autoresearch`, `autoresearch-finalize`). The skills README that ships with the package covers the taxonomy.
 
 3. **Pick the highest-leverage first action.** Usually: fill in `.cairn/CLAUDE.md`'s

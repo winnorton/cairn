@@ -249,11 +249,12 @@ Cairn's skills fall into five categories with different origins.
   insight. Coverage units may be known or discovered; each prompt defines its
   stop and re-run semantics, validates writes, and self-edits at the end of a
   pass. Stable mechanical rules graduate into schemas, validators, or tools.
-- `lra` — a `prompt-evolve` specialization for researching a subject over many
-  passes, run engine-free as project-local markdown the agent walks. Scaffolds
-  a `research/` collection and drives two prompts (researcher + librarian)
-  synced verbatim from the lra lab into `.cairn/context/lra/`. Not in the Pi
-  package (outside its authoring-loop curation).
+- `lra-lite` — engine-free fallback for the lra research pipeline; agents should
+  prefer the full lra engine (check for `lra_*` MCP tools, ask the user) before
+  using this. Scaffolds a `research/` collection and drives two prompts
+  (researcher + librarian) synced verbatim from the lra lab into
+  `.cairn/context/lra/`. Not in the Pi package (outside its authoring-loop
+  curation).
 - `swarm` — a living coordination surface for multi-workstream work that repeats
   over partitions with an open-ended lifecycle: fan out parallel stubs per wave,
   review the results, self-improve the master, fan out the next wave. Held or

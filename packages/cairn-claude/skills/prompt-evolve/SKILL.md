@@ -1,6 +1,6 @@
 ---
 name: prompt-evolve
-description: Author a version-controlled operational prompt for multi-pass work where each pass produces output and reusable insight. Use when work exceeds one execution and has known or discoverable repeatable slices of work, called coverage units, such as years, batches, or modules; triggers include "evolving prompt", "mining prompt", "self-improving prompt", and "process in batches and learn". Two modes: `/prompt-evolve NAME` cold-starts from a five-input brief; `--from SPEC_FILE` extracts a spec's deliverable. Both write `.cairn/prompt-evolve/NAME_PROMPT.md`. Require inventory-before-write, a coverage table, ACTIVE/HELD state, stop/re-run semantics, an absolute self-edit target, versioned CHANGELOG, and blocked-work capture. Do not use for single-run work (`/spec`), notes, parallel decomposition (`/program`), open-ended wave fan-out (`/swarm`), round review, or subject research (`/lra`).
+description: Author a version-controlled operational prompt for multi-pass work where each pass produces output and reusable insight. Use when work exceeds one execution and has known or discoverable repeatable slices of work, called coverage units, such as years, batches, or modules; triggers include "evolving prompt", "mining prompt", "self-improving prompt", and "process in batches and learn". Two modes — `/prompt-evolve NAME` cold-starts from a five-input brief; `--from SPEC_FILE` extracts a spec's deliverable. Both write `.cairn/prompt-evolve/NAME_PROMPT.md`. Require inventory-before-write, a coverage table, ACTIVE/HELD state, stop/re-run semantics, an absolute self-edit target, versioned CHANGELOG, and blocked-work capture. Do not use for single-run work (`/spec`), notes, parallel decomposition (`/program`), open-ended wave fan-out (`/swarm`), round review, or subject research (`/lra-lite`).
 ---
 
 # Prompt-Evolve
@@ -175,6 +175,6 @@ and the next unit to run. Explain its re-run expectation; do not always promise 
 - `/swarm`: run open-ended wave fan-out where the coordination master itself evolves. One
   file iterating over units is prompt-evolve; many stubs per wave whose master evolves is swarm.
 - `/round-review`: verify program rounds and create follow-up artifacts.
-- `/lra`: run the researcher/librarian specialization for subject research.
+- `/lra-lite`: run the researcher/librarian specialization for subject research (engine-free fallback; prefer the full lra engine when available).
 - `/reflect`: capture session-level process lessons; prompt self-improvement captures the
   artifact's domain and execution lessons.

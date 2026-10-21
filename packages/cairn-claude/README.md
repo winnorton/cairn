@@ -51,7 +51,7 @@ All 20 cairn skills, invocable as `/skill-name` in Claude Code:
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
 | Cross-perspective | `/peer-review`, `/session-distill` |
-| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra`, `/swarm` |
+| Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra-lite`, `/swarm` |
 | Execution | `/autoresearch`, `/autoresearch-finalize` |
 
 Markdown skills, with one exception: the `autoresearch` pack bundles a zero-dependency
