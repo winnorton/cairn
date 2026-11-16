@@ -1,10 +1,11 @@
 ---
 name: program
 description: Author a program of specs — one master plus parallel workstream stubs in
-  docs/specs/. Use for multi-workstream work with shared contracts or cross-cutting
-  concerns, or promote an oversized spec with /program --from <spec>. Stubs are
-  elaborated by /spec --from <stub>. Do not use for one-executor work, simple changes,
-  exploration without a deliverable, or intent capture.
+  docs/specs/. Use for fixed-contract multi-workstream work with shared contracts or
+  cross-cutting concerns, or promote an oversized spec with /program --from <spec>.
+  Stubs elaborate via /spec --from <stub>; executor rounds verify via /round-review. Do
+  not use for repeating partition waves (/swarm), single-executor work (/spec),
+  single-file loops (/prompt-evolve), simple changes, or intent capture (/note).
 ---
 
 # Program
@@ -49,8 +50,10 @@ Require a `LEAD FINDING` containing:
 Stop and request evidence when none exists.
 
 For `--from`, read the source and its review history in full. Carry every resolved
-decision and unresolved finding forward. After the program is written, move the source
-to `docs/specs/_promoted/` and prepend a dated link to the program master.
+decision and unresolved finding forward. After the program is written, ensure
+`docs/specs/_promoted/` exists (`mkdir -p`), move the source there (`git mv` when
+tracked, plain `mv` when untracked), prepend a dated link to
+`../SPEC_<NAME>_00_PROGRAM.md`, and adjust any relative links inside the moved file.
 
 ### 2. Run the axes gate
 
@@ -79,7 +82,8 @@ of these.`
 A scheduled deferral is legal only when it has all three:
 
 1. a named round, version, dependency, or trigger;
-2. a stub written now in `docs/specs/`;
+2. a stub written now in `docs/specs/` with `**Status:** DEFERRED (<trigger>)` and a
+   `DEFERRED (<trigger>)` status-table row;
 3. explicit user approval.
 
 Cap scheduled deferrals at five; escalate before exceeding the cap. Put only dated,
@@ -108,9 +112,11 @@ The parallel-execution protocol must state:
 
 1. isolate concurrent work in separate worktrees;
 2. freeze shared contracts before dependent work fans out;
-3. run spec → implementation → fresh adversarial verification → repair until no
-   ship-blocking finding remains; reconcile spec drift and date subtle findings in
-   `OPEN QUESTIONS`; name cosmetic exemptions in the commit;
+3. run spec → implementation → fresh non-author verification (a `/peer-review`, or
+   parallel skeptics on security, spec-impl drift, error paths, and defensive access
+   plus one completeness critic) → repair until no ship-blocking finding remains;
+   reconcile spec drift and date subtle findings in `OPEN QUESTIONS`; name cosmetic
+   exemptions in the commit;
 4. serialize integration into the main context;
 5. coordinate through the master status table;
 6. derive changing counts programmatically.
@@ -131,32 +137,36 @@ these sections in order:
 | 2 | CONTRACT SURFACES | Shared APIs, types, schemas, and invariants. |
 | 3 | RESOLVED DESIGN DECISIONS (no deferrals) | Committed answers and scheduled deferrals. |
 | 4 | HARD CONTRACT | Load-bearing cross-cutting contract; project-tailored. |
-| 5 | DEFINITION OF DONE | Numbered program-level checks, including docs, memory/handoff, CI, agent surfaces, and fresh verification. |
+| 5 | DEFINITION OF DONE | Numbered program-level checks, including docs, memory/handoff, CI, agent surfaces, and fresh non-author verification. |
 | 6 | RISKS | Each risk names its mitigating child. |
 | 7 | WHY THIS SHAPE | Technical placement and seam rationale. |
 | 8 | OPERATIONAL POLICY | Project-tailored CI, baseline, security, or migration policy. |
 | 9 | PARALLELIZATION GRAPH + STATUS TABLE | Titled subsections `Workstream registry`, `Dependency DAG`, `Parallel-execution protocol`, and `Status table`. |
-| 10 | FIRST-ACTION CHECKLIST | Read master/evidence, claim child, read child, execute, update state. |
+| 10 | FIRST-ACTION CHECKLIST | Read master/evidence, read target child and confirm its header reads `READY FOR EXECUTOR` (halt on `STUB` or `DEFERRED`), claim child, execute, update state. |
 | 11 | ARCHITECTURAL RATIONALE FOR THE PROGRAM SHAPE | Evidence that one spec is insufficient. |
 | 12 | OPEN QUESTIONS | Dated non-blocking items only. |
 
 Drop or replace `HARD CONTRACT` or `OPERATIONAL POLICY` only when the axes matrix shows
 that no such concern applies.
 
-Status rows contain Phase, linked Spec, Status, Owner, and Depends on.
+Status rows contain Phase, linked Spec, Status (`OPEN`, `in-progress`, `COMPLETE`, or
+`DEFERRED (<trigger>)`), Owner, and Depends on.
 
 For each registry row, write
 `docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md` with:
 
 - `# SPEC_<NAME>_<NN>_<TOPIC>`;
-- `**Status:** STUB` plus sibling-relative program link and dependencies;
+- `**Status:** STUB` (or `**Status:** DEFERRED (<trigger>)` for scheduled deferrals until
+  triggered, then flipped to `STUB` for elaboration) plus sibling-relative program link,
+  `Depends on`, and `Parallel-safe with`;
 - `Goal`, `Scope`, `Telemetry hook`, `Diagnostics path`, `Rollback story`, `Gate`, and
   `Files` sections copied from the registry;
 - a final instruction to elaborate in place with `/spec --from <this-path>`.
 
 The elaboration instruction tells the next agent to read the master sections titled
-`CONTRACT SURFACES`, `RESOLVED DESIGN DECISIONS (no deferrals)`, and the
-`Parallel-execution protocol` subsection. Match titles, not section numbers.
+`CONTRACT SURFACES`, `RESOLVED DESIGN DECISIONS (no deferrals)`, `HARD CONTRACT` (when
+present), and the `Parallel-execution protocol` subsection. Match titles, not section
+numbers.
 
 ### 6. Review and absorb
 
@@ -177,9 +187,17 @@ Repeat until approved.
 
 - The master status table is authoritative. Executors claim a row with owner and
   `in-progress`, then mark it `COMPLETE` after merge.
-- After Gate A approval, when the environment permits parallel agents and ready
-  workstreams exist, dispatch them without re-asking; approval authorizes the declared
-  parallel plan.
+- After Gate B approval, elaborate ready `OPEN` stubs (skipping `DEFERRED` rows until
+  triggered) via `/spec --from <stub>` (`STUB` → `READY FOR EXECUTOR`) and, when the
+  environment permits parallel agents, dispatch ready elaborated workstreams without
+  re-asking; Gate B approval authorizes the declared parallel plan.
+- Verify completed executor rounds with `/round-review` against `DEFINITION OF DONE`
+  (`DEFERRED (<trigger>)` rows do not block completion). Keep child specs in
+  `docs/specs/` while the program is active; when zero follow-up stubs remain and every
+  check passes, ensure `docs/specs/archive/` exists (`mkdir -p`) and move the master,
+  completed child specs, and any round masters/stubs together to `docs/specs/archive/`
+  with `git mv` (leave unbuilt scheduled-deferral specs live in `docs/specs/`, adjusting
+  relative links across directory depth on all moved and linked files).
 - Link every spec mention to its current path, including conversation status reports.
 - Group status reports as shipped, partially shipped, executable, and blocked; include
   verified gates, newly unblocked work, and recommended next dispatches.
@@ -201,5 +219,7 @@ Confirm in at most 200 words:
 
 ## Companion skills
 
-`/spec` elaborates stubs. `/peer-review` supplies Gate B. `/note` captures unrelated
-follow-up work. `/plan` handles conversational alignment before program authoring.
+`/spec` elaborates stubs. `/peer-review` supplies Gate B. `/round-review` verifies
+executor rounds and drafts follow-up rounds. `/swarm` handles open-ended repeating wave
+fan-out. `/note` captures unrelated follow-up work. `/plan` handles conversational
+alignment before program authoring.

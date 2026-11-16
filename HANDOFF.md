@@ -65,6 +65,25 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## Unreleased since v0.16.0
 
+- **Authoring & review loop hardening (`program`, `spec`, `round-review`, `peer-review`)**
+  (2026-11-16) — closed post-compression and cross-skill state-machine gaps validated
+  across four cold `/peer-review` passes per `[LAW pre-merge-review]`: (1) `program` and
+  `round-review` gate parallel executor dispatch on Gate B approval + `/spec --from`
+  elaboration (`STUB` → `READY FOR EXECUTOR`, with child-header halting checks in `§10`
+  and R+1 `§4`, separating child readiness from `OPEN`/`in-progress`/`COMPLETE` master
+  tables and tagging scheduled deferrals `DEFERRED (<trigger>)`); (2) `program` restores
+  the `71f7a1c` non-author verification recipe and `peer-review` adds internal
+  correctness/safety/spec-invariant checks at priority #1 alongside propagation checks,
+  unforked zero-history isolation, and shell-portable trunk file-history resolution;
+  (3) `Parallel-safe with`, `HARD CONTRACT`, round-master links, and title-matched
+  elaboration footers propagate 1:1 across `program`, `round-review`, and `spec`;
+  (4) unified active-program vs standalone vs scheduled-deferral archival (`mkdir -p` +
+  `git mv` + cross-depth relative-link updates) across `spec`, `program`, `round-review`,
+  `AGENTS.md`, `manifest.json`, `README.md`, `files/skills/README.md`,
+  `docs/specs/README.md`, and `docs/notes/README.md`. `round-review` description trimmed
+  from `1017` → `815` chars (`0 near` across all 20 skills); synced across `cairn-pi`,
+  `cairn-claude`, and `cairn-agy`; body-word baselines re-recorded and all CI gates green
+  at lockstep `0.16.0`.
 - **autoresearch-finalize: two-part harvest step** (2026-08-05) — new procedure step 6
   "Harvest the map": (a) archive `.auto/prompt.md` verbatim into the project's
   planning/doc tree on trunk (experiment branches are ephemeral and get wiped), with a

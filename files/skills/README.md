@@ -94,9 +94,9 @@ what the *human* actually does in the collaboration.
 These rotate WHO is looking at the work, not just how it's framed. Each surfaces a
 gap class that the work-author cannot see from inside their own session.
 
-- `peer-review/` — fresh agent reading a change set cold (catches inconsistency-class bugs
-  the author missed because they're "too close"). Named `peer-review` to disambiguate from
-  Claude Code's built-in `/review` skill.
+- `peer-review/` — fresh agent reading a change set cold (catches internal defects, spec
+  drift, and propagation bugs the author missed because they're "too close"). Named
+  `peer-review` to disambiguate from Claude Code's built-in `/review` skill.
 - `session-distill/` — fresh agent reading a past session's JSONL transcript cold,
   through cairn's improvement lens. Produces a structured report of patterns recognized
   (matched against a seeded catalog), skill candidates with 3-instance gate check, law
@@ -115,8 +115,10 @@ pre-ship cross-agent. Both can fire on the same change set.
 Help the agent capture intent and structure execution as durable in-repo files (not
 just conversation state). Distinct from maintenance skills like `/plan` or `/reflect`
 which are behavioral/conversational — these produce files that ship with the codebase,
-get seen by anyone who clones the repo, and have explicit lifecycles. Execution specs
-use folder-as-status: active is live and `archive/` is shipped, with no status field.
+get seen by anyone who clones the repo, and have explicit lifecycles. Standalone execution specs use folder-as-status (active in `docs/specs/`, shipped in
+`archive/`, no status field); program child specs carry `**Status:** STUB` → `READY FOR
+EXECUTOR` while active and completed children archive together with their master on
+program completion (unbuilt scheduled-deferral stubs stay live in `docs/specs/`).
 Permanent contract specs stay live and carry evidence-bearing status.
 
 - `note/` — file a quick thought, debug finding, or feature sketch as a single-paragraph
@@ -136,7 +138,8 @@ Permanent contract specs stay live and carry evidence-bearing status.
   the diff (the executor's status files are NOT authoritative; disk wins). Drafts R+1
   stub specs for the gaps plus an R+1 round master that's a self-contained dispatch
   target. Loop exits when the skill writes zero R+1 stubs. Closes the orchestration
-  loop: `/program` → `/spec --from` → executor → `/round-review` → next dispatch.
+  loop: `/program` → `/spec --from` → executor → `/round-review` → `/spec --from` (R+1)
+  → next dispatch.
 - `prompt-evolve/` — author a version-controlled operational prompt for multi-pass work where
   each pass produces output and reusable insight. Two entry modes: `/prompt-evolve <NAME>`
   cold-starts from a five-input brief (source, target, data model, tools, coverage unit);

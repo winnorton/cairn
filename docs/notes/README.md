@@ -20,7 +20,7 @@ Move-on-state, not flip-a-field. Three terminal directories carry the lifecycle:
 | Folder | Meaning |
 |---|---|
 | `docs/notes/` (here) | Active — open thought, not yet acted on. |
-| `docs/notes/_promoted/` | Promoted to a `/spec`. The note stays as a breadcrumb pointing at the spec. A single note can be promoted multiple times if different aspects become real work. |
+| `docs/notes/_promoted/` | Promoted once via `/spec --from <note>`. The note stays as a breadcrumb pointing at the spec; file separate notes or child stubs when follow-up threads split off. |
 | `docs/notes/_done/` | Work completed without ever needing a spec. |
 
 A note that becomes obsolete or superseded is deleted — no `_archive/` here.

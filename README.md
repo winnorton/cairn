@@ -190,9 +190,10 @@ serve each:
   via `/note`. One paragraph, in-repo, dated. Distinct from `/reflect` (post-hoc) and
   from durable, agent-indexed cross-session memory. Cheap to write, cheap to delete,
   cheap to promote when work materializes.
-- **External-perspective review** (catching inconsistency-class bugs the work-author
-  missed): via `/peer-review`. Reads the diff PLUS adjacent unchanged files that the diff
-  expects to be consistent with. Distinct from `/reflect` (which is same-agent post-hoc).
+- **External-perspective review** (catching internal defects, spec drift, and propagation
+  bugs the work-author missed): via `/peer-review`. Reads the diff PLUS adjacent unchanged
+  files that the diff expects to be consistent with. Distinct from `/reflect` (which is
+  same-agent post-hoc).
 
 These are **collaboration**, **cross-perspective**, and **artifact** skills, distinct
 from the maintenance skills (reflect, plan, prune, audit, tour, feedback) that service
@@ -234,16 +235,18 @@ Cairn's skills fall into five categories with different origins.
 
 - `note` — pre-emptive intent capture; one paragraph, in-repo (`docs/notes/`),
   dated. Cheap to write, cheap to delete, can be promoted to `/spec`.
-- `spec` — structured agent execution spec (`docs/specs/`) with phases, steps,
-  checkpoints, executor handoff. Distinct from `/plan` (behavioral, no file).
+- `spec` — structured agent execution or permanent contract spec (`docs/specs/`)
+  with phases, steps, checkpoints, executor handoff. Distinct from `/plan`
+  (behavioral, no file).
 - `program` — author a program-of-specs (one master coordination doc + N
   workstream child stubs in `docs/specs/`) for substantial work that exceeds a
   single spec's scope. Bakes in no-deferral discipline + cross-cutting axes
   coverage. Stubs are elaborated by `/spec --from <stub>`.
 - `round-review` — trust-but-verify an autonomous executor's round of work
-  against a `/program` master. Walks the master's §5 DoD criterion-by-criterion
-  against the diff; drafts R+1 stub specs and a self-contained R+1 round master
-  for the gaps. Loop exits when this skill writes zero R+1 stubs.
+  against a `/program` master. Walks the master's `DEFINITION OF DONE`
+  criterion-by-criterion against the diff; drafts R+1 stub specs (elaborated via
+  `/spec --from`) and a self-contained R+1 round master for the gaps. Loop exits
+  when this skill writes zero R+1 stubs.
 - `prompt-evolve` — extract a version-controlled operational prompt from a
   `/spec` for multi-pass work where execution produces both output and reusable
   insight. Coverage units may be known or discovered; each prompt defines its
@@ -290,8 +293,8 @@ agent's session leaves blind spots that only a fresh observer can catch —
 `peer-review` defeats the work-author's
 mental-model anchoring on what they touched. The artifact skills were imported from
 a downstream project's `/plan`-rework arc — they produce durable in-repo files with
-explicit lifecycles (folder-as-status), distinct from the maintenance skills'
-behavioral/conversational shape.
+explicit lifecycles (folder-as-status or evidence-bearing contract status), distinct
+from the maintenance skills' behavioral/conversational shape.
 
 **Design principle:** *observe the collaboration first, then package what you see.*
 Skills designed from observation solve problems that exist; skills designed from

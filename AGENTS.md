@@ -97,7 +97,7 @@ for the index.
   distillate-to-production, plus README and open-questions). The "why" archive.
 - `docs/notes/` (active, single-paragraph intent capture) + `docs/notes/_promoted/`
   (breadcrumbs after `/spec --from` promoted a note to a spec)
-- `docs/specs/` — execution specs; folder-as-status (`docs/specs/archive/` for shipped)
+- `docs/specs/` — execution and permanent contract specs; folder-as-status for standalone execution specs and completed programs (`docs/specs/archive/` for shipped; permanent contracts and unbuilt scheduled-deferral specs stay live)
 - `plans/` (active) and `plans/archive/` (shipped, v0.3 → v0.12 documented) — same
   folder-as-status pattern as specs
 - `server/feedback-endpoint/` — Node 20 + Express + Octokit handler for the
@@ -224,8 +224,11 @@ Patterns this project leans on hard. Carry them through every new piece of work:
   before promotion (see `NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md` for the
   3-instance gate).
 - **Folder-as-status, not `Status:` fields** — `plans/` vs `plans/archive/`,
-  `docs/specs/` vs `docs/specs/archive/`, `docs/notes/` vs `docs/notes/_promoted/`.
-  `git mv` is the ship signal. Status fields drift; folder locations don't.
+  `docs/specs/` vs `docs/specs/archive/` (standalone execution specs and completed
+  programs; active program children carry `STUB` / `READY FOR EXECUTOR` and permanent
+  contract specs carry 3-pass evidence status in `docs/specs/`), `docs/notes/` vs
+  `docs/notes/_promoted/`. `git mv` is the ship signal. Status fields drift; folder
+  locations don't.
 - **Slug-is-identity** — laws and memories cite by slug, never by number. Numbers
   reorder; slugs survive. Same applies to skill names — collision with another
   vendor's namespace (e.g. `/review`) triggers a rename, not a coexistence attempt.
