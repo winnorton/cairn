@@ -17,7 +17,7 @@ After install, confirm with:
 
 ```
 claude plugin list
-# expect: cairn  0.16.1  ...
+# expect: cairn  <version>  ...
 ```
 
 ### From a local clone
@@ -93,8 +93,8 @@ The `skills/` directory at the package root is auto-discovered by the Claude Cod
 committed byte-identical copy enforced by `scripts/sync-skills.mjs --check`. Send
 PRs against the source files, not these copies. When source prose changes, update and
 review the root `scripts/skill-body-word-baseline.json`; package-local sync checks cover
-copy identity and description caps, not the body-word ratchet. Any baseline increase
-requires explicit review justification. Versions are lockstep with cairn releases.
+copy identity and description caps, not the body-word ratchet. Versions are lockstep
+with cairn releases.
 
 ## License
 

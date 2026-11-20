@@ -68,8 +68,8 @@ is canonical. `skills/` here is a committed byte-identical copy enforced by
 `scripts/sync-skills.mjs --check` (runs on `prepublishOnly`). Send PRs against the
 source files, not these copies. When source prose changes, update and review the root
 `scripts/skill-body-word-baseline.json`; package-local sync checks cover copy identity
-and description caps, not the body-word ratchet. Any baseline increase requires explicit
-review justification. Versions are lockstep with cairn releases.
+and description caps, not the body-word ratchet. Versions are lockstep with cairn
+releases.
 
 ## License
 

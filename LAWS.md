@@ -31,7 +31,7 @@ machine-checkable means gate-not-law, memory-first promotion.
 
 ---
 
-## Cairn's development laws (11)
+## Cairn's development laws (9)
 
 ### Load the project's meta-laws before making architectural decisions *(slug: load-meta-laws)*
 
@@ -98,22 +98,6 @@ up", "move to the next session", "come back here for analysis"), stop accepting 
 work and invoke `/reflect`. Produce memory candidates, law candidates, and a
 HANDOFF.md before the boundary — not after.
 
-### Update HANDOFF.md before tagging a release *(slug: handoff-stays-current)*
-
-**Why:** HANDOFF.md is the bridge document the next session reads. If it drifts
-behind the actual release, it actively misleads — telling the next agent "we're at
-v0.9.1" when main is on v0.10.0. The first `/resume` validation surfaced this
-exact drift: HANDOFF.md said v0.9.1 minutes after v0.10.0 shipped because the
-release commit didn't update it. The bridge document rotted faster than the
-bridge.
-
-**How to apply:** Before any `git tag -a vX.Y.Z` on cairn (or any project where
-HANDOFF.md is canonical), verify HANDOFF.md reflects the version about to ship.
-Specifically check: the version line, the "State at end of session" section, and
-any "open work" entries that may now be closed. Bundle the HANDOFF.md update into
-the same commit as the release artifacts (VERSION, manifest version, README
-status). One commit, one consistent view.
-
 ### Choose memory slug by content scope, not session location *(slug: choose-slug-by-scope)*
 
 **Why:** Memory's slug determines which sessions can load it. Naive "write where
@@ -167,40 +151,6 @@ trace):
 Companion to cwar's NEW_LAWS Law 13 (Serialization Boundary), which captures
 the technical-content layer of the same episode. This law captures the
 process-meta layer.
-
-### Route release-shaped PRs through `/peer-review` by a fresh-perspective agent before merge *(slug: pre-merge-review)*
-
-**Why:** Single-pass review by the work-author re-confirms the author's mental
-model rather than challenging it. The author looks where they expect problems —
-the files they touched. The blind-spot class lives in *adjacent unchanged files*
-the author didn't touch this session. v0.12.x produced the canonical evidence:
-five separate misses across four releases, every one in the adjacent-files
-class, every one caught only by a fresh `/peer-review` session. v0.12.0/.1 missed
-adopt.md install-template version strings (user caught), v0.12.1 missed
-`/spec`'s docs propagation, `/peer-review`'s own cwar coupling, the cairn-slug
-MEMORY.md index entry, and the plan-archival step (fresh `/peer-review` caught all
-four). The same release that introduced `/peer-review` shipped with the exact
-gap-class `/peer-review` is meant to catch — five times. The law forces the gate
-the skill alone doesn't enforce.
-
-**How to apply:** Before merging any PR on cairn that ships a release version
-(`feat: vX.Y.Z`, `fix: vX.Y.Z`) or touches multiple user-facing files
-(`README.md` + `adopt.md` + `manifest.json` together; or any 3+ files):
-
-1. Open the PR.
-2. Spawn a **fresh agent session** — different session, no shared context with
-   the PR's author. The fresh agent must not have been in the build.
-3. Have the fresh agent invoke `/peer-review` against the PR (the skill's anti-trigger
-   prevents author-self-review; that's the point).
-4. Address findings before merge, or document why they're deferred.
-5. Merge only after the chain completes.
-
-This is for cairn's *own* dev discipline, not for adopters' habits. (Adopters
-ship `/peer-review` as a skill they invoke ad-hoc; cairn's release process treats it
-as mandatory.) If the law fires often enough that compliance becomes routine,
-escalate to a mechanical gate per `[MEM cwar feedback/escalate-rule-to-mechanical-gate]`
-— a pre-merge hook that checks for a `/peer-review`-shaped citation in the PR body
-or the most recent commit message before allowing merge.
 
 ---
 
@@ -276,6 +226,22 @@ package, command, file — clear two gates:
 
 Ownership is the design default; deviate only with a named reason in durable
 output.
+
+---
+
+## Retired laws
+
+Slugs that appear in older commits and docs. No longer in force (meta-rule: laws expire).
+
+- `pre-merge-review` — retired 2026-11-19. Required a fresh-session `/peer-review` before
+  merging any release or any change touching 3+ user-facing files. Sized for a project
+  with outside adopters; cairn has one user, its maintainer. A cold `/peer-review` remains
+  worth asking for when a skill's contract is rewritten, and is no longer a merge gate.
+- `handoff-stays-current` — retired 2026-11-19. Required `HANDOFF.md`, `README.md`
+  status, and the manifest to be updated in the same commit as `VERSION`. Replaced by
+  `scripts/release.mjs`, which bumps the version files and writes one `CHANGELOG.md`
+  entry mechanically (meta-rule: machine-checkable means gate, not law). `HANDOFF.md` is
+  now session-continuity notes only.
 
 ---
 

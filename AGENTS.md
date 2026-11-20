@@ -15,20 +15,14 @@ for the index.
 
 ## Current state
 
-- **Latest tag:** v0.16.1 (2026-11-19) — **authoring-loop hardening, released.** Cuts a
-  tag over the commits that accumulated on `main` after v0.16.0 (2026-08-05, the
-  `autoresearch` execution pack): `lra` → `lra-lite`, `swarm` held/retired only on user
-  approval, the `autoresearch-finalize` harvest step, and three passes over `spec`,
-  `program`, `round-review`, and `peer-review` that closed state-machine gaps and halved
-  `round-review`. Cut for the v0.15.0 reason again: installed plugins were still running
-  the v0.15.0 skill set.
-- **Earlier tag:** v0.15.0 (2026-07-28) — **the interim slice, released.** Cuts a tag
-  over the 18 commits that had accumulated on `main` since v0.14.0 while `VERSION`
-  stayed pinned: the skill-compression campaign, the `lra` pack, law-creation
-  discipline, `swarm`, and `prompt-evolve`'s cold-start/coverage-table/lifecycle-state
-  change. Cut because a pinned `VERSION` gives the plugin manager no signal to update
-  on, so installed caches silently ran the v0.14.0 skill set for weeks.
-- **Prior tag:** v0.14.0 (2026-06-14) — the **cairn ownership migration**: state
+- **Version:** [`VERSION`](VERSION) is the one place the current version is stated;
+  release history is in [`CHANGELOG.md`](CHANGELOG.md). Cut a release with
+  `node scripts/release.mjs` (see `## Working agreement`).
+- **Why releases matter here:** a version bump is the only signal Claude Code's plugin
+  manager updates on, and Antigravity and Codex change only when reinstalled. Twice
+  (v0.15.0, v0.16.1) installed copies ran a months-old skill set because nothing was
+  bumped.
+- **v0.14.0 (2026-06-14)** — the **cairn ownership migration**: state
   moved out of vendor namespaces into a cairn-owned `<project>/.cairn/` directory;
   skills distribute as cairn-named packages the vendor's own installer places
   (the `cairn` Claude Code plugin, `@winnorton/cairn-pi` npm, the native
@@ -88,16 +82,21 @@ for the index.
 - `files/.cairn/LAWS.md`, `files/.cairn/CLAUDE.md`, `files/.cairn/memory/` — supporting
   context templates shipped to adopters (installed to `<project>/.cairn/`). Editing
   these changes what every future adopter gets.
-- `LAWS.md` (repo root) — cairn's *own* 11 laws governing how cairn itself is developed
+- `LAWS.md` (repo root) — cairn's *own* 9 laws governing how cairn itself is developed
   (distinct from `files/.cairn/LAWS.md`, which is the *template* shipped to adopters)
 - `adopt.md` — the install/onboarding script agents follow when running `adopt cairn`
 - `manifest.json` — machine-readable install manifest read by `adopt.md`; `files:`
   array is the canonical source-of-truth for what ships
 - `scripts/skill-body-word-baseline.json` — reviewed instructional-word counts for
   every source skill; CI rejects unacknowledged count drift
-- `VERSION` — semver, bumped per release
-- `HANDOFF.md` — bridge across session boundaries (must be updated in the same commit
-  as `VERSION` per `[LAW handoff-stays-current]`)
+- `VERSION` — semver; bumped by `scripts/release.mjs` in lockstep with the five
+  package/manifest version files
+- `CHANGELOG.md` — one short entry per release, written by `scripts/release.mjs`
+- `scripts/release.mjs` — one-command release: gates, version bump, changelog entry,
+  commit, tag, push, then refresh of the maintainer's Claude Code, Antigravity, and
+  Codex installs (`--install-only` refreshes without releasing; `--dry-run` previews)
+- `HANDOFF.md` — bridge across session boundaries; updated when a session has something
+  to hand off, not per release
 - `README.md` — product surface for humans considering adoption
 - `docs/research/` — 9 papers (agentic-habitat, two-file-habitat, habitat-transfer,
   collaboration-skills, human-interaction-patterns, feedback-velocity,
@@ -174,10 +173,10 @@ Adding a new skill = drop a `files/skills/<name>/SKILL.md` subdirectory with fro
 (schema in [`files/skills/README.md`](files/skills/README.md)) AND add a matching entry
 in the category list both there and in this file. Until both lists agree, the skill is
 half-shipped. Enroll it in the relevant package sync-configs, run
-`node scripts/check-skill-budgets.mjs --update-body-baseline` from the repo root, review
-the baseline diff, then run the default budget and package sync checks. Instructional
-counts include prose, lists, and tables; they exclude frontmatter, headings, fenced
-examples, and HTML comments. Any increase needs explicit justification in review.
+`node scripts/check-skill-budgets.mjs --update-body-baseline` from the repo root, then
+run the default budget and package sync checks. Instructional counts include prose,
+lists, and tables; they exclude frontmatter, headings, fenced examples, and HTML
+comments.
 
 ## Hard rules
 
@@ -187,13 +186,6 @@ itself. The ones that fire most often:
 - **`[LAW load-meta-laws]`** — load the project's meta-laws before architectural
   decisions. For cairn itself that means reading this file's `Read first` pointer +
   the relevant research paper before designing.
-- **`[LAW handoff-stays-current]`** — `HANDOFF.md` updates in the same commit as
-  `VERSION`, `manifest.json`, `README.md` status section. One commit, one consistent
-  view. Drift here actively misleads the next session.
-- **`[LAW pre-merge-review]`** — release-shaped PRs (`feat: vX.Y.Z`, `fix: vX.Y.Z`,
-  or any change touching 3+ user-facing files) get a fresh-perspective `/peer-review`
-  from a session that didn't author the change. Mandatory for cairn's own development,
-  not just recommended.
 - **`[LAW commit-cite]`** — when a commit implements a law or memory's directive,
   cite the source by slug in the commit message body. Citations must reach durable
   output (files, commits) — `/audit` can't scan conversation.
@@ -204,6 +196,22 @@ itself. The ones that fire most often:
 
 Cite by slug (`[LAW <slug>]`) in any durable output the law shaped — that's how the
 `/audit` skill earns its signal.
+
+## Working agreement (sole maintainer)
+
+Cairn has one user: its maintainer. Process is sized for that (2026-11-19).
+
+- **Commit straight to `main`** when asked to commit. No branch or PR unless asked.
+- **Release with one command.** `node scripts/release.mjs` runs the gates, bumps the six
+  version files, writes the `CHANGELOG.md` entry from commit subjects, commits, tags,
+  pushes, and refreshes the Claude Code, Antigravity, and Codex installs. Release when
+  skill bodies change and the installs should pick them up; doc-only changes need none.
+- **No per-release prose.** Do not restate a release in `HANDOFF.md`, `README.md`, this
+  file, or `CLAUDE.md`. The changelog entry is the record.
+- **Review on request.** A cold `/peer-review` is worth asking for when a skill's contract
+  is rewritten. It is not a merge gate.
+- **Gates stay.** The mechanical checks in `scripts/` and CI are cheap and keep running.
+  When a skill body changes, re-record the body-word baseline; no written justification.
 
 ## HIVE_CONTEXT_SESSIONS program (shipped, 2026-06-13)
 

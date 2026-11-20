@@ -10,15 +10,16 @@ lands on the topline and the AGENTS.md pointer.
 
 Key orientation pointers (all detailed in AGENTS.md):
 
-- **Latest tag is v0.16.1** — authoring-loop hardening, shipped 2026-11-19 (v0.16.0
-  added the `autoresearch` pack; v0.15.0 was the interim slice). The
-  tag v0.14.0 (2026-06-14) was the `.cairn/` ownership migration; its
-  program master is archived at
+- **Sole-maintainer repo.** Commit straight to `main` when asked to commit — no branch
+  or PR unless asked. Release with `node scripts/release.mjs` (gates, version bump,
+  changelog, tag, push, install refresh). Cold `/peer-review` is on request, not a merge
+  gate. Details: AGENTS.md `## Working agreement`.
+- **Version** is in [`VERSION`](VERSION); release history in [`CHANGELOG.md`](CHANGELOG.md).
+  The v0.14.0 `.cairn/` ownership migration's program master is archived at
   [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
   — read it before touching `manifest.json`, `adopt.md`, or path conventions.
 - **Design rationale lives in [docs/research/](docs/research/)** — 9 papers explaining
   *why* each architectural choice exists. Consult before adding/changing structure.
 - **20 skills** under `files/skills/<name>/SKILL.md`. New skill = new subdirectory +
   matching entries in [AGENTS.md](AGENTS.md) and [files/skills/README.md](files/skills/README.md).
-- **Hard rules** in [LAWS.md](LAWS.md); session handoff in [HANDOFF.md](HANDOFF.md)
-  (must update in the same commit as `VERSION` per `[LAW handoff-stays-current]`).
+- **Hard rules** in [LAWS.md](LAWS.md); session handoff in [HANDOFF.md](HANDOFF.md).

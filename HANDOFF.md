@@ -6,7 +6,7 @@ unless explicitly preserved.
 
 > **Repo-root entry point (canonical, added 2026-06):** read [AGENTS.md](AGENTS.md) at
 > the repo root. It's the cairn-itself agent context — layout, 20 skills, key laws by
-> slug, design DNA, current state (v0.16.1 shipped). Claude Code auto-loads
+> slug, design DNA, working agreement. Claude Code auto-loads
 > [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
 > in this repo, AGENTS.md is the orientation you want before anything else.
 
@@ -47,6 +47,13 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
+> **Release tracking moved (2026-11-19).** Release history is in
+> [CHANGELOG.md](CHANGELOG.md), written by `scripts/release.mjs`; the current version is
+> in [VERSION](VERSION). The release bullets and `Released as` / `Unreleased since`
+> sections below are frozen at v0.16.1 and kept for provenance. This file is
+> session-continuity notes from here on, updated when a session has something to hand
+> off.
+
 - **Latest release:** v0.16.1 — **authoring-loop hardening, released**, shipped
   2026-11-19 (tag `v0.16.1`). Cuts a release over the commits that accumulated on `main`
   after v0.16.0 (2026-08-05, the `autoresearch` execution pack — see
@@ -74,6 +81,21 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## Unreleased since v0.16.1
 
+- **Release discipline reduced to sole-maintainer scale** (2026-11-19) — the maintainer
+  is cairn's only user; the v0.16.1 cycle cost six review passes, six hand-edited version
+  files, and release prose repeated in four docs, two of which had already drifted a
+  release behind. Changes: (1) `[LAW pre-merge-review]` and `[LAW handoff-stays-current]`
+  retired (`LAWS.md` 11 → 9, with a `Retired laws` record so old citations resolve); the
+  CI release-guard job removed. (2) New `scripts/release.mjs` does the whole release —
+  gates, lockstep bump, `CHANGELOG.md` entry from commit subjects, commit, tag, push, and
+  refresh of the Claude Code, Antigravity, and Codex installs (`--dry-run`,
+  `--install-only`, `--no-install`, `--no-push`). (3) New `CHANGELOG.md` holds release
+  history; `README.md`'s 300-line Status section moved there unchanged, and `AGENTS.md`,
+  `CLAUDE.md`, `README.md`, `adopt.md`, and the plugin READMEs no longer state a version,
+  so nothing is left to drift. (4) Commits go straight to `main`. (5) The body-word
+  baseline is still checked, with no written justification for an increase. The agreement
+  is recorded in `AGENTS.md` `## Working agreement` and `CLAUDE.md`. Templates shipped to
+  adopters under `files/.cairn/` are unchanged.
 - **agy install command fixed** (2026-11-19) — agy 1.4.6 rejects the `github:` subpath
   target cairn documented since v0.14.0 ("install target must be a directory"), so every
   adopter on a current agy failed at adopt.md Step 4a. Replaced with the GitHub tree URL

@@ -56,8 +56,7 @@ description: One-sentence description used by the agent to decide relevance. Be 
   Counts include prose, lists, and tables; frontmatter, headings, fenced examples, and
   HTML comments are excluded. After an intentional body edit, run the command from the
   repo root with `--update-body-baseline` and review the
-  `scripts/skill-body-word-baseline.json` diff before the default check. A count increase
-  requires explicit justification in review; baseline regeneration is not approval.
+  `scripts/skill-body-word-baseline.json` diff before the default check.
 - **Size is necessary, not sufficient.** The budget and register gates certify prompt
   shape; a cold `/peer-review` of the skill plus adjacent docs certifies behavior.
 - **One skill, one purpose.** Splitting "reflect" and "plan" into separate skills lets

@@ -396,7 +396,7 @@ content from context.
 ### Step 6 — Write version marker, show import line, then report
 
 **First, write the version marker** to `{cairnRoot}/cairn-version` — a single
-line containing the installed version string (e.g. `0.16.1`), no frontmatter.
+line containing the installed version string (the contents of cairn's `VERSION`), no frontmatter.
 This enables the Step 3 fast-path on future re-adoptions.
 
 **Second, show the user the import line** (user-action Step — cairn does NOT
@@ -486,7 +486,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.16.1/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/<tag>/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -706,7 +706,7 @@ new `peer-review/SKILL.md` first and merge by hand before deleting.
 legacy `/review` skill name still points at the same gap-class (external-perspective
 review). Convert to `/peer-review` at your leisure; there's no audit gate against
 legacy `/review` citations because the skill name isn't a tracked-citation form (slug
-citations like `[LAW pre-merge-review]` are unaffected).
+citations like `[LAW commit-cite]` are unaffected).
 
 ## v0.13.x → v0.14.0 (.cairn/) migration
 
