@@ -124,7 +124,7 @@ for the index.
   drift guard runs in CI (plugin has no `prepublishOnly`). Per `[LAW own-your-namespace]`.
 - `packages/cairn-agy/` — the native Antigravity (agy) plugin (agy uses a ROOT
   `plugin.json`, not Claude's `.claude-plugin/`). Same shared sync-guard; installs via
-  `agy plugin install github:winnorton/cairn//packages/cairn-agy@main`. agy's
+  `agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy`. agy's
   `import claude` does NOT ingest marketplace plugins, hence a native agy package — see
   [docs/notes/NOTE_AGY_DISTRIBUTION_IMPORT_GAP_2026-06-13.md](docs/notes/NOTE_AGY_DISTRIBUTION_IMPORT_GAP_2026-06-13.md).
 

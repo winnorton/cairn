@@ -9,11 +9,13 @@ bundled Node harness — no build step either way.
 ### From GitHub (recommended)
 
 ```
-agy plugin install github:winnorton/cairn//packages/cairn-agy@main
+agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy
 ```
 
-agy resolves GitHub subpaths with branch resolution directly — no tarball or
-intermediate step needed.
+agy fetches the subfolder from the GitHub tree URL directly — no tarball or
+intermediate step needed. Replace `main` with a tag to pin a version. Validated on
+agy 1.4.6; agy 1.0.x took `github:winnorton/cairn//packages/cairn-agy@main`, which
+1.4.6 rejects with "install target must be a directory".
 
 After install, confirm with:
 

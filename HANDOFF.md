@@ -72,6 +72,21 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
 
+## Unreleased since v0.16.1
+
+- **agy install command fixed** (2026-11-19) — agy 1.4.6 rejects the `github:` subpath
+  target cairn documented since v0.14.0 ("install target must be a directory"), so every
+  adopter on a current agy failed at adopt.md Step 4a. Replaced with the GitHub tree URL
+  form, `agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy`,
+  validated on agy 1.4.6 three ways (install from `main`, install from the `v0.16.0` tag,
+  uninstall → cold install; result byte-identical to the v0.16.1 package). Swept through
+  `adopt.md` (three sites, plus the skill count 19 → 20 and a clone-and-install-directory
+  last resort per the three-level-degradation pattern), `AGENTS.md`, `README.md`, both
+  plugin READMEs, and all 21 `delivery.agy` strings in `manifest.json`. Dated notes and
+  archived specs keep the old form as history. Note closed to
+  [`docs/notes/_done/`](docs/notes/_done/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md).
+  `VERSION` unchanged: no skill body changed.
+
 ## Released as v0.16.1 (2026-11-19)
 
 Released 2026-11-19: VERSION bump + lockstep across all six version files; cold
@@ -80,10 +95,10 @@ four MAJORs fixed in `73b34f5` before merge). The release commit also corrects t
 v0.15.0 latest-tag references in `AGENTS.md`, `CLAUDE.md`, `README.md`, `adopt.md`, and
 both plugin READMEs.
 
-- **Open at release:** (a) agy 1.4.6 rejects the documented
-  `agy plugin install github:winnorton/cairn//packages/cairn-agy@main` target
-  ("install target must be a directory"); a local-directory install works — see
-  [`docs/notes/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md`](docs/notes/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md).
+- **Open at release:** (a) agy 1.4.6 rejects the then-documented `github:` subpath
+  install target ("install target must be a directory") — fixed after release, see
+  `## Unreleased since v0.16.1` and
+  [`docs/notes/_done/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md`](docs/notes/_done/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md).
   (b) Cairn has no Codex package; the maintainer's `~/.codex/skills` copy was refreshed by
   direct copy on request. (c) `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_12_ADAPTER_CODEX.md`
   is a live child with no row in its archived master.

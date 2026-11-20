@@ -244,14 +244,21 @@ version-locked.
 **Antigravity CLI (agy):**
 
 agy has its own native cairn plugin (`packages/cairn-agy/`). Install it directly from
-the repo — `agy plugin install` supports GitHub subpaths with branch resolution:
+the repo — `agy plugin install` accepts a GitHub tree URL:
 
 ```
-agy plugin install github:winnorton/cairn//packages/cairn-agy@main
+agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy
 ```
 
-This stages all 19 cairn skills into agy's `/skill:` namespace (verified: `agy plugin
-validate` passes + a clean install round-trip on agy 1.0.7). State lands in
+For a pinned version, replace `main` with a tag (`.../tree/<tag>/packages/cairn-agy`).
+If your agy rejects the URL, update agy; failing that, clone the repo and install the
+directory: `agy plugin install <clone>/packages/cairn-agy`. (agy 1.0.x took
+`github:winnorton/cairn//packages/cairn-agy@main`; agy 1.4.6 rejects that form with
+"install target must be a directory".)
+
+This stages all 20 cairn skills into agy's `/skill:` namespace (verified on agy 1.4.6:
+install from `main`, install from a pinned tag, and an uninstall → cold install
+round-trip). State lands in
 `<project>/.cairn/`; add the `@./.cairn/CLAUDE.md` import line to your `AGENTS.md`
 (Step 6).
 
@@ -726,7 +733,7 @@ adopt flow.
 Before running any migration phase, confirm:
 1. The `cairn` Claude Code plugin is installed (or `@winnorton/cairn-pi` for Pi, or
    the native `cairn-agy` plugin — `agy plugin install
-   github:winnorton/cairn//packages/cairn-agy@main` — for Antigravity). The
+   https://github.com/winnorton/cairn/tree/main/packages/cairn-agy` — for Antigravity). The
    replacement must be live before you remove any residue (Phase C).
 2. You are running in the adopter project's directory (not cairn's own repo).
 3. You have a recent git commit or backup — migration is non-destructive by design,
@@ -943,7 +950,7 @@ and loadable:
   `@winnorton/cairn-pi` is installed (`pi list` shows it).
 - **Antigravity/agy residue** (under `~/.gemini/config/skills/`): <!-- migration-ref -->
   confirm `agy plugin list` shows the native `cairn-agy` plugin (installed via
-  `agy plugin install github:winnorton/cairn//packages/cairn-agy@main` in Step 4a).
+  `agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy` in Step 4a).
 
 If a harness's replacement is not yet confirmed loadable, skip that harness's residue
 section and annotate the skip in the migration report.

@@ -391,7 +391,7 @@ cairn-owned `<project>/.cairn/` directory; skills distribute as cairn-named pack
 the vendor's own installer places: the `cairn` Claude Code plugin
 (`claude plugin marketplace add winnorton/cairn` + `claude plugin install cairn@cairn`),
 `@winnorton/cairn-pi` (npm), and the native `packages/cairn-agy` agy plugin
-(`agy plugin install github:winnorton/cairn//packages/cairn-agy@main`). `adopt.md`
+(`agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy`). `adopt.md`
 does zero agent writes to vendor dirs — the only vendor-file touch is one
 user-written `@./.cairn/CLAUDE.md` import line. Adds the non-destructive
 v0.13.x → `.cairn/` migration flow, install-integrity checks, the shared

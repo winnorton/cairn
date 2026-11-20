@@ -74,7 +74,7 @@ agy has its own native plugin — `packages/cairn-agy/` — because `agy plugin 
 does not ingest marketplace plugins. Install via:
 
 ```
-agy plugin install github:winnorton/cairn//packages/cairn-agy@main
+agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy
 ```
 
 ## Marketplace model
