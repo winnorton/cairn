@@ -6,6 +6,11 @@ is in [`VERSION`](VERSION).
 
 <!-- release-entries -->
 
+## v0.16.2 — 2026-11-19
+
+- chore: cut release process to sole-maintainer scale; add scripts/release.mjs
+- fix(docs): replace the agy install command with the GitHub tree URL form
+
 ## Earlier releases
 
 Prose entries moved here from `README.md` on 2026-11-19, unchanged.
