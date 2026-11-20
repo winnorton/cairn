@@ -14,14 +14,14 @@ correctness and its consistency with untouched files.
 
 ## Eligibility
 
-- Review only a coherent commit, branch, or PR; wait while scope is unstable.
+- Review only a coherent change set (commit, range, branch, PR, working tree, or spec
+  path); wait while scope is unstable.
 - The reviewer did not participate in authoring and shares zero conversation history
   with the author (unforked context). If you wrote the change, decline and route it to a
   fresh agent or session; self-review re-creates the blind spot peer-review exists to
   catch.
-- Use `/round-review` for whole-round `DEFINITION OF DONE` verification against a program
-  master (use `/peer-review` for an individual workstream's diff or a Gate B master/stub
-  commit).
+- Whole-round `DEFINITION OF DONE` verification against a program master goes to
+  `/round-review`; one workstream's diff or a Gate B master/stub commit stays here.
 - Use `/reflect` for lessons from the current agent's completed work.
 
 ## Workflow
@@ -33,8 +33,9 @@ Record changed files and lines. Use the available form:
 - PR: use `gh pr view <N> --json title,baseRefName,headRefName,changedFiles,additions,deletions`
   for metadata and `gh pr diff <N>` for the diff.
 - Branch: `git diff <base>...HEAD` plus `git log <base>..HEAD --oneline` (when `HEAD`
-  is on `<base>`, inspect the target commit via `git show <sha>` or `HEAD~1..HEAD`).
+  is on `<base>`, inspect the target commit via `git show <sha>`).
 - Commit or range: `git show <sha>` or `git diff <range>`.
+- Working tree: `git diff HEAD` plus untracked files (`git status --porcelain`).
 - File or spec path: resolve the branch diff (`git diff <base>...HEAD`) or, on trunk, the
   commits touching that artifact (`git log --follow --oneline -- <path>`, then
   `git show <commits>`) so the review covers the introducing commit, Gate B absorptions,
@@ -83,8 +84,7 @@ severity.
 
 ## Output
 
-A 200–600 word structured review. End with a clear push/merge decision and one specific
-next-action question.
+A 200–600 word structured review in the step 4 shape.
 
 ## Companion skills
 

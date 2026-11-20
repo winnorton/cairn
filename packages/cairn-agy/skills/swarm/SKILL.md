@@ -302,7 +302,7 @@ A swarm master has no completion signal the agent can detect. It carries a
 RETIRED — from the expansion protocol's empty-audit branch, from `/reflect`,
 or on request — and must cite evidence when it does. It never flips the
 State header, moves the master, or archives on its own; neither does an
-autonomous executor such as `/fast-execute`.
+autonomous executor.
 
 Completed wave stubs CAN be cleaned up at any state — move to
 `docs/swarm/archive/SWARM_<NAME>_W<N>_*` if the directory gets noisy. The
@@ -375,10 +375,9 @@ This makes every wave's impact scannable without reading prose.
 - **`/program`** — for one-shot parallel coordination under a fixed
   contract. If the agent can detect completion from a Definition of Done,
   use program, not swarm.
-- **`/round-review`** — can review a wave's output against the master's
-  contract, similar to reviewing a program round.
-- **`/peer-review`** — for fresh-eyes review of a wave's change set before
-  merge.
+- **`/peer-review`** — for fresh-eyes review of a wave's change set against
+  the master's §2 CONTRACT before merge. `/round-review` walks a `/program`
+  master's Definition of Done, which a swarm master lacks.
 - **`/note`** — for incidental learnings during wave execution that don't
   belong in the master's patterns section.
 - **`/reflect`** — at natural checkpoints (after a wave, after N waves) to

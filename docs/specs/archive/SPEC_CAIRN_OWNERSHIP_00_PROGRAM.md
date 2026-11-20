@@ -2,7 +2,7 @@
 
 > **Filed:** 2026-06-13 · **By:** Claude Opus 4.8 (1M) · **Requested by:** maintainer
 > **Production-status:** has-users (public repo, v0.13.1, real adopters) → migration in scope, but user-driven (documented steps), not automated tooling.
-> **Supersedes:** [SPEC_AGENTS_UMBRELLA](_promoted/SPEC_AGENTS_UMBRELLA.md) (the parked v0.14 `agents/` draft — outdated premise + drifted anchors per the 2026-06-13 revalidation).
+> **Supersedes:** [SPEC_AGENTS_UMBRELLA](../_promoted/SPEC_AGENTS_UMBRELLA.md) (the parked v0.14 `agents/` draft — outdated premise + drifted anchors per the 2026-06-13 revalidation).
 > **Governing law:** `[LAW own-your-namespace]` (cairn root `LAWS.md`, added this session). **Memory:** `[MEM feedback/own-namespace-no-vendor-folder-deps]`.
 >
 > **Revision history:** Drafted 2026-06-13 as a program (not a single spec) — see §11. Pass 1 fresh-agent review (5 lenses, 0-author) surfaced 2 blockers + 11 should-fix/nit, all absorbed: N1 (WS09 "move"→copy-verify-delete, blocker), N2 (WS09 Pi-residue removal gated on replacement-installed, blocker), N3 (`<!-- migration-ref -->` sentinel for DoD#1 grep, §4+§5), N4 (WS04/08 adopt agy-branch dep edge), N5 (WS01/09 define/implement reword), N6 (dep fixes 09+05/10+12/11+07 + parallel-safe symmetry), N7 (.agents-alignment grep in DoD#8), N8 (WS09 Cowork + import-line-as-migration-step + cairn-version fast-path + committed fixture), N9 (breadcrumb wording, WS05 link). **Pass 2** (migration-safety + cross-section, opus) returned **no-blocker**; absorbed N10 (WS09 agy-residue gate + dep 04), N11 (WS06↔11 parallel-safe symmetry), N12 (WS01 integrity definition includes the import-line check). **Pass 3 — spec-review** (3 lenses on the 12 elaborated specs) surfaced 3 blockers + should-fix/nit; resolved at master (B1 `versionFile` contract §2.4/§3, user-owned `<project>/CLAUDE.md` §2.1/§3, archive-dir §3, HIVE coordination §2.6, merge-map §9.5) and fanned out per-spec (WS06 `src`-paths+count, WS08 Pi-skill-list, WS01↔02 `.cairn/CLAUDE.md` ownership, WS09 step-ref, WS11 active-preflight, WS12 plan-collision fallback, WS07 HIVE-section preserve, WS10 HIVE carry-forward).
@@ -17,7 +17,7 @@
 | Old `agents/` umbrella draft would collide with `.agents/skills/` — hard-coded `{workspace}/.agents/skills` in the agy binary, claimed by Pi **and** agy loaders | 2026-06-13 | namespace collision (caught) |
 | `404: Not Found` bodies written as `program/SKILL.md` + `round-review/SKILL.md` in `~/.pi/agent/skills/` — adopt curl-wrote into a vendor folder with no validation | 2026-06-11 | vendor-folder dependency (live breakage) |
 | Stale pre-v0.12.1 flat-format skills + legacy `review/` rotting in agy's `~/.gemini/config/skills/` | 2026-06-13 | vendor-folder dependency (residue) |
-| [SPEC_AGENTS_UMBRELLA](_promoted/SPEC_AGENTS_UMBRELLA.md) premise ("sandbox denies CLAUDE.md writes") now "I do not know if still live" | 2026-06-13 | design rested on transient vendor behavior |
+| [SPEC_AGENTS_UMBRELLA](../_promoted/SPEC_AGENTS_UMBRELLA.md) premise ("sandbox denies CLAUDE.md writes") now "I do not know if still live" | 2026-06-13 | design rested on transient vendor behavior |
 
 **What this program replaces:** the curl-into-vendor-dirs install + generic folder/skill names — with: **state in `<project>/.cairn/`** (cairn-owned), **skills via cairn-named packages the vendor's own installer places**, and **one user-written import line** as the only vendor-file touch.
 

@@ -1,6 +1,6 @@
 # Agents/ umbrella + git as memory bus — Note
 
-> **Promoted to** [docs/specs/SPEC_AGENTS_UMBRELLA.md](../../specs/SPEC_AGENTS_UMBRELLA.md) **on 2026-05-02** — forcing function: the 2026-05 sandbox restriction on agent-config writes made the parked design suddenly load-bearing.
+> **Promoted to** [docs/specs/_promoted/SPEC_AGENTS_UMBRELLA.md](../../specs/_promoted/SPEC_AGENTS_UMBRELLA.md) **on 2026-05-02** — forcing function: the 2026-05 sandbox restriction on agent-config writes made the parked design suddenly load-bearing.
 
 > **Filed:** 2026-04-30 · **By:** agent (per user request) · **Status:** promoted (was: open)
 

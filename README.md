@@ -240,13 +240,14 @@ Cairn's skills fall into five categories with different origins.
   (behavioral, no file).
 - `program` — author a program-of-specs (one master coordination doc + N
   workstream child stubs in `docs/specs/`) for substantial work that exceeds a
-  single spec's scope. Bakes in no-deferral discipline + cross-cutting axes
-  coverage. Stubs are elaborated by `/spec --from <stub>`.
+  single spec's scope. Bakes in deferral discipline (scheduled deferrals only:
+  trigger + stub + user approval) + cross-cutting axes coverage. Stubs are
+  elaborated by `/spec --from <stub>`.
 - `round-review` — trust-but-verify an autonomous executor's round of work
   against a `/program` master. Walks the master's `DEFINITION OF DONE`
   criterion-by-criterion against the diff; drafts R+1 stub specs (elaborated via
   `/spec --from`) and a self-contained R+1 round master for the gaps. Loop exits
-  when this skill writes zero R+1 stubs.
+  when this skill writes zero R+1 stubs and leaves no criterion unverified.
 - `prompt-evolve` — extract a version-controlled operational prompt from a
   `/spec` for multi-pass work where execution produces both output and reusable
   insight. Coverage units may be known or discovered; each prompt defines its

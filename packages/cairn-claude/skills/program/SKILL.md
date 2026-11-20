@@ -19,13 +19,14 @@ child into an executable plan.
 | Invocation | Action |
 |---|---|
 | `/program <NAME> [description]` | Author from established intent. |
-| `/program --from docs/specs/SPEC_X.md` | Promote an oversized active execution spec; preserve its decisions and review findings. |
-| `/program` | Revise the current draft, when one exists. |
+| `/program --from docs/specs/SPEC_X.md` | Promote an oversized active execution spec. `<NAME>` defaults to the source's. |
+| `/program` | Before Gate B approval, revise the current draft. After approval, resume: reload the active master's status table and latest round master, report, and leave frozen sections unrevised. |
 
-Reject sources under `docs/specs/archive/` or `docs/specs/_promoted/`. Also reject a
-contract spec: one declaring the contract lifecycle or a Pass 1/2/3 or `RECONCILED`
-status. Contract specs remain live; create a new program that links to one instead of
-moving it.
+Reject sources under `docs/specs/archive/` or `docs/specs/_promoted/`, program and round
+masters, and program children (a `STUB`, `DEFERRED`, or `READY FOR EXECUTOR` header).
+Also reject a contract spec: one declaring the contract lifecycle or a Pass 1/2/3 or
+`RECONCILED` status. Contract specs remain live; create a new program that links to one
+instead of moving it.
 
 ## Workflow
 
@@ -53,7 +54,8 @@ For `--from`, read the source and its review history in full. Carry every resolv
 decision and unresolved finding forward. After the program is written, ensure
 `docs/specs/_promoted/` exists (`mkdir -p`), move the source there (`git mv` when
 tracked, plain `mv` when untracked), prepend a dated link to
-`../SPEC_<NAME>_00_PROGRAM.md`, and adjust any relative links inside the moved file.
+`../SPEC_<NAME>_00_PROGRAM.md`, and repair relative links in the moved file and in files
+linking to it.
 
 ### 2. Run the axes gate
 
@@ -106,12 +108,14 @@ Assign every claimed axis to a workstream. Each registry entry contains:
 | Rollback story | How the change is undone, or `N/A: <reason>`. |
 
 Draw a dependency DAG and group work into foundation, parallel, and integration waves.
-Dependencies, not wave-wide barriers, control readiness.
+A workstream is ready when every `Depends on` row reads `COMPLETE`; dependencies, not
+wave-wide barriers, control readiness.
 
 The parallel-execution protocol must state:
 
 1. isolate concurrent work in separate worktrees;
-2. freeze shared contracts before dependent work fans out;
+2. freeze shared contracts before dependent work fans out, and name one writer or a
+   serialized order for every file two workstreams touch;
 3. run spec → implementation → fresh non-author verification (a `/peer-review`, or
    parallel skeptics on security, spec-impl drift, error paths, and defensive access
    plus one completeness critic) → repair until no ship-blocking finding remains;
@@ -142,7 +146,7 @@ these sections in order:
 | 7 | WHY THIS SHAPE | Technical placement and seam rationale. |
 | 8 | OPERATIONAL POLICY | Project-tailored CI, baseline, security, or migration policy. |
 | 9 | PARALLELIZATION GRAPH + STATUS TABLE | Titled subsections `Workstream registry`, `Dependency DAG`, `Parallel-execution protocol`, and `Status table`. |
-| 10 | FIRST-ACTION CHECKLIST | Read master/evidence, read target child and confirm its header reads `READY FOR EXECUTOR` (halt on `STUB` or `DEFERRED`), claim child, execute, update state. |
+| 10 | FIRST-ACTION CHECKLIST | Read master/evidence; read the target child and halt unless its header reads `READY FOR EXECUTOR` and every `Depends on` workstream finished in this run or reads `COMPLETE`; execute; report completion to the integrating context. |
 | 11 | ARCHITECTURAL RATIONALE FOR THE PROGRAM SHAPE | Evidence that one spec is insufficient. |
 | 12 | OPEN QUESTIONS | Dated non-blocking items only. |
 
@@ -150,28 +154,29 @@ Drop or replace `HARD CONTRACT` or `OPERATIONAL POLICY` only when the axes matri
 that no such concern applies.
 
 Status rows contain Phase, linked Spec, Status (`OPEN`, `in-progress`, `COMPLETE`, or
-`DEFERRED (<trigger>)`), Owner, and Depends on.
+`DEFERRED (<trigger>)`), Owner, and Depends on. Each `/round-review` round appends one
+`in-progress` row linking its round master.
 
 For each registry row, write
 `docs/specs/SPEC_<NAME>_<NN>_<TOPIC>.md` with:
 
 - `# SPEC_<NAME>_<NN>_<TOPIC>`;
-- `**Status:** STUB` (or `**Status:** DEFERRED (<trigger>)` for scheduled deferrals until
-  triggered, then flipped to `STUB` for elaboration) plus sibling-relative program link,
-  `Depends on`, and `Parallel-safe with`;
+- `**Status:** STUB`, or `**Status:** DEFERRED (<trigger>)` for a scheduled deferral
+  (`/spec --from` flips it to `STUB` once the user confirms the trigger), plus
+  sibling-relative program link, `Depends on`, and `Parallel-safe with`;
 - `Goal`, `Scope`, `Telemetry hook`, `Diagnostics path`, `Rollback story`, `Gate`, and
   `Files` sections copied from the registry;
 - a final instruction to elaborate in place with `/spec --from <this-path>`.
 
 The elaboration instruction tells the next agent to read the master sections titled
 `CONTRACT SURFACES`, `RESOLVED DESIGN DECISIONS (no deferrals)`, `HARD CONTRACT` (when
-present), and the `Parallel-execution protocol` subsection. Match titles, not section
-numbers.
+present), and the `Parallel-execution protocol` subsection, matched by title.
 
 ### 6. Review and absorb
 
 Gate B begins after the master and stubs form one committed change set. Direct a fresh
-agent that did not author them to run `/peer-review` on that diff or branch.
+agent that did not author them to run `/peer-review` on that diff or branch: an unforked
+subagent, or a paste-ready `/peer-review <sha>` for the user to run in a new session.
 
 For every finding:
 
@@ -181,31 +186,36 @@ For every finding:
 4. commit the absorption separately;
 5. offer another review pass or approval.
 
-Repeat until approved.
+Repeat until approved, then record `Gate B: APPROVED <date>` in the master header;
+`/spec --from` requires that line.
 
 ## Operating rules
 
-- The master status table is authoritative. Executors claim a row with owner and
-  `in-progress`, then mark it `COMPLETE` after merge.
-- After Gate B approval, elaborate ready `OPEN` stubs (skipping `DEFERRED` rows until
-  triggered) via `/spec --from <stub>` (`STUB` → `READY FOR EXECUTOR`) and, when the
-  environment permits parallel agents, dispatch ready elaborated workstreams without
-  re-asking; Gate B approval authorizes the declared parallel plan.
+- The master status table is authoritative, and only the integrating context (the main
+  checkout) edits it: claim a row with owner and `in-progress` at dispatch; mark it
+  `COMPLETE` on merge. A worktree executor reports and leaves the master unedited.
+- After Gate B approval, run `/spec --from <stub>` on every `OPEN` row in dependency
+  order (`STUB` → `READY FOR EXECUTOR`), skipping `DEFERRED` rows. Dispatch ready
+  elaborated workstreams, in parallel where the environment allows, without re-asking;
+  Gate B approval authorizes the declared parallel plan.
 - Verify completed executor rounds with `/round-review` against `DEFINITION OF DONE`
   (`DEFERRED (<trigger>)` rows do not block completion). Keep child specs in
-  `docs/specs/` while the program is active; when zero follow-up stubs remain and every
-  check passes, ensure `docs/specs/archive/` exists (`mkdir -p`) and move the master,
-  completed child specs, and any round masters/stubs together to `docs/specs/archive/`
-  with `git mv` (leave unbuilt scheduled-deferral specs live in `docs/specs/`, adjusting
-  relative links across directory depth on all moved and linked files).
+  `docs/specs/` while the program is active.
+- Archive when the latest `/round-review` writes zero stubs, leaves no criterion
+  unverified, and no row reads `OPEN` or `in-progress`: `mkdir -p docs/specs/archive/`, then `git mv` the master, completed child
+  specs, and round masters/stubs there together. Repair relative links in every moved
+  file and every file linking to one. Leave unbuilt scheduled-deferral specs in
+  `docs/specs/`.
+- Work added after archive is a standalone `/spec` linking the archived master: no `NN`,
+  no Status header, no master row.
 - Link every spec mention to its current path, including conversation status reports.
 - Group status reports as shipped, partially shipped, executable, and blocked; include
   verified gates, newly unblocked work, and recommended next dispatches.
 - End each completed orchestration step with an exact paste-ready next command. Say
-  `no next action — program complete` when the loop has ended.
+  `no next action — program complete` after the archive commit.
 - At handoff-shaped moments, include available session ID and transcript path.
-- After context compaction, reload the master status table and these operating rules
-  before reporting or dispatching.
+- After context compaction, reload the active master's status table, the latest round
+  master, and these operating rules before reporting or dispatching.
 
 ## Output
 

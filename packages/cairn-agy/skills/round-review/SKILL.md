@@ -1,189 +1,118 @@
 ---
 name: round-review
-description: Review one round of executor output against a program master and draft R+1 follow-up stubs plus a self-contained R+1 round master for gaps. Invoke after an executor (Flash, `/goal`, teammate) finishes a round on a `/program` master. Trust-but-verify — executor status files (`task.md`, "all done" claims) are NOT authoritative; disk diff plus the master's `DEFINITION OF DONE` section are. Produces (1) a review report, (2) N R+1 stubs per `/program`'s schema (`SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`), and (3) an R+1 round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) with execution order, round DoD, and checklist. Elaborate R+1 stubs via `/spec --from <stub>`, then dispatch `/goal execute <round-master-path>`. Exits when zero R+1 stubs remain. Do NOT use on your own implementation or single-spec work (`/peer-review`).
+description: Verify one finished executor round against a /program master and draft the
+  next round. Walk the program's DEFINITION OF DONE criterion by criterion against disk
+  and git state; executor status files and "all done" claims are claims, not evidence.
+  Write R+1 stubs (SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md) plus one self-contained round master
+  (SPEC_<NAME>_R<N>_00_MASTER.md) as the single dispatch target; elaborate the stubs via
+  /spec --from <stub>. The loop exits when a review writes zero stubs and leaves no
+  criterion unverified. Do not use on your own implementation, while the executor is
+  still working, or for single-spec work (/peer-review).
 ---
 
 # Round Review
 
-When an executor finishes a round of work on a `/program`-produced master, `/round-review`
-reads the diff, walks the master's Definition of Done, surfaces gaps, and drafts the next
-round of stubs. The skill is the read-end of `/program`'s orchestration loop — `/program`
-produces the master and child stubs; `/spec --from <stub>` elaborates; the executor
-ships; `/round-review` decides what's left.
+Close the `/program` loop: `/program` writes the master and stubs, `/spec --from <stub>`
+elaborates, an executor ships, and `/round-review` decides what remains. Disk and git
+state are evidence; the executor's status file is a claim.
 
-## Why this skill exists
+## Eligibility
 
-Three failure modes recur when an autonomous executor (Flash, `/goal`, an assistant
-agent) finishes a multi-phase program and the human checks back in:
+- An executor has declared a round finished or paused, and the change set is stable.
+- The reviewer did not author the implementation; route your own work to a fresh agent
+  or session.
+- The program master (`SPEC_<NAME>_00_PROGRAM.md`) is readable; it holds the criteria.
+- Single-spec work goes to `/peer-review`.
 
-1. **Status drift.** The executor's `task.md` checkboxes say "all done"; the working tree
-   says "nothing committed." The status file isn't authoritative — it reflects the
-   executor's claim, not the reality on disk.
-2. **Silent omissions.** The master's §5 DoD names specific files by literal path
-   (`tests/unit/mapTelemetry/determinism.test.ts`); the executor shipped 18 other tests
-   under that directory but not the one named. Without programmatic DoD-walk, the
-   omission hides under "tests pass."
-3. **Zero-order findings outside the DoD.** Uncommitted work, broken headline metrics,
-   leftover scratch files — things that block shipping but aren't enumerated in §5;
-   §5 assumed the executor would land the work properly. `/round-review`
-   surfaces these.
+## Workflow
 
-The skill encodes the "trust-but-verify" move into a procedure: read the rubric, probe
-what exists, walk criterion-by-criterion, name what's missing as drafted R+1 stubs that
-become the next dispatch.
+Match master sections by title; section numbers are display order. `docs/specs/` below
+means the folder holding the program master.
 
-## When to use
+### 1. Identify the round
 
-- An autonomous executor (Flash, `/goal`, a teammate session) has declared finished or
-  paused on a round of work against a `/program`-produced master.
-- You return to the planning session (typically Opus) and need to assess: ship? draft
-  R+1? what got missed?
-- Iteration: after each round of execution, until the skill writes zero R+1 stubs.
+The reviewed round is `R<k>`: the highest-numbered `SPEC_<NAME>_R<k>_00_MASTER.md` in
+`docs/specs/`, or R1 (the program's original children) when none exists. Its governing
+master is that round master, or the program master for R1. New artifacts are `R<N>` with
+`N = k + 1`.
 
-## When NOT to use
+### 2. Cross-check the claim against disk
 
-- You authored the executor's implementation — fresh perspective is the whole point;
-  reviewing your own output recreates the blind spot. Hand to another agent or session.
-- The work is a single `/spec` (not a program-of-specs). Use `/peer-review` directly.
-- The executor is still actively working. Wait for a stable change set; mid-execution
-  diffs aren't reviewable.
-- You don't have access to the program master (`SPEC_<NAME>_00_PROGRAM.md`). Without
-  the master, there's no DoD to walk; you'd be making up criteria.
+Compare the executor's status file or transcript claim with `git status -sb`,
+`git log --oneline <base>..HEAD`, and the governing master's status table, where
+`<base>` is the commit that added the governing master
+(`git log --diff-filter=A --format=%h -- <master-path> | tail -1`). Disk wins every
+conflict; record the conflict in the report.
 
-## Distinction from `/peer-review`
+The change set is committed work (`git diff <base>..HEAD`) plus uncommitted work
+(`git diff HEAD`) plus untracked files (`git status --porcelain | grep '^??'`; glob
+tools skip them). Untracked files are round output: they land or get removed.
 
-| | `/peer-review` | `/round-review` |
-|---|---|---|
-| Input | One change set (diff/branch/PR) | One round of work against a program master |
-| Rubric | Reviewer's judgment + general gap-classes | Program master's §5 DoD (named criteria) |
-| Output | Structured review report | Review report + drafted R+1 stubs + R+1 round master |
-| Loop role | One-shot pre-merge gate | Iterative — exits when zero R+1 stubs needed |
-| Asks | "Did the author miss anything?" | "Did the executor ship what the master required?" |
+When the change set and every unmerged executor branch hold no implementation work, the
+round has not run: stop and report its dispatch command.
 
-`/round-review` invokes `/peer-review`-style discipline (fresh perspective, adjacent-file
-reads) but layers programmatic DoD-walking on top.
+### 3. Load the rubric
 
-## Steps
+- From the program master: `DEFINITION OF DONE` (each numbered criterion is one
+  verification target), `PROGRAM GOAL`, `CONTRACT SURFACES`, and the status table.
+- From a governing round master: its round-level Definition of Done, stub table, and
+  master amendments.
+- From each child or stub dispatched this round: its `Gate`.
 
-### 1. Trust-but-verify the executor's claim
+Two row kinds are outside this round's gaps: untriggered `DEFERRED (<trigger>)` rows,
+and `OPEN` rows with no work in the change set (report those as executable next). Review
+against the written criteria only.
 
-The executor's status file is a CLAIM, not authoritative. Cross-reference:
+### 4. Probe disk
 
-- Executor's status file (e.g. `task.md`, `implementation_plan.md`, agent's transcript)
-  — what the executor *says* it did.
-- `git status -sb` against the branch base — what's actually in the working tree.
-- `git log --oneline` against the branch base — what's actually committed.
-- The program master's `§9` status table — the source of truth for what should exist.
+For every path the rubric names, check existence, grep the required references, and read
+small load-bearing artifacts (baselines, new source files, docs) plus the unchanged
+files adjacent to them. Parallelize independent reads. Past your context budget,
+delegate to a sub-agent with the criteria, the file list, and the question "does each
+exist with the required content?"
 
-If the executor's status conflicts with disk reality, **disk wins.** Common patterns:
+### 5. Walk every criterion
 
-- "All phases [x]" + uncommitted working tree = work happened, never landed in git
-- "All phases [x]" + scratch files left behind = executor self-evaluated prematurely
-- "Phase N in-progress" + Phase N+M artifacts present = status file drifted
-
-Record the conflict, then proceed with disk-reality as the basis.
-
-### 2. Establish the authoritative change set
-
-The "change set" is whatever ground truth the diff represents — committed or not.
-
-- If committed on a branch: `git diff <base>...HEAD`
-- If uncommitted: `git diff HEAD` plus `git status --porcelain` for untracked files
-  (untracked files are part of the round's output; they need to land or get cleaned up)
-- If split across both: combine. Don't assume the executor committed all the work.
-
-`Glob` and `find` may filter untracked files depending on tooling. Use
-`git status --porcelain | grep '^??'` to enumerate untracked explicitly.
-
-### 3. Load the rubric — the master's DEFINITION OF DONE
-
-**Match master sections by TITLE, not §-number.** Real programs insert sections and
-the numbers shift (lra's masters carry the DoD at §6, contracts at §3). Everywhere
-this skill says "§5" it means *the master's section titled DEFINITION OF DONE,
-wherever it's numbered* — same rule for the other shorthands below.
-
-The master's DEFINITION OF DONE section is the criterion list. Read
-it line-by-line. Each numbered criterion is one verification target.
-
-Also load (by title):
-- PROGRAM GOAL — what the headline metric / primary deliverable is
-- CONTRACT SURFACES — what shared APIs must exist
-- The status table (in the parallelization section) — which `OPEN` / `in-progress`
-  children should have shipped this round (untriggered `DEFERRED (<trigger>)` rows do not
-  count as round gaps)
-- Child spec §Gate sections — per-workstream success criteria that roll up
-
-Do not improvise criteria. The master is the contract; the executor was bound to it;
-review against it.
-
-### 4. Probe what exists on disk
-
-For each load-bearing path named in §5 / child specs, probe:
-
-- `Glob` / `find` / `ls` for file existence
-- `grep` for content references (e.g. "is `MapTelemetry` referenced in `tests/runAll.ts`
-  per §5.10?")
-- Direct `Read` of small load-bearing artifacts (baselines, key new source files,
-  documentation files)
-
-This is the **most time-intensive step** for large programs. Use parallel reads where
-the artifacts are independent. Delegate to a sub-agent when the file count
-exceeds your context budget — give the sub-agent the DoD + the file list + the question
-"for each, does it exist with the required content?"
-
-### 5. Walk the DoD criterion-by-criterion
-
-For each numbered criterion in §5, produce a verdict:
+Give each program criterion, round criterion, and dispatched `Gate` one verdict:
 
 | Verdict | Meaning |
 |---|---|
-| **PASS** | Criterion met; cite file:line evidence |
-| **PARTIAL** | Some sub-clauses met, others not; cite which |
-| **FAIL** | Criterion not met; cite what's absent |
-| **UNVERIFIED** | Can't determine from static analysis (e.g. "tests pass" requires running them) |
+| PASS | Met; cite `file:line`. |
+| PARTIAL | Some sub-clauses met; cite which. |
+| FAIL | Not met; cite what is absent. |
+| UNVERIFIED | Static analysis cannot decide; name the command that would. |
 
-Build a table. The table is the spine of the review report.
-
-If a criterion is UNVERIFIED, name what command would verify it. Don't run heavy
-verification commands inline unless the user asks — surface them in the report as
-"verification commands to run."
+Run heavy verification commands only at the user's request; otherwise list them in the
+report.
 
 ### 6. Surface zero-order findings
 
-Things outside §5 that still block shipping:
+List, with severity, the blockers the criteria did not anticipate: uncommitted work or
+no branch/PR; a broken headline metric; a regression in a base measurement; scratch
+files, debug logs, or build artifacts left in the tree; `.gitignore` violations; drift
+between a master and what was implemented.
 
-- All work uncommitted, no branch / PR
-- Broken headline metric (the program's reason for existing didn't actually work)
-- Catastrophic regression in a base measurement
-- Executor scratch files, debug logs, leftover build artifacts in the tree
-- `.gitignore` violations
-- Master itself drifted (the executor implemented one thing; the master says another;
-  one of them is wrong)
-
-These are findings the DoD didn't anticipate — it assumed competent landing.
-List them with severity. Zero-order findings often have higher severity than PARTIAL
-DoD criteria.
-
-**Triage every finding (DoD and zero-order) three ways:**
+Triage every finding, criterion and zero-order alike. A FAIL or PARTIAL criterion is
+ship-blocking unless the spec is reconciled:
 
 | Triage | Action |
 |---|---|
-| **Ship-blocking** | Becomes an R+1 stub (or blocks the round) — fix before ship |
-| **Spec-drift** | The master or child spec is wrong, not the code — reconcile the spec now, with rationale |
-| **Subtle** | Real but non-blocking — park one dated line in the master's OPEN QUESTIONS section; do NOT let it evaporate into conversation |
+| Ship-blocking | Becomes an R+1 stub. |
+| Spec-drift | The master or child spec is wrong, not the code: reconcile the spec now, with rationale. |
+| Subtle | Real and non-blocking: add one dated line to the program master's `OPEN QUESTIONS`. |
+| Out of program | File a `/note`. |
 
-### 7. Draft R+1 stub specs per `/program`'s stub schema
+### 7. Draft R+1 stubs
 
-Each FAIL, PARTIAL, or zero-order finding that needs follow-up becomes an R+1 stub.
-Write the stub to `docs/specs/SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md` (or wherever the
-program's specs live — match the existing folder pattern).
-
-Per `/program`'s stub schema, each stub contains:
+Write one stub per ship-blocking finding to
+`docs/specs/SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`, `<NN>` sequential within the round and
+padded as the program's children are; merge findings that share a workstream. Use
+`/program`'s stub schema plus the round fields:
 
 ```markdown
 # SPEC_<NAME>_R<N>_<NN>_<TOPIC>
 
-**Status:** STUB · **Program:** [SPEC_<NAME>_00_PROGRAM](SPEC_<NAME>_00_PROGRAM.md) · **Round master:** [SPEC_<NAME>_R<N>_00_MASTER](SPEC_<NAME>_R<N>_00_MASTER.md) · **Round:** R<N> · **Depends on:** <other R+1 stubs or "none"> · **Parallel-safe with:** <IDs or "all"> · **Severity:** <CRITICAL | HIGH | MEDIUM | LOW>
+**Status:** STUB · **Program:** [SPEC_<NAME>_00_PROGRAM](SPEC_<NAME>_00_PROGRAM.md) · **Round master:** [SPEC_<NAME>_R<N>_00_MASTER](SPEC_<NAME>_R<N>_00_MASTER.md) · **Round:** R<N> · **Closes:** <program status-table row NN, or "none"> · **Depends on:** <other R<N> stubs or "none"> · **Parallel-safe with:** <IDs or "all"> · **Severity:** <CRITICAL | HIGH | MEDIUM | LOW>
 
 ## Goal
 ## Scope
@@ -198,201 +127,129 @@ Per `/program`'s stub schema, each stub contains:
 Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`. Read the round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) and program master sections titled `CONTRACT SURFACES`, `RESOLVED DESIGN DECISIONS (no deferrals)`, `HARD CONTRACT` (when present), and `Parallel-execution protocol` — match titles, not §-numbers.
 ```
 
-Naming: `R2_01_<TOPIC>`, `R2_02_<TOPIC>`, … sequential within the round. The round
-number (R2, R3) increments per `/round-review` invocation, not per stub.
+`Closes` names the program status-table row the stub finishes. `Telemetry hook`,
+`Diagnostics path`, and `Rollback story` accept `N/A: <reason>`.
 
-If multiple gaps map to the same workstream, one stub suffices. If a single gap touches
-multiple workstreams, one stub still suffices (`Depends on:` and `Files:` fields capture
-the spread).
+### 8. Draft the round master
 
-### 8. Draft the R+1 round master — the single dispatch target
-
-**Required for one-line dispatch.** The stubs alone are not enough — the executor
-needs a single file to point `/goal` (or equivalent) at, with execution order and
-dependencies encoded IN THE FILE rather than in the dispatch prompt's prose. The user
-shouldn't have to type "(R2_01 first — X depends on it)" — that knowledge belongs in the file.
-
-Write `docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md` containing:
+With one or more stubs, write `docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md`: the single
+dispatch target, carrying execution order and dependencies in the file so the dispatch
+prompt carries none. With zero stubs, write no round master.
 
 ```markdown
 # SPEC_<NAME>_R<N>_00_MASTER — Round <N> Coordination Doc
 
 **Round:** R<N> · **Program:** [SPEC_<NAME>_00_PROGRAM](SPEC_<NAME>_00_PROGRAM.md)
 **Status:** Drafted <date> by /round-review · **Severity:** <CRITICAL | HIGH | ...>
-**Type:** Round master — elaborate §2 stubs via `/spec --from`, then dispatch this single file with `/goal`.
+**Type:** Round master — elaborate the §2 stubs via `/spec --from`, then dispatch this single file.
 
 ## 0. Why this round exists
-<one paragraph summarizing the Round N-1 outcome + the DoD walk verdict that produced
-these stubs. Cite the §5 rows that FAILed or were PARTIAL. This is the executor's
-context — without it, R+1 has no purpose-statement.>
+<one paragraph: the Round <N-1> outcome and the verdicts that produced these stubs. Cite
+each FAIL or PARTIAL criterion by its DEFINITION OF DONE number and each zero-order
+finding. This is the executor's purpose statement.>
 
 ## 1. Execution order
-<ASCII or markdown dependency graph showing which stub runs first, what fans out, what
-serializes. If R<N>_01 must precede the rest (common when prior round was uncommitted),
-make this load-bearing.>
+<dependency graph: which stub runs first, what fans out, what serializes>
 
-## 2. R+1 stubs (the children)
-<table: # | spec link | status (OPEN / in-progress / COMPLETE) | severity | one-line goal — one row per stub>
+## 2. R<N> stubs
+<table: # | spec link | status (OPEN / in-progress / COMPLETE) | closes (program row) | severity | one-line goal>
 
 ## 3. Round-level Definition of Done
-<numbered list — what makes Round <N> shippable. Always include: "Round-review Pass <N+1>
-returns zero new R+1 stubs OR a clean ship recommendation." That's the loop exit.>
+<numbered list of checks the executor can verify that make Round <N> shippable>
 
 ## 4. First-action checklist
-<concrete numbered steps for the executor: read this master, read the program master
-sections titled CONTRACT SURFACES, RESOLVED DESIGN DECISIONS (no deferrals), HARD CONTRACT
-(when present), and DEFINITION OF DONE (match titles, not §-numbers), open each §2 child
-file and confirm its **Status:** header reads READY FOR EXECUTOR (halt if any child file
-still reads STUB — elaborate via /spec --from first), inventory the working tree, claim
-rows as in-progress and run elaborated specs in §1's order, mark COMPLETE in §2's table
-(and in any matching row of the program master's status table)>
+<numbered steps: read this master; read the program master sections titled CONTRACT
+SURFACES, RESOLVED DESIGN DECISIONS (no deferrals), HARD CONTRACT (when present), and
+DEFINITION OF DONE (match titles, not §-numbers); open each §2 stub and halt if any
+**Status:** header still reads STUB (elaborate via /spec --from first); inventory the
+working tree; take OPEN rows in §1's order, skipping COMPLETE rows, and start a stub only
+when each Depends-on stub finished in this run or reads COMPLETE; mark each row
+in-progress, then COMPLETE, in §2 and in the program-master row its Closes field names.
+The context that merges edits these tables; a worktree executor reports instead.>
 
-## 5. Master amendments (record any here as R<N> lands)
-<empty table at draft time; the executor populates if any R<N> stub amends the
-program master's contracts. Provides traceability for "the master changed because of
-R2_02 finding NN".>
+## 5. Master amendments
+<empty table at draft time; the executor adds one row per program-master contract an
+R<N> stub amends, naming the stub and the finding>
 
 ## 6. Exit signal
-<one paragraph — when does the executor know this round is done? Typically: §3 DoD all
-hold; signal to planning session "R<N> done — ready for round-review".>
+<when the executor knows the round is done: §3 holds; signal the planning session
+"R<N> done — ready for /round-review">
 ```
 
-Elaborate the R+1 stubs via `/spec --from <stub>` (`STUB` → `READY FOR EXECUTOR`), then
-dispatch the round master:
+In the program master's status table, append one `in-progress` row linking the round
+master and set each `Closes` row back to `in-progress`. Stage by path the round master,
+stubs, and edited masters, and commit them as one change set, so worktrees and the next
+review see them. The next action is `/spec --from <stub>` on each stub in dependency
+order (`STUB` → `READY FOR EXECUTOR`), a commit of the elaborations, then dispatch of
+the round master:
 
 ```
 /goal execute docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md
 ```
 
-Once stubs are elaborated, one file dispatches the round with no ordering caveats in the
-prompt. The execution order, dependencies, DoD, and exit signal all live inside the file.
+Use the harness's equivalent where `/goal` is absent.
 
-### 9. Produce the review report
-
-For the user (typically: the planning-session agent invoking this skill, or the user
-themselves). Structure:
+### 9. Report
 
 ```
-## Round Review — <PROGRAM_NAME> Round <N>
+## Round Review — <PROGRAM_NAME> Round <k>
 
 ### Executive verdict
-<one paragraph — what shipped, what didn't, the headline finding>
+<one paragraph: what shipped, what did not, the headline finding>
 
-### Trust-but-verify cross-check
+### Claim versus disk
 - Executor claim: <quote>
-- Reality on disk: <git status summary>
-- Conflict: <yes/no, and what>
+- Disk: <git status / git log summary>
+- Conflict: <none, or what>
 
-### DoD walk (master §5)
-| § | Criterion | Verdict | Evidence |
-| 5.1 | <criterion> | PASS / PARTIAL / FAIL / UNVERIFIED | <file:line or gap> |
-| ... | ... | ... | ... |
+### Criteria walk
+| Source | Criterion | Verdict | Evidence |
+| DEFINITION OF DONE 1 | <criterion> | PASS / PARTIAL / FAIL / UNVERIFIED | <file:line or gap> |
+| Round DoD 1 | ... | ... | ... |
+| Gate <NN> | ... | ... | ... |
 
-### Zero-order findings (outside §5)
-<numbered list, severity-ordered>
+### Zero-order findings
+<numbered, severity-ordered, each with its triage>
 
-### R+1 artifacts written
-**Round master (the dispatch target):**
-- `SPEC_<NAME>_R<N>_00_MASTER.md` — execution order, round DoD, first-action checklist
-
-**Stubs (the children):**
-- `SPEC_<NAME>_R<N>_01_<TOPIC>.md` — <one line>
-- `SPEC_<NAME>_R<N>_02_<TOPIC>.md` — <one line>
-- ...
+### R<N> artifacts written
+- Round master: [SPEC_<NAME>_R<N>_00_MASTER.md](docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md)
+- Stubs: [SPEC_<NAME>_R<N>_01_<TOPIC>.md](docs/specs/SPEC_<NAME>_R<N>_01_<TOPIC>.md) — <one line> (one per stub)
 
 ### Verification commands to run
-<commands the user should run to settle UNVERIFIED rows>
-
-### Dispatch line
-1. Elaborate stubs: `/spec --from docs/specs/SPEC_<NAME>_R<N>_01_<TOPIC>.md` (repeat per R+1 stub)
-2. Execute round: `/goal execute docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md`
-(or `no next action — program complete` when zero R+1 stubs remain)
+<commands that settle UNVERIFIED rows>
 
 ### Next action
-"Elaborate the R+1 stubs via `/spec --from`, then dispatch the round master to your executor."
-OR
-"No follow-up specs needed — program complete. Ship and archive the master, completed children, and round artifacts (leave unbuilt scheduled-deferral specs live in `docs/specs/`)."
+1. `/spec --from docs/specs/SPEC_<NAME>_R<N>_01_<TOPIC>.md` (repeat per stub)
+2. `/goal execute docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md`
+— or, with zero stubs, the Exit section's next action —
+
+Session: <session ID> · Transcript: <path>
 ```
 
-End with a clear next action.
+## Exit
 
-## R+1 stub naming convention
+Every review reconciles the status tables with its verdicts: a row whose `Gate` reads
+PASS becomes `COMPLETE`, and the reviewed round's row in the program master becomes
+`COMPLETE` (its remaining gaps live in `R<N>`).
 
-- `SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md` — `<NN>` zero-padded within the round
-- `<N>` is the round number (R2, R3, R4, ...) incremented per `/round-review` invocation
-- Stubs from different rounds can coexist in the same folder; the round number prevents
-  collision and preserves history
-- Naming follows the program master's pattern — if the existing program uses
-  `SPEC_<NAME>_R2_<NN>_<TOPIC>.md` (zero-padded `<NN>`), match it; if it uses
-  `SPEC_<NAME>_R2_<NN>_<TOPIC>.md` without padding, match that
+The program is complete when this review writes zero stubs, leaves no criterion
+UNVERIFIED, and no status row reads `OPEN` or `in-progress`. Short of that, withhold the
+archive recommendation: with an UNVERIFIED criterion, report `pending verification` and
+list the commands; with `OPEN` rows, report them as the next dispatch.
 
-## Standing instructions (defaults baked in)
-
-These are operating defaults; the user does not re-prompt per session:
-
-- **Trust the disk, not the executor's status file.** Cross-reference always.
-- **Probe untracked files explicitly.** `git status --porcelain | grep '^??'` — many
-  glob tools filter untracked by default.
-- **Walk the DoD criterion-by-criterion.** Don't summarize. The master is the contract;
-  every criterion gets a verdict.
-- **Zero-order findings get equal weight to DoD criteria.** "Work uncommitted" and
-  "headline metric broken" may not be in §5, but they block shipping.
-- **R+1 stubs use `/program`'s stub schema exactly.** `Parallel-safe with` in the header,
-  Telemetry hook / Diagnostics path / Rollback story sections (with `N/A: <justification>`
-  allowed), and the title-matched `/spec --from` elaboration footer are all required. The
-  schema is what `/spec --from` reads downstream.
-- **Loop exit is when this skill writes zero stubs.** If everything passes, the report
-  says so explicitly; the program is done.
-- **Surface session metadata at handoff-shaped moments.** Round-review reports are
-  themselves a handoff moment — the user takes the report to another session, an
-  external executor, or back to their planning agent. The report MUST include the
-  current session ID and transcript path (typically alongside the next-dispatch line
-  at the bottom). Same reasoning as `/program`'s `Operating rules`;
-  3+ instances of "session id and path?"-class queries across two cwar sessions
-  (601821ab, 817c311b).
-- **Close every report with the next dispatch line.** The Output section already
-  promises this; the standing instruction here is reinforcement — never end a
-  `/round-review` invocation without the exact paste-shaped prompt for the user's
-  next move (typically `/spec --from` on the R+1 stubs followed by
-  `/goal execute docs/specs/SPEC_X_R<N>_00_MASTER.md`, or
-  `no next action — program complete` if the loop exited cleanly). The signal this
-  rule is leaking: the user typing "next step?" or "what's next?" after a report.
-  Each occurrence is an agent-side close failure. Reason: cwar session `601821ab`
-  produced 4+ instances of "next step?"-class prompts; same pattern as
-  `/program`'s `Operating rules`.
+On completion, the next action is `/program`'s archive rule: finish the doc and memory
+rows of `DEFINITION OF DONE`, `mkdir -p docs/specs/archive/`, `git mv` the program
+master, completed children, and round artifacts together, repair relative links in moved
+and linking files, and leave unbuilt scheduled-deferral specs in `docs/specs/`. Say
+`no next action — program complete` after that commit.
 
 ## Output
 
-Three artifacts:
-
-1. **Structured review report** (typically 300-700 words) in conversation — the verbal
-   verdict for the user.
-2. **N R+1 stub files** at `docs/specs/SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md` — per
-   `/program`'s stub schema, one per substantive gap.
-3. **One R+1 round master** at `docs/specs/SPEC_<NAME>_R<N>_00_MASTER.md` — the single
-   round dispatch target. Self-contained: execution order, round DoD, first-action
-   checklist all inside. Elaborate the R+1 stubs via `/spec --from <stub>`, then dispatch
-   with `/goal execute <round-master-path>` (or the executor environment's equivalent) —
-   no ordering caveats in the prompt; the file carries them.
-
-If N == 0: the program is done. Report says so; no stubs or round master are written;
-recommends archiving the program master, completed child specs, and any prior round
-masters/stubs together (`mkdir -p docs/specs/archive/` + `git mv`, leaving unbuilt
-scheduled-deferral specs live in `docs/specs/` and updating relative links on both sides
-— `archive/` in each live deferred spec, `../` in the archived master) and completing any
-doc/memory-update rows the master's `DEFINITION OF DONE` section carries.
+A 300–700 word report in conversation, the R+1 stubs, and the round master. Close with
+the paste-ready next command plus the session ID and transcript path when available.
 
 ## Companion skills
 
-- `/program` — produces the master + initial stubs `/round-review` reads as input.
-  Round-review's output (R+1 stubs) is consumed by `/spec --from` for elaboration in
-  the next dispatch.
-- `/spec --from <stub>` — elaborates each R+1 stub into a full executable spec when
-  the next executor round dispatches.
-- `/peer-review` — `/round-review` invokes peer-review-style discipline (fresh
-  perspective, adjacent-file reads) but is broader: peer-review checks one change set;
-  round-review checks a change set against a named contract (the program master).
-  Both can fire on the same round.
-- `/note` — when zero-order findings include items that genuinely don't belong in this
-  program, file them as notes (different folder, different lifecycle) so they don't
-  evaporate or accidentally become R+1 stubs.
+`/program` writes the master and the stub schema this skill reads. `/spec --from <stub>`
+elaborates R+1 stubs. `/peer-review` reviews one change set and can run on the same
+round. `/note` holds findings outside the program.

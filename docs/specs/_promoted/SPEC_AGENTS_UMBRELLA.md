@@ -1,10 +1,10 @@
-> **Superseded** by [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](../SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) on 2026-06-13 — re-architected under [LAW own-your-namespace]. Retained for its migration thinking; the 2026-06-13 revalidation findings are summarized at the master's §0 evidence table (not in this file — this body is the unmodified original draft, incl. its now-stale "13 skills" count and the cherry-apply Phase 4 that doc-churn made infeasible).
+> **Superseded** by [SPEC_CAIRN_OWNERSHIP_00_PROGRAM](../archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md) on 2026-06-13 — re-architected under [LAW own-your-namespace]. Retained for its migration thinking; the 2026-06-13 revalidation findings are summarized at the master's §0 evidence table (not in this file — this body is the unmodified original draft, incl. its now-stale "13 skills" count and the cherry-apply Phase 4 that doc-churn made infeasible).
 
 # v0.14.0 — agents/ umbrella + no-agent-writes-to-CLAUDE.md
 
 > **Filed:** 2026-05-02 · **By:** Claude Opus 4.7 (1M context) · **Requested by:** maintainer
 >
-> **Promoted from:** [docs/notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md](../notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md)
+> **Promoted from:** [docs/notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md](../../notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md)
 >
 > **Builds on prototype:** commit `345241a` (`feat: v0.14.0 — agents/ umbrella + git as memory bus`) — 15 files, 159+/116−, branch deleted but commit reachable. The prototype solved the *path* shift (memory + laws → `<project>/agents/`); this spec keeps that work and adds the *install-method* shift forced by the 2026-05 sandbox restriction on agent-config writes.
 
@@ -449,7 +449,7 @@ git mv docs/specs/SPEC_AGENTS_UMBRELLA.md docs/specs/archive/SPEC_AGENTS_UMBRELL
 
 **Critical files to read first:**
 
-1. **The promoted note** — [docs/notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md](../notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md). Design intent for the path shift.
+1. **The promoted note** — [docs/notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md](../../notes/_promoted/NOTE_AGENTS_UMBRELLA_2026-04-30.md). Design intent for the path shift.
 2. **The prototype commit** — `git show 345241a`. 80% of phases 1-5 are already specified there as code; this spec extends it.
 3. **`manifest.json`** — the canonical destination map.
 4. **`adopt.md` (current)** — the install flow you're rewriting in Phase 3.

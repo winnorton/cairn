@@ -96,7 +96,8 @@ for the index.
   collaboration-skills, human-interaction-patterns, feedback-velocity,
   distillate-to-production, plus README and open-questions). The "why" archive.
 - `docs/notes/` (active, single-paragraph intent capture) + `docs/notes/_promoted/`
-  (breadcrumbs after `/spec --from` promoted a note to a spec)
+  (breadcrumbs after `/spec --from` promoted a note to a spec) + `docs/notes/_done/`
+  (finished without a spec)
 - `docs/specs/` — execution and permanent contract specs; folder-as-status for standalone execution specs and completed programs (`docs/specs/archive/` for shipped; permanent contracts and unbuilt scheduled-deferral specs stay live)
 - `plans/` (active) and `plans/archive/` (shipped, v0.3 → v0.12 documented) — same
   folder-as-status pattern as specs
@@ -147,7 +148,7 @@ Listed by category — full descriptions in
 
 ### Artifact — produce in-tree planning files
 - [`note`](files/skills/note/SKILL.md) — single-paragraph in-tree capture (`docs/notes/`)
-- [`spec`](files/skills/spec/SKILL.md) — structured agent execution spec (`docs/specs/`)
+- [`spec`](files/skills/spec/SKILL.md) — structured execution or permanent contract spec (`docs/specs/`)
 - [`program`](files/skills/program/SKILL.md) — program-of-specs (master + N workstream stubs)
 - [`round-review`](files/skills/round-review/SKILL.md) — review one round of executor output against a program, draft R+1 stubs + round master
 - [`prompt-evolve`](files/skills/prompt-evolve/SKILL.md) — author a version-controlled operational prompt for multi-pass work, cold-started from a five-input brief or extracted from a spec; coverage units may be known or discovered and a project-named coverage table tracks them, the prompt carries `ACTIVE`/`HELD` lifecycle state so a paused loop stays resumable, and every pass validates work then improves the prompt
@@ -227,7 +228,7 @@ Patterns this project leans on hard. Carry them through every new piece of work:
   `docs/specs/` vs `docs/specs/archive/` (standalone execution specs and completed
   programs; active program children carry `STUB` / `READY FOR EXECUTOR` and permanent
   contract specs carry 3-pass evidence status in `docs/specs/`), `docs/notes/` vs
-  `docs/notes/_promoted/`. `git mv` is the ship signal. Status fields drift; folder
+  `docs/notes/_promoted/` and `docs/notes/_done/`. `git mv` is the ship signal. Status fields drift; folder
   locations don't.
 - **Slug-is-identity** — laws and memories cite by slug, never by number. Numbers
   reorder; slugs survive. Same applies to skill names — collision with another

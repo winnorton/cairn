@@ -70,7 +70,7 @@ Folder location is state; use no status field.
 | State | Action |
 |---|---|
 | Promoted | `/spec --from <note>` moves it once to `docs/notes/_promoted/` as a breadcrumb. |
-| Done without a spec | Move it to `docs/notes/_done/`. |
+| Done without a spec | Move it to `docs/notes/_done/` (`mkdir -p`). |
 | Obsolete | Delete with user authorization. |
 
 Periodically surface live notes older than about 30 days for human review.

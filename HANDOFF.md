@@ -65,6 +65,45 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## Unreleased since v0.16.0
 
+- **Authoring-loop audit: state-machine gaps closed, `round-review` compressed**
+  (2026-11-19) — a four-dimension cold audit (state machine, end-to-end walkthrough,
+  propagation, prompt economy) of `spec`, `program`, `round-review`, `peer-review` after
+  the 2026-11-16 hardening, with every major finding re-verified first-hand against the
+  skill text and the two archived programs, then a fifth cold `/peer-review` of the
+  working diff whose three MAJORs (exit predicate ignoring undispatched rows, a
+  self-referential round DoD line, a worktree executor deadlocked on its own dependency
+  rows) were fixed before commit. Contract changes: (1) loop exit is "zero stubs, no
+  criterion UNVERIFIED, **and** no status row `OPEN` or `in-progress`" — `round-review`
+  previously declared a program complete with unrun gates — and each review reconciles
+  the status tables with its verdicts; (2) `round-review` derives the round
+  number from disk, loads the governing round master's DoD and stub Gates on R≥2, defines
+  `<base>`, stops on an undispatched round, commits R+1 artifacts as one change set, adds
+  a `Closes` field mapping each R+1 stub to a program status-table row, and appends a
+  round row to the program master; (3) scheduled-deferral trigger has an actor
+  (`/spec --from` asks, then flips header `DEFERRED` → `STUB` and row → `OPEN`); (4) Gate B
+  approval is durable (`Gate B: APPROVED <date>` in the master header, required by
+  `/spec --from` for R1 stubs; absent line = stop and ask, so pre-existing programs are
+  not hard-rejected); (5) "ready" is defined (every `Depends on` row `COMPLETE`), dependent
+  stubs elaborate in dependency order against the dependency's REPLACEMENT
+  (`CURRENT (after <NN>)`), and Pre-flight halts on unmet dependencies; (6) only the
+  integrating context (main checkout) edits status tables — field evidence: the archived
+  ownership master still shows all 12 rows `OPEN`; (7) bare `/program` resumes
+  orchestration after Gate B; `/program --from` rejects masters and program children;
+  post-archive work is a standalone `/spec`; shared files get a named writer or serialized
+  order (the ownership program had to invent its §9.5 merge-map); (8) every move repairs
+  inbound links as well as links inside the moved file — four broken breadcrumb links in
+  `docs/notes/_promoted/`, `docs/specs/_promoted/`, and the archived ownership master
+  repaired. Economy: `spec` states the ship action once (was three drifted copies);
+  `round-review` rewritten into the compressed register, 2061 → 967 body words and
+  description 815 → 640 chars, with §-number shorthand replaced by section titles in the
+  generated templates; `swarm` drops its reference to the removed `/fast-execute` and its
+  `/round-review` companion claim. Body-word baseline re-recorded: `program` +171
+  (justified by items 3–7), `spec` +1, `round-review` −1094, `peer-review` +6 (working-tree
+  review form), `swarm` −1, `note` +2. `VERSION` unchanged at 0.16.0. Known and left for the release pass:
+  `AGENTS.md`, `CLAUDE.md`, `README.md`, and `adopt.md` still name v0.15.0 as latest;
+  `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_12_ADAPTER_CODEX.md` is a live child with no row
+  in its archived master. [MEM reference/prompt-economy]
+  [MEM feedback/parallel-dimension-review-verify-blockers]
 - **Authoring & review loop hardening (`program`, `spec`, `round-review`, `peer-review`)**
   (2026-11-16) — closed post-compression and cross-skill state-machine gaps validated
   across four cold `/peer-review` passes per `[LAW pre-merge-review]`: (1) `program` and

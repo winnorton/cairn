@@ -77,7 +77,7 @@
       },
       "role": "optional",
       "tier": "grow",
-      "description": "Pre-emptive intent capture — file a quick thought as a dated note in the project repo. Distinct from /reflect (post-hoc) and from durable, agent-indexed cross-session memory. Includes the two-destinations disambiguation table."
+      "description": "Pre-emptive intent capture — file a quick thought as a dated note in the project repo. Distinct from /reflect (post-hoc) and from durable, agent-indexed cross-session memory. Includes a routing table (note vs memory/law vs /spec vs /reflect)."
     },
     {
       "src": "files/skills/peer-review/SKILL.md",
@@ -273,7 +273,7 @@
       },
       "role": "scaffolding",
       "tier": "structure",
-      "description": "Program-of-specs authoring: produce one master coordination doc + N workstream child stubs in docs/specs/ for substantial work that exceeds a single spec's scope. Bakes in no-deferral discipline, cross-cutting axes coverage (telemetry/diagnostics/rollback per workstream), informal axes-sign-off + commit-then-/peer-review at the master gate, and program-internal N-label bookkeeping for review-iteration traceability. Three invocation modes: cold-start, promote-from-spec (when a single /spec outgrew one file), and revise-draft. Stubs are elaborated by `/spec --from`."
+      "description": "Program-of-specs authoring: produce one master coordination doc + N workstream child stubs in docs/specs/ for substantial work that exceeds a single spec's scope. Bakes in deferral discipline (no unscheduled deferrals; a scheduled one needs a trigger, a stub, and user approval; cap 5), cross-cutting axes coverage (telemetry/diagnostics/rollback per workstream), informal axes-sign-off + commit-then-/peer-review at the master gate, and program-internal N-label bookkeeping for review-iteration traceability. Three invocation modes: cold-start, promote-from-spec (when a single /spec outgrew one file), and bare `/program` (revise the draft before Gate B approval; resume orchestration after it). Gate B approval is recorded in the master header; stubs are elaborated by `/spec --from`."
     },
     {
       "src": "files/skills/round-review/SKILL.md",
@@ -285,7 +285,7 @@
       },
       "role": "scaffolding",
       "tier": "structure",
-      "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's Definition-of-Done section criterion-by-criterion against the diff (match sections by title, not §-number), surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) encoding execution order, round DoD, and first-action checklist. Elaborate R+1 stubs via `/spec --from <stub>` (`STUB` → `READY FOR EXECUTOR`), then dispatch `/goal execute <round-master-path>` with no ordering caveats in the prompt. Closes the orchestration loop: /program → /spec --from → executor → /round-review → /spec --from (R+1) → next dispatch → repeat. Loop exits when /round-review writes zero stubs. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
+      "description": "Round-review verb: trust-but-verify an executor's round of work against a /program-produced master, walk the master's Definition-of-Done section criterion-by-criterion against the diff (match sections by title, not §-number), surface zero-order findings outside the DoD, and draft (a) R+1 stub specs for each gap PLUS (b) an R+1 round master (SPEC_<NAME>_R<N>_00_MASTER.md) encoding execution order, round DoD, and first-action checklist. Elaborate R+1 stubs via `/spec --from <stub>` (`STUB` → `READY FOR EXECUTOR`), then dispatch the round master (`/goal execute <round-master-path>` or the harness's equivalent) with no ordering caveats in the prompt. Closes the orchestration loop: /program → /spec --from → executor → /round-review → /spec --from (R+1) → next dispatch → repeat. Loop exits when /round-review writes zero stubs and leaves no criterion UNVERIFIED. Do NOT invoke if you authored the executor's implementation (anti-fresh-perspective)."
     },
     {
       "src": "files/skills/prompt-evolve/SKILL.md",

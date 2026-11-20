@@ -23,7 +23,8 @@ Move-on-state, not flip-a-field. Three terminal directories carry the lifecycle:
 | `docs/notes/_promoted/` | Promoted once via `/spec --from <note>`. The note stays as a breadcrumb pointing at the spec; file separate notes or child stubs when follow-up threads split off. |
 | `docs/notes/_done/` | Work completed without ever needing a spec. |
 
-A note that becomes obsolete or superseded is deleted — no `_archive/` here.
+A note that becomes obsolete or superseded is deleted with user authorization — no
+`_archive/` here. `_promoted/` and `_done/` are created on first use (`mkdir -p`).
 
 ## Promotion path
 
@@ -34,8 +35,9 @@ When a note matures into real work:
 ```
 
 The `/spec` skill reads the note for intent, does research, writes a structured spec in
-`docs/specs/`, and `git mv`s the note to `_promoted/` with a header line pointing at
-the new spec. Original intent paragraph stays preserved.
+`docs/specs/`, and moves the note to `_promoted/` (`git mv` when tracked, plain `mv`
+when untracked) with a header line pointing at the new spec, repairing relative links in
+the moved note and in files that link to it. Original intent paragraph stays preserved.
 
 ## Hygiene
 
