@@ -20,7 +20,7 @@ child into an executable plan.
 |---|---|
 | `/program <NAME> [description]` | Author from established intent. |
 | `/program --from docs/specs/SPEC_X.md` | Promote an oversized active execution spec. `<NAME>` defaults to the source's. |
-| `/program` | Before Gate B approval, revise the current draft. After approval, resume: reload the active master's status table and latest round master, report, and leave frozen sections unrevised. |
+| `/program` | Before Gate B approval, revise the current draft. After approval, resume: reload the active master's status table and latest round master, report, and leave frozen sections unrevised. With no `Gate B:` line and dispatched rows, ask which applies. |
 
 Reject sources under `docs/specs/archive/` or `docs/specs/_promoted/`, program and round
 masters, and program children (a `STUB`, `DEFERRED`, or `READY FOR EXECUTOR` header).
@@ -194,6 +194,7 @@ Repeat until approved, then record `Gate B: APPROVED <date>` in the master heade
 - The master status table is authoritative, and only the integrating context (the main
   checkout) edits it: claim a row with owner and `in-progress` at dispatch; mark it
   `COMPLETE` on merge. A worktree executor reports and leaves the master unedited.
+  Commit elaborations and status edits before cutting a worktree.
 - After Gate B approval, run `/spec --from <stub>` on every `OPEN` row in dependency
   order (`STUB` → `READY FOR EXECUTOR`), skipping `DEFERRED` rows. Dispatch ready
   elaborated workstreams, in parallel where the environment allows, without re-asking;
@@ -201,11 +202,11 @@ Repeat until approved, then record `Gate B: APPROVED <date>` in the master heade
 - Verify completed executor rounds with `/round-review` against `DEFINITION OF DONE`
   (`DEFERRED (<trigger>)` rows do not block completion). Keep child specs in
   `docs/specs/` while the program is active.
-- Archive when the latest `/round-review` writes zero stubs, leaves no criterion
-  unverified, and no row reads `OPEN` or `in-progress`: `mkdir -p docs/specs/archive/`, then `git mv` the master, completed child
-  specs, and round masters/stubs there together. Repair relative links in every moved
-  file and every file linking to one. Leave unbuilt scheduled-deferral specs in
-  `docs/specs/`.
+- Archive when the latest `/round-review` writes zero stubs, leaves nothing unverified,
+  and no row reads `OPEN` or `in-progress`: `mkdir -p docs/specs/archive/`, then
+  `git mv` the master, completed child specs, and round masters/stubs there together.
+  Repair relative links in every moved file and every file linking to one. Leave
+  unbuilt scheduled-deferral specs in `docs/specs/`.
 - Work added after archive is a standalone `/spec` linking the archived master: no `NN`,
   no Status header, no master row.
 - Link every spec mention to its current path, including conversation status reports.

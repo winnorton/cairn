@@ -138,8 +138,8 @@ Permanent contract specs stay live and carry evidence-bearing status.
   `/program`-produced master. Walks the master's `DEFINITION OF DONE` criterion-by-criterion against
   the diff (the executor's status files are NOT authoritative; disk wins). Drafts R+1
   stub specs for the gaps plus an R+1 round master that's a self-contained dispatch
-  target. Loop exits when the skill writes zero R+1 stubs and leaves no criterion
-  unverified. Closes the orchestration
+  target. Loop exits when the skill writes zero R+1 stubs, leaves nothing unverified,
+  and every program row is complete. Closes the orchestration
   loop: `/program` → `/spec --from` → executor → `/round-review` → `/spec --from` (R+1)
   → next dispatch.
 - `prompt-evolve/` — author a version-controlled operational prompt for multi-pass work where

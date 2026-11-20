@@ -247,7 +247,8 @@ Cairn's skills fall into five categories with different origins.
   against a `/program` master. Walks the master's `DEFINITION OF DONE`
   criterion-by-criterion against the diff; drafts R+1 stub specs (elaborated via
   `/spec --from`) and a self-contained R+1 round master for the gaps. Loop exits
-  when this skill writes zero R+1 stubs and leaves no criterion unverified.
+  when this skill writes zero R+1 stubs, leaves nothing unverified, and every
+  program row is complete.
 - `prompt-evolve` — extract a version-controlled operational prompt from a
   `/spec` for multi-pass work where execution produces both output and reusable
   insight. Coverage units may be known or discovered; each prompt defines its

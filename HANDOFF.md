@@ -72,7 +72,12 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
   skill text and the two archived programs, then a fifth cold `/peer-review` of the
   working diff whose three MAJORs (exit predicate ignoring undispatched rows, a
   self-referential round DoD line, a worktree executor deadlocked on its own dependency
-  rows) were fixed before commit. Contract changes: (1) loop exit is "zero stubs, no
+  rows) were fixed before commit, and a sixth on the committed branch per
+  `[LAW pre-merge-review]` — no blockers, four MAJORs fixed in a follow-up commit
+  (elaborations and status edits never committed before a worktree is cut; a FAIL owned
+  by an undispatched or deferred row becoming a duplicate stub; reconciliation unable to
+  reach rows outside the reviewed round; an UNVERIFIED `Gate` dropped when stubs are also
+  written). Contract changes: (1) loop exit is "zero stubs, no
   criterion UNVERIFIED, **and** no status row `OPEN` or `in-progress`" — `round-review`
   previously declared a program complete with unrun gates — and each review reconciles
   the status tables with its verdicts; (2) `round-review` derives the round
@@ -94,11 +99,11 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
   inbound links as well as links inside the moved file — four broken breadcrumb links in
   `docs/notes/_promoted/`, `docs/specs/_promoted/`, and the archived ownership master
   repaired. Economy: `spec` states the ship action once (was three drifted copies);
-  `round-review` rewritten into the compressed register, 2061 → 967 body words and
-  description 815 → 640 chars, with §-number shorthand replaced by section titles in the
+  `round-review` rewritten into the compressed register, 2061 → 1037 body words and
+  description 815 → 667 chars, with §-number shorthand replaced by section titles in the
   generated templates; `swarm` drops its reference to the removed `/fast-execute` and its
-  `/round-review` companion claim. Body-word baseline re-recorded: `program` +171
-  (justified by items 3–7), `spec` +1, `round-review` −1094, `peer-review` +6 (working-tree
+  `/round-review` companion claim. Body-word baseline re-recorded: `program` +190
+  (justified by items 3–7), `spec` +1, `round-review` −1024, `peer-review` +6 (working-tree
   review form), `swarm` −1, `note` +2. `VERSION` unchanged at 0.16.0. Known and left for the release pass:
   `AGENTS.md`, `CLAUDE.md`, `README.md`, and `adopt.md` still name v0.15.0 as latest;
   `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_12_ADAPTER_CODEX.md` is a live child with no row

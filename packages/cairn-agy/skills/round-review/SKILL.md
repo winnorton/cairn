@@ -5,9 +5,9 @@ description: Verify one finished executor round against a /program master and dr
   and git state; executor status files and "all done" claims are claims, not evidence.
   Write R+1 stubs (SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md) plus one self-contained round master
   (SPEC_<NAME>_R<N>_00_MASTER.md) as the single dispatch target; elaborate the stubs via
-  /spec --from <stub>. The loop exits when a review writes zero stubs and leaves no
-  criterion unverified. Do not use on your own implementation, while the executor is
-  still working, or for single-spec work (/peer-review).
+  /spec --from <stub>. The loop exits when a review writes zero stubs, leaves nothing
+  unverified, and every program row is complete. Do not use on your own implementation,
+  while the executor is still working, or for single-spec work (/peer-review).
 ---
 
 # Round Review
@@ -22,6 +22,7 @@ state are evidence; the executor's status file is a claim.
 - The reviewer did not author the implementation; route your own work to a fresh agent
   or session.
 - The program master (`SPEC_<NAME>_00_PROGRAM.md`) is readable; it holds the criteria.
+- Run from the main checkout: this skill edits the program master.
 - Single-spec work goes to `/peer-review`.
 
 ## Workflow
@@ -41,15 +42,16 @@ master is that round master, or the program master for R1. New artifacts are `R<
 Compare the executor's status file or transcript claim with `git status -sb`,
 `git log --oneline <base>..HEAD`, and the governing master's status table, where
 `<base>` is the commit that added the governing master
-(`git log --diff-filter=A --format=%h -- <master-path> | tail -1`). Disk wins every
+(`git log --diff-filter=A --format=%h -- <master-path> | tail -1`). When that prints
+nothing, or the commit also holds round work, ask the user for the base. Disk wins every
 conflict; record the conflict in the report.
 
 The change set is committed work (`git diff <base>..HEAD`) plus uncommitted work
 (`git diff HEAD`) plus untracked files (`git status --porcelain | grep '^??'`; glob
 tools skip them). Untracked files are round output: they land or get removed.
 
-When the change set and every unmerged executor branch hold no implementation work, the
-round has not run: stop and report its dispatch command.
+When the change set and every unmerged executor branch hold no work on this round's
+`Files`, the round has not run: stop and report it as undispatched.
 
 ### 3. Load the rubric
 
@@ -57,11 +59,12 @@ round has not run: stop and report its dispatch command.
   verification target), `PROGRAM GOAL`, `CONTRACT SURFACES`, and the status table.
 - From a governing round master: its round-level Definition of Done, stub table, and
   master amendments.
-- From each child or stub dispatched this round: its `Gate`.
+- From each child or stub dispatched this round, and each program row short of
+  `COMPLETE` with work on disk: its `Gate`.
 
 Two row kinds are outside this round's gaps: untriggered `DEFERRED (<trigger>)` rows,
-and `OPEN` rows with no work in the change set (report those as executable next). Review
-against the written criteria only.
+and `OPEN` rows with no work on disk (report those as executable next). Review against
+the written criteria only.
 
 ### 4. Probe disk
 
@@ -85,6 +88,10 @@ Give each program criterion, round criterion, and dispatched `Gate` one verdict:
 Run heavy verification commands only at the user's request; otherwise list them in the
 report.
 
+Then reconcile the program master's status table with the verdicts. A row becomes
+`COMPLETE` when its `Gate`, and the `Gate` of every stub that `Closes` it, reads PASS.
+The reviewed round's row becomes `COMPLETE`; its remaining gaps live in `R<N>`.
+
 ### 6. Surface zero-order findings
 
 List, with severity, the blockers the criteria did not anticipate: uncommitted work or
@@ -93,7 +100,8 @@ files, debug logs, or build artifacts left in the tree; `.gitignore` violations;
 between a master and what was implemented.
 
 Triage every finding, criterion and zero-order alike. A FAIL or PARTIAL criterion is
-ship-blocking unless the spec is reconciled:
+ship-blocking unless the spec is reconciled or the criterion waits on an `OPEN` or
+`DEFERRED` row:
 
 | Triage | Action |
 |---|---|
@@ -112,7 +120,7 @@ padded as the program's children are; merge findings that share a workstream. Us
 ```markdown
 # SPEC_<NAME>_R<N>_<NN>_<TOPIC>
 
-**Status:** STUB · **Program:** [SPEC_<NAME>_00_PROGRAM](SPEC_<NAME>_00_PROGRAM.md) · **Round master:** [SPEC_<NAME>_R<N>_00_MASTER](SPEC_<NAME>_R<N>_00_MASTER.md) · **Round:** R<N> · **Closes:** <program status-table row NN, or "none"> · **Depends on:** <other R<N> stubs or "none"> · **Parallel-safe with:** <IDs or "all"> · **Severity:** <CRITICAL | HIGH | MEDIUM | LOW>
+**Status:** STUB · **Program:** [SPEC_<NAME>_00_PROGRAM](SPEC_<NAME>_00_PROGRAM.md) · **Round master:** [SPEC_<NAME>_R<N>_00_MASTER](SPEC_<NAME>_R<N>_00_MASTER.md) · **Round:** R<N> · **Closes:** <program status-table rows NN, or "none"> · **Depends on:** <other R<N> stubs or "none"> · **Parallel-safe with:** <IDs or "all"> · **Severity:** <CRITICAL | HIGH | MEDIUM | LOW>
 
 ## Goal
 ## Scope
@@ -127,7 +135,7 @@ padded as the program's children are; merge findings that share a workstream. Us
 Phases, steps, pre-flight, post-flight, executor handoff: **TO BE ELABORATED** via `/spec --from docs/specs/SPEC_<NAME>_R<N>_<NN>_<TOPIC>.md`. Read the round master (`SPEC_<NAME>_R<N>_00_MASTER.md`) and program master sections titled `CONTRACT SURFACES`, `RESOLVED DESIGN DECISIONS (no deferrals)`, `HARD CONTRACT` (when present), and `Parallel-execution protocol` — match titles, not §-numbers.
 ```
 
-`Closes` names the program status-table row the stub finishes. `Telemetry hook`,
+`Closes` names the program status-table rows the stub finishes. `Telemetry hook`,
 `Diagnostics path`, and `Rollback story` accept `N/A: <reason>`.
 
 ### 8. Draft the round master
@@ -155,7 +163,8 @@ finding. This is the executor's purpose statement.>
 <table: # | spec link | status (OPEN / in-progress / COMPLETE) | closes (program row) | severity | one-line goal>
 
 ## 3. Round-level Definition of Done
-<numbered list of checks the executor can verify that make Round <N> shippable>
+<numbered list of checks the executor can verify that make Round <N> shippable, plus
+every criterion or Gate this review left UNVERIFIED, each with its command>
 
 ## 4. First-action checklist
 <numbered steps: read this master; read the program master sections titled CONTRACT
@@ -228,20 +237,21 @@ Session: <session ID> · Transcript: <path>
 
 ## Exit
 
-Every review reconciles the status tables with its verdicts: a row whose `Gate` reads
-PASS becomes `COMPLETE`, and the reviewed round's row in the program master becomes
-`COMPLETE` (its remaining gaps live in `R<N>`).
+The program is complete when this review writes zero stubs, leaves no criterion or
+`Gate` UNVERIFIED, and no program-master row reads `OPEN` or `in-progress`. Short of
+that, withhold the archive recommendation:
 
-The program is complete when this review writes zero stubs, leaves no criterion
-UNVERIFIED, and no status row reads `OPEN` or `in-progress`. Short of that, withhold the
-archive recommendation: with an UNVERIFIED criterion, report `pending verification` and
-list the commands; with `OPEN` rows, report them as the next dispatch.
+- an UNVERIFIED verdict: report `pending verification`, list the commands, and offer to
+  run them;
+- an `OPEN` row: report it as the next dispatch;
+- an `in-progress` row with no stub: report it as blocked and name what its `Gate`
+  still lacks.
 
-On completion, the next action is `/program`'s archive rule: finish the doc and memory
-rows of `DEFINITION OF DONE`, `mkdir -p docs/specs/archive/`, `git mv` the program
-master, completed children, and round artifacts together, repair relative links in moved
-and linking files, and leave unbuilt scheduled-deferral specs in `docs/specs/`. Say
-`no next action — program complete` after that commit.
+On completion, the next action is `/program`'s archive rule: `mkdir -p
+docs/specs/archive/`, `git mv` the program master, completed children, and round
+artifacts together, repair relative links in moved and linking files, and leave unbuilt
+scheduled-deferral specs in `docs/specs/`. Say `no next action — program complete` after
+that commit.
 
 ## Output
 
