@@ -19,7 +19,7 @@ After install, confirm with:
 
 ```
 agy plugin list
-# expect: cairn  0.14.0  ...
+# expect: cairn  0.16.1  ...
 ```
 
 ### From a local clone

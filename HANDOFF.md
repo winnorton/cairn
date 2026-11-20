@@ -6,7 +6,7 @@ unless explicitly preserved.
 
 > **Repo-root entry point (canonical, added 2026-06):** read [AGENTS.md](AGENTS.md) at
 > the repo root. It's the cairn-itself agent context — layout, 20 skills, key laws by
-> slug, design DNA, current state (v0.15.0 shipped). Claude Code auto-loads
+> slug, design DNA, current state (v0.16.1 shipped). Claude Code auto-loads
 > [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
 > in this repo, AGENTS.md is the orientation you want before anything else.
 
@@ -47,7 +47,16 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 
 ## State at end of session
 
-- **Latest release:** v0.15.0 — **the interim slice, released**, shipped 2026-07-28
+- **Latest release:** v0.16.1 — **authoring-loop hardening, released**, shipped
+  2026-11-19 (tag `v0.16.1`). Cuts a release over the commits that accumulated on `main`
+  after v0.16.0 (2026-08-05, the `autoresearch` execution pack — see
+  `## Released as v0.16.0`): the `autoresearch-finalize` harvest step, `swarm`'s
+  held/retired-on-approval lifecycle, `lra` → `lra-lite`, the adopt.md HTML-comment fix,
+  and three passes over `spec` / `program` / `round-review` / `peer-review`. Cut for the
+  v0.15.0 reason again: on 2026-11-19 both Claude Code and agy still reported
+  `cairn 0.15.0`. 20 skills; all six version files in lockstep. Detail in
+  `## Released as v0.16.1` below.
+- **Earlier release:** v0.15.0 — **the interim slice, released**, shipped 2026-07-28
   (tag `v0.15.0`). Cuts a release over the 18 commits that had accumulated on `main`
   since v0.14.0 while `VERSION` stayed pinned at `0.14.0`: the skill-compression
   campaign, the `lra` skill pack, law-creation discipline, `swarm`, and the
@@ -63,8 +72,26 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
 - **Live feedback endpoint:** https://cairn.winnorton.com/feedback (canonical) and https://cairn-feedback-591252228833.us-central1.run.app/feedback (Cloud Run direct fallback).
 - **Empirical confirmation 2026-04-27:** v0.13.0 fresh-perspective `/peer-review` caught README body-text drift the author missed (the v0.9.0-era citation explainer in README's "Usage signal (citations)" section — anchored on `LAWS.md`, didn't grep README's own usage-signal section). Validates `[LAW pre-merge-review]` — exactly the gap class `/peer-review` is built to catch.
 
-## Unreleased since v0.16.0
+## Released as v0.16.1 (2026-11-19)
 
+Released 2026-11-19: VERSION bump + lockstep across all six version files; cold
+`/peer-review` of the audit branch completed per `[LAW pre-merge-review]` (no blockers;
+four MAJORs fixed in `73b34f5` before merge). The release commit also corrects the stale
+v0.15.0 latest-tag references in `AGENTS.md`, `CLAUDE.md`, `README.md`, `adopt.md`, and
+both plugin READMEs.
+
+- **Open at release:** (a) agy 1.4.6 rejects the documented
+  `agy plugin install github:winnorton/cairn//packages/cairn-agy@main` target
+  ("install target must be a directory"); a local-directory install works — see
+  [`docs/notes/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md`](docs/notes/NOTE_AGY_INSTALL_GITHUB_TARGET_REJECTED_2026-11-19.md).
+  (b) Cairn has no Codex package; the maintainer's `~/.codex/skills` copy was refreshed by
+  direct copy on request. (c) `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_12_ADAPTER_CODEX.md`
+  is a live child with no row in its archived master.
+- **Previously unlogged, shipped here:** `lra` → `lra-lite` as the engine-free fallback
+  plus the strict-YAML frontmatter check in `sync-skills.mjs` (`261180e`); the lra-lite
+  hardcoded-local-path fix (`5cb70e2`); `swarm` "never archives" → held/retired only on
+  user approval (`3ecba02`); adopt.md accepts Markdown starting with HTML comments
+  (`8325d55`).
 - **Authoring-loop audit: state-machine gaps closed, `round-review` compressed**
   (2026-11-19) — a four-dimension cold audit (state machine, end-to-end walkthrough,
   propagation, prompt economy) of `spec`, `program`, `round-review`, `peer-review` after
@@ -104,10 +131,7 @@ in a single session on 2026-04-24. Live at https://github.com/winnorton/cairn.
   generated templates; `swarm` drops its reference to the removed `/fast-execute` and its
   `/round-review` companion claim. Body-word baseline re-recorded: `program` +190
   (justified by items 3–7), `spec` +1, `round-review` −1024, `peer-review` +6 (working-tree
-  review form), `swarm` −1, `note` +2. `VERSION` unchanged at 0.16.0. Known and left for the release pass:
-  `AGENTS.md`, `CLAUDE.md`, `README.md`, and `adopt.md` still name v0.15.0 as latest;
-  `docs/specs/SPEC_HIVE_CONTEXT_SESSIONS_12_ADAPTER_CODEX.md` is a live child with no row
-  in its archived master. [MEM reference/prompt-economy]
+  review form), `swarm` −1, `note` +2. [MEM reference/prompt-economy]
   [MEM feedback/parallel-dimension-review-verify-blockers]
 - **Authoring & review loop hardening (`program`, `spec`, `round-review`, `peer-review`)**
   (2026-11-16) — closed post-compression and cross-skill state-machine gaps validated
@@ -505,7 +529,9 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 ---
 
 _Originally written 2026-04-24 at session's end by the builder agent. Last updated
-2026-07-28 (**v0.15.0 release**): cut a tag over the 18-commit interim slice that had
+2026-11-19 (**v0.16.1 release**): released the authoring-loop hardening, logged the
+post-v0.16.0 commits, and corrected the latest-tag references. Prior refresh 2026-07-28
+(v0.15.0 release): cut a tag over the 18-commit interim slice that had
 been sitting on `main` unreleased since v0.14.0, because the pinned `VERSION` left
 installed plugins stranded on the v0.14.0 skill set with no signal to update on.
 Logged the `swarm` skill and the `prompt-evolve` cold-start/coverage-table/lifecycle

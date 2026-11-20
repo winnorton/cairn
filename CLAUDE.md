@@ -10,8 +10,9 @@ lands on the topline and the AGENTS.md pointer.
 
 Key orientation pointers (all detailed in AGENTS.md):
 
-- **Latest tag is v0.15.0** — the interim slice released, shipped 2026-07-28. The
-  prior tag v0.14.0 (2026-06-14) was the `.cairn/` ownership migration; its
+- **Latest tag is v0.16.1** — authoring-loop hardening, shipped 2026-11-19 (v0.16.0
+  added the `autoresearch` pack; v0.15.0 was the interim slice). The
+  tag v0.14.0 (2026-06-14) was the `.cairn/` ownership migration; its
   program master is archived at
   [`docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md`](docs/specs/archive/SPEC_CAIRN_OWNERSHIP_00_PROGRAM.md)
   — read it before touching `manifest.json`, `adopt.md`, or path conventions.

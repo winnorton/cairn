@@ -389,7 +389,7 @@ content from context.
 ### Step 6 — Write version marker, show import line, then report
 
 **First, write the version marker** to `{cairnRoot}/cairn-version` — a single
-line containing the installed version string (e.g. `0.15.0`), no frontmatter.
+line containing the installed version string (e.g. `0.16.1`), no frontmatter.
 This enables the Step 3 fast-path on future re-adoptions.
 
 **Second, show the user the import line** (user-action Step — cairn does NOT
@@ -479,7 +479,7 @@ Keep the report under ~200 words. No prose padding.
 The manifest and this file live on `main`. For a pinned version, fetch from a tag:
 
 ```
-https://raw.githubusercontent.com/winnorton/cairn/v0.15.0/manifest.json
+https://raw.githubusercontent.com/winnorton/cairn/v0.16.1/manifest.json
 ```
 
 If the user invoked with `adopt ...@<tag>`, use that tag. Otherwise use `main`.
@@ -604,7 +604,7 @@ State files installed to `.cairn/` by adopt:
 Skills are distributed via package manager — not in this table. See Step 4a.
 
 Most entries use `mode: create-if-absent`; the four lra prompt masters
-(`.cairn/context/lra/`, installed by adopt at tier `full` and consumed by the `/lra`
+(`.cairn/context/lra/`, installed by adopt at tier `full` and consumed by the `/lra-lite`
 skill) use `mode: overwrite` — cairn-owned, refreshed from upstream on every
 re-adopt. For the authoritative list, use the manifest at runtime — this table may drift.
 

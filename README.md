@@ -50,7 +50,7 @@ adopt https://github.com/winnorton/cairn
 Your agent will fetch [`adopt.md`](./adopt.md), detect your environment, preview the install
 plan, wait for your confirmation, and write the files. Nothing is installed without your ok.
 
-For a pinned version: `adopt https://github.com/winnorton/cairn@v0.15.0`
+For a pinned version: `adopt https://github.com/winnorton/cairn@v0.16.1`
 
 For a minimal install (two files, works with any agent): `adopt https://github.com/winnorton/cairn --tier seed`
 
@@ -84,7 +84,7 @@ Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi
 | `<project>/.cairn/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/.cairn/CLAUDE.md` | Cairn-shaped context sections — imported into your project's `CLAUDE.md` or `AGENTS.md` via one user-written import line |
 | `<project>/.cairn/LAWS.md` | Meta-laws + seed laws — your non-negotiables |
-| Skills via package | Five categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`), **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra`, `swarm`), and **execution** (`autoresearch`, `autoresearch-finalize`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
+| Skills via package | Five categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`), **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra-lite`, `swarm`), and **execution** (`autoresearch`, `autoresearch-finalize`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -365,6 +365,18 @@ Agents: the canonical install script is [`adopt.md`](./adopt.md). The machine-re
 list is [`manifest.json`](./manifest.json). Follow `adopt.md` precisely.
 
 ## Status
+
+v0.16.1 — **Authoring-loop hardening.** `spec`, `program`, `round-review`, and
+`peer-review` close a set of state-machine gaps found by cold audit: a program completes
+only when a round review writes zero stubs, leaves nothing unverified, and every program
+row is complete; scheduled deferrals, Gate B approval, round numbering, and status-table
+edits each have a named actor; `round-review` is half its former size. Also `lra` →
+`lra-lite` (the engine-free fallback), `swarm` held or retired only on user approval, and
+the `autoresearch-finalize` harvest step. 20 skills.
+
+v0.16.0 — **The execution category.** `autoresearch` and `autoresearch-finalize`: an
+autonomous measure-keep-revert optimization loop and its finalizer, the first cairn
+skills that bundle runtime scripts. `fast-execute` removed. 20 skills.
 
 v0.15.0 — **The interim slice, released.** Cuts a tag over the work that accumulated on
 `main` since v0.14.0 while `VERSION` stayed pinned, which had left installed plugins with

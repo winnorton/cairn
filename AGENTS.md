@@ -15,7 +15,14 @@ for the index.
 
 ## Current state
 
-- **Latest tag:** v0.15.0 (2026-07-28) — **the interim slice, released.** Cuts a tag
+- **Latest tag:** v0.16.1 (2026-11-19) — **authoring-loop hardening, released.** Cuts a
+  tag over the commits that accumulated on `main` after v0.16.0 (2026-08-05, the
+  `autoresearch` execution pack): `lra` → `lra-lite`, `swarm` held/retired only on user
+  approval, the `autoresearch-finalize` harvest step, and three passes over `spec`,
+  `program`, `round-review`, and `peer-review` that closed state-machine gaps and halved
+  `round-review`. Cut for the v0.15.0 reason again: installed plugins were still running
+  the v0.15.0 skill set.
+- **Earlier tag:** v0.15.0 (2026-07-28) — **the interim slice, released.** Cuts a tag
   over the 18 commits that had accumulated on `main` since v0.14.0 while `VERSION`
   stayed pinned: the skill-compression campaign, the `lra` pack, law-creation
   discipline, `swarm`, and `prompt-evolve`'s cold-start/coverage-table/lifecycle-state
