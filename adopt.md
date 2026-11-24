@@ -256,7 +256,7 @@ directory: `agy plugin install <clone>/packages/cairn-agy`. (agy 1.0.x took
 `github:winnorton/cairn//packages/cairn-agy@main`; agy 1.4.6 rejects that form with
 "install target must be a directory".)
 
-This stages all 20 cairn skills into agy's `/skill:` namespace (verified on agy 1.4.6:
+This stages all 21 cairn skills into agy's `/skill:` namespace (verified on agy 1.4.6:
 install from `main`, install from a pinned tag, and an uninstall → cold install
 round-trip). State lands in
 `<project>/.cairn/`; add the `@./.cairn/CLAUDE.md` import line to your `AGENTS.md`

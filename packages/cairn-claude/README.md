@@ -44,13 +44,13 @@ claude --plugin-dir /path/to/cairn/packages/cairn-claude
 
 ## What you get
 
-All 20 cairn skills, invocable as `/skill-name` in Claude Code:
+All 21 cairn skills, invocable as `/skill-name` in Claude Code:
 
 | Category | Skills |
 |---|---|
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
-| Cross-perspective | `/peer-review`, `/session-distill` |
+| Cross-perspective | `/peer-review`, `/session-distill`, `/convergence` |
 | Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra-lite`, `/swarm` |
 | Execution | `/autoresearch`, `/autoresearch-finalize` |
 

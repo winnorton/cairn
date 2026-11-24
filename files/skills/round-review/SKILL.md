@@ -247,7 +247,9 @@ that, withhold the archive recommendation:
 - an `in-progress` row with no stub: report it as blocked and name what its `Gate`
   still lacks.
 
-On completion, the next action is `/program`'s archive rule: `mkdir -p
+On completion, where `.cairn/convergence.md` requires it, first get a convergence report
+for the program's range (`/convergence` writes it) and link it from the master. Then the
+next action is `/program`'s archive rule: `mkdir -p
 docs/specs/archive/`, `git mv` the program master, completed children, and round
 artifacts together, repair relative links in moved and linking files, and leave unbuilt
 scheduled-deferral specs in `docs/specs/`. Say `no next action — program complete` after

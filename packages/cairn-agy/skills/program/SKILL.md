@@ -203,8 +203,10 @@ Repeat until approved, then record `Gate B: APPROVED <date>` in the master heade
   (`DEFERRED (<trigger>)` rows do not block completion). Keep child specs in
   `docs/specs/` while the program is active.
 - Archive when the latest `/round-review` writes zero stubs, leaves nothing unverified,
-  and no row reads `OPEN` or `in-progress`: `mkdir -p docs/specs/archive/`, then
-  `git mv` the master, completed child specs, and round masters/stubs there together.
+  no row reads `OPEN` or `in-progress`, and, where `.cairn/convergence.md` requires it, the
+  master links a convergence report for the program's range (`/convergence` writes it). Then
+  `mkdir -p docs/specs/archive/` and `git mv` the master, completed child specs, and round
+  masters/stubs there together.
   Repair relative links in every moved file and every file linking to one. Leave
   unbuilt scheduled-deferral specs in `docs/specs/`.
 - Work added after archive is a standalone `/spec` linking the archived master: no `NN`,
@@ -232,5 +234,6 @@ Confirm in at most 200 words:
 
 `/spec` elaborates stubs. `/peer-review` supplies Gate B. `/round-review` verifies
 executor rounds and drafts follow-up rounds. `/swarm` handles open-ended repeating wave
-fan-out. `/note` captures unrelated follow-up work. `/plan` handles conversational
+fan-out. `/convergence` reviews a closing program's subject for what it should have reused
+or shared. `/note` captures unrelated follow-up work. `/plan` handles conversational
 alignment before program authoring.

@@ -4,19 +4,20 @@
   "autoresearch": 1138,
   "autoresearch-finalize": 506,
   "bridge": 688,
+  "convergence": 912,
   "feedback": 803,
   "lra-lite": 1225,
   "note": 280,
   "peer-review": 490,
   "plan": 270,
-  "program": 1516,
+  "program": 1551,
   "prompt-evolve": 1125,
   "prune": 614,
   "reflect": 425,
   "reframe": 445,
-  "round-review": 1037,
+  "round-review": 1062,
   "session-distill": 2585,
   "spec": 982,
   "swarm": 1248,
-  "tour": 470
+  "tour": 471
 }

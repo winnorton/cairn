@@ -105,6 +105,18 @@ gap class that the work-author cannot see from inside their own session.
   `human-interaction-patterns.md`). Reports by default; never auto-applies; user "do it"
   gates any cairn-side change. Cousin to `/peer-review` (same observer-rotation
   mechanic; transcript instead of diff).
+- `convergence/` — cold lenses reading a finished multi-spec effort on one subject (a
+  gamemode, app, service or package) for what it should have reused or shared: new shared
+  primitives with one consumer, local copies of shared primitives that already exist, and
+  authoring-process friction. Every headline claim is verified before the report; open items
+  carry into the next run, which must settle each one. The project binding (subjects, shared
+  roots, measure commands, registers, whether closing a `/program` requires it) lives in
+  `<project>/.cairn/convergence.md`. Ships markdown references only (lens briefs, report and
+  profile templates). Promoted after three observed convergence passes in cwar-engine, each
+  with an artifact: Utopia 2026-09 (`SPEC_UTOPIA_FRAMEWORK_CONVERGENCE_00_PROGRAM`,
+  `RETRO_rts_utopia_convergence.md`), Principax Royale
+  (`SPEC_PRINCIPAX_ROYALE_GAME_03A_CONVERGENCE`), and Delve 2026-11
+  (`SPEC_DELVE_CONVERGENCE_00_PROGRAM`).
 
 `/reflect` is post-hoc same-agent (different gap class than these); `/peer-review` is
 pre-ship cross-agent. Both can fire on the same change set.

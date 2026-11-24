@@ -5,7 +5,7 @@ boundary. Read it first. It exists because session boundaries are where signal g
 unless explicitly preserved.
 
 > **Repo-root entry point (canonical, added 2026-06):** read [AGENTS.md](AGENTS.md) at
-> the repo root. It's the cairn-itself agent context — layout, 20 skills, key laws by
+> the repo root. It's the cairn-itself agent context — layout, 21 skills, key laws by
 > slug, design DNA, working agreement. Claude Code auto-loads
 > [CLAUDE.md](CLAUDE.md), which points at AGENTS.md. If you're a fresh agent landing
 > in this repo, AGENTS.md is the orientation you want before anything else.
@@ -546,7 +546,7 @@ Cairn's own `LAWS.md` (at repo root, added v0.9.1) now encodes this as
 ## For the next agent
 
 - **Start with [AGENTS.md](AGENTS.md) at the repo root.** It's the canonical agent
-  context for working on cairn itself — layout, 20 skills, key laws by slug, design
+  context for working on cairn itself — layout, 21 skills, key laws by slug, design
   DNA, current state. Then load this file (HANDOFF.md) for cross-session continuity,
   and `LAWS.md` for the full law set. Skip the v0.x plan artifacts unless you're
   digging into a specific release's design rationale — `docs/research/` is usually

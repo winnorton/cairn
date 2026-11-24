@@ -40,7 +40,7 @@ Do NOT invoke for:
    - **Skills** — installed via your harness's cairn package (not files in the project),
      invoked as `/name`. Five categories: maintenance (`reflect`, `plan`, `prune`,
      `audit`, `tour`, `feedback`), collaboration (`reframe`, `bridge`, `advocate`),
-     cross-perspective (`peer-review`, `session-distill`), artifact
+     cross-perspective (`peer-review`, `session-distill`, `convergence`), artifact
      (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra-lite`, `swarm`), and
      execution (`autoresearch`, `autoresearch-finalize`). The skills README that ships with the package covers the taxonomy.
 

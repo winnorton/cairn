@@ -85,7 +85,7 @@ Pi's authoring/executor loop. Source: [`packages/cairn-pi/`](./packages/cairn-pi
 | `<project>/.cairn/memory/` | Typed memory tree: `user/`, `feedback/`, `project/`, `reference/` — each with its own citation rules and hygiene |
 | `<project>/.cairn/CLAUDE.md` | Cairn-shaped context sections — imported into your project's `CLAUDE.md` or `AGENTS.md` via one user-written import line |
 | `<project>/.cairn/LAWS.md` | Meta-laws + seed laws — your non-negotiables |
-| Skills via package | Five categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`), **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra-lite`, `swarm`), and **execution** (`autoresearch`, `autoresearch-finalize`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
+| Skills via package | Five categories: **maintenance** (`tour`, `reflect`, `plan`, `prune`, `audit`, `feedback`), **collaboration** (`reframe`, `bridge`, `advocate`), **cross-perspective** (`peer-review`, `session-distill`, `convergence`), **artifact** (`note`, `spec`, `program`, `round-review`, `prompt-evolve`, `lra-lite`, `swarm`), and **execution** (`autoresearch`, `autoresearch-finalize`) — installed via the `cairn` Claude Code plugin, `@winnorton/cairn-pi` (Pi), or the native `cairn-agy` plugin (agy). See [skills taxonomy](#skills-taxonomy). |
 
 All files install in `create-if-absent` mode — cairn will never overwrite what you've
 customized. Re-adopting later will show diffs and let you choose per-file.
@@ -229,6 +229,10 @@ Cairn's skills fall into five categories with different origins.
   of the methodology that produced cairn itself** — the transcript-analysis
   loop the research papers documented, the same loop that surfaced `/reframe`,
   `/bridge`, `/advocate`, and most of the collaboration-skills taxonomy.
+- `convergence` — cold lenses reading a finished multi-spec effort on one subject for what
+  it should have reused or shared: new shared primitives with one consumer, local copies of
+  shared primitives that already exist, and authoring-process friction. Its open items carry
+  to the next run, so a named second consumer is followed up instead of forgotten.
 
 **Artifact skills — produce in-tree planning files:**
 

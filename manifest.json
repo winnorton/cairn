@@ -321,6 +321,22 @@
       "description": "Session-distill verb: read a past agent session JSONL transcript (Pi or Claude Code format, auto-detected) cold and produce a structured analysis of cairn-improvement findings — patterns recognized against a seeded catalog, skill candidates with 3-instance gate check, law candidates, memory candidates, environment-support gaps. This skill is the FORMALIZATION of cairn's foundational methodology — the transcript-analysis loop documented in docs/research/collaboration-skills.md and human-interaction-patterns.md, which produced /reframe, /bridge, /advocate, the collaboration-skills taxonomy, and most of cairn's existing skills. The methodology was running manually since v0.1; this skill makes it named and reproducible. Cousin to /peer-review (same observer-rotation mechanic; transcript instead of diff). Cousin to /reflect (which produces in-session distillate); /session-distill produces cross-session distillate for cairn-the-framework itself. Reports by default; never auto-applies changes. User-side `do it` gates any /note filing, skill edit, LAWS.md update, /feedback, etc. The skill body ships with a seeded catalog of patterns cairn has already named (cross-session relay → /bridge, reframing → /reframe, stub-spec-executed-anyway, status-without-spec-links, self-improving prompt, Pi-as-executor, etc.) so new findings are matched against history rather than re-invented. Promoted from docs/notes/_promoted/NOTE_CAIRN_INTROSPECT_SKILL_2026-04-26.md after the 3-instance gate was met in a single session (2026-06-09: 6+ instances)."
     },
     {
+      "src": "files/skills/convergence/SKILL.md",
+      "bundles": [
+        "files/skills/convergence/references/lens-briefs.md",
+        "files/skills/convergence/references/profile-template.md",
+        "files/skills/convergence/references/report-template.md"
+      ],
+      "delivery": {
+        "method": "package",
+        "claude-code": "cairn (Claude Code plugin)",
+        "agy": "cairn-agy (agy plugin install https://github.com/winnorton/cairn/tree/main/packages/cairn-agy)"
+      },
+      "role": "scaffolding",
+      "tier": "structure",
+      "description": "Convergence verb: review a finished multi-spec effort on one subject (a gamemode, app, service or package built on shared layers) for what it should have reused or shared. Measure first (the project's inventory and metric commands), settle every open item earlier runs left for this subject (adopted, declined, retired or carried), then run three cold lenses in parallel — primitives (is each new shared export generic and reused, or shaped by one subject), local concepts (ADOPT an existing primitive, ELEVATE with a named second consumer, or ISOLATE), and process (recurring defect classes and which a script could catch). The orchestrator verifies every headline claim, writes a report whose open-items table the next run must settle, records items in the project's registers, and asks before planning fixes as a /program. Project binding lives in <project>/.cairn/convergence.md (template in references/profile-template.md), which can make the run required before a /program archives. Ships markdown references only. Promoted after three observed convergence passes in cwar-engine."
+    },
+    {
       "src": "files/skills/swarm/SKILL.md",
       "delivery": {
         "method": "package",

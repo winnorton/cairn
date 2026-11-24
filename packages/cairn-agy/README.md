@@ -34,13 +34,13 @@ agy plugin install /path/to/cairn/packages/cairn-agy
 
 ## What you get
 
-All 20 cairn skills, invocable as `/skill-name` in Antigravity:
+All 21 cairn skills, invocable as `/skill-name` in Antigravity:
 
 | Category | Skills |
 |---|---|
 | Maintenance | `/tour`, `/reflect`, `/plan`, `/prune`, `/audit`, `/feedback` |
 | Collaboration | `/reframe`, `/bridge`, `/advocate` |
-| Cross-perspective | `/peer-review`, `/session-distill` |
+| Cross-perspective | `/peer-review`, `/session-distill`, `/convergence` |
 | Artifact | `/note`, `/spec`, `/program`, `/round-review`, `/prompt-evolve`, `/lra-lite`, `/swarm` |
 | Execution | `/autoresearch`, `/autoresearch-finalize` |
 

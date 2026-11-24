@@ -117,7 +117,7 @@ for the index.
   `scripts/sync-skills.mjs`;
   `--check` (wired to `prepublishOnly`) fails on drift, over-cap descriptions, or
   VERSION-lockstep breaks. Never hand-edit the copies.
-- `packages/cairn-claude/` — the `cairn` Claude Code plugin shipping all 20 skills to
+- `packages/cairn-claude/` — the `cairn` Claude Code plugin shipping all 21 skills to
   Claude Code (`claude plugin marketplace add winnorton/cairn` + `claude plugin install
   cairn@cairn`). Skills synced from `files/skills/` by the shared `scripts/sync-skills.mjs`;
   drift guard runs in CI (plugin has no `prepublishOnly`). Per `[LAW own-your-namespace]`.
@@ -130,7 +130,7 @@ for the index.
 Edits to `files/**` change what adopters get on their next `adopt cairn` run.
 Edits outside `files/**` change cairn-the-repo only.
 
-## Skills defined by this project (20)
+## Skills defined by this project (21)
 
 Listed by category — full descriptions in
 [`files/skills/README.md`](files/skills/README.md):
@@ -151,6 +151,7 @@ Listed by category — full descriptions in
 ### Cross-perspective — rotate the observer
 - [`peer-review`](files/skills/peer-review/SKILL.md) — fresh agent reading a change set cold
 - [`session-distill`](files/skills/session-distill/SKILL.md) — fresh agent reading a past session JSONL cold through cairn's improvement lens; formalizes the transcript-analysis methodology that produced cairn itself (`/reframe`, `/bridge`, `/advocate`, and the collaboration-skills taxonomy all came from this loop)
+- [`convergence`](files/skills/convergence/SKILL.md) — cold lenses reading a finished effort on one subject (gamemode, app, service) for what it should have reused or shared; settles earlier runs' open items so findings bind the next program; project binding in `<project>/.cairn/convergence.md`
 
 ### Artifact — produce in-tree planning files
 - [`note`](files/skills/note/SKILL.md) — single-paragraph in-tree capture (`docs/notes/`)
