@@ -6,6 +6,12 @@ is in [`VERSION`](VERSION).
 
 <!-- release-entries -->
 
+## v0.17.0 — 2026-11-24
+
+New /convergence skill: a required-where-profiled closeout review of what a program should have reused or shared; /program and /round-review archive gates now honour it.
+
+- feat(skills): add /convergence, a closeout review of what a program should have shared
+
 ## v0.16.2 — 2026-11-19
 
 - chore: cut release process to sole-maintainer scale; add scripts/release.mjs
